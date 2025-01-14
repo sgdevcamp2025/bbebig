@@ -1,0 +1,37 @@
+{
+  "name": "auth-server",
+  "version": "1.0.0",
+  "description": "인증관련 기능을 처리합니다.",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "start:build": "tsc -w --project tsconfig.json && npx -p tsconfig.json",
+    "build:live": "nodemon --watch 'src/' --exec node --loader ts-node/esm index.ts --verbose ",
+    "start": "npm run build:live"
+  },
+  "author": "Jihyeong LEE",
+  "license": "ISC",
+  "dependencies": {
+    "@fastify/cookie": "^11.0.2",
+    "@fastify/cors": "^10.0.2",
+    "@fastify/swagger": "^9.4.1",
+    "@fastify/swagger-ui": "^5.2.1",
+    "@prisma/client": "^6.2.1",
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.7",
+    "fastify": "^5.2.1",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "packageManager": "yarn@4.6.0",
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/dotenv": "^8.2.3",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/node": "^22.10.6",
+    "nodemon": "^3.1.9",
+    "prisma": "^6.2.1",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}
