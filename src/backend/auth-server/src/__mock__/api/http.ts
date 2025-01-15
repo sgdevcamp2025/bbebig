@@ -1,9 +1,13 @@
 import Fastify from 'fastify';
 import mockRoutes from './route';
+import { validatorCompiler, serializerCompiler } from 'fastify-type-provider-zod';
 
 const fastify = Fastify({
   logger: true,
 });
+
+fastify.setValidatorCompiler(validatorCompiler);
+fastify.setSerializerCompiler(serializerCompiler);
 
 fastify.register(mockRoutes);
 
