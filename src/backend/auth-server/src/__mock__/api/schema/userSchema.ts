@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { commonHeaderSchema } from '../../../schema/commonSchema';
+import { commonHeaderSchema, commonResponseSchema } from '../../../schema/commonSchema';
 
 // 공통 헤더 스키마
 const header = commonHeaderSchema;
@@ -9,13 +9,6 @@ const successResponse = z.object({
   status: z.number(),
   message: z.string(),
   success: z.boolean(),
-});
-
-const errorResponse = z.object({
-  status: z.number(),
-  message: z.string(),
-  success: z.boolean(),
-  details: z.optional(z.any()), // 추가 디버깅 정보
 });
 
 // 사용자 요청 스키마
@@ -35,8 +28,8 @@ const loginSchema = {
       id: z.string(),
       email: z.string(),
     }),
-    400: errorResponse, // 잘못된 요청
-    404: errorResponse, // 사용자 없음
+    400: commonResponseSchema, // 잘못된 요청
+    404: commonResponseSchema, // 사용자 없음
   },
 };
 
@@ -50,7 +43,7 @@ const signupSchema = {
     201: successResponse.extend({
       status: z.literal(201),
     }),
-    400: errorResponse, // 이미 존재하는 사용자
+    400: commonResponseSchema, // 이미 존재하는 사용자
   },
 };
 
@@ -63,8 +56,8 @@ const logoutSchema = {
     205: successResponse.extend({
       status: z.literal(205),
     }),
-    400: errorResponse, // 잘못된 요청
-    401: errorResponse, // 인증 실패
+    400: commonResponseSchema, // 잘못된 요청
+    401: commonResponseSchema, // 인증 실패
   },
 };
 
