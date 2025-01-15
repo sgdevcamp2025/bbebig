@@ -1,5 +1,6 @@
 import { Secret } from 'jsonwebtoken';
 
+const DOMAIN = process.env.DOMAIN;
 const FIRST_PWD = process.env.FIRST_PWD;
 const ROUND = Number(process.env.ROUND);
 const SECRET_KEY = process.env.SECRET_KEY as Secret;
@@ -56,33 +57,34 @@ const ERROR_MESSAGE = {
 
 const SUCCESS_MESSAGE = {
   loginOk: {
-    success: true,
-    status: 201,
+    isSuccess: true,
+    code: 200,
     message: 'Login Ok!',
   },
   logoutOk: {
-    success: true,
-    status: 205,
+    isSuccess: true,
+    code: 205,
     message: 'Logout success!',
   },
   refreshToken: {
-    success: true,
-    status: 201,
+    isSuccess: true,
+    code: 201,
     message: 'refresh success',
   },
   accessTokenOk: {
-    success: true,
-    status: 200,
+    isSuccess: true,
+    code: 200,
     message: 'access token ok',
   },
   registerOk: {
-    status: 201,
-    success: true,
+    isSuccess: true,
+    code: 201,
     message: 'register success!',
   },
 } as const;
 
 export {
+  DOMAIN,
   FIRST_PWD,
   ROUND,
   SECRET_KEY,

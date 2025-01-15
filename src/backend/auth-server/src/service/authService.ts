@@ -82,7 +82,7 @@ function authService() {
     }
   };
 
-  const refresh = async (refreshToken: string) => {
+  const refresh = async (refreshToken?: string) => {
     try {
       if (!refreshToken) throw ERROR_MESSAGE.unauthorized;
 
