@@ -11,7 +11,11 @@
     "strict": true,
     "noImplicitAny": true,
     "useUnknownInCatchVariables": false,
-    "inlineSourceMap": true
+    "inlineSourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
   "include": ["src/**/*", "main.ts"],
   "exclude": ["document", "backup"],
