@@ -6,4 +6,88 @@ const SECRET_KEY = process.env.SECRET_KEY as Secret;
 const ACCESS_TOKEN_EXPIRES = process.env.ACCESS_TOKEN_EXPIRES;
 const REFRESH_TOKEN_EXPIRES = process.env.REFRESH_TOKEN_EXPIRES;
 
-export { FIRST_PWD, ROUND, SECRET_KEY, ACCESS_TOKEN_EXPIRES, REFRESH_TOKEN_EXPIRES };
+const ERROR_MESSAGE = {
+  badRequest: {
+    isSuccess: false,
+    code: 400,
+    message: 'Bad Request',
+  },
+  unauthorized: {
+    isSuccess: false,
+    code: 401,
+    message: 'Unauthorized',
+  },
+  invalidToken: {
+    isSuccess: false,
+    code: 401,
+    message: 'Invalid token',
+  },
+  notExpired: {
+    isSuccess: false,
+    code: 401,
+    message: 'Token Not Expired',
+  },
+  forbidden: {
+    isSuccess: false,
+    code: 403,
+    message: 'Forbidden',
+  },
+  alreadySignup: {
+    isSuccess: false,
+    code: 403,
+    message: 'Already Sign Up',
+  },
+  notFound: {
+    isSuccess: false,
+    code: 404,
+    message: 'Not Found',
+  },
+  preconditionFailed: {
+    isSuccess: false,
+    code: 412,
+    message: 'Precondition Failed',
+  },
+  serverError: {
+    isSuccess: false,
+    code: 500,
+    message: 'Server Error',
+  },
+} as const;
+
+const SUCCESS_MESSAGE = {
+  loginOk: {
+    success: true,
+    status: 201,
+    message: 'Login Ok!',
+  },
+  logoutOk: {
+    success: true,
+    status: 205,
+    message: 'Logout success!',
+  },
+  refreshToken: {
+    success: true,
+    status: 201,
+    message: 'refresh success',
+  },
+  accessTokenOk: {
+    success: true,
+    status: 200,
+    message: 'access token ok',
+  },
+  registerOk: {
+    status: 201,
+    success: true,
+    message: 'register success!',
+  },
+} as const;
+
+export {
+  FIRST_PWD,
+  ROUND,
+  SECRET_KEY,
+  ACCESS_TOKEN_EXPIRES,
+  REFRESH_TOKEN_EXPIRES,
+  ERROR_MESSAGE,
+  SUCCESS_MESSAGE,
+};

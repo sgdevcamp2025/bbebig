@@ -24,16 +24,16 @@ model FRIEND {
 
 model USER {
   id                               BigInt                       @id @default(autoincrement())
-  name                             String?                      @db.VarChar(255)
-  email                            String?                      @db.VarChar(255)
-  password                         String?                      @db.VarChar(255)
+  name                             String                       @db.VarChar(255)
+  email                            String                       @unique(map: "email") @db.VarChar(255)
+  password                         String                       @db.VarChar(255)
   profile_img_url                  String?                      @db.VarChar(255)
   nickname                         String?                      @db.VarChar(255)
   custom_presence_status           USER_custom_presence_status?
-  create_at                        DateTime?                    @db.Timestamp(0)
-  update_at                        DateTime?                    @db.Timestamp(0)
+  create_at                        DateTime?                    @default(now()) @db.Timestamp(0)
+  update_at                        DateTime?                    @default(now()) @db.Timestamp(0)
   birthdate                        DateTime?                    @db.Timestamp(0)
-  last_access_at                   DateTime?                    @db.Timestamp(0)
+  last_access_at                   DateTime?                    @default(now()) @db.Timestamp(0)
   FRIEND_FRIEND_from_user_idToUSER FRIEND[]                     @relation("FRIEND_from_user_idToUSER")
   FRIEND_FRIEND_to_user_idToUSER   FRIEND[]                     @relation("FRIEND_to_user_idToUSER")
 }
