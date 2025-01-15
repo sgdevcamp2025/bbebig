@@ -12,23 +12,26 @@
   },
   "dependencies": {
     "@repo/ui": "workspace:*",
+    "autoprefixer": "^10.4.18",
+    "postcss": "^8.4.35",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "zustand": "^5.0.3",
     "tailwindcss": "^3.4.1",
-    "postcss": "^8.4.35",
-    "autoprefixer": "^10.4.18"
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
     "@repo/tailwind-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^8.57.0",
-    "typescript": "5.5.4",
+    "prettier": "^3.2.5",
+    "prettier-plugin-tailwindcss": "^0.6.9",
+    "typescript": "5.3.3",
     "vite": "^6.0.7",
     "vitest": "^2.1.8"
-  }
+  },
+  "prettier": "../../packages/prettier-config/prettier.config.js"
 }
