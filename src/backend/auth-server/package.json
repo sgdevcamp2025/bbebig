@@ -9,7 +9,6 @@
     "start": "yarn build:live",
     "test": "jest --config jest.config.cjs",
     "test:watch": "jest --config jest.config.cjs --watch",
-    "start:mock": "tsx src/__mock__/api/http.ts",
     "lint": "lint-staged"
   },
   "author": "Jihyeong LEE",

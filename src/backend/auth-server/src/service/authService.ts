@@ -14,7 +14,7 @@ function authService() {
     password: string,
     name: string,
     nickname: string,
-    birthdate: Date,
+    birthdate: string,
   ) => {
     const result = await db.uSER.create({
       data: {

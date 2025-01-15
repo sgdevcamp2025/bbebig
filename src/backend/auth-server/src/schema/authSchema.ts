@@ -30,7 +30,7 @@ const registerSchema = {
     password: z.string().min(8),
     name: z.string().min(2),
     nickname: z.string().min(2),
-    birthdate: z.date(),
+    birthdate: z.string(),
   }),
   response: {
     201: commonResponseSchema,
@@ -58,12 +58,11 @@ const accessTokenSchema = {
 const refreshTokenSchema = {
   tags: ['auth'],
   description: '리프레시 토큰을 발급 받습니다.',
-  cookies: z.object({
+  headers: z.object({
     refreshToken: z.string(),
   }),
   response: {
     201: z.object({
-      email: z.string(),
       accessToken: z.string(),
     }),
     400: commonResponseSchema,

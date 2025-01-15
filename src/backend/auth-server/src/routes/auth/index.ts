@@ -29,10 +29,10 @@ const authRoute = async (app: FastifyInstance) => {
         accessToken: values.accessToken,
       };
 
-      res.status(SUCCESS_MESSAGE.loginOk.code).send({
+      return {
         ...SUCCESS_MESSAGE.loginOk,
         details: result,
-      });
+      };
     },
   });
 
@@ -45,7 +45,8 @@ const authRoute = async (app: FastifyInstance) => {
 
       try {
         await authService.register(email, password, name, nickname, birthdate);
-        res.status(SUCCESS_MESSAGE.registerOk.code).send(SUCCESS_MESSAGE.registerOk);
+
+        return SUCCESS_MESSAGE.registerOk;
       } catch (error) {
         handleError(res, ERROR_MESSAGE.serverError, error);
       }
@@ -53,7 +54,7 @@ const authRoute = async (app: FastifyInstance) => {
   });
 
   app.withTypeProvider<ZodTypeProvider>().route({
-    method: 'GET',
+    method: 'POST',
     url: '/logout',
     handler: (req, res) => {
       res.send({ message: 'Hello World' });
