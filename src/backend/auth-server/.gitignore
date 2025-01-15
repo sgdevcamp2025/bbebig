@@ -1,0 +1,11 @@
+# Ignore node_modules directory
+node_modules/
+
+# Ignore environment files
+.env
+
+# Ignore Yarn error logs
+yarn-error.log
+
+# Ignore lock files (optional, only if you don't want to track them)
+# yarn.lock
