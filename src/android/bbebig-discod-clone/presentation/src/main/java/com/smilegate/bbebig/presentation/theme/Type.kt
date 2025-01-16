@@ -1,4 +1,4 @@
-package com.smilegate.bbebig.presentation.ui.theme
+package com.smilegate.bbebig.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
