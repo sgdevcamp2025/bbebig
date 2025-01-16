@@ -1,4 +1,4 @@
-package com.smilegate.bbebig.presentation.ui
+package com.smilegate.bbebig.presentation.ui.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -7,41 +7,29 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.smilegate.bbebig.presentation.ui.theme.BbebigTheme
+import androidx.navigation.compose.rememberNavController
+import com.smilegate.bbebig.presentation.navigation.UserNavHost
+import com.smilegate.bbebig.presentation.theme.BbebigTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val navController = rememberNavController()
             BbebigTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding),
+                    UserNavHost(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                        navController = navController,
                     )
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier,
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    BbebigTheme {
-        Greeting("Android")
     }
 }
