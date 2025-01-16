@@ -1,5 +1,6 @@
 package com.bbebig.user_server.domain;
 
+import com.bbebig.user_server.presentation.dto.UserModifyRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -44,4 +45,9 @@ public class User {
 
     @Column(name = "last_access_at")
     private LocalDateTime lastAccessAt;
+
+    public void modify(UserModifyRequest request) {
+        if(request.profileImgUrl()!=null) this.profileImgUrl=request.profileImgUrl();
+        if(request.nickname()!=null)this.nickname=request.nickname();
+    }
 }
