@@ -54,6 +54,7 @@ const refreshTokenSchema = {
 const logoutSchema = {
   tags: ['auth'],
   description: '로그아웃 합니다.',
+  headers,
   response: {
     205: commonResponseSchema,
     400: commonResponseSchema,

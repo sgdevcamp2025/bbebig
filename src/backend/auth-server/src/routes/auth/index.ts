@@ -7,7 +7,6 @@ import {
   signInSchema,
   verifyTokenSchema,
 } from '../../schema/authSchema';
-
 import authService from '@/service/authService';
 import { DOMAIN, ERROR_MESSAGE, REDIS_KEY, SUCCESS_MESSAGE } from '@/libs/constants';
 import { handleError } from '@/libs/errorHelper';
@@ -19,7 +18,7 @@ const authRoute = async (app: FastifyInstance) => {
     url: '/login',
     schema: signInSchema,
     handler: async (req, res) => {
-      const { email, password } = req.body as { email: string; password: string };
+      const { email, password } = req.body;
       const values = await authService.loginWithPassword(email, password);
 
       res.setCookie('refresh_token', values.refreshToken, {

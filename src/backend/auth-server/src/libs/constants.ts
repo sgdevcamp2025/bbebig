@@ -7,13 +7,17 @@ const ACCESS_TOKEN_EXPIRES = process.env.ACCESS_TOKEN_EXPIRES;
 const REFRESH_TOKEN_EXPIRES = process.env.REFRESH_TOKEN_EXPIRES;
 const REDIS_HOST = process.env.REDIS_HOST;
 const REDIS_PORT = process.env.REDIS_PORT;
-const REDIS_PASSWORD = process.env.REDIS_PASSWORD || '';
 
 const ERROR_MESSAGE = {
   duplicateEmail: {
     isSuccess: false,
     code: 400,
     message: 'Duplicate Email',
+  },
+  passwordNotMatch: {
+    isSuccess: false,
+    code: 400,
+    message: 'Password Not Match',
   },
   badRequest: {
     isSuccess: false,
@@ -97,7 +101,6 @@ const REDIS_KEY = {
 export {
   REDIS_HOST,
   REDIS_PORT,
-  REDIS_PASSWORD,
   DOMAIN,
   ROUND,
   SECRET_KEY,

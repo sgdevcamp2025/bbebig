@@ -41,10 +41,10 @@ function authService() {
         },
       });
 
-      if (!authenticationUser) throw new Error('User not found');
+      if (!authenticationUser) throw ERROR_MESSAGE.notFound;
 
       const isPasswordCorrect = await verifyPassword(email, password);
-      if (!isPasswordCorrect) throw ERROR_MESSAGE.unauthorized;
+      if (!isPasswordCorrect) throw ERROR_MESSAGE.passwordNotMatch;
 
       const accessToken = generateAccessToken({
         id: Number(authenticationUser.id),

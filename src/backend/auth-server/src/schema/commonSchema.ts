@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 const commonHeaderSchema = z.object({
-  Authorization: z.string().regex(/^Bearer\s[\w-]+\.[\w-]+\.[\w-]+$/, {
+  authorization: z.string().regex(/^Bearer\s[\w-]+\.[\w-]+\.[\w-]+$/, {
     message: 'Invalid Authorization format. Must be "Bearer <JWT>"',
   }),
 });
