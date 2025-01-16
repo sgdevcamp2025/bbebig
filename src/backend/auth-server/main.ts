@@ -5,17 +5,23 @@ import { FastifyCookieOptions } from '@fastify/cookie';
 import routes from './src/routes';
 import cors from '@fastify/cors';
 import fastifyCookie from '@fastify/cookie';
-import { SECRET_KEY } from '@/libs/constants';
-
+import { REDIS_HOST, REDIS_PASSWORD, REDIS_PORT, SECRET_KEY } from '@/libs/constants';
+import fastifyRedis from '@fastify/redis';
+import { currentAuthPlugin } from '@/plugin/authPlugin';
 const app = Fastify({
   logger: true,
 }).withTypeProvider<ZodTypeProvider>();
 
 const port = process.env.PORT || 8083;
 
+app.register(currentAuthPlugin);
 app.register(routes);
+app.register(fastifyRedis, {
+  host: REDIS_HOST,
+  port: Number(REDIS_PORT),
+  password: REDIS_PASSWORD,
+});
 
-// TODO: 프론트 오리진 설정
 app.register(cors, {
   origin: true,
   credentials: true,

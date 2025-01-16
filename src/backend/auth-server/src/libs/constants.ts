@@ -1,13 +1,20 @@
 import { Secret } from 'jsonwebtoken';
 
 const DOMAIN = process.env.DOMAIN;
-const FIRST_PWD = process.env.FIRST_PWD;
 const ROUND = Number(process.env.ROUND);
 const SECRET_KEY = process.env.SECRET_KEY as Secret;
 const ACCESS_TOKEN_EXPIRES = process.env.ACCESS_TOKEN_EXPIRES;
 const REFRESH_TOKEN_EXPIRES = process.env.REFRESH_TOKEN_EXPIRES;
+const REDIS_HOST = process.env.REDIS_HOST;
+const REDIS_PORT = process.env.REDIS_PORT;
+const REDIS_PASSWORD = process.env.REDIS_PASSWORD || '';
 
 const ERROR_MESSAGE = {
+  duplicateEmail: {
+    isSuccess: false,
+    code: 400,
+    message: 'Duplicate Email',
+  },
   badRequest: {
     isSuccess: false,
     code: 400,
@@ -83,13 +90,20 @@ const SUCCESS_MESSAGE = {
   },
 } as const;
 
+const REDIS_KEY = {
+  refreshToken: (userId: number) => `refreshToken:${userId}`,
+} as const;
+
 export {
+  REDIS_HOST,
+  REDIS_PORT,
+  REDIS_PASSWORD,
   DOMAIN,
-  FIRST_PWD,
   ROUND,
   SECRET_KEY,
   ACCESS_TOKEN_EXPIRES,
   REFRESH_TOKEN_EXPIRES,
   ERROR_MESSAGE,
   SUCCESS_MESSAGE,
+  REDIS_KEY,
 };
