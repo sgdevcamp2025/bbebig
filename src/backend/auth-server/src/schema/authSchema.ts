@@ -1,4 +1,42 @@
 import { z } from 'zod';
+import { commonResponseSchema } from './commonSchema';
+
+const signInSchema = {
+  tags: ['auth'],
+  description: '로그인 합니다.',
+  body: z.object({
+    email: z.string().email(),
+    password: z.string().min(8),
+  }),
+  response: {
+    200: z.object({
+      isSuccess: z.boolean(),
+      code: z.number(),
+      message: z.string(),
+      details: z.object({
+        email: z.string(),
+        accessToken: z.string(),
+      }),
+    }),
+    400: commonResponseSchema,
+  },
+};
+
+const registerSchema = {
+  tags: ['auth'],
+  description: '회원가입 합니다.',
+  body: z.object({
+    email: z.string().email(),
+    password: z.string().min(8),
+    name: z.string().min(2),
+    nickname: z.string().min(2),
+    birthdate: z.string(),
+  }),
+  response: {
+    201: commonResponseSchema,
+    400: commonResponseSchema,
+  },
+};
 
 const accessTokenSchema = {
   tags: ['auth'],
@@ -9,23 +47,25 @@ const accessTokenSchema = {
   }),
   response: {
     201: z.object({
+      id: z.string(),
+      email: z.string(),
       accessToken: z.string(),
-      refreshToken: z.string(),
     }),
+    400: commonResponseSchema,
   },
 };
 
 const refreshTokenSchema = {
   tags: ['auth'],
   description: '리프레시 토큰을 발급 받습니다.',
-  body: z.object({
+  headers: z.object({
     refreshToken: z.string(),
   }),
   response: {
     201: z.object({
       accessToken: z.string(),
-      refreshToken: z.string(),
     }),
+    400: commonResponseSchema,
   },
 };
 
@@ -42,4 +82,4 @@ const checkTokenSchema = {
   },
 };
 
-export { accessTokenSchema, refreshTokenSchema, checkTokenSchema };
+export { accessTokenSchema, refreshTokenSchema, checkTokenSchema, registerSchema, signInSchema };

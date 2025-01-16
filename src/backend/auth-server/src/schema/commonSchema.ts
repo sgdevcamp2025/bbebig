@@ -5,10 +5,10 @@ const commonHeaderSchema = z.object({
 });
 
 const commonResponseSchema = z.object({
-  status: z.number(),
+  code: z.number(),
   message: z.string(),
   isSuccess: z.boolean(),
-  details: z.optional(z.any()), // 추가 디버깅 정보
+  details: z.optional(z.any()),
 });
 
 export { commonHeaderSchema, commonResponseSchema };
