@@ -10,4 +10,4 @@ eureka:
 
 spring:
   application:
-    name: apigateway-service
+    name: apigateway-server
