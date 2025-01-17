@@ -1,6 +1,7 @@
 import { Secret } from 'jsonwebtoken';
 
 const DOMAIN = process.env.DOMAIN;
+const PORT = process.env.PORT;
 const ROUND = Number(process.env.ROUND);
 const SECRET_KEY = process.env.SECRET_KEY as Secret;
 const ACCESS_TOKEN_EXPIRES = process.env.ACCESS_TOKEN_EXPIRES;
@@ -99,6 +100,7 @@ const REDIS_KEY = {
 } as const;
 
 export {
+  PORT,
   REDIS_HOST,
   REDIS_PORT,
   DOMAIN,

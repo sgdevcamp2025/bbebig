@@ -9,3 +9,5 @@ yarn-error.log
 
 # Ignore lock files (optional, only if you don't want to track them)
 # yarn.lock
+
+dist
