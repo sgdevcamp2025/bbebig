@@ -1,5 +1,7 @@
 import { z } from 'zod';
-import { commonResponseSchema } from './commonSchema';
+import { commonHeaderSchema, commonResponseSchema } from './commonSchema';
+
+const headers = commonHeaderSchema;
 
 const signInSchema = {
   tags: ['auth'],
@@ -38,29 +40,9 @@ const registerSchema = {
   },
 };
 
-const accessTokenSchema = {
-  tags: ['auth'],
-  description: '엑세스 토큰을 발급 받습니다.',
-  body: z.object({
-    id: z.string(),
-    email: z.string(),
-  }),
-  response: {
-    201: z.object({
-      id: z.string(),
-      email: z.string(),
-      accessToken: z.string(),
-    }),
-    400: commonResponseSchema,
-  },
-};
-
 const refreshTokenSchema = {
   tags: ['auth'],
   description: '리프레시 토큰을 발급 받습니다.',
-  headers: z.object({
-    refreshToken: z.string(),
-  }),
   response: {
     201: z.object({
       accessToken: z.string(),
@@ -69,17 +51,24 @@ const refreshTokenSchema = {
   },
 };
 
-const checkTokenSchema = {
+const logoutSchema = {
   tags: ['auth'],
-  description: '토큰을 검증 받습니다.',
+  description: '로그아웃 합니다.',
+  headers,
   response: {
-    200: z.object({
-      isSuccess: z.boolean(),
-    }),
-    401: z.object({
-      isSuccess: z.boolean(),
-    }),
+    205: commonResponseSchema,
+    400: commonResponseSchema,
   },
 };
 
-export { accessTokenSchema, refreshTokenSchema, checkTokenSchema, registerSchema, signInSchema };
+const verifyTokenSchema = {
+  tags: ['auth'],
+  description: '토큰을 검증 받습니다.',
+  headers,
+  response: {
+    200: commonResponseSchema,
+    401: commonResponseSchema,
+  },
+};
+
+export { logoutSchema, refreshTokenSchema, verifyTokenSchema, registerSchema, signInSchema };

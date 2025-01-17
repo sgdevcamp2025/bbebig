@@ -1,12 +1,12 @@
 import {
   generateAccessToken,
   generateRefreshToken,
+  verifyAccessToken,
   verifyPassword,
   verifyRefreshToken,
 } from '@/libs/authHelper';
 import { ERROR_MESSAGE } from '@/libs/constants';
 import db from '@/libs/db';
-import { getCurrentDate } from '@/libs/timeHelper';
 
 function authService() {
   const register = async (
@@ -22,8 +22,6 @@ function authService() {
         password,
         name,
         nickname,
-        create_at: getCurrentDate(),
-        update_at: getCurrentDate(),
         birthdate,
       },
     });
@@ -43,24 +41,22 @@ function authService() {
         },
       });
 
-      if (!authenticationUser) throw new Error('User not found');
+      if (!authenticationUser) throw ERROR_MESSAGE.notFound;
 
       const isPasswordCorrect = await verifyPassword(email, password);
-      if (!isPasswordCorrect) throw ERROR_MESSAGE.unauthorized;
+      if (!isPasswordCorrect) throw ERROR_MESSAGE.passwordNotMatch;
 
-      const accessToken = generateAccessToken(authenticationUser);
-      const refreshToken = generateRefreshToken(authenticationUser);
-
-      const values = {
-        userId: authenticationUser.id,
-        accessToken,
-        refreshToken,
-      };
-
-      //@TODO: 토큰 저장
+      const accessToken = generateAccessToken({
+        id: Number(authenticationUser.id),
+        email: authenticationUser.email,
+      });
+      const refreshToken = generateRefreshToken({
+        id: Number(authenticationUser.id),
+        email: authenticationUser.email,
+      });
 
       const returnValue = {
-        id: authenticationUser.id,
+        id: Number(authenticationUser.id),
         email: authenticationUser.email,
         accessToken,
         refreshToken,
@@ -73,22 +69,22 @@ function authService() {
     }
   };
 
-  const logout = async () => {
+  const refresh = async (refreshToken: string, redisRefreshToken: string) => {
     try {
-      //@TODO: 토큰 삭제
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  };
+      if (!refreshToken || !redisRefreshToken) throw ERROR_MESSAGE.unauthorized;
 
-  const refresh = async (refreshToken?: string) => {
-    try {
-      if (!refreshToken) throw ERROR_MESSAGE.unauthorized;
+      const authenticationUser = await verifyRefreshToken(refreshToken, redisRefreshToken);
 
-      const authenticationUser = await verifyRefreshToken(refreshToken);
+      const userInfo = {
+        id: authenticationUser.id,
+        email: authenticationUser.email,
+      };
 
-      // Todo: 토큰 검증 후 유저 정보 반환, id, email, Authorization
+      const accessToken = generateAccessToken(userInfo);
+
+      return {
+        accessToken,
+      };
     } catch (error) {
       console.error(error);
       throw error;
@@ -98,7 +94,6 @@ function authService() {
   return {
     register,
     loginWithPassword,
-    logout,
     refresh,
   };
 }
