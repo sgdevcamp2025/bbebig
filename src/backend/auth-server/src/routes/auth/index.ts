@@ -49,12 +49,12 @@ const authRoute = async (app: FastifyInstance) => {
     url: '/register',
     schema: registerSchema,
     handler: async (req, res) => {
-      const { email, password, name, nickname, birthdate } = req.body;
+      const { email, password, name, nickname, birthDate } = req.body;
 
       try {
         const hashedPassword = generateHash(password);
 
-        await authService.register(email, hashedPassword, name, nickname, birthdate);
+        await authService.register(email, hashedPassword, name, nickname, birthDate);
 
         return SUCCESS_MESSAGE.registerOk;
       } catch (error) {

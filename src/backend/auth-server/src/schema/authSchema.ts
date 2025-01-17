@@ -32,7 +32,7 @@ const registerSchema = {
     password: z.string().min(8),
     name: z.string().min(2),
     nickname: z.string().min(2),
-    birthdate: z.string(),
+    birthDate: z.date(),
   }),
   response: {
     201: commonResponseSchema,

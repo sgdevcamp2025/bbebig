@@ -17,7 +17,7 @@ const generateHash = (pwd: string) => {
 
 const duplicateVerifyUser = async (email: string) => {
   try {
-    const userCount = await db.uSER.count({
+    const userCount = await db.member.count({
       where: { email },
     });
 
@@ -31,7 +31,7 @@ const duplicateVerifyUser = async (email: string) => {
 
 const verifyPassword = async (email: string, password: string) => {
   try {
-    const encryptedPwd = await db.uSER.findUnique({
+    const encryptedPwd = await db.member.findUnique({
       where: {
         email,
       },
