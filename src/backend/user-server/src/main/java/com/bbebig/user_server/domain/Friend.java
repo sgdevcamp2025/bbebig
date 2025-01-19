@@ -46,9 +46,10 @@ public class Friend {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public void changeToPending(){
-        this.status=FriendStatus.PENDING;
+    public void changeFriendStatus(FriendStatus status){
+        this.status=status;
     }
+
 
     public static Friend of(Member fromMember, Member toMember){
         return Friend.builder().fromMember(fromMember).toMember(toMember).status(FriendStatus.PENDING).build();

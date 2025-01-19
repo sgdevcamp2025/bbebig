@@ -1,6 +1,7 @@
 package com.bbebig.user_server.presentation;
 
 import com.bbebig.user_server.application.FriendService;
+import com.bbebig.user_server.domain.FriendStatus;
 import com.bbebig.user_server.presentation.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,5 +30,11 @@ public class FriendController {
     public ResponseEntity getFriendCreate(@RequestHeader("memberId") Long memberId, @ModelAttribute PageRequestDto request) {
         Page<FriendCreateResponse> response= friendService.getFriendCreate(memberId, request.toPageRequest());
         return ResponseEntity.ok().body(response);
+    }
+
+    @PatchMapping("/request/{friendId}")
+    public ResponseEntity changeFriendCreateStatus(@RequestHeader("memberId") Long memberId,@PathVariable("friendId")Long friendId, @RequestParam FriendStatus requestStatus) {
+        friendService.changeFriendCreateStatus(friendId,requestStatus);
+        return ResponseEntity.noContent().build();
     }
 }

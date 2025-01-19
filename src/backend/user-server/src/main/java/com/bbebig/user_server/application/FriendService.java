@@ -24,7 +24,7 @@ public class FriendService {
         Optional<Friend> existFriend = friendRepository.findByStatusNot(FriendStatus.ACCEPTED);
         if (existFriend.isPresent()) {
             //있으면 pending으로 변경
-            existFriend.get().changeToPending();
+            existFriend.get().changeFriendStatus(FriendStatus.PENDING);
         } else {
             //없으면 생성
             Member fromMember = memberRepository.findById(memberId).get();
@@ -41,5 +41,9 @@ public class FriendService {
     public Page<FriendResponse> getFriendList(Long memberId, Pageable pageRequest) {
         Member member = memberRepository.findById(memberId).get();
         return friendRepository.findByStatusAndToMemberOrFromMember(FriendStatus.ACCEPTED, member, member, pageRequest).map(FriendResponse::of);
+    }
+
+    public void changeFriendCreateStatus(Long friendId, FriendStatus requestStatus) {
+        friendRepository.findById(friendId).get().changeFriendStatus(requestStatus);
     }
 }
