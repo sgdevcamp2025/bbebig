@@ -2,8 +2,11 @@ package com.bbebig.user_server.application;
 
 import com.bbebig.user_server.domain.*;
 import com.bbebig.user_server.presentation.dto.FriendCreateRequest;
+import com.bbebig.user_server.presentation.dto.FriendCreateResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -27,5 +30,10 @@ public class FriendService {
             Member toMember = memberRepository.findById(request.toMemberId()).get();
             friendRepository.save(Friend.of(fromMember, toMember));
         }
+    }
+
+    public Page<FriendCreateResponse> getFriendCreate(Long memberId, Pageable pageRequest) {
+        Member member = memberRepository.findById(memberId).get();
+        return friendRepository.findByToMemberAndStatus(member, FriendStatus.PENDING, pageRequest).map(FriendCreateResponse::of);
     }
 }

@@ -1,6 +1,5 @@
 package com.bbebig.user_server.domain;
 
-import com.bbebig.user_server.presentation.dto.FriendCreateRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
