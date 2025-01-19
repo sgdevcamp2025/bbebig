@@ -1,6 +1,7 @@
 package com.bbebig.chatserver.handler;
 
 import com.bbebig.chatserver.apiPayload.code.status.ErrorStatus;
+import com.bbebig.chatserver.repository.RedisSessionManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
@@ -19,6 +20,7 @@ import java.util.Optional;
 @Slf4j
 public class StompHandler implements ChannelInterceptor {
 
+	private final RedisSessionManager redisSessionManager;
 
 	// WebSocket을 통해 들어온 요청이 처리 되기 전에 실행
 	@Override
@@ -44,6 +46,7 @@ public class StompHandler implements ChannelInterceptor {
 			// 토큰이 유효한 경우
 
 			// simpSessionId를 이용하여 사용자 정보 저장
+			String simpSessionId = headerAccessor.getSessionId();
 
 		} else if (StompCommand.DISCONNECT == headerAccessor.getCommand()) { // DISCONNECT 요청일 경우
 
