@@ -37,11 +37,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
 
-		registry.addEndpoint("/stomp") // 클라이언트가 연결할 엔드포인트 설정
+		registry.addEndpoint("/ws") // 클라이언트가 연결할 엔드포인트 설정
 				.setAllowedOrigins("*");
 
 		// 웹소켓을 사용할 수 없는 환경에서 sockJS 지원
-		registry.addEndpoint("/stomp/web") // 클라이언트가 연결할 엔드포인트 설정
+		registry.addEndpoint("/ws/web") // 클라이언트가 연결할 엔드포인트 설정
 				.setAllowedOrigins("*")
 				.withSockJS();
 
