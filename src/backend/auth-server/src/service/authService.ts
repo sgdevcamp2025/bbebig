@@ -1,12 +1,11 @@
 import {
   generateAccessToken,
   generateRefreshToken,
-  verifyAccessToken,
   verifyPassword,
   verifyRefreshToken,
-} from '@/libs/authHelper';
-import { ERROR_MESSAGE } from '@/libs/constants';
-import db from '@/libs/db';
+} from '../libs/authHelper';
+import { ERROR_MESSAGE } from '../libs/constants';
+import db from '../libs/db';
 
 function authService() {
   const register = async (

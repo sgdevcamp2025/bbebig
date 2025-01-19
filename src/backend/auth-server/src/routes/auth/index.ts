@@ -7,10 +7,10 @@ import {
   signInSchema,
   verifyTokenSchema,
 } from '../../schema/authSchema';
-import authService from '@/service/authService';
-import { DOMAIN, ERROR_MESSAGE, REDIS_KEY, SUCCESS_MESSAGE } from '@/libs/constants';
-import { handleError } from '@/libs/errorHelper';
-import { generateHash, verifyAccessToken, verifySignIn } from '@/libs/authHelper';
+import authService from '../../service/authService';
+import { DOMAIN, ERROR_MESSAGE, REDIS_KEY, SUCCESS_MESSAGE } from '../../libs/constants';
+import { handleError } from '../../libs/errorHelper';
+import { generateHash, verifyAccessToken, verifySignIn } from '../../libs/authHelper';
 
 const authRoute = async (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().route({
