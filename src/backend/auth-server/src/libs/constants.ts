@@ -1,8 +1,8 @@
 import { Secret } from 'jsonwebtoken';
 
 const DOMAIN = process.env.DOMAIN;
-const PORT = process.env.PORT;
-const ROUND = Number(process.env.ROUND);
+const PORT = Number(process.env.PORT) || 8083;
+const ROUND = Number(process.env.ROUND) || 10;
 const SECRET_KEY = process.env.SECRET_KEY as Secret;
 const ACCESS_TOKEN_EXPIRES = process.env.ACCESS_TOKEN_EXPIRES;
 const REFRESH_TOKEN_EXPIRES = process.env.REFRESH_TOKEN_EXPIRES;

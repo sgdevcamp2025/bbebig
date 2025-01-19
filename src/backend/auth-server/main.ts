@@ -18,6 +18,8 @@ import { currentAuthPlugin } from '@/plugin/authPlugin';
 import { fastifySwagger } from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 import { z } from 'zod';
+import { hasZodFastifySchemaValidationErrors } from 'fastify-type-provider-zod';
+
 const app = Fastify({
   logger: true,
 }).withTypeProvider<ZodTypeProvider>();
@@ -60,6 +62,10 @@ app.register(routes);
 app.register(fastifyRedis, {
   host: REDIS_HOST,
   port: Number(REDIS_PORT),
+  retryStrategy: (times) => {
+    console.log('Retrying...', times);
+    return Math.min(times * 50, 2000);
+  },
 });
 
 app.register(cors, {
@@ -69,8 +75,6 @@ app.register(cors, {
 app.register(fastifyCookie, {
   secret: SECRET_KEY,
 } as FastifyCookieOptions);
-
-import { hasZodFastifySchemaValidationErrors } from 'fastify-type-provider-zod';
 
 app.setErrorHandler((err, req, reply) => {
   if (hasZodFastifySchemaValidationErrors(err)) {
