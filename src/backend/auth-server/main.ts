@@ -114,6 +114,10 @@ app.setErrorHandler((err, req, reply) => {
 
 const start = async () => {
   try {
+    await app.ready(() => {
+      console.log('Registered routes:', app.printRoutes());
+    });
+
     await app.listen({ port: Number(SERVER_PORT), host: '0.0.0.0' });
     console.log(`listening on port ${SERVER_PORT}`);
   } catch (error) {

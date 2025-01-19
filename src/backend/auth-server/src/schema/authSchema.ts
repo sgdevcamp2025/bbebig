@@ -32,7 +32,10 @@ const registerSchema = {
     password: z.string().min(8),
     name: z.string().min(2),
     nickname: z.string().min(2),
-    birthDate: z.date(),
+    birthDate: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/)
+      .transform((str) => new Date(str)),
   }),
   response: {
     201: commonResponseSchema,

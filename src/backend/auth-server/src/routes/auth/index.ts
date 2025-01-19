@@ -22,7 +22,6 @@ const authRoute = async (app: FastifyInstance) => {
       const values = await authService.loginWithPassword(email, password);
 
       res.setCookie('refresh_token', values.refreshToken, {
-        domain: SERVER_URL,
         sameSite: true,
         httpOnly: true,
         secure: true,
