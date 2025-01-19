@@ -3,6 +3,7 @@ node_modules/
 
 # Ignore environment files
 .env
+.env.production
 
 # Ignore Yarn error logs
 yarn-error.log

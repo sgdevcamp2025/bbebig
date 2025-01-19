@@ -22,11 +22,8 @@ import { hasZodFastifySchemaValidationErrors } from 'fastify-type-provider-zod';
 
 const app = Fastify({
   logger: true,
+  pluginTimeout: 20000,
 }).withTypeProvider<ZodTypeProvider>();
-console.log('Redis connection config:', {
-  host: process.env.REDIS_HOST,
-  port: process.env.REDIS_PORT,
-});
 
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
@@ -63,14 +60,21 @@ app.register(fastifySwaggerUi, {
 
 app.register(currentAuthPlugin);
 app.register(routes);
-app.register(fastifyRedis, {
-  host: REDIS_HOST,
-  port: Number(REDIS_PORT),
-  retryStrategy: (times) => {
-    console.log('Retrying...', times);
-    return Math.min(times * 50, 2000);
-  },
-});
+
+app
+  .register(fastifyRedis, {
+    host: REDIS_HOST,
+    port: Number(REDIS_PORT),
+    closeClient: false,
+    connectTimeout: 10000,
+  })
+  .ready((err) => {
+    if (err) {
+      console.error('Redis connection failed:', err);
+    } else {
+      console.log('Redis connected successfully');
+    }
+  });
 
 app.register(cors, {
   origin: true,
@@ -110,7 +114,7 @@ app.setErrorHandler((err, req, reply) => {
 
 const start = async () => {
   try {
-    await app.listen({ port: Number(SERVER_PORT) });
+    await app.listen({ port: Number(SERVER_PORT), host: '0.0.0.0' });
     console.log(`listening on port ${SERVER_PORT}`);
   } catch (error) {
     app.log.error(error);
