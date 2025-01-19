@@ -21,16 +21,16 @@ public class Friend {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "from_user_id")
-    private User fromUser;
+    private Member fromMember;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "to_user_id")
-    private User toUser;
+    private Member toMember;
 
     @Enumerated(EnumType.STRING)
     private FriendStatus status;
 
-    @Column(columnDefinition = "JSON",name = "server_list")
+    @Column(columnDefinition = "JSON", name = "server_list")
     private String serverList;
 
     @Column(name = "created_at")

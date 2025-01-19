@@ -1,9 +1,9 @@
 ### 유저 조회
-GET http://localhost:8080/user/1
+GET http://localhost:8080/member/1
 
 
 ### 유저 수정
-PUT http://localhost:8080/user/1
+PUT http://localhost:8080/member/1
 Content-Type: application/json
 
 {

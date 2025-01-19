@@ -1,6 +1,6 @@
 package com.bbebig.user_server.presentation.dto;
 
-public record UserModifyRequest(
+public record MemberModifyRequest(
         String profileImgUrl,
         String nickname
 ) {

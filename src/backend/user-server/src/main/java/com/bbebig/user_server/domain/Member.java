@@ -1,19 +1,20 @@
 package com.bbebig.user_server.domain;
 
-import com.bbebig.user_server.presentation.dto.UserModifyRequest;
+import com.bbebig.user_server.presentation.dto.MemberModifyRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "user")
-public class User {
+@Table(name = "member")
+public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,9 +29,13 @@ public class User {
     @Column
     private String password;
 
+    @Column
+    private String birthdate;
+
     @Column(name = "profile_img_url")
     private String profileImgUrl;
 
+    @Column
     private String nickname;
 
     @Enumerated(EnumType.STRING)
@@ -46,8 +51,13 @@ public class User {
     @Column(name = "last_access_at")
     private LocalDateTime lastAccessAt;
 
-    public void modify(UserModifyRequest request) {
-        if(request.profileImgUrl()!=null) this.profileImgUrl=request.profileImgUrl();
-        if(request.nickname()!=null)this.nickname=request.nickname();
+    public void modify(MemberModifyRequest request) {
+        if (request.profileImgUrl() != null) {
+            this.profileImgUrl = request.profileImgUrl();
+        }
+
+        if (request.nickname() != null) {
+            this.nickname = request.nickname();
+        }
     }
 }
