@@ -46,4 +46,8 @@ public class FriendService {
     public void changeFriendCreateStatus(Long friendId, FriendStatus requestStatus) {
         friendRepository.findById(friendId).get().changeFriendStatus(requestStatus);
     }
+
+    public void deleteFriend(Long friendId) {
+        friendRepository.findById(friendId).get().changeFriendStatus(FriendStatus.DELETED);
+    }
 }

@@ -31,7 +31,11 @@ public class FriendController {
         Page<FriendCreateResponse> response= friendService.getFriendCreate(memberId, request.toPageRequest());
         return ResponseEntity.ok().body(response);
     }
-
+    @DeleteMapping("/{friendId}")
+    public ResponseEntity deleteFriend(@RequestHeader("memberId") Long memberId,@PathVariable("friendId")Long friendId) {
+        friendService.deleteFriend(friendId);
+        return ResponseEntity.noContent().build();
+    }
     @PatchMapping("/request/{friendId}")
     public ResponseEntity changeFriendCreateStatus(@RequestHeader("memberId") Long memberId,@PathVariable("friendId")Long friendId, @RequestParam FriendStatus requestStatus) {
         friendService.changeFriendCreateStatus(friendId,requestStatus);
