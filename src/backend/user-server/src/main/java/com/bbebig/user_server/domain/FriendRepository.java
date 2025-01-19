@@ -10,4 +10,5 @@ public interface FriendRepository extends JpaRepository<Friend,Long> {
     Optional<Friend> findByStatusNot(FriendStatus status);
 
     Page<Friend> findByToMemberAndStatus(Member member, FriendStatus status, Pageable pageable);
+    Page<Friend> findByStatusAndToMemberOrFromMember( FriendStatus status,Member toMember, Member fromMember, Pageable pageable);
 }

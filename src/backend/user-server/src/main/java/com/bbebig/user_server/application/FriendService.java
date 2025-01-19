@@ -3,6 +3,7 @@ package com.bbebig.user_server.application;
 import com.bbebig.user_server.domain.*;
 import com.bbebig.user_server.presentation.dto.FriendCreateRequest;
 import com.bbebig.user_server.presentation.dto.FriendCreateResponse;
+import com.bbebig.user_server.presentation.dto.FriendResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -35,5 +36,10 @@ public class FriendService {
     public Page<FriendCreateResponse> getFriendCreate(Long memberId, Pageable pageRequest) {
         Member member = memberRepository.findById(memberId).get();
         return friendRepository.findByToMemberAndStatus(member, FriendStatus.PENDING, pageRequest).map(FriendCreateResponse::of);
+    }
+
+    public Page<FriendResponse> getFriendList(Long memberId, Pageable pageRequest) {
+        Member member = memberRepository.findById(memberId).get();
+        return friendRepository.findByStatusAndToMemberOrFromMember(FriendStatus.ACCEPTED, member, member, pageRequest).map(FriendResponse::of);
     }
 }
