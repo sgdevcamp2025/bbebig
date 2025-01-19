@@ -8,7 +8,7 @@ import {
   verifyTokenSchema,
 } from '../../schema/authSchema';
 import authService from '../../service/authService';
-import { DOMAIN, ERROR_MESSAGE, REDIS_KEY, SUCCESS_MESSAGE } from '../../libs/constants';
+import { ERROR_MESSAGE, REDIS_KEY, SUCCESS_MESSAGE, SERVER_URL } from '../../libs/constants';
 import { handleError } from '../../libs/errorHelper';
 import { generateHash, verifyAccessToken, verifySignIn } from '../../libs/authHelper';
 
@@ -22,7 +22,7 @@ const authRoute = async (app: FastifyInstance) => {
       const values = await authService.loginWithPassword(email, password);
 
       res.setCookie('refresh_token', values.refreshToken, {
-        domain: DOMAIN,
+        domain: SERVER_URL,
         sameSite: true,
         httpOnly: true,
         secure: true,

@@ -1,13 +1,17 @@
 import { Secret } from 'jsonwebtoken';
 
-const DOMAIN = process.env.DOMAIN;
-const PORT = Number(process.env.PORT) || 8083;
-const ROUND = Number(process.env.ROUND) || 10;
+const SERVER_PORT = Number(process.env.SERVER_PORT) || 8083;
+const SERVER_URL = process.env.SERVER_URL;
+const ROUND = Number(process.env.HASH_ROUND) || 10;
 const SECRET_KEY = process.env.SECRET_KEY as Secret;
 const ACCESS_TOKEN_EXPIRES = process.env.ACCESS_TOKEN_EXPIRES;
 const REFRESH_TOKEN_EXPIRES = process.env.REFRESH_TOKEN_EXPIRES;
 const REDIS_HOST = process.env.REDIS_HOST;
 const REDIS_PORT = process.env.REDIS_PORT;
+const REDIS_BINDING_PORT = process.env.REDIS_BINDING_PORT;
+const REDIS_CONTAINER_NAME = process.env.REDIS_CONTAINER_NAME;
+const REDIS_IMAGE = process.env.REDIS_IMAGE;
+const REDIS_VOLUME = process.env.REDIS_VOLUME;
 
 const ERROR_MESSAGE = {
   duplicateEmail: {
@@ -100,10 +104,8 @@ const REDIS_KEY = {
 } as const;
 
 export {
-  PORT,
-  REDIS_HOST,
-  REDIS_PORT,
-  DOMAIN,
+  SERVER_PORT,
+  SERVER_URL,
   ROUND,
   SECRET_KEY,
   ACCESS_TOKEN_EXPIRES,
@@ -111,4 +113,10 @@ export {
   ERROR_MESSAGE,
   SUCCESS_MESSAGE,
   REDIS_KEY,
+  REDIS_HOST,
+  REDIS_PORT,
+  REDIS_BINDING_PORT,
+  REDIS_CONTAINER_NAME,
+  REDIS_IMAGE,
+  REDIS_VOLUME,
 };

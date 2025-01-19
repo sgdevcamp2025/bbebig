@@ -12,7 +12,7 @@ import { FastifyCookieOptions } from '@fastify/cookie';
 import routes from './src/routes';
 import cors from '@fastify/cors';
 import fastifyCookie from '@fastify/cookie';
-import { PORT, REDIS_HOST, REDIS_PORT, SECRET_KEY } from './src/libs/constants';
+import { REDIS_HOST, REDIS_PORT, SECRET_KEY, SERVER_PORT } from './src/libs/constants';
 import fastifyRedis from '@fastify/redis';
 import { currentAuthPlugin } from './src/plugin/authPlugin';
 import { fastifySwagger } from '@fastify/swagger';
@@ -23,6 +23,10 @@ import { hasZodFastifySchemaValidationErrors } from 'fastify-type-provider-zod';
 const app = Fastify({
   logger: true,
 }).withTypeProvider<ZodTypeProvider>();
+console.log('Redis connection config:', {
+  host: process.env.REDIS_HOST,
+  port: process.env.REDIS_PORT,
+});
 
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
@@ -106,8 +110,8 @@ app.setErrorHandler((err, req, reply) => {
 
 const start = async () => {
   try {
-    await app.listen({ port: Number(PORT) });
-    console.log(`listening on port ${PORT}`);
+    await app.listen({ port: Number(SERVER_PORT) });
+    console.log(`listening on port ${SERVER_PORT}`);
   } catch (error) {
     app.log.error(error);
     process.exit(1);
