@@ -23,11 +23,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	 * 클라이언트가 구독하고 메시지를 받을 경로와 애플리케이션에서 처리할 경로를 설정
 	 */
 	@Override
-	public void configureMessageBroker(MessageBrokerRegistry config) {
-		// 클라이언트가 메시지를 받을 경로를 설정
-		config.enableSimpleBroker("/sub");
-		// 클라이언트가 서버로 메시지를 보낼 때 사용할 경로 설정
-		config.setApplicationDestinationPrefixes("/pub");
+	public void configureMessageBroker(MessageBrokerRegistry registry) {
+		// 메세지 발행 요청 url -> 메세지 보낼 때
+		registry.setApplicationDestinationPrefixes("/app");
+
 	}
 
 	/**
