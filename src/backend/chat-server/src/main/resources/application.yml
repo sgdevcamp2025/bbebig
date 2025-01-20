@@ -12,7 +12,7 @@ spring:
 
     topic:
       chat: "chat"
-      connectionEvent: "connectionEvent"
+      session-event: "sessionEvent"
 
     producer:
       bootstrap-servers: localhost:9092

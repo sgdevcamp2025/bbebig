@@ -1,6 +1,7 @@
 package com.bbebig.chatserver.global.config;
 
 import com.bbebig.chatserver.dto.ChatMessageDto;
+import com.bbebig.chatserver.dto.SessionEventDto;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ser.std.StringSerializer;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -33,7 +34,7 @@ public class KafkaProducerConfig {
 		return configurations;
 	}
 
-	// 채팅 관련 Producer 생성
+	// 채팅 Producer 생성
 	@Bean
 	public ProducerFactory<String, ChatMessageDto> producerFactoryForChat(){
 		return new DefaultKafkaProducerFactory<>(producerConfigurations());
@@ -42,5 +43,15 @@ public class KafkaProducerConfig {
 	@Bean
 	public KafkaTemplate<String, ChatMessageDto> kafkaTemplateForChat(){
 		return new KafkaTemplate<>(producerFactoryForChat());
+	}
+
+	// 세션 이벤트(웹소켓 연결) Producer
+	@Bean
+	public ProducerFactory<String, SessionEventDto> producerFactoryForSession(){
+		return new DefaultKafkaProducerFactory<>(producerConfigurations());
+	}
+
+	public KafkaTemplate<String, SessionEventDto> kafkaTemplateForSession(){
+		return new KafkaTemplate<>(producerFactoryForSession());
 	}
 }
