@@ -2,9 +2,9 @@ package com.smilegate.bbebig.presentation.ui.intro
 
 import androidx.lifecycle.SavedStateHandle
 import com.smilegate.bbebig.presentation.base.BaseViewModel
-import com.smilegate.bbebig.presentation.ui.intro.intent.IntroIntent
-import com.smilegate.bbebig.presentation.ui.intro.model.IntroUiState
-import com.smilegate.bbebig.presentation.ui.intro.sideeffect.IntroSideEffect
+import com.smilegate.bbebig.presentation.ui.intro.mvi.IntroIntent
+import com.smilegate.bbebig.presentation.ui.intro.mvi.IntroSideEffect
+import com.smilegate.bbebig.presentation.ui.intro.mvi.IntroUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

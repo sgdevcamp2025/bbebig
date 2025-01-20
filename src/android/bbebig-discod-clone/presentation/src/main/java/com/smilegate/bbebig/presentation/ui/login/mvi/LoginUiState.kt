@@ -1,4 +1,4 @@
-package com.smilegate.bbebig.presentation.ui.login.model
+package com.smilegate.bbebig.presentation.ui.login.mvi
 
 import com.smilegate.bbebig.presentation.base.UiState
 import com.smilegate.bbebig.presentation.model.UserInfo

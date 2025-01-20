@@ -8,8 +8,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.smilegate.bbebig.presentation.ui.intro.IntroScreen
 import com.smilegate.bbebig.presentation.ui.intro.IntroViewModel
-import com.smilegate.bbebig.presentation.ui.intro.intent.IntroIntent
-import com.smilegate.bbebig.presentation.ui.intro.sideeffect.IntroSideEffect
+import com.smilegate.bbebig.presentation.ui.intro.mvi.IntroIntent
+import com.smilegate.bbebig.presentation.ui.intro.mvi.IntroSideEffect
 
 @Composable
 fun IntroRoute(

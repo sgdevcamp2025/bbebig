@@ -9,9 +9,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.smilegate.bbebig.presentation.ui.login.LoginScreen
 import com.smilegate.bbebig.presentation.ui.login.LoginViewModel
-import com.smilegate.bbebig.presentation.ui.login.intent.LoginIntent
 import com.smilegate.bbebig.presentation.ui.login.model.UserAccount
-import com.smilegate.bbebig.presentation.ui.login.sideeffect.LoginSideEffect
+import com.smilegate.bbebig.presentation.ui.login.mvi.LoginIntent
+import com.smilegate.bbebig.presentation.ui.login.mvi.LoginSideEffect
 
 @Composable
 fun LoginRoute(

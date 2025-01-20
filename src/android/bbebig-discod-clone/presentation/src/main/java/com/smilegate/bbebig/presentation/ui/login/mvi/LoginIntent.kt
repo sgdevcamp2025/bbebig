@@ -1,4 +1,4 @@
-package com.smilegate.bbebig.presentation.ui.login.intent
+package com.smilegate.bbebig.presentation.ui.login.mvi
 
 import com.smilegate.bbebig.presentation.base.UiIntent
 import com.smilegate.bbebig.presentation.ui.login.model.UserAccount

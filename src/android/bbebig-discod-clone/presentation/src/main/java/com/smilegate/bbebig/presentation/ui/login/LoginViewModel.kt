@@ -3,9 +3,9 @@ package com.smilegate.bbebig.presentation.ui.login
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import com.smilegate.bbebig.presentation.base.BaseViewModel
-import com.smilegate.bbebig.presentation.ui.login.intent.LoginIntent
-import com.smilegate.bbebig.presentation.ui.login.model.LoginUiState
-import com.smilegate.bbebig.presentation.ui.login.sideeffect.LoginSideEffect
+import com.smilegate.bbebig.presentation.ui.login.mvi.LoginIntent
+import com.smilegate.bbebig.presentation.ui.login.mvi.LoginSideEffect
+import com.smilegate.bbebig.presentation.ui.login.mvi.LoginUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

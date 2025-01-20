@@ -1,4 +1,4 @@
-package com.smilegate.bbebig.presentation.ui.intro.sideeffect
+package com.smilegate.bbebig.presentation.ui.intro.mvi
 
 import com.smilegate.bbebig.presentation.base.UiSideEffect
 
