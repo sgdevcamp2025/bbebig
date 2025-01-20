@@ -11,7 +11,8 @@ spring:
     bootstrap-servers: localhost:9092
 
     topic:
-      chat: "chat"
+      channel-chat: "channelChat"
+      dm-chat: "dmChat"
       session-event: "sessionEvent"
 
     producer:
@@ -19,7 +20,8 @@ spring:
 
     consumer:
       group-id:
-        chat: "chatGroup"
+        channel-chat: "channelChatGroup"
+        dm-chat: "dmChatGroup"
         connection-event: "connectionEventGroup"
 
       enable-auto-commit: true

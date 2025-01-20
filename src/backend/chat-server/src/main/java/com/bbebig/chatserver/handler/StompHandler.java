@@ -64,6 +64,7 @@ public class StompHandler implements ChannelInterceptor {
 			// simpSessionId를 이용하여 사용자 정보 저장
 			String simpSessionId = headerAccessor.getSessionId();
 			redisSessionManager.saveConnectSessionInfoToRedis(simpSessionId, authResponseDto.getResult().getMemberId());
+			log.info("[Chat] Stomp Handler : 사용자 연결 - memberId : {}, sessionId : {}", authResponseDto.getResult().getMemberId(), simpSessionId);
 
 			SessionEventDto sessionEventDto = SessionEventDto.builder()
 					.memberId(authResponseDto.getResult().getMemberId())
@@ -72,7 +73,6 @@ public class StompHandler implements ChannelInterceptor {
 					.socketSessionId(simpSessionId)
 					.connectedServerIp(serverIp + ":" + serverPort)
 					.build();
-
 			messageProducerService.sendMessageForSession(sessionEventDto);
 
 		} else if (StompCommand.DISCONNECT == headerAccessor.getCommand()) { // DISCONNECT 요청일 경우
@@ -80,6 +80,8 @@ public class StompHandler implements ChannelInterceptor {
 			Long memberId = redisSessionManager.findMemberIdBySessionId(simpSessionId);
 			// 사용자 정보 삭제
 			redisSessionManager.deleteConnectSessionInfoToRedis(simpSessionId, memberId);
+			log.info("[Chat] Stomp Handler : 사용자 연결 해제 - memberId : {}, sessionId : {}", memberId, simpSessionId);
+
 			SessionEventDto sessionEventDto = SessionEventDto.builder()
 					.memberId(memberId)
 					.type("DISCONNECT")
@@ -87,19 +89,21 @@ public class StompHandler implements ChannelInterceptor {
 					.socketSessionId(simpSessionId)
 					.connectedServerIp(serverIp + ":" + serverPort)
 					.build();
+			messageProducerService.sendMessageForSession(sessionEventDto);
 		}
 		return message;
 	}
 
-	@EventListener
-	public void handleWebSocketConnectionListener(SessionConnectedEvent event){
-		log.info("사용자 입장");
-	}
-
-	@EventListener
-	public void handleWebSocketDisconnectionListener(SessionDisconnectEvent event){
-		log.info("사용자 퇴장");
-	}
+	// 사용 여부 고려해야함
+//	@EventListener
+//	public void handleWebSocketConnectionListener(SessionConnectedEvent event) {
+//		log.info("사용자 입장");
+//	}
+//
+//	@EventListener
+//	public void handleWebSocketDisconnectionListener(SessionDisconnectEvent event) {
+//		log.info("사용자 퇴장");
+//	}
 
 	private Optional<String> extractBearerToken(StompHeaderAccessor headerAccessor) {
 		return Optional.ofNullable(headerAccessor.getFirstNativeHeader("Authorization"))

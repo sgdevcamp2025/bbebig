@@ -3,7 +3,6 @@ package com.bbebig.chatserver.service;
 import com.bbebig.chatserver.dto.ChatMessageDto;
 import com.bbebig.chatserver.dto.SessionEventDto;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -12,8 +11,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MessageProducerService {
 
-	@Value("${spring.kafka.topic.chat}")
-	private String chatTopic;
+	@Value("${spring.kafka.topic.channel-chat}")
+	private String channelChatTopic;
+
+	@Value("${spring.kafka.topic.dm-chat}")
+	private String dmChatTopic;
 
 	@Value("${spring.kafka.topic.session-event}")
 	private String sessionEventTopic;
@@ -22,8 +24,14 @@ public class MessageProducerService {
 
 	private final KafkaTemplate<String, SessionEventDto> kafkaTemplateForSession;
 
-	public void sendMessageForCommunity(ChatMessageDto messageDto) {
-		kafkaTemplateForChat.send(chatTopic, messageDto);
+	// 채널 채팅 메시지 전송
+	public void sendMessageForChannelChat(ChatMessageDto messageDto) {
+		kafkaTemplateForChat.send(channelChatTopic, messageDto);
+	}
+
+	// DM 채팅 메시지 전송
+	public void sendMessageForDmChat(ChatMessageDto messageDto) {
+		kafkaTemplateForChat.send(channelChatTopic, messageDto);
 	}
 
 	public void sendMessageForSession(SessionEventDto sessionDto) {
