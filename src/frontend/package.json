@@ -6,9 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint:fix": "eslint . --fix",
-    "format": "prettier --write .",
-    "check": "yarn format && yarn lint:fix",
+    "check": "yarn formatter && yarn lint:fix",
+    "lint:fix": "eslint --fix \"src/**/*.{ts,tsx}\"",
+    "formatter": "prettier --write \"src/**/*.{ts,tsx}\"",
     "preview": "vite preview",
     "test": "vitest",
     "storybook": "storybook dev -p 6006",
