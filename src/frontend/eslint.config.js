@@ -41,6 +41,7 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
+      'import/no-anonymous-default-export': 'off',
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       'prettier/prettier': 'error',
       'unused-imports/no-unused-imports': 'error',
