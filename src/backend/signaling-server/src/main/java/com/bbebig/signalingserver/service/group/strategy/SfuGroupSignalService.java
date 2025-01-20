@@ -1,6 +1,6 @@
 package com.bbebig.signalingserver.service.group.strategy;
 
-import com.bbebig.signalingserver.domain.FilePath;
+import com.bbebig.signalingserver.domain.Path;
 import com.bbebig.signalingserver.domain.MessageType;
 import com.bbebig.signalingserver.domain.SignalMessage;
 import com.bbebig.signalingserver.global.response.code.error.ErrorStatus;
@@ -65,7 +65,7 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
 
             messagingTemplate.convertAndSendToUser(
                     sessionId,
-                    FilePath.directSubPath,
+                    Path.directSubPath,
                     fullMessage
             );
         }
@@ -95,7 +95,7 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
 
         messagingTemplate.convertAndSendToUser(
                 sessionId,
-                FilePath.directSubPath,
+                Path.directSubPath,
                 allUsersMessage
         );
     }
@@ -111,7 +111,7 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
                 .build();
 
         messagingTemplate.convertAndSend(
-                FilePath.groupSubPath + message.getChannelId(),
+                Path.groupSubPath + message.getChannelId(),
                 userJoinedMessage
         );
     }
@@ -136,7 +136,7 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
                 .build();
 
         messagingTemplate.convertAndSend(
-                FilePath.groupSubPath + message.getChannelId(),
+                Path.groupSubPath + message.getChannelId(),
                 userLeftMessage
         );
     }
@@ -170,7 +170,7 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
 
         messagingTemplate.convertAndSendToUser(
                 sessionId,
-                FilePath.directSubPath,
+                Path.directSubPath,
                 answerMessage
         );
     }

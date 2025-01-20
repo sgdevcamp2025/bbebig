@@ -1,6 +1,6 @@
 package com.bbebig.signalingserver.service.direct;
 
-import com.bbebig.signalingserver.domain.FilePath;
+import com.bbebig.signalingserver.domain.Path;
 import com.bbebig.signalingserver.domain.SignalMessage;
 import com.bbebig.signalingserver.global.response.code.error.ErrorStatus;
 import com.bbebig.signalingserver.global.response.exception.ErrorHandler;
@@ -54,7 +54,7 @@ public class DirectSignalService {
 
         messagingTemplate.convertAndSendToUser(
                 message.getReceiverId(),
-                FilePath.directSubPath,
+                Path.directSubPath,
                 directMessage
         );
     }
