@@ -33,3 +33,7 @@ dist-ssr
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+
+# tsbuildinfo
+tsconfig.tsbuildinfo

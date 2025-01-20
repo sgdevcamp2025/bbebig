@@ -12,7 +12,8 @@
     "preview": "vite preview",
     "test": "vitest",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "start": "vite preview"
   },
   "dependencies": {
     "autoprefixer": "^10.4.20",

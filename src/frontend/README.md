@@ -1,50 +1,38 @@
-# React + TypeScript + Vite
+## BBeBig Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### 최소 요구 사항
 
-Currently, two official plugins are available:
+- Node.js 20.x 이상
+- Yarn 4.x 이상
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 폴더 구조
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname
-    }
-  }
-})
+```bash
+src/
+  ├── __test__ # 테스트 파일
+  ├── apis # API 관련 파일
+  ├── assets # 정적 파일
+  ├── components # 컴포넌트
+  ├── constants # 상수
+  ├── hooks # 훅
+  ├── libs # 라이브러리
+  ├── pages # 페이지
+  ├── routes # 라우트
+  ├── store # 상태관리
+  ├── styles # 스타일
+  ├── types # 타입
+  └── utils # 유틸리티
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### 스크립트
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+```bash
+# 개발 서버 실행
+yarn dev
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules
-  }
-})
+# 빌드
+yarn build
+
+# 빌드 파일 실행
+yarn start
 ```
