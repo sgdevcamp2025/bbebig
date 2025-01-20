@@ -15,57 +15,46 @@ const REDIS_VOLUME = process.env.REDIS_VOLUME;
 
 const ERROR_MESSAGE = {
   duplicateEmail: {
-    isSuccess: false,
     code: 400,
     message: 'Duplicate Email',
   },
   passwordNotMatch: {
-    isSuccess: false,
     code: 400,
     message: 'Password Not Match',
   },
   badRequest: {
-    isSuccess: false,
     code: 400,
     message: 'Bad Request',
   },
   unauthorized: {
-    isSuccess: false,
     code: 401,
     message: 'Unauthorized',
   },
   invalidToken: {
-    isSuccess: false,
     code: 401,
     message: 'Invalid token',
   },
   notExpired: {
-    isSuccess: false,
     code: 401,
     message: 'Token Not Expired',
   },
   forbidden: {
-    isSuccess: false,
     code: 403,
     message: 'Forbidden',
   },
   alreadySignup: {
-    isSuccess: false,
     code: 403,
     message: 'Already Sign Up',
   },
   notFound: {
-    isSuccess: false,
     code: 404,
     message: 'Not Found',
   },
   preconditionFailed: {
-    isSuccess: false,
     code: 412,
     message: 'Precondition Failed',
   },
   serverError: {
-    isSuccess: false,
     code: 500,
     message: 'Server Error',
   },
@@ -73,27 +62,22 @@ const ERROR_MESSAGE = {
 
 const SUCCESS_MESSAGE = {
   loginOk: {
-    isSuccess: true,
     code: 200,
     message: 'Login Ok!',
   },
   logoutOk: {
-    isSuccess: true,
     code: 205,
     message: 'Logout success!',
   },
   refreshToken: {
-    isSuccess: true,
     code: 201,
     message: 'refresh success',
   },
   accessTokenOk: {
-    isSuccess: true,
     code: 200,
     message: 'access token ok',
   },
   registerOk: {
-    isSuccess: true,
     code: 201,
     message: 'register success!',
   },

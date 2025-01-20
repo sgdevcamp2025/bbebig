@@ -89,8 +89,7 @@ app.setErrorHandler((err, req, reply) => {
     return reply.code(400).send({
       message: 'Response Validation Error',
       code: 400,
-      isSuccess: false,
-      details: {
+      result: {
         issues: err.validation,
         method: req.method,
         url: req.url,
@@ -102,8 +101,7 @@ app.setErrorHandler((err, req, reply) => {
     return reply.code(500).send({
       message: 'Internal Server Error',
       code: 500,
-      isSuccess: false,
-      details: {
+      result: {
         issues: err.cause.issues,
         method: err.method,
         url: err.url,

@@ -5,6 +5,7 @@ import {
   refreshTokenSchema,
   registerSchema,
   signInSchema,
+  verifyEmailSchema,
   verifyTokenSchema,
 } from '../../schema/authSchema';
 import { verifySignIn } from '../../libs/authHelper';

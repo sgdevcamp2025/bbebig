@@ -29,7 +29,7 @@ function authController() {
 
     return {
       ...SUCCESS_MESSAGE.loginOk,
-      details: result,
+      result,
     };
   };
 
@@ -92,11 +92,11 @@ function authController() {
         return;
       }
 
-      const values = await authService.refresh(refreshToken, redisRefreshToken);
+      const result = await authService.refresh(refreshToken, redisRefreshToken);
 
       return {
         ...SUCCESS_MESSAGE.refreshToken,
-        details: values,
+        result,
       };
     } catch (error) {
       handleError(res, ERROR_MESSAGE.unauthorized, error);
@@ -119,7 +119,7 @@ function authController() {
 
     return {
       ...SUCCESS_MESSAGE.accessTokenOk,
-      details: {
+      result: {
         id: decode.id,
         email: decode.email,
       },

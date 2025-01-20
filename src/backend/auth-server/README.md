@@ -45,3 +45,7 @@ yarn build && yarn start
 ```bash
 docker compose up -d
 ```
+
+### Swagger 문서 확인
+
+http://localhost:8083/docs
