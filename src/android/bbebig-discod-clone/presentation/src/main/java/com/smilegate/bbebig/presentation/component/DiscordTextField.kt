@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.OutputTransformation
 import androidx.compose.foundation.text.input.TextFieldBuffer
 import androidx.compose.foundation.text.input.TextFieldLineLimits
@@ -17,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,7 +30,8 @@ import com.smilegate.bbebig.presentation.theme.Gray90
 fun DiscordTextField(
     modifier: Modifier,
     textFieldState: TextFieldState,
-    textHint: String,
+    textHint: String = "",
+    keyboardType: KeyboardType = KeyboardType.Text,
     isPasswordType: Boolean = false,
 ) {
     BasicTextField(
@@ -39,6 +42,7 @@ fun DiscordTextField(
             color = Gray90,
             fontSize = 16.sp,
         ),
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         onKeyboardAction = { /*완료버튼을 눌렀을때 실행할 함수*/ },
         cursorBrush = Brush.linearGradient(
             colors = listOf(Gray40, Color.Transparent),

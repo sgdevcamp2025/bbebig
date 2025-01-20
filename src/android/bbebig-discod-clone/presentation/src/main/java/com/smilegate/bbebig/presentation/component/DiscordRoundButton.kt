@@ -23,12 +23,13 @@ fun DiscordRoundButton(
     onClick: () -> Unit,
     textColor: Color = Color.Black,
     radiusDp: Dp = 50.dp,
+    isEnable: Boolean = true,
 ) {
     Text(
         modifier = modifier
             .clip(shape = RoundedCornerShape(radiusDp))
-            .rippleSingleClick { onClick() }
-            .background(color = backgroundColor)
+            .rippleSingleClick { if (isEnable) onClick() }
+            .background(color = if (isEnable) backgroundColor else backgroundColor.copy(alpha = 0.5f))
             .padding(vertical = 13.dp)
             .fillMaxWidth(),
         text = stringResource(id = textResId),
