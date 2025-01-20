@@ -1,6 +1,6 @@
 import { FastifyPluginAsync, FastifyRequest } from 'fastify';
-import { verifyAccessToken, shortVerifyRefreshToken } from '@/libs/authHelper';
-import { ERROR_MESSAGE } from '@/libs/constants';
+import { verifyAccessToken, shortVerifyRefreshToken } from '../libs/authHelper';
+import { ERROR_MESSAGE } from '../libs/constants';
 import fp from 'fastify-plugin';
 
 const currentAuth: FastifyPluginAsync = async (app) => {

@@ -7,10 +7,10 @@ import {
   signInSchema,
   verifyTokenSchema,
 } from '../../schema/authSchema';
-import authService from '@/service/authService';
-import { DOMAIN, ERROR_MESSAGE, REDIS_KEY, SUCCESS_MESSAGE } from '@/libs/constants';
-import { handleError } from '@/libs/errorHelper';
-import { generateHash, verifyAccessToken, verifySignIn } from '@/libs/authHelper';
+import authService from '../../service/authService';
+import { ERROR_MESSAGE, REDIS_KEY, SUCCESS_MESSAGE, SERVER_URL } from '../../libs/constants';
+import { handleError } from '../../libs/errorHelper';
+import { generateHash, verifyAccessToken, verifySignIn } from '../../libs/authHelper';
 
 const authRoute = async (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().route({
@@ -22,7 +22,6 @@ const authRoute = async (app: FastifyInstance) => {
       const values = await authService.loginWithPassword(email, password);
 
       res.setCookie('refresh_token', values.refreshToken, {
-        domain: DOMAIN,
         sameSite: true,
         httpOnly: true,
         secure: true,
@@ -49,12 +48,12 @@ const authRoute = async (app: FastifyInstance) => {
     url: '/register',
     schema: registerSchema,
     handler: async (req, res) => {
-      const { email, password, name, nickname, birthdate } = req.body;
+      const { email, password, name, nickname, birthDate } = req.body;
 
       try {
         const hashedPassword = generateHash(password);
 
-        await authService.register(email, hashedPassword, name, nickname, birthdate);
+        await authService.register(email, hashedPassword, name, nickname, birthDate);
 
         return SUCCESS_MESSAGE.registerOk;
       } catch (error) {

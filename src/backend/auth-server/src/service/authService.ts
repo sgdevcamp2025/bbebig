@@ -1,12 +1,11 @@
 import {
   generateAccessToken,
   generateRefreshToken,
-  verifyAccessToken,
   verifyPassword,
   verifyRefreshToken,
-} from '@/libs/authHelper';
-import { ERROR_MESSAGE } from '@/libs/constants';
-import db from '@/libs/db';
+} from '../libs/authHelper';
+import { ERROR_MESSAGE } from '../libs/constants';
+import db from '../libs/db';
 
 function authService() {
   const register = async (
@@ -14,15 +13,15 @@ function authService() {
     password: string,
     name: string,
     nickname: string,
-    birthdate: string,
+    birth_date: Date,
   ) => {
-    const result = await db.uSER.create({
+    const result = await db.member.create({
       data: {
         email,
         password,
         name,
         nickname,
-        birthdate,
+        birth_date,
       },
     });
 
@@ -31,7 +30,7 @@ function authService() {
 
   const loginWithPassword = async (email: string, password: string) => {
     try {
-      const authenticationUser = await db.uSER.findFirst({
+      const authenticationUser = await db.member.findFirst({
         where: {
           email,
         },

@@ -3,9 +3,12 @@ node_modules/
 
 # Ignore environment files
 .env
+.env.production
 
 # Ignore Yarn error logs
 yarn-error.log
 
 # Ignore lock files (optional, only if you don't want to track them)
 # yarn.lock
+
+dist/
