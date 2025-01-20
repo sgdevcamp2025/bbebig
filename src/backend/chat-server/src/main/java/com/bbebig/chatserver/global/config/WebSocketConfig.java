@@ -24,9 +24,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	 */
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry registry) {
-		registry.enableSimpleBroker("/topic");
+		registry.enableSimpleBroker("/chat/queue","/chat/topic");
 		// 메세지 발행 요청 url -> 메세지 보낼 때
-		registry.setApplicationDestinationPrefixes("/app");
+		registry.setApplicationDestinationPrefixes("/chat/pub");
 
 	}
 
@@ -37,11 +37,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
 
-		registry.addEndpoint("/ws") // 클라이언트가 연결할 엔드포인트 설정
+		registry.addEndpoint("/ws-chat") // 클라이언트가 연결할 엔드포인트 설정
 				.setAllowedOrigins("*");
 
 		// 웹소켓을 사용할 수 없는 환경에서 sockJS 지원
-		registry.addEndpoint("/ws/web") // 클라이언트가 연결할 엔드포인트 설정
+		registry.addEndpoint("/ws-chat") // 클라이언트가 연결할 엔드포인트 설정
 				.setAllowedOrigins("*")
 				.withSockJS();
 
