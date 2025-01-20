@@ -1,7 +1,7 @@
-package com.bbebig.chatserver.apiPayload.exception;
+package com.bbebig.chatserver.global.response.exception;
 
-import com.bbebig.chatserver.apiPayload.code.BaseErrorCode;
-import com.bbebig.chatserver.apiPayload.code.ErrorReasonDTO;
+import com.bbebig.chatserver.global.response.code.error.BaseErrorCode;
+import com.bbebig.chatserver.global.response.code.error.ErrorReasonDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

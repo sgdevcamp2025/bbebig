@@ -1,7 +1,5 @@
-package com.bbebig.chatserver.apiPayload.code.status;
+package com.bbebig.chatserver.global.response.code.success;
 
-import com.bbebig.chatserver.apiPayload.code.BaseCode;
-import com.bbebig.chatserver.apiPayload.code.ReasonDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -9,7 +7,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum SuccessStatus implements BaseCode {
-    _OK(HttpStatus.OK, "COMMON200", "성공입니다.");
+    _OK(HttpStatus.OK, "200", "성공입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
@@ -18,7 +16,6 @@ public enum SuccessStatus implements BaseCode {
     @Override
     public ReasonDTO getReason() {
         return ReasonDTO.builder()
-            .isSuccess(true)
             .code(code)
             .message(message)
             .build();
@@ -28,7 +25,6 @@ public enum SuccessStatus implements BaseCode {
     public ReasonDTO getReasonHttpStatus() {
         return ReasonDTO.builder()
             .httpStatus(httpStatus)
-            .isSuccess(true)
             .code(code)
             .message(message)
             .build();

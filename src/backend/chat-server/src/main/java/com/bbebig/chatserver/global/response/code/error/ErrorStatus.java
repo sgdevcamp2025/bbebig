@@ -1,7 +1,5 @@
-package com.bbebig.chatserver.apiPayload.code.status;
+package com.bbebig.chatserver.global.response.code.error;
 
-import com.bbebig.chatserver.apiPayload.code.BaseErrorCode;
-import com.bbebig.chatserver.apiPayload.code.ErrorReasonDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -19,7 +17,7 @@ public enum ErrorStatus implements BaseErrorCode {
     _SERVICE_UNAVAILABLE_ERROR(HttpStatus.SERVICE_UNAVAILABLE, "503", "서버가 일시적으로 사용중지 되었습니다."),
 
     //유저 응답
-    MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER401", "유저가 존재하지 않습니다."),
+    MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "M401", "유저가 존재하지 않습니다."),
 
     //채팅 응답
     CHAT_ROOM_NOT_FOUND(HttpStatus.BAD_REQUEST, "CHAT401", "채팅방이 존재하지 않습니다."),
@@ -37,7 +35,6 @@ public enum ErrorStatus implements BaseErrorCode {
         return ErrorReasonDTO.builder()
             .message(message)
             .code(code)
-            .isSuccess(false)
             .build();
     }
 
@@ -46,7 +43,6 @@ public enum ErrorStatus implements BaseErrorCode {
         return ErrorReasonDTO.builder()
             .message(message)
             .code(code)
-            .isSuccess(false)
             .httpStatus(httpStatus)
             .build();
     }

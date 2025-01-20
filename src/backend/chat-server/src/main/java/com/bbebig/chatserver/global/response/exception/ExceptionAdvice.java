@@ -1,8 +1,8 @@
-package com.bbebig.chatserver.apiPayload.exception;
+package com.bbebig.chatserver.global.response.exception;
 
-import com.bbebig.chatserver.apiPayload.ApiResponse;
-import com.bbebig.chatserver.apiPayload.code.ErrorReasonDTO;
-import com.bbebig.chatserver.apiPayload.code.status.ErrorStatus;
+import com.bbebig.chatserver.global.response.code.ApiResponse;
+import com.bbebig.chatserver.global.response.code.error.ErrorReasonDTO;
+import com.bbebig.chatserver.global.response.code.error.ErrorStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.*;
 import lombok.extern.slf4j.Slf4j;

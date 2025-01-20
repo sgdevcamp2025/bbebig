@@ -1,0 +1,43 @@
+services:
+  # Zookeeper 서비스: Kafka의 메타데이터와 상태를 관리
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest  # ARM64 호환 Zookeeper 이미지
+    container_name: zookeeper
+    ports:
+      - "2181:2181"               # Zookeeper 기본 포트 매핑
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181  # Zookeeper 클라이언트 포트 설정
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper  # Zookeeper 데이터 저장 디렉토리
+    networks:
+      - bbebig-network
+
+  # Kafka 서비스: 메시징 브로커 역할
+  kafka:
+    image: confluentinc/cp-kafka:latest  # ARM64 호환 Kafka 이미지
+    container_name: kafka
+    ports:
+      - "9092:9092"                  # Kafka 클라이언트 통신 포트 매핑
+    environment:
+      KAFKA_BROKER_ID: 1              # Kafka 브로커의 고유 ID
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181  # Kafka가 Zookeeper와 연결하는 주소
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092  # Kafka 클라이언트가 연결할 외부 주소
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092              # Kafka 브로커가 수신 대기할 네트워크 인터페이스
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"                # 토픽 자동 생성 활성화
+      KAFKA_LOG_RETENTION_HOURS: 168                        # 메시지 보존 시간 (7일)
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1             # 오프셋 관리 토픽의 복제본 수
+    volumes:
+      - kafka-data:/var/lib/kafka/data  # Kafka 데이터 저장 디렉토리
+    depends_on:
+      - zookeeper                    # Zookeeper 실행 후 Kafka 실행
+    networks:
+      - bbebig-network
+
+networks:
+  bbebig-network:
+    external: true  # 이미 수동으로 생성된 네트워크 사용
+
+volumes:
+  zookeeper-data:  # Zookeeper 데이터 볼륨
+  kafka-data:      # Kafka 데이터 볼륨
+

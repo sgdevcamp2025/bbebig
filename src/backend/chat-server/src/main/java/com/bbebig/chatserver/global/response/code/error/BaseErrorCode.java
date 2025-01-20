@@ -1,4 +1,4 @@
-package com.bbebig.chatserver.apiPayload.code;
+package com.bbebig.chatserver.global.response.code.error;
 
 public interface BaseErrorCode {
 

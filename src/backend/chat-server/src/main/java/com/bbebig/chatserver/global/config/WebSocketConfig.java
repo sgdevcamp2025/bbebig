@@ -1,4 +1,4 @@
-package com.bbebig.chatserver.config;
+package com.bbebig.chatserver.global.config;
 
 import com.bbebig.chatserver.handler.StompErrorHandler;
 import com.bbebig.chatserver.handler.StompHandler;
@@ -24,6 +24,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	 */
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry registry) {
+		registry.enableSimpleBroker("/topic");
 		// 메세지 발행 요청 url -> 메세지 보낼 때
 		registry.setApplicationDestinationPrefixes("/app");
 

@@ -1,4 +1,4 @@
-package com.bbebig.chatserver.apiPayload.exception;
+package com.bbebig.chatserver.global.response.exception;
 
 /**
  * 추상 클래스 BaseException

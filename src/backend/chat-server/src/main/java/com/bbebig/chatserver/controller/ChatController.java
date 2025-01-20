@@ -10,6 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class ChatController {
 
-	@MessageMapping("/chat/message")
+//	@MessageMapping("/chat/message")
 
 }

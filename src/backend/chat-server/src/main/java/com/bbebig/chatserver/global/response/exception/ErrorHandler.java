@@ -1,7 +1,6 @@
-package com.bbebig.chatserver.apiPayload.exception.handler;
+package com.bbebig.chatserver.global.response.exception;
 
-import com.bbebig.chatserver.apiPayload.code.BaseErrorCode;
-import com.bbebig.chatserver.apiPayload.exception.GeneralException;
+import com.bbebig.chatserver.global.response.code.error.BaseErrorCode;
 
 /**
  * 클래스 ErrorHandler

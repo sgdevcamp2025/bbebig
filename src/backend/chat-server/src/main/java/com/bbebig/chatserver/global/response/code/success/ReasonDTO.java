@@ -1,4 +1,4 @@
-package com.bbebig.chatserver.apiPayload.code;
+package com.bbebig.chatserver.global.response.code.success;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -9,11 +9,7 @@ import org.springframework.http.HttpStatus;
 public class ReasonDTO {
     private HttpStatus httpStatus;
 
-    private final Boolean isSuccess;
     private final String code;
     private final String message;
 
-    public Boolean isSuccess(){
-        return isSuccess;
-    }
 }

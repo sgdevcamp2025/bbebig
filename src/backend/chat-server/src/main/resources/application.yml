@@ -5,6 +5,11 @@ spring:
   application:
     name: chat-service
 
+  data:
+    redis:
+      port: 6379
+      host: localhost
+
 eureka:
   client:
     register-with-eureka: true

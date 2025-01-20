@@ -1,4 +1,4 @@
-package com.bbebig.chatserver.apiPayload.exception;
+package com.bbebig.chatserver.global.response.exception;
 
 import org.springframework.http.HttpStatus;
 
