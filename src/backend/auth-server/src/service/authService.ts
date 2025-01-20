@@ -37,6 +37,7 @@ function authService() {
         select: {
           id: true,
           email: true,
+          nickname: true,
         },
       });
 
@@ -57,6 +58,7 @@ function authService() {
       const returnValue = {
         id: Number(authenticationUser.id),
         email: authenticationUser.email,
+        nickname: authenticationUser.nickname,
         accessToken,
         refreshToken,
       };
