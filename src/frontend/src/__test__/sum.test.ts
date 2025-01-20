@@ -1,7 +1,7 @@
-import { test, expect } from "vitest";
+import { expect, test } from 'vitest'
 
-const sum = (a: number, b: number) => a + b;
+const sum = (a: number, b: number) => a + b
 
-test("sum", () => {
-  expect(sum(1, 2)).toBe(3);
-});
+test('sum', () => {
+  expect(sum(1, 2)).toBe(3)
+})
