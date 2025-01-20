@@ -12,12 +12,12 @@ const signInSchema = {
   }),
   response: {
     200: z.object({
-      isSuccess: z.boolean(),
       code: z.number(),
       message: z.string(),
-      details: z.object({
+      result: z.object({
         email: z.string(),
         accessToken: z.string(),
+        nickname: z.string(),
       }),
     }),
     400: commonResponseSchema,
@@ -74,4 +74,23 @@ const verifyTokenSchema = {
   },
 };
 
-export { logoutSchema, refreshTokenSchema, verifyTokenSchema, registerSchema, signInSchema };
+const verifyEmailSchema = {
+  tags: ['auth'],
+  description: '이메일 검증 합니다.',
+  body: z.object({
+    email: z.string().email(),
+  }),
+  response: {
+    200: commonResponseSchema,
+    400: commonResponseSchema,
+  },
+};
+
+export {
+  logoutSchema,
+  refreshTokenSchema,
+  verifyTokenSchema,
+  registerSchema,
+  signInSchema,
+  verifyEmailSchema,
+};
