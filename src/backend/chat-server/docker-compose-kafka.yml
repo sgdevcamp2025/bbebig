@@ -21,7 +21,7 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181  # Kafka가 Zookeeper와 연결하는 주소
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092  # 클라이언트가 Kafka와 연결할 외부 주소
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092              # Kafka 브로커가 수신 대기할 네트워크 인터페이스
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"                # 토픽 자동 생성 활성화
+      KAFKA_CREATE_TOPICS: "chat:3:1, connectionEvent:3:1"   # Kafka 실행 시 생성할 토픽 설정
       KAFKA_LOG_RETENTION_HOURS: 168                        # 메시지 보존 시간(7일)
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1             # 오프셋 관리 토픽의 복제본 수
     volumes:

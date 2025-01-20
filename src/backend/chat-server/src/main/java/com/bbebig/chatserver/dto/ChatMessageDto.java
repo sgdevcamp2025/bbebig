@@ -1,18 +1,21 @@
-package com.bbebig.chatserver.dto.request;
+package com.bbebig.chatserver.dto;
 
 import com.bbebig.chatserver.model.ChannelType;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @Builder
-public class ChatMessageRequestDto {
+public class ChatMessageDto {
 
 	private long id;
 
 	private ChannelType channelType;
+
+	private MessageType messageType;
 
 	private Long serverId;
 
@@ -24,15 +27,12 @@ public class ChatMessageRequestDto {
 
 	private List<ChatFileDto> attachedFiles;
 
-	private String createdAt;
+	private LocalDateTime createdAt;
 
-	private String updatedAt;
+	private LocalDateTime updatedAt;
 
-	public class ChatFileDto {
-		private String fileName;
-		private String fileUrl;
-		private String fileType;
-		private String fileSize;
+	public enum MessageType {
+		TEXT, IMAGE, VIDEO, FILE, SYSTEM
 	}
 
 }
