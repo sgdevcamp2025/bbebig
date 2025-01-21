@@ -6,8 +6,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.smilegate.bbebig.presentation.navigation.intro.introNavGraph
-import com.smilegate.bbebig.presentation.navigation.login.loginNavGraph
+import com.smilegate.bbebig.presentation.navigation.signup.signUpNavGraph
+import com.smilegate.bbebig.presentation.navigation.user.Intro
+import com.smilegate.bbebig.presentation.navigation.user.intro.introNavGraph
+import com.smilegate.bbebig.presentation.navigation.user.login.loginNavGraph
 
 @Composable
 fun UserNavHost(
@@ -17,7 +19,7 @@ fun UserNavHost(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = UserRoute.Intro.route,
+        startDestination = Intro,
         exitTransition = { ExitTransition.None },
         enterTransition = { EnterTransition.None },
         popExitTransition = { ExitTransition.None },
@@ -25,5 +27,6 @@ fun UserNavHost(
     ) {
         introNavGraph(navController = navController)
         loginNavGraph(navController = navController)
+        signUpNavGraph(navController = navController)
     }
 }

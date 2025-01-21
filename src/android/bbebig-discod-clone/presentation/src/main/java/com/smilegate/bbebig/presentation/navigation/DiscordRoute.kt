@@ -1,9 +1,6 @@
 package com.smilegate.bbebig.presentation.navigation
 
-sealed interface DiscordRoute {
-    val route: String
+import kotlinx.serialization.Serializable
 
-    data object Home : DiscordRoute {
-        override val route: String = "home"
-    }
-}
+@Serializable
+data object DiscordHome
