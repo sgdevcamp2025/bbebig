@@ -1,4 +1,4 @@
-package com.smilegate.bbebig.presentation.ui.signup
+package com.smilegate.bbebig.presentation.ui.signup.nickname
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,14 +22,13 @@ import com.smilegate.devcamp.presentation.R
 
 @Composable
 fun NicknameScreen(
-    modifier: Modifier,
     onBackClick: () -> Unit,
     onClickConfirm: (String) -> Unit,
 ) {
     val nicknameState = rememberTextFieldState()
 
     Column(
-        modifier = modifier.padding(horizontal = 10.dp),
+        modifier = Modifier.padding(horizontal = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         DiscordTopBar(
@@ -66,5 +65,5 @@ fun NicknameScreen(
 @Composable
 @Preview
 fun PreviewNicknameScreen() {
-    NicknameScreen(modifier = Modifier, onBackClick = {}, onClickConfirm = {})
+    NicknameScreen(onBackClick = {}, onClickConfirm = {})
 }
