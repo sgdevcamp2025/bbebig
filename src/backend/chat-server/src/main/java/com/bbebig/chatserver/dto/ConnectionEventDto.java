@@ -14,8 +14,6 @@ public class ConnectionEventDto {
 	private String customPresenceStatus;
 	private String socketSessionId;
 	private String connectedServerIp;
-	private long currentServerId;
-	private long currentChannelId;
 	private List<Long> serverIds;
 	private List <Long> channelIds;
 	private List <Long> dmChannelIds;
