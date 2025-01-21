@@ -2,6 +2,7 @@ spring:
   application:
     name: state-server
 
+
   data:
     redis:
       port: 6379
