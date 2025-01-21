@@ -1,7 +1,7 @@
 package com.bbebig.chatserver.service;
 
 import com.bbebig.chatserver.dto.ChatMessageDto;
-import com.bbebig.chatserver.dto.SessionEventDto;
+import com.bbebig.chatserver.dto.ConnectionEventDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -17,24 +17,27 @@ public class MessageProducerService {
 	@Value("${spring.kafka.topic.dm-chat}")
 	private String dmChatTopic;
 
-	@Value("${spring.kafka.topic.session-event}")
+	@Value("${spring.kafka.topic.connection-event}")
 	private String sessionEventTopic;
 
-	private final KafkaTemplate<String, ChatMessageDto> kafkaTemplateForChat;
+	private final KafkaTemplate<String, ChatMessageDto> kafkaTemplateForChannelChat;
 
-	private final KafkaTemplate<String, SessionEventDto> kafkaTemplateForSession;
+	private final KafkaTemplate<String, ChatMessageDto> kafkaTemplateForDmChat;
+
+	private final KafkaTemplate<String, ConnectionEventDto> kafkaTemplateForSession;
 
 	// 채널 채팅 메시지 전송
 	public void sendMessageForChannelChat(ChatMessageDto messageDto) {
-		kafkaTemplateForChat.send(channelChatTopic, messageDto);
+		kafkaTemplateForChannelChat.send(channelChatTopic, messageDto);
 	}
 
 	// DM 채팅 메시지 전송
 	public void sendMessageForDmChat(ChatMessageDto messageDto) {
-		kafkaTemplateForChat.send(channelChatTopic, messageDto);
+		kafkaTemplateForDmChat.send(dmChatTopic, messageDto);
 	}
 
-	public void sendMessageForSession(SessionEventDto sessionDto) {
+	// 세션 이벤트 메시지 전송
+	public void sendMessageForSession(ConnectionEventDto sessionDto) {
 		kafkaTemplateForSession.send(sessionEventTopic, sessionDto);
 	}
 

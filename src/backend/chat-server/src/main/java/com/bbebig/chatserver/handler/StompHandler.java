@@ -1,15 +1,17 @@
 package com.bbebig.chatserver.handler;
 
 import com.bbebig.chatserver.client.AuthClient;
-import com.bbebig.chatserver.dto.SessionEventDto;
+import com.bbebig.chatserver.client.MemberClient;
+import com.bbebig.chatserver.dto.ConnectionEventDto;
 import com.bbebig.chatserver.dto.response.AuthResponseDto;
+import com.bbebig.chatserver.dto.response.MemberResponseDto;
 import com.bbebig.chatserver.global.response.code.error.ErrorStatus;
 import com.bbebig.chatserver.repository.RedisSessionManager;
 import com.bbebig.chatserver.service.MessageProducerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.event.EventListener;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageDeliveryException;
@@ -17,9 +19,10 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.messaging.SessionConnectedEvent;
-import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import org.springframework.web.context.WebApplicationContext;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 
@@ -28,14 +31,14 @@ import java.util.Optional;
 @Slf4j
 public class StompHandler implements ChannelInterceptor {
 
+	private WebApplicationContext webApplicationContext;
+
 	@Value("${spring.cloud.client.ip-address}")
 	private String serverIp;
 
-	@Value("${server.port}")
-	private String serverPort;
-
 	private final RedisSessionManager redisSessionManager;
 	private final AuthClient authClient;
+	private final MemberClient memberClient;
 	private final MessageProducerService messageProducerService;
 
 	// WebSocket을 통해 들어온 요청이 처리 되기 전에 실행
@@ -44,6 +47,7 @@ public class StompHandler implements ChannelInterceptor {
 
 		StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(message);
 		String sessionId = headerAccessor.getSessionId(); // 세션 ID
+		String serverPort = webApplicationContext.getEnvironment().getProperty("local.server.port"); // 서버 포트
 
 		// CONNECT 요청일 경우
 		if (StompCommand.CONNECT == headerAccessor.getCommand()) {
@@ -62,34 +66,42 @@ public class StompHandler implements ChannelInterceptor {
 			}
 
 			// simpSessionId를 이용하여 사용자 정보 저장
-			String simpSessionId = headerAccessor.getSessionId();
-			redisSessionManager.saveConnectSessionInfoToRedis(simpSessionId, authResponseDto.getResult().getMemberId());
-			log.info("[Chat] Stomp Handler : 사용자 연결 - memberId : {}, sessionId : {}", authResponseDto.getResult().getMemberId(), simpSessionId);
+			redisSessionManager.saveConnectSessionInfoToRedis(sessionId, authResponseDto.getResult().getMemberId());
+			log.info("[Chat] Stomp Handler : 사용자 연결 - memberId : {}, sessionId : {}", authResponseDto.getResult().getMemberId(), sessionId);
 
-			SessionEventDto sessionEventDto = SessionEventDto.builder()
-					.memberId(authResponseDto.getResult().getMemberId())
+			// MemberClient를 통해 사용자 정보 조회
+			MemberResponseDto memberInfo = memberClient.getMemberInfo(authResponseDto.getResult().getMemberId());
+			if (memberInfo == null || memberInfo.getCode() != 200) {
+				log.error("[Chat] Stomp Handler : 사용자 정보 조회 실패");
+				throw new MessageDeliveryException(ErrorStatus.MEMBER_NOT_FOUND.getMessage());
+			}
+
+			// TODO: 서비스 서버에서 참여중인 서버와 채널 정보를 받아와서, 아래 DTO에 추가해야함
+
+			ConnectionEventDto connectionEventDto = ConnectionEventDto.builder()
+					.memberId(memberInfo.getResult().getMemberId())
 					.type("CONNECT")
-					.currentStatus("ONLINE")
-					.socketSessionId(simpSessionId)
+					.currentPresenceStatus("ONLINE")
+					.customPresenceStatus(memberInfo.getResult().getCustomPresenceStatus())
+					.socketSessionId(sessionId)
 					.connectedServerIp(serverIp + ":" + serverPort)
 					.build();
-			messageProducerService.sendMessageForSession(sessionEventDto);
+			messageProducerService.sendMessageForSession(connectionEventDto);
 
 		} else if (StompCommand.DISCONNECT == headerAccessor.getCommand()) { // DISCONNECT 요청일 경우
-			String simpSessionId = headerAccessor.getSessionId();
-			Long memberId = redisSessionManager.findMemberIdBySessionId(simpSessionId);
+			Long memberId = redisSessionManager.findMemberIdBySessionId(sessionId);
 			// 사용자 정보 삭제
-			redisSessionManager.deleteConnectSessionInfoToRedis(simpSessionId, memberId);
-			log.info("[Chat] Stomp Handler : 사용자 연결 해제 - memberId : {}, sessionId : {}", memberId, simpSessionId);
+			redisSessionManager.deleteConnectSessionInfoToRedis(sessionId, memberId);
+			log.info("[Chat] Stomp Handler : 사용자 연결 해제 - memberId : {}, sessionId : {}", memberId, sessionId);
 
-			SessionEventDto sessionEventDto = SessionEventDto.builder()
+			ConnectionEventDto connectionEventDto = ConnectionEventDto.builder()
 					.memberId(memberId)
 					.type("DISCONNECT")
-					.currentStatus("OFFLINE")
-					.socketSessionId(simpSessionId)
+					.currentPresenceStatus("OFFLINE")
+					.socketSessionId(sessionId)
 					.connectedServerIp(serverIp + ":" + serverPort)
 					.build();
-			messageProducerService.sendMessageForSession(sessionEventDto);
+			messageProducerService.sendMessageForSession(connectionEventDto);
 		}
 		return message;
 	}

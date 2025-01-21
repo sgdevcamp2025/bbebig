@@ -27,7 +27,7 @@ public class KafkaChatConsumerConfig {
 	@Value("${spring.kafka.bootstrap-servers}")
 	private String bootstrapAddress;
 
-	@Value("${spring.kafka.chat-consumer.group-id.chat}")
+	@Value("${spring.kafka.consumer.group-id.channel-chat}")
 	private String baseGroupId;
 
 	@Value(("${eureka.instance.instance-id}"))

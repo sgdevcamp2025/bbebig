@@ -1,36 +1,13 @@
 package com.bbebig.chatserver.client;
 
 import com.bbebig.chatserver.dto.response.AuthResponseDto;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 
-@Service
-public class AuthClient {
+@FeignClient(name = "auth-server") // Eureka에 등록된 Node.js 서버의 서비스 이름
+public interface AuthClient {
 
-	private final WebClient webClient;
-
-	@Value("${auth.server.url}")
-	private String authServerUrl;
-
-	public AuthClient(WebClient.Builder webClientBuilder) {
-		this.webClient = webClientBuilder.baseUrl(authServerUrl).build();
-	}
-
-	public AuthResponseDto verifyToken(String token) {
-		return webClient.post()
-				.uri("/verify-token")
-				.header("Authorization", "Bearer " + token)
-				.retrieve()
-				.bodyToMono(AuthResponseDto.class)
-				.onErrorResume(e -> {
-					e.printStackTrace();
-					return Mono.empty();
-				})
-				.block(); // 동기 방식으로 실행
-	}
-
+	@PostMapping("/auth-server/verify-token")
+	AuthResponseDto verifyToken(@RequestHeader("Authorization") String token);
 }

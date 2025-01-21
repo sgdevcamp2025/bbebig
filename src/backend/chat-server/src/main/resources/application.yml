@@ -13,7 +13,7 @@ spring:
     topic:
       channel-chat: "channelChat"
       dm-chat: "dmChat"
-      session-event: "sessionEvent"
+      connection-event: "connectionEvent"
 
     producer:
       bootstrap-servers: localhost:9092

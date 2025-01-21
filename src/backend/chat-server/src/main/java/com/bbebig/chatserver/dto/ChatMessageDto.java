@@ -17,6 +17,8 @@ public class ChatMessageDto {
 
 	private MessageType messageType;
 
+	private String type;
+
 	private Long serverId;
 
 	private Long channelId;
