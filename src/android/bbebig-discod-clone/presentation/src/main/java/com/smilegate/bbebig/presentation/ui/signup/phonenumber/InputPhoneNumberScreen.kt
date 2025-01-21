@@ -1,4 +1,4 @@
-package com.smilegate.bbebig.presentation.ui.signup
+package com.smilegate.bbebig.presentation.ui.signup.phonenumber
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,14 +24,13 @@ import com.smilegate.devcamp.presentation.R
 
 @Composable
 fun PhoneNumberScreen(
-    modifier: Modifier,
     onBackClick: () -> Unit,
     onClickConfirm: (Int) -> Unit,
 ) {
     val phoneNumberState = rememberTextFieldState()
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -76,7 +75,6 @@ fun PhoneNumberScreen(
 @Preview
 private fun PreviewPhoneNumberScreen() {
     PhoneNumberScreen(
-        modifier = Modifier,
         onBackClick = {},
         onClickConfirm = {},
     )
