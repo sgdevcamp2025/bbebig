@@ -1,4 +1,4 @@
-package com.smilegate.bbebig.presentation.ui.signup
+package com.smilegate.bbebig.presentation.ui.signup.account
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,11 +19,12 @@ import com.smilegate.bbebig.presentation.component.DiscordRoundButton
 import com.smilegate.bbebig.presentation.component.DiscordTopBar
 import com.smilegate.bbebig.presentation.theme.Blue70
 import com.smilegate.bbebig.presentation.theme.White
+import com.smilegate.bbebig.presentation.ui.signup.account.mvi.InputAccountUiState
 import com.smilegate.devcamp.presentation.R
 
 @Composable
-fun UserInfoScreen(
-    modifier: Modifier,
+fun AccountScreen(
+    uiState: InputAccountUiState,
     onBackClick: () -> Unit,
     onClickConfirm: (String, String) -> Unit,
 ) {
@@ -31,7 +32,7 @@ fun UserInfoScreen(
     val passwordState = rememberTextFieldState()
 
     Column(
-        modifier = modifier.padding(horizontal = 10.dp),
+        modifier = Modifier.padding(horizontal = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         DiscordTopBar(
@@ -98,8 +99,8 @@ fun PasswordIntroContainer(modifier: Modifier) {
 @Composable
 @Preview
 private fun UserInfoScreenPreview() {
-    UserInfoScreen(
-        modifier = Modifier,
+    AccountScreen(
+        uiState = InputAccountUiState.initial(),
         onBackClick = {},
         onClickConfirm = { _, _ -> },
     )
