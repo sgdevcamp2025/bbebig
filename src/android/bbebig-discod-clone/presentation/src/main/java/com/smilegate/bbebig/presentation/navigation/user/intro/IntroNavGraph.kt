@@ -1,8 +1,8 @@
-package com.smilegate.bbebig.presentation.navigation.intro
+package com.smilegate.bbebig.presentation.navigation.user.intro
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import com.smilegate.bbebig.presentation.navigation.UserRoute
+import com.smilegate.bbebig.presentation.navigation.signup.SignUp
 import com.smilegate.bbebig.presentation.ui.intro.navigation.introNavigation
 import com.smilegate.bbebig.presentation.ui.login.navigation.navigateToLogin
 
@@ -14,7 +14,7 @@ fun NavGraphBuilder.introNavGraph(
             navController.navigateToLogin()
         },
         navigateToSignUp = {
-            navController.navigate(UserRoute.SignUp.route)
+            navController.navigate(SignUp)
         },
     )
 }

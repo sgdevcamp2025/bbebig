@@ -1,7 +1,7 @@
-package com.smilegate.bbebig.presentation.ui.signup
+package com.smilegate.bbebig.presentation.ui.signup.phonenumber
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -22,16 +23,16 @@ import com.smilegate.bbebig.presentation.theme.White
 import com.smilegate.devcamp.presentation.R
 
 @Composable
-fun UserInfoScreen(
-    modifier: Modifier,
+fun PhoneNumberScreen(
     onBackClick: () -> Unit,
-    onClickConfirm: (String, String) -> Unit,
+    onClickConfirm: (Int) -> Unit,
 ) {
-    val userNameState = rememberTextFieldState()
-    val passwordState = rememberTextFieldState()
+    val phoneNumberState = rememberTextFieldState()
 
     Column(
-        modifier = modifier.padding(horizontal = 10.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         DiscordTopBar(
@@ -41,66 +42,40 @@ fun UserInfoScreen(
         )
         Text(
             modifier = Modifier.padding(top = 20.dp),
-            text = stringResource(R.string.user_info_title),
+            text = stringResource(R.string.phone_numer_title),
             fontSize = 24.sp,
             textAlign = TextAlign.Center,
         )
         DiscordInputContainer(
             modifier = Modifier.padding(top = 20.dp),
-            textState = userNameState,
-            titleResId = R.string.username,
-            textHintResId = R.string.username,
-        )
-        DiscordInputContainer(
-            modifier = Modifier.padding(top = 20.dp),
-            textState = passwordState,
-            titleResId = R.string.pw_hint,
-            textHintResId = R.string.pw_hint,
-            isPasswordType = true,
-        )
-        PasswordIntroContainer(
-            modifier = Modifier.fillMaxWidth(),
+            textState = phoneNumberState,
+            titleResId = R.string.phone_number,
+            textHintResId = R.string.phone_number,
+            keyboardType = KeyboardType.NumberPassword,
         )
         DiscordRoundButton(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 20.dp),
-            textResId = R.string.next,
+                .padding(top = 15.dp),
+            textResId = R.string.auth,
             backgroundColor = Blue70,
             onClick = {
                 onClickConfirm(
-                    userNameState.text.toString(),
-                    passwordState.text.toString(),
+                    phoneNumberState.text.toString().toInt(),
                 )
             },
             textColor = White,
             radiusDp = 5.dp,
-            isEnable = userNameState.text.isNotEmpty() && passwordState.text.isNotEmpty(),
-        )
-    }
-}
-
-@Composable
-fun PasswordIntroContainer(modifier: Modifier) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Text(
-            modifier = Modifier.padding(top = 5.dp),
-            text = stringResource(R.string.require_pw),
-            textAlign = TextAlign.Center,
+            isEnable = phoneNumberState.text.isNotEmpty(),
         )
     }
 }
 
 @Composable
 @Preview
-private fun UserInfoScreenPreview() {
-    UserInfoScreen(
-        modifier = Modifier,
+private fun PreviewPhoneNumberScreen() {
+    PhoneNumberScreen(
         onBackClick = {},
-        onClickConfirm = { _, _ -> },
+        onClickConfirm = {},
     )
 }

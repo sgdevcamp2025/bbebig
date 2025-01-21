@@ -1,4 +1,4 @@
-package com.smilegate.bbebig.presentation.ui.signup
+package com.smilegate.bbebig.presentation.ui.signup.nickname
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,28 +9,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.smilegate.bbebig.presentation.component.DiscordInputContainer
 import com.smilegate.bbebig.presentation.component.DiscordRoundButton
-import com.smilegate.bbebig.presentation.component.DiscordTextField
 import com.smilegate.bbebig.presentation.component.DiscordTopBar
 import com.smilegate.bbebig.presentation.theme.Blue70
 import com.smilegate.bbebig.presentation.theme.White
 import com.smilegate.devcamp.presentation.R
 
 @Composable
-fun AuthCodeScreen(
-    modifier: Modifier,
+fun NicknameScreen(
     onBackClick: () -> Unit,
-    onClickConfirm: (Int) -> Unit,
+    onClickConfirm: (String) -> Unit,
 ) {
-    val codeState = rememberTextFieldState()
+    val nicknameState = rememberTextFieldState()
 
     Column(
-        modifier = modifier.padding(horizontal = 10.dp),
+        modifier = Modifier.padding(horizontal = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         DiscordTopBar(
@@ -40,39 +38,32 @@ fun AuthCodeScreen(
         )
         Text(
             modifier = Modifier.padding(top = 20.dp),
-            text = stringResource(R.string.auth_code_title),
+            text = stringResource(R.string.nickname_title),
             fontSize = 24.sp,
             textAlign = TextAlign.Center,
         )
-        DiscordTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 15.dp),
-            textFieldState = codeState,
-            keyboardType = KeyboardType.Phone,
+        DiscordInputContainer(
+            modifier = Modifier.padding(top = 20.dp),
+            textState = nicknameState,
+            titleResId = R.string.alias_title,
+            textHintResId = R.string.signup_user_info,
         )
         DiscordRoundButton(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 15.dp),
-            textResId = R.string.auth,
+            textResId = R.string.next,
             backgroundColor = Blue70,
-            onClick = {
-                onClickConfirm(codeState.text.toString().toInt())
-            },
+            onClick = { onClickConfirm(nicknameState.text.toString()) },
             textColor = White,
             radiusDp = 5.dp,
-            isEnable = codeState.text.isNotEmpty(),
+            isEnable = nicknameState.text.isNotEmpty(),
         )
     }
 }
 
 @Composable
 @Preview
-private fun AuthCodeScreenPreview() {
-    AuthCodeScreen(
-        modifier = Modifier,
-        onBackClick = {},
-        onClickConfirm = {},
-    )
+fun PreviewNicknameScreen() {
+    NicknameScreen(onBackClick = {}, onClickConfirm = {})
 }

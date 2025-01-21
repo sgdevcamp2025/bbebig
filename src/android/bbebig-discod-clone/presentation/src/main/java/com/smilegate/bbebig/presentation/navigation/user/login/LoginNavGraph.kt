@@ -1,8 +1,8 @@
-package com.smilegate.bbebig.presentation.navigation.login
+package com.smilegate.bbebig.presentation.navigation.user.login
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import com.smilegate.bbebig.presentation.navigation.DiscordRoute
+import com.smilegate.bbebig.presentation.navigation.DiscordHome
 import com.smilegate.bbebig.presentation.ui.login.navigation.loginNavigation
 
 fun NavGraphBuilder.loginNavGraph(
@@ -10,7 +10,7 @@ fun NavGraphBuilder.loginNavGraph(
 ) {
     loginNavigation(
         navigateToHome = {
-            navController.navigate(DiscordRoute.Home.route)
+            navController.navigate(DiscordHome)
         },
         onBackClick = {
             navController.popBackStack()

@@ -6,6 +6,7 @@ androidTools = "31.7.2"
 coroutine = "1.9.0"
 
 kotlin = "2.0.0"
+kotlinSerialization = "1.8.0"
 ksp = "2.0.0-1.0.24"
 
 coreKtx = "1.13.1"
@@ -50,6 +51,7 @@ hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 hilt-core = { group = "com.google.dagger", name = "hilt-core", version.ref = "hilt" }
 
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinSerialization" }
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }
 
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
@@ -89,6 +91,7 @@ room = { id = "androidx.room", version.ref = "room" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinSerialization" }
 
 # Plugins defined by this project
 bbebig-android-application = { id = "bbebig.android.application" }

@@ -1,4 +1,4 @@
-package com.smilegate.bbebig.presentation.ui.signup
+package com.smilegate.bbebig.presentation.ui.signup.age
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -34,7 +34,6 @@ import java.util.Calendar
 
 @Composable
 fun AgeScreen(
-    modifier: Modifier,
     onBackClick: () -> Unit,
     onClickConfirm: (String) -> Unit,
 ) {
@@ -42,7 +41,7 @@ fun AgeScreen(
     var selectedDate by remember { mutableStateOf("") }
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -126,7 +125,6 @@ private fun DateContainer(modifier: Modifier, selectedDate: String, onDateAreaCl
 @Preview
 private fun AgeScreenPreview() {
     AgeScreen(
-        modifier = Modifier,
         onBackClick = { },
         onClickConfirm = { },
     )

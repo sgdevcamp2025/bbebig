@@ -1,0 +1,27 @@
+package com.smilegate.bbebig.presentation.ui.signup.account.navigation
+
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
+import com.smilegate.bbebig.presentation.navigation.signup.InputAccount
+import com.smilegate.bbebig.presentation.navigation.signup.SignUp
+
+fun NavController.navigateToAccount() {
+    navigate(
+        route = InputAccount,
+    )
+}
+
+fun NavGraphBuilder.accountNavigation(
+    navigateToPhoneNumber: () -> Unit,
+    onBackClick: () -> Unit,
+    navController: NavController,
+) {
+    composable<InputAccount> {
+        AccountRoute(
+            navigateToPhoneNumber = navigateToPhoneNumber,
+            onBackClick = onBackClick,
+            navBackStackEntry = navController.getBackStackEntry<SignUp>(),
+        )
+    }
+}
