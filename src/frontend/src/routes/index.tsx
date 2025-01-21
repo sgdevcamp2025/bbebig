@@ -1,10 +1,21 @@
-import CustomButton from '@/components/custom-button'
-import { CustomButtonVariants } from '@/components/custom-button/variants'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+
+import LandingLayout from '@/layouts/ladning'
+import Landing from '@/pages/landing'
 
 function App() {
   return (
     <>
-      <CustomButton variant={CustomButtonVariants.primary}>Click ME!</CustomButton>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<LandingLayout />}>
+            <Route
+              path='/'
+              element={<Landing />}
+            />
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </>
   )
 }

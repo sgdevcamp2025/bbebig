@@ -11,6 +11,5 @@
   "tabWidth": 2,
   "trailingComma": "none",
   "useTabs": false,
-  "quoteProps": "as-needed",
-  "plugins": ["prettier-plugin-tailwindcss"]
+  "quoteProps": "as-needed"
 }

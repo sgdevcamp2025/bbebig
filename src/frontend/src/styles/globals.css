@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+@layer base {
+  .padding-global {
+    @apply w-[100%] flex-1 px-10;
+  }
+}
