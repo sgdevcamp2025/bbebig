@@ -1,6 +1,7 @@
 spring:
   application:
-    name: chat-service
+    name: state-server
+
 
   data:
     redis:
