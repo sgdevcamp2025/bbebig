@@ -1,4 +1,4 @@
-package com.smilegate.bbebig.presentation.ui.signup
+package com.smilegate.bbebig.presentation.ui.signup.authcode
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,14 +23,13 @@ import com.smilegate.devcamp.presentation.R
 
 @Composable
 fun AuthCodeScreen(
-    modifier: Modifier,
     onBackClick: () -> Unit,
     onClickConfirm: (Int) -> Unit,
 ) {
     val codeState = rememberTextFieldState()
 
     Column(
-        modifier = modifier.padding(horizontal = 10.dp),
+        modifier = Modifier.padding(horizontal = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         DiscordTopBar(
@@ -71,7 +70,6 @@ fun AuthCodeScreen(
 @Preview
 private fun AuthCodeScreenPreview() {
     AuthCodeScreen(
-        modifier = Modifier,
         onBackClick = {},
         onClickConfirm = {},
     )
