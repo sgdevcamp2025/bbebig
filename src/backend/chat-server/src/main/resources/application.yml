@@ -1,6 +1,6 @@
 spring:
   application:
-    name: chat-service
+    name: chat-server
 
   data:
     redis:
