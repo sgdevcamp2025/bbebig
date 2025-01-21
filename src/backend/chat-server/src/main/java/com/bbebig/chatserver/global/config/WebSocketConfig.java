@@ -24,9 +24,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	 */
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry registry) {
-		registry.enableSimpleBroker("/chat/queue","/chat/topic");
+		registry.enableSimpleBroker("/topic","/queue"); // 메세지 구독 요청 url -> 메세지 받을 때
 		// 메세지 발행 요청 url -> 메세지 보낼 때
-		registry.setApplicationDestinationPrefixes("/chat/pub");
+		registry.setApplicationDestinationPrefixes("/pub");
 
 	}
 

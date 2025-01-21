@@ -20,9 +20,9 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "M401", "유저가 존재하지 않습니다."),
 
     //채팅 응답
-    CHAT_ROOM_NOT_FOUND(HttpStatus.BAD_REQUEST, "CHAT401", "채팅방이 존재하지 않습니다."),
-    CHAT_ROOM_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "CHAT402", "이미 존재하는 채팅방입니다."),
-    CHAT_ROOM_MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "CHAT403", "채팅방에 참여한 멤버가 존재하지 않습니다.");
+    CHAT_ROOM_NOT_FOUND(HttpStatus.BAD_REQUEST, "C401", "채팅방이 존재하지 않습니다."),
+    CHAT_ROOM_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "C402", "이미 존재하는 채팅방입니다."),
+    CHAT_ROOM_MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "C403", "채팅방에 참여한 멤버가 존재하지 않습니다.");
 
 
     private final HttpStatus httpStatus;

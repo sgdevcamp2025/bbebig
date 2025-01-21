@@ -8,7 +8,8 @@ import java.util.List;
 @Data
 @Builder
 public class ConnectionEventDto {
-	private long memberId;
+
+	private Long memberId;
 	private String type;
 	private String currentPresenceStatus;
 	private String customPresenceStatus;
