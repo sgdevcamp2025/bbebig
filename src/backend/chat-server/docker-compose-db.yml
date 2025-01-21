@@ -1,0 +1,71 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: bbebig
+      MONGO_INITDB_ROOT_PASSWORD: bbebig1234
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - bbebig-network
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: bbebig1234
+      MYSQL_DATABASE: bbebigdb
+      MYSQL_USER: bbebig
+      MYSQL_PASSWORD: bbebig1234
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - bbebig-network
+
+  postgresql:
+    image: postgres:latest
+    container_name: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: bbebig
+      POSTGRES_PASSWORD: bbebig1234
+      POSTGRES_DB: bbebigdb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - bbebig-network
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    hostname: redis
+    ports:
+      - 6379:6379
+    environment:
+      - TZ=Asia/Seoul
+    labels:
+      - "name=redis"
+      - "mode=standalone"
+    networks:
+      - bbebig-network
+    volumes:
+      - redis-data:/data
+
+volumes:
+  mongodb_data:
+  mysql_data:
+  postgres_data:
+  redis-data:
+
+networks:
+  bbebig-network:
+    external: true
