@@ -1,10 +1,7 @@
 package com.bbebig.user_server.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -39,7 +36,22 @@ public class Friend {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    public enum FriendStatus {
-        //TODO enum 논의 필요
+    @Builder
+    public Friend(Member fromMember, Member toMember, FriendStatus status, String serverList) {
+        this.fromMember = fromMember;
+        this.toMember = toMember;
+        this.status = status;
+        this.serverList = serverList;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void changeFriendStatus(FriendStatus status){
+        this.status=status;
+    }
+
+
+    public static Friend of(Member fromMember, Member toMember){
+        return Friend.builder().fromMember(fromMember).toMember(toMember).status(FriendStatus.PENDING).build();
     }
 }
