@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  auth-server:
+    build: .
+    ports:
+      - '8083:8083'
+    env_file:
+      - ./.env.production
+    depends_on:
+      - redis
+    restart: always
+    networks:
+      - auth-network
+
+  redis:
+    image: redis:alpine
+    container_name: redis-local
+    ports:
+      - '6379:6379'
+    command: redis-server --appendonly yes
+    networks:
+      - auth-network
+    healthcheck:
+      test: ['CMD', 'redis-server', '--ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+networks:
+  auth-network:
+    driver: bridge
