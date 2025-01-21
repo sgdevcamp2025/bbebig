@@ -1,12 +1,6 @@
-server:
-  port: 8080 # ?? ??
-  servlet:
-    encoding:
-      charset: UTF-8
-      enabled: true
-      force: true
-
 spring:
+  application:
+    name: service-server
   datasource:
     url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_DATABASE}
     username: ${DB_USERNAME}
@@ -25,3 +19,12 @@ logging:
     org:
       springframework:
         jdbc: DEBUG # ?? ???? WARN?? ??
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    instance-id: ${spring.cloud.client.ip-address}:${spring.application.instance_id:${random.value}}
