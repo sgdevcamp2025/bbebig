@@ -1,11 +1,13 @@
 import type { Config } from 'tailwindcss'
+import tailwindCSSMotion from 'tailwindcss-motion'
 
-const config: Pick<Config, 'presets' | 'content' | 'theme'> = {
+const config: Pick<Config, 'presets' | 'content' | 'theme' | 'plugins'> = {
   content: ['./src/**/*.tsx'],
   theme: {
     extend: {
       colors: {
         brand: '#5865f2',
+        'brand-10': 'hsl(222.857 calc(1 * 6.667%) 20.588% / 1)',
         'brand-gradient': 'linear-gradient(90deg, #8ea1e1 0%, #7289da 100%)',
         greyple: '#99aab5',
         'dark-not-black': '#2c2f33',
@@ -13,16 +15,21 @@ const config: Pick<Config, 'presets' | 'content' | 'theme'> = {
         'status-green': '#43b581',
         'text-link': '#00b0f4',
         'off-white': '#f6f6f6',
-        white: '#fff',
+        'white-10': 'hsl(220 calc(1 * 13.043%) 95.49% / 1)',
+        'white-20': 'hsl(215 calc(1 * 8.824%) 73.333% / 1)',
+        'white-100': '#fff',
         'black-10': '#000',
         'black-20': '#060a0b',
         'black-30': '#23272a',
+        'black-80': 'hsl(225 calc(1 * 6.25%) 12.549% / 1)',
         'red-10': '#de2761',
         'blue-10': '#1a2081',
         'blue-20': '#00002a',
-        'blue-30': '#404eed'
+        'blue-30': '#404eed',
+        'gray-10': 'hsl(var(--primary-330-hsl) / 1)'
       },
       backgroundImage: {
+        'auth-background': "url('./src/assets/image/auth/background.svg')",
         'landing-background': "url('./src/assets/image/homepage/background-art.png')",
         'landing-hero-background': "url('./src/assets/image/homepage/hero-character.webp')",
         'landing-shine-1': "url('./src/assets/image/homepage/background-shine-1.webp')",
@@ -69,7 +76,8 @@ const config: Pick<Config, 'presets' | 'content' | 'theme'> = {
         }
       }
     }
-  }
+  },
+  plugins: [tailwindCSSMotion]
 }
 
 export default config
