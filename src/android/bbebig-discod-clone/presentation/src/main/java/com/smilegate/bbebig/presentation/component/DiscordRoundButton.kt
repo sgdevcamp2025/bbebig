@@ -19,7 +19,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.smilegate.bbebig.presentation.theme.Blue70
 import com.smilegate.bbebig.presentation.theme.White
 import com.smilegate.bbebig.presentation.utils.StableImage
@@ -32,6 +34,7 @@ fun DiscordRoundButton(
     textResId: Int,
     backgroundColor: Color,
     onClick: () -> Unit,
+    textSize: TextUnit = 15.sp,
     iconSize: Dp = 15.dp,
     textColor: Color = Color.Black,
     verticalInnerPadding: Dp = 13.dp,
@@ -63,6 +66,7 @@ fun DiscordRoundButton(
             text = stringResource(id = textResId),
             color = textColor,
             textAlign = TextAlign.Center,
+            fontSize = textSize,
         )
     }
 }
