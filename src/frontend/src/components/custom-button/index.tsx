@@ -1,23 +1,36 @@
-import { cva } from 'class-variance-authority'
+import { cva, VariantProps } from 'class-variance-authority'
+import { ComponentPropsWithoutRef } from 'react'
 
-import { CustomButtonVariants } from './variants'
+import { cn } from '@/utils/cn'
 
-interface Props {
-  children: React.ReactNode
-  variant: keyof typeof CustomButtonVariants
-}
+type Props = VariantProps<typeof buttonVariants> & ComponentPropsWithoutRef<'button'>
 
 const buttonVariants = cva('', {
   variants: {
     variant: {
-      [CustomButtonVariants.primary]: 'bg-red-200',
-      [CustomButtonVariants.secondary]: 'bg-blue-200'
+      primary: 'bg-brand text-white-100',
+      secondary: 'bg-blue-200'
+    },
+    size: {
+      small: 'h-10 leading-[24px] rounded-[3px]',
+      medium: 'h-12',
+      large: 'h-14'
+    },
+    width: {
+      full: 'w-full',
+      half: 'w-1/2'
     }
   }
 })
 
-function CustomButton({ children, variant }: Props) {
-  return <button className={buttonVariants({ variant })}>{children}</button>
+function CustomButton({ children, variant, size, width, className, ...props }: Props) {
+  return (
+    <button
+      className={cn(buttonVariants({ variant, size, width }), className)}
+      {...props}>
+      {children}
+    </button>
+  )
 }
 
 export default CustomButton

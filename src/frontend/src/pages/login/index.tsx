@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import AuthInput from '@/components/auth-input'
+import CustomButton from '@/components/custom-button'
 
 function LoginPage() {
   const navigate = useNavigate()
@@ -38,9 +39,13 @@ function LoginPage() {
               required
             />
             <button className='text-sm text-text-link mb-5'>비밀번호를 잊으셨나요?</button>
-            <button className='rounded-[3px] w-full h-10 bg-brand text-white-100 mb-1 leading-[24px]'>
+            <CustomButton
+              variant='primary'
+              size='small'
+              width='full'
+              className='mb-1'>
               로그인
-            </button>
+            </CustomButton>
             <div className='text-white-20 text-sm'>
               계정이 필요한가요?{' '}
               <button

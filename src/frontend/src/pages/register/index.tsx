@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 import AuthInput from '@/components/auth-input'
 import CheckBox from '@/components/check-box'
+import CustomButton from '@/components/custom-button'
 import DateInput from '@/components/date-input'
 
 function RegisterPage() {
@@ -56,9 +57,13 @@ function RegisterPage() {
             />
           </div>
           <div>
-            <button className='rounded-[3px] mb-1 w-full h-[40px] bg-brand text-white-100 leading-[24px]'>
+            <CustomButton
+              variant='primary'
+              size='small'
+              width='full'
+              className='mb-1'>
               계속하기
-            </button>
+            </CustomButton>
             <div className='text-white-20 text-[12px] mt-1'>
               등록하는 순간 Discord의 <a className='text-text-link'>서비스 이용 약관</a>와
               <a className='text-text-link'>개인정보 보호 정책</a>에 동의하게 됩니다.

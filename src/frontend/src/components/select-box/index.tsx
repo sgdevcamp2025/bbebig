@@ -4,11 +4,11 @@ import { Dispatch, ReactNode, SetStateAction, useRef, useState } from 'react'
 import useClickOutside from '@/hooks/useClickOutside'
 import { cn } from '@/utils/cn'
 
-interface Props<T> {
+interface Props {
   label: string
-  options: T[]
-  value: T | null
-  onChange: Dispatch<SetStateAction<T | null>>
+  options: string[]
+  value: string | null
+  onChange: Dispatch<SetStateAction<string | null>>
   className?: string
   required?: boolean
   prefix?: string
@@ -22,7 +22,7 @@ function SelectBox<T>({
   className,
   prefix = '',
   ...props
-}: Props<T>) {
+}: Props) {
   const [isOpen, setIsOpen] = useState(false)
   const selectRef = useRef<HTMLDivElement>(null)
   const [search, setSearch] = useState('')
@@ -31,7 +31,7 @@ function SelectBox<T>({
     setSearch(e.target.value)
   }
 
-  const handleSelectOption = (option: T) => {
+  const handleSelectOption = (option: string) => {
     onChange(option)
     setSearch('')
     setIsOpen(false)

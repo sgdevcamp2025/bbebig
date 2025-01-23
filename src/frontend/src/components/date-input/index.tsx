@@ -7,14 +7,14 @@ interface Props {
   required?: boolean
 }
 
-const year = Array.from({ length: 100 }, (_, i) => 2025 - i)
-const month = Array.from({ length: 12 }, (_, i) => i + 1)
-const day = Array.from({ length: 31 }, (_, i) => i + 1)
+const year = Array.from({ length: 100 }, (_, i) => String(2025 - i))
+const month = Array.from({ length: 12 }, (_, i) => String(i + 1))
+const day = Array.from({ length: 31 }, (_, i) => String(i + 1))
 
 function DateInput({ label, required }: Props) {
-  const [selectedYear, setSelectedYear] = useState<number | null>(null)
-  const [selectedMonth, setSelectedMonth] = useState<number | null>(null)
-  const [selectedDay, setSelectedDay] = useState<number | null>(null)
+  const [selectedYear, setSelectedYear] = useState<string | null>(null)
+  const [selectedMonth, setSelectedMonth] = useState<string | null>(null)
+  const [selectedDay, setSelectedDay] = useState<string | null>(null)
 
   return (
     <div>
