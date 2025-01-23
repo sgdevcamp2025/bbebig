@@ -12,7 +12,7 @@ import androidx.compose.ui.res.painterResource
 fun StableImage(
     modifier: Modifier = Modifier,
     @DrawableRes drawableResId: Int,
-    contentDescription: String?,
+    contentDescription: String? = null,
     contentScale: ContentScale = ContentScale.Fit,
     colorFilter: ColorFilter? = null,
 ) {

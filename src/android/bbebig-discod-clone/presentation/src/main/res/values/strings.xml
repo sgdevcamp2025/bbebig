@@ -24,4 +24,10 @@
     <string name="auth_code_title">확인 코드를 입력해주세요</string>
     <string name="alias_title">별명</string>
     <string name="nickname_title">이름은 무엇인가요?</string>
+    <string name="server_join_text">서버 참가하기</string>
+    <string name="server_make_text">서버를 만들어보세요</string>
+    <string name="search_text">검색하기</string>
+    <string name="empty_title">한 단계 나아간 그룹 채팅을 이용할\n준비가 되셨나요?</string>
+    <string name="empty_sub_title">정리된 대화, 즉흥적 행아웃, 강력한 사용자\n 지정 기능과 함께 커뮤니티를 구축하세요!</string>
+
 </resources>
