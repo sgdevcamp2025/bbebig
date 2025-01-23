@@ -1,6 +1,6 @@
-package com.bbebig.chatserver.dto;
+package com.bbebig.chatserver.domain.dto;
 
-import com.bbebig.chatserver.model.ChannelType;
+import com.bbebig.chatserver.domain.model.ChannelType;
 import lombok.Builder;
 import lombok.Data;
 
@@ -17,6 +17,7 @@ public class ChatMessageDto {
 	private String type;
 	private Long serverId;
 	private Long channelId;
+	private Long channelSequence;
 	private Long sendMemberId;
 	private String content;
 	private List<ChatFileDto> attachedFiles;

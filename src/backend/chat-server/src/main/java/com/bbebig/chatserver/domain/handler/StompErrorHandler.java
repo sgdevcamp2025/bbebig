@@ -1,4 +1,4 @@
-package com.bbebig.chatserver.handler;
+package com.bbebig.chatserver.domain.handler;
 
 import com.bbebig.chatserver.global.response.code.error.ErrorStatus;
 import lombok.RequiredArgsConstructor;

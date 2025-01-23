@@ -1,6 +1,6 @@
 package com.bbebig.chatserver.global.config;
 
-import com.bbebig.chatserver.dto.ChatMessageDto;
+import com.bbebig.chatserver.domain.dto.ChatMessageDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -27,7 +27,7 @@ public class KafkaChatConsumerConfig {
 	@Value("${spring.kafka.bootstrap-servers}")
 	private String bootstrapAddress;
 
-	@Value("${spring.kafka.consumer.group-id.channel-chat}")
+	@Value("${spring.kafka.consumer.group-id.channel-chat-event}")
 	private String baseGroupId;
 
 	@Value(("${eureka.instance.instance-id}"))

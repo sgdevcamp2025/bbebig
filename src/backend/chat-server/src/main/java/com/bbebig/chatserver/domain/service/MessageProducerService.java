@@ -1,7 +1,7 @@
-package com.bbebig.chatserver.service;
+package com.bbebig.chatserver.domain.service;
 
-import com.bbebig.chatserver.dto.ChatMessageDto;
-import com.bbebig.chatserver.dto.ConnectionEventDto;
+import com.bbebig.chatserver.domain.dto.ChatMessageDto;
+import com.bbebig.chatserver.domain.dto.ConnectionEventDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MessageProducerService {
 
-	@Value("${spring.kafka.topic.channel-chat}")
+	@Value("${spring.kafka.topic.channel-chat-event}")
 	private String channelChatTopic;
 
-	@Value("${spring.kafka.topic.dm-chat}")
+	@Value("${spring.kafka.topic.dm-chat-event}")
 	private String dmChatTopic;
 
 	@Value("${spring.kafka.topic.connection-event}")

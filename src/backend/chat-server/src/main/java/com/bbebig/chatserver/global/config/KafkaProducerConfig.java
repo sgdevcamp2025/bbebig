@@ -1,7 +1,7 @@
 package com.bbebig.chatserver.global.config;
 
-import com.bbebig.chatserver.dto.ChatMessageDto;
-import com.bbebig.chatserver.dto.ConnectionEventDto;
+import com.bbebig.chatserver.domain.dto.ChatMessageDto;
+import com.bbebig.chatserver.domain.dto.ConnectionEventDto;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ser.std.StringSerializer;
 import org.apache.kafka.clients.producer.ProducerConfig;

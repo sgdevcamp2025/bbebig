@@ -1,4 +1,4 @@
-package com.bbebig.chatserver.controller;
+package com.bbebig.chatserver.domain.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

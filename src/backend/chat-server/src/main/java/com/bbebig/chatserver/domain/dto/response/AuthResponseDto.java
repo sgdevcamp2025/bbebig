@@ -1,4 +1,4 @@
-package com.bbebig.chatserver.dto.response;
+package com.bbebig.chatserver.domain.dto.response;
 
 import lombok.Data;
 

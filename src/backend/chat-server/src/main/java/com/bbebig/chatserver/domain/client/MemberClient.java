@@ -1,6 +1,6 @@
-package com.bbebig.chatserver.client;
+package com.bbebig.chatserver.domain.client;
 
-import com.bbebig.chatserver.dto.response.MemberResponseDto;
+import com.bbebig.chatserver.domain.dto.response.MemberResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

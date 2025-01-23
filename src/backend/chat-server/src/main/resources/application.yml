@@ -11,18 +11,24 @@ spring:
     bootstrap-servers: localhost:9092
 
     topic:
-      channel-chat: "channelChat"
-      dm-chat: "dmChat"
+      channel-chat-event: "channelChatEvent"
+      dm-chat-event: "dmChatEvent"
       connection-event: "connectionEvent"
+      presence-event: "presenceEvent"
+      notification-event: "notificationEvent"
+      server-event: "serverEvent"
+      channel-event: "channelEvent"
 
     producer:
       bootstrap-servers: localhost:9092
 
     consumer:
       group-id:
-        channel-chat: "channelChatGroup"
-        dm-chat: "dmChatGroup"
-        connection-event: "connectionEventGroup"
+        channel-chat-event: "channelChatEventGroup"
+        dm-chat-event: "dmChatEventGroup"
+        notification-event: "notificationEventGroup"
+        server-event: "serverEventGroup"
+        channel-event: "channelEventGroup"
 
       enable-auto-commit: true
       auto-offset-reset: latest

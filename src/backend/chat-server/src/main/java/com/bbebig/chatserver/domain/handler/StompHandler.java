@@ -1,16 +1,15 @@
-package com.bbebig.chatserver.handler;
+package com.bbebig.chatserver.domain.handler;
 
-import com.bbebig.chatserver.client.AuthClient;
-import com.bbebig.chatserver.client.MemberClient;
-import com.bbebig.chatserver.dto.ConnectionEventDto;
-import com.bbebig.chatserver.dto.response.AuthResponseDto;
-import com.bbebig.chatserver.dto.response.MemberResponseDto;
+import com.bbebig.chatserver.domain.client.AuthClient;
+import com.bbebig.chatserver.domain.client.MemberClient;
+import com.bbebig.chatserver.domain.dto.ConnectionEventDto;
+import com.bbebig.chatserver.domain.dto.response.AuthResponseDto;
+import com.bbebig.chatserver.domain.dto.response.MemberResponseDto;
 import com.bbebig.chatserver.global.response.code.error.ErrorStatus;
-import com.bbebig.chatserver.repository.RedisSessionManager;
-import com.bbebig.chatserver.service.MessageProducerService;
+import com.bbebig.chatserver.domain.repository.SessionManager;
+import com.bbebig.chatserver.domain.service.MessageProducerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -34,7 +33,7 @@ public class StompHandler implements ChannelInterceptor {
 	@Value("${spring.cloud.client.ip-address}")
 	private String serverIp;
 
-	private final RedisSessionManager redisSessionManager;
+	private final SessionManager sessionManager;
 	private final AuthClient authClient;
 	private final MemberClient memberClient;
 	private final MessageProducerService messageProducerService;
@@ -64,7 +63,7 @@ public class StompHandler implements ChannelInterceptor {
 			}
 
 			// simpSessionId를 이용하여 사용자 정보 저장
-			redisSessionManager.saveConnectSessionInfoToRedis(sessionId, authResponseDto.getResult().getMemberId());
+			sessionManager.saveConnectSessionInfo(sessionId, authResponseDto.getResult().getMemberId());
 			log.info("[Chat] Stomp Handler : 사용자 연결 - memberId : {}, sessionId : {}", authResponseDto.getResult().getMemberId(), sessionId);
 
 			// MemberClient를 통해 사용자 정보 조회
@@ -79,23 +78,20 @@ public class StompHandler implements ChannelInterceptor {
 			ConnectionEventDto connectionEventDto = ConnectionEventDto.builder()
 					.memberId(memberInfo.getResult().getMemberId())
 					.type("CONNECT")
-					.currentPresenceStatus("ONLINE")
-					.customPresenceStatus(memberInfo.getResult().getCustomPresenceStatus())
 					.socketSessionId(sessionId)
 					.connectedServerIp(serverIp + ":" + serverPort)
 					.build();
 			messageProducerService.sendMessageForSession(connectionEventDto);
 
 		} else if (StompCommand.DISCONNECT == headerAccessor.getCommand()) { // DISCONNECT 요청일 경우
-			Long memberId = redisSessionManager.findMemberIdBySessionId(sessionId);
+			Long memberId = sessionManager.findMemberIdBySessionId(sessionId);
 			// 사용자 정보 삭제
-			redisSessionManager.deleteConnectSessionInfoToRedis(sessionId, memberId);
+			sessionManager.deleteConnectSessionInfo(sessionId, memberId);
 			log.info("[Chat] Stomp Handler : 사용자 연결 해제 - memberId : {}, sessionId : {}", memberId, sessionId);
 
 			ConnectionEventDto connectionEventDto = ConnectionEventDto.builder()
 					.memberId(memberId)
 					.type("DISCONNECT")
-					.currentPresenceStatus("OFFLINE")
 					.socketSessionId(sessionId)
 					.connectedServerIp(serverIp + ":" + serverPort)
 					.build();
