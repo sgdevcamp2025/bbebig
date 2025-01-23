@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
@@ -46,17 +47,19 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.smilegate.bbebig.presentation.component.DiscordEmptyTitleContainer
 import com.smilegate.bbebig.presentation.component.DiscordRoundButton
 import com.smilegate.bbebig.presentation.model.SampleChannel
 import com.smilegate.bbebig.presentation.model.SampleServerList
+import com.smilegate.bbebig.presentation.model.ServerType
 import com.smilegate.bbebig.presentation.theme.Blue70
 import com.smilegate.bbebig.presentation.theme.Gray30
+import com.smilegate.bbebig.presentation.theme.Gray40
 import com.smilegate.bbebig.presentation.theme.Gray50
 import com.smilegate.bbebig.presentation.theme.Gray60
 import com.smilegate.bbebig.presentation.theme.Gray70
@@ -71,7 +74,8 @@ import com.smilegate.devcamp.presentation.R
 fun HomeScreen(
     onMakeServerClick: () -> Unit,
     onServerJoinClick: () -> Unit,
-    onSearchClick: () -> Unit = {},
+    onClickInviteFriend: () -> Unit,
+    onSearchClick: () -> Unit,
     serverList: SampleServerList = SampleServerList.getDummyList(),
 ) {
     Row(
@@ -88,6 +92,7 @@ fun HomeScreen(
             onMakeServerClick = onMakeServerClick,
             onServerJoinClick = onServerJoinClick,
             onSearchClick = onSearchClick,
+            onClickAddFriend = onClickInviteFriend,
         )
     }
 }
@@ -165,10 +170,12 @@ private fun EmptyServerContent(
 ) {
     Box(modifier = modifier) {
         Text(modifier = Modifier.align(Alignment.TopStart), fontSize = 24.sp, text = "서버")
-        TitleContainer(
+        DiscordEmptyTitleContainer(
             modifier = Modifier
                 .align(Alignment.Center)
                 .padding(vertical = 20.dp),
+            firstTitleResId = R.string.empty_title,
+            secondTitleResId = R.string.empty_sub_title,
         )
         ButtonContainer(
             modifier = Modifier.align(Alignment.BottomCenter),
@@ -199,18 +206,6 @@ private fun ButtonContainer(
             textColor = Gray80,
             backgroundColor = Gray50,
         )
-    }
-}
-
-@Composable
-private fun TitleContainer(modifier: Modifier) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-    ) {
-        Text(stringResource(R.string.empty_title), textAlign = TextAlign.Center)
-        Text(stringResource(R.string.empty_sub_title), textAlign = TextAlign.Center)
     }
 }
 
@@ -301,25 +296,129 @@ private fun MakeServerItem(modifier: Modifier, onMakeServerClick: () -> Unit) {
 private fun ServerChannelContainer(
     modifier: Modifier,
     serverList: SampleServerList,
+    type: ServerType = ServerType.DM,
     onMakeServerClick: () -> Unit,
     onServerJoinClick: () -> Unit,
     onSearchClick: () -> Unit,
+    onClickAddFriend: () -> Unit,
 ) {
-    if (serverList.channelList.isEmpty()) {
-        EmptyServerContent(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(horizontal = 15.dp, vertical = 20.dp),
-            onMakeServerClick = onMakeServerClick,
-            onServerJoinClick = onServerJoinClick,
+    when (type) {
+        ServerType.DM -> {
+            DMContentContainer(
+                modifier = modifier.fillMaxSize(),
+                onClickAddFriend = onClickAddFriend,
+                onClickSearch = onSearchClick,
+            )
+        }
+
+        is ServerType.Server -> {
+            if (serverList.channelList.isEmpty()) {
+                EmptyServerContent(
+                    modifier = modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 15.dp, vertical = 20.dp),
+                    onMakeServerClick = onMakeServerClick,
+                    onServerJoinClick = onServerJoinClick,
+                )
+            } else {
+                ServerContentContainer(
+                    modifier = modifier
+                        .fillMaxSize()
+                        .padding(top = 5.dp),
+                    onSearchClick = onSearchClick,
+                    serverList = serverList,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DMTopContainer(
+    modifier: Modifier,
+    onClickAddFriend: () -> Unit,
+    onClickSearch: () -> Unit,
+) {
+    Column(modifier = modifier) {
+        Text(
+            modifier = Modifier.padding(vertical = 10.dp),
+            text = stringResource(R.string.dm_top_title),
+            fontSize = 24.sp,
         )
-    } else {
-        ServerContentContainer(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(top = 5.dp),
-            onSearchClick = onSearchClick,
-            serverList = serverList,
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            StableImage(
+                modifier = Modifier
+                    .size(30.dp)
+                    .clip(shape = CircleShape)
+                    .background(color = Gray40)
+                    .padding(8.dp)
+                    .clickable { onClickSearch() },
+                drawableResId = R.drawable.ic_search,
+            )
+            DiscordRoundButton(
+                modifier = Modifier.fillMaxWidth(),
+                textResId = R.string.add_friend,
+                verticalInnerPadding = 8.dp,
+                textColor = Gray80,
+                iconSize = 10.dp,
+                textSize = 12.sp,
+                backgroundColor = Gray60,
+                onClick = onClickAddFriend,
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun DMContentContainer(
+    modifier: Modifier,
+    onClickAddFriend: () -> Unit,
+    onClickSearch: () -> Unit,
+) {
+    val friendList = remember { mutableStateOf(emptyList<String>()) }
+
+    Box(modifier = modifier.fillMaxSize()) {
+        LazyColumn(modifier = Modifier.align(Alignment.TopCenter)) {
+            stickyHeader {
+                DMTopContainer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 15.dp),
+                    onClickAddFriend = onClickAddFriend,
+                    onClickSearch = onClickSearch,
+                )
+            }
+        }
+
+        if (friendList.value.isEmpty()) {
+            EmptyFriendListContainer(
+                modifier = Modifier.align(Alignment.Center),
+                onClickAddFriend = onClickAddFriend,
+            )
+        }
+    }
+}
+
+@Composable
+private fun EmptyFriendListContainer(modifier: Modifier, onClickAddFriend: () -> Unit) {
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        DiscordEmptyTitleContainer(
+            modifier = Modifier.wrapContentSize(),
+            firstTitleResId = R.string.dm_empty_title,
+            secondTitleResId = R.string.dm_sub_title,
+        )
+        DiscordRoundButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp, vertical = 20.dp),
+            textResId = R.string.add_friend,
+            textColor = White,
+            backgroundColor = Blue70,
+            onClick = onClickAddFriend,
         )
     }
 }
@@ -334,7 +433,11 @@ private fun ServerContentContainer(
     LazyColumn(modifier = modifier) {
         stickyHeader {
             Column(modifier = modifier.padding(horizontal = 15.dp)) {
-                TopTitleContainer(modifier = Modifier, title = serverList.serverName, onSearchClick)
+                TopTitleContainer(
+                    modifier = Modifier,
+                    title = serverList.serverName,
+                    onClickSearch = onSearchClick,
+                )
                 DiscordRoundButton(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -415,5 +518,7 @@ private fun ServerItemPreview() {
     HomeScreen(
         onMakeServerClick = {},
         onServerJoinClick = {},
+        onClickInviteFriend = {},
+        onSearchClick = {},
     )
 }

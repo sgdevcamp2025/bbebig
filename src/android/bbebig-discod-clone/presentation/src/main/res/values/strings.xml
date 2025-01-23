@@ -29,5 +29,9 @@
     <string name="search_text">검색하기</string>
     <string name="empty_title">한 단계 나아간 그룹 채팅을 이용할\n준비가 되셨나요?</string>
     <string name="empty_sub_title">정리된 대화, 즉흥적 행아웃, 강력한 사용자\n 지정 기능과 함께 커뮤니티를 구축하세요!</string>
+    <string name="add_friend">친구 추가하기</string>
+    <string name="dm_top_title">메시지</string>
+    <string name="dm_sub_title">친구들 초대해 게임도 하고, 노래도\n 듣고, 다양한 활동을 즐기세요.</string>
+    <string name="dm_empty_title">즐거움이 함께하는 DM</string>
 
 </resources>
