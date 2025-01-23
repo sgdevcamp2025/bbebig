@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import { fn } from '@storybook/test'
 import { useState } from 'react'
 
 import SelectBox from '.'
@@ -31,7 +32,7 @@ export const PrimarySelectBox: Story = {
     label: '옵션 선택',
     options,
     value: null,
-    onChange: () => console.log('onChange')
+    onChange: fn()
   },
   render: (args) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import { fn } from '@storybook/test'
 import { useState } from 'react'
 
 import CheckBox from '.'
@@ -28,9 +29,9 @@ type Story = StoryObj<typeof meta>
 
 export const PrimaryCheckBox: Story = {
   args: {
-    onChange: () => {},
     isChecked: false,
-    label: '체크박스'
+    label: '체크박스',
+    onChange: fn()
   },
   render: (args) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks

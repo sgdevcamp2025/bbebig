@@ -14,15 +14,7 @@ interface Props {
   prefix?: string
 }
 
-function SelectBox<T>({
-  label,
-  options,
-  value,
-  onChange,
-  className,
-  prefix = '',
-  ...props
-}: Props) {
+function SelectBox({ label, options, value, onChange, className, prefix = '', ...props }: Props) {
   const [isOpen, setIsOpen] = useState(false)
   const selectRef = useRef<HTMLDivElement>(null)
   const [search, setSearch] = useState('')
