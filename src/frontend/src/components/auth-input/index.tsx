@@ -9,7 +9,7 @@ type Props = {
 function AuthInput({ label, required, error, ...props }: Props) {
   return (
     <div className=''>
-      <label className='text-white-20 mb-2 block text-[12px] leading-[1.33] bold'>
+      <label className='text-white-20 mb-2 block font-bold text-[12px] leading-[1.33] bold'>
         {label} {required && <span className='text-red-10'>*</span>}
         {error && <span className='text-red-10'>{error}</span>}
       </label>

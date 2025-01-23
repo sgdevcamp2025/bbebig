@@ -1,10 +1,25 @@
-import { Link } from 'react-router-dom'
+import { useCallback, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import AuthInput from '@/components/auth-input'
 
 function LoginPage() {
+  const navigate = useNavigate()
+  const [movePage, setMovePage] = useState(false)
+
+  const handleMoveSignUpPage = useCallback(() => {
+    setMovePage(true)
+
+    setTimeout(() => {
+      navigate('/register')
+    }, 500)
+  }, [navigate])
+
   return (
-    <form className='p-8 bg-brand-10 rounded-lg motion-opacity-in-20 motion-translate-y-in-25 motion-blur-in-5'>
+    <form
+      className={`p-8 bg-brand-10 rounded-lg motion-opacity-in-20 motion-translate-y-in-25 motion-blur-in-5 ${
+        movePage ? 'motion-opacity-out-20 motion-translate-y-out-25 motion-blur-out-100' : ''
+      }`}>
       <div className='flex flex-row w-[720px] gap-8'>
         <div className='flex-1'>
           <div className='flex flex-col text-center'>
@@ -23,16 +38,17 @@ function LoginPage() {
               required
             />
             <button className='text-sm text-text-link mb-5'>비밀번호를 잊으셨나요?</button>
-            <button className='rounded-[3px] w-full h-10 rpim bg-brand text-white-100 mb-1 leading-[24px]'>
+            <button className='rounded-[3px] w-full h-10 bg-brand text-white-100 mb-1 leading-[24px]'>
               로그인
             </button>
             <div className='text-white-20 text-sm'>
               계정이 필요한가요?{' '}
-              <Link
-                to='/register'
+              <button
+                type='button'
+                onClick={handleMoveSignUpPage}
                 className='text-text-link'>
                 가입하기
-              </Link>
+              </button>
             </div>
           </div>
         </div>
