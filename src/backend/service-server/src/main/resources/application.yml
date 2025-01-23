@@ -1,3 +1,11 @@
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
 spring:
   application:
     name: service-server
@@ -9,7 +17,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create # ?? ???? none?? ??
+      ddl-auto: create-drop # 운영 시에 none 변경
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -18,7 +26,7 @@ logging:
   level:
     org:
       springframework:
-        jdbc: DEBUG # ?? ???? WARN?? ??
+        jdbc: DEBUG # 운영 시에 WARN 변경
 
 eureka:
   client:
@@ -28,3 +36,9 @@ eureka:
       defaultZone: http://localhost:8761/eureka
   instance:
     instance-id: ${spring.cloud.client.ip-address}:${spring.application.instance_id:${random.value}}
+
+springdoc:
+  path: /swagger-ui/index.html
+  swagger-ui:
+    tags-sorter: alpha
+    operations-sorter: method
