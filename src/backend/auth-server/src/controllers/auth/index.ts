@@ -94,6 +94,8 @@ function authController() {
 
       const result = await authService.refresh(refreshToken, redisRefreshToken);
 
+      app.redis.set(REDIS_KEY.refreshToken(id), result.refreshToken);
+
       return {
         ...SUCCESS_MESSAGE.refreshToken,
         result,
@@ -103,35 +105,11 @@ function authController() {
     }
   };
 
-  const verifyToken = async (req: FastifyRequest, res: FastifyReply) => {
-    const authorization = req.headers.authorization;
-    if (!authorization) {
-      handleError(res, ERROR_MESSAGE.unauthorized);
-      return;
-    }
-
-    const decode = await verifyAccessToken(authorization);
-
-    if (!decode) {
-      handleError(res, ERROR_MESSAGE.unauthorized);
-      return;
-    }
-
-    return {
-      ...SUCCESS_MESSAGE.accessTokenOk,
-      result: {
-        id: decode.id,
-        email: decode.email,
-      },
-    };
-  };
-
   return {
     login,
     register,
     logout,
     refresh,
-    verifyToken,
   };
 }
 

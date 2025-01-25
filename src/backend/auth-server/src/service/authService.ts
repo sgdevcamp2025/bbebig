@@ -48,11 +48,9 @@ function authService() {
 
       const accessToken = generateAccessToken({
         id: Number(authenticationUser.id),
-        email: authenticationUser.email,
       });
       const refreshToken = generateRefreshToken({
         id: Number(authenticationUser.id),
-        email: authenticationUser.email,
       });
 
       const returnValue = {
@@ -78,13 +76,14 @@ function authService() {
 
       const userInfo = {
         id: authenticationUser.id,
-        email: authenticationUser.email,
       };
 
-      const accessToken = generateAccessToken(userInfo);
+      const newAccessToken = generateAccessToken(userInfo);
+      const newRefreshToken = generateRefreshToken(userInfo);
 
       return {
-        accessToken,
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
       };
     } catch (error) {
       console.error(error);

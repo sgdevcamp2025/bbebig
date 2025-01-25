@@ -49,15 +49,15 @@ const verifyPassword = async (email: string, password: string) => {
   }
 };
 
-const generateAccessToken = (user: { id: number; email: string }) => {
+const generateAccessToken = (user: { id: number }) => {
   const accessToken = jwt.sign({ id: user.id }, SECRET_KEY, {
     expiresIn: ACCESS_TOKEN_EXPIRES,
   });
   return accessToken;
 };
 
-const generateRefreshToken = (user: { id: number; email: string }) => {
-  const refreshToken = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, {
+const generateRefreshToken = (user: { id: number }) => {
+  const refreshToken = jwt.sign({ id: user.id }, SECRET_KEY, {
     expiresIn: REFRESH_TOKEN_EXPIRES,
   });
   return refreshToken;
@@ -65,9 +65,8 @@ const generateRefreshToken = (user: { id: number; email: string }) => {
 
 const verifySignIn = async (req: FastifyRequest, res: FastifyReply) => {
   const id = req.user?.id;
-  const email = req.user?.email;
 
-  if (id && email) {
+  if (id) {
     return;
   } else {
     handleError(res, ERROR_MESSAGE.unauthorized);
