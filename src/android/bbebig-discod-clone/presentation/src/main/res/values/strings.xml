@@ -33,5 +33,11 @@
     <string name="dm_top_title">메시지</string>
     <string name="dm_sub_title">친구들 초대해 게임도 하고, 노래도\n 듣고, 다양한 활동을 즐기세요.</string>
     <string name="dm_empty_title">즐거움이 함께하는 DM</string>
+    <string name="server_join_title">기존 서버에 참가하기</string>
+    <string name="server_join_sub_title">아래에 있는 초대 코드를 입력하여 서버에 참가하세요.</string>
+    <string name="server_join_link_title">초대 링크</string>
+    <string name="server_join_hint">htttps://discord.gg/hTKzmak</string>
+    <string name="server_join_btn_text">초대 링크로 참가하기</string>
+    <string name="server_join_how_input_link">초대는 https://discord.com/hTKzmak, hTKzmak, 또는\nhttps://discord.gg/cool-people와 같은 형태여야 해요.</string>
 
 </resources>
