@@ -12,13 +12,20 @@ import { FastifyCookieOptions } from '@fastify/cookie';
 import routes from './src/routes';
 import cors from '@fastify/cors';
 import fastifyCookie from '@fastify/cookie';
-import { REDIS_HOST, REDIS_PORT, SECRET_KEY, SERVER_PORT } from './src/libs/constants';
+import {
+  ERROR_MESSAGE,
+  REDIS_HOST,
+  REDIS_PORT,
+  SECRET_KEY,
+  SERVER_PORT,
+} from './src/libs/constants';
 import fastifyRedis from '@fastify/redis';
 import { currentAuthPlugin } from './src/plugin/authPlugin';
 import { fastifySwagger } from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 import { z } from 'zod';
 import { hasZodFastifySchemaValidationErrors } from 'fastify-type-provider-zod';
+import { handleError } from 'src/libs/errorHelper';
 
 const app = Fastify({
   logger: true,
@@ -86,27 +93,18 @@ app.register(fastifyCookie, {
 
 app.setErrorHandler((err, req, reply) => {
   if (hasZodFastifySchemaValidationErrors(err)) {
-    return reply.code(400).send({
-      message: 'Response Validation Error',
-      code: 400,
-      result: {
-        issues: err.validation,
-        method: req.method,
-        url: req.url,
+    return handleError(
+      reply,
+      {
+        code: 400,
+        message: err.validation[0].params.issue.message,
       },
-    });
+      err,
+    );
   }
 
   if (isResponseSerializationError(err)) {
-    return reply.code(500).send({
-      message: 'Internal Server Error',
-      code: 500,
-      result: {
-        issues: err.cause.issues,
-        method: err.method,
-        url: err.url,
-      },
-    });
+    return handleError(reply, ERROR_MESSAGE.serverError, err);
   }
 });
 
