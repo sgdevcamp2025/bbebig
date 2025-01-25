@@ -17,7 +17,7 @@ public class ChatMessageDto {
 	private String type;
 	private Long serverId;
 	private Long channelId;
-	private Long channelSequence;
+	private Long channelSeq;
 	private Long sendMemberId;
 	private String content;
 	private List<ChatFileDto> attachedFiles;

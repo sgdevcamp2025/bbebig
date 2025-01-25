@@ -13,4 +13,12 @@ public class ConnectionEventDto {
 	private String type;
 	private String socketSessionId;
 	private String connectedServerIp;
+	private String platform;
+	private String deviceId;
+	private String deviceType;
+	private String tabId;
+	private String currentRoomType;
+	private String currentChannelId;
+	private String currentServerId;
+
 }

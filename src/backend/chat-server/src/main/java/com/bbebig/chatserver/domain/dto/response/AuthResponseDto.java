@@ -11,7 +11,7 @@ public class AuthResponseDto {
 
 	@Data
 	public static class Result {
-		private long memberId;
+		private Long memberId;
 		private String email;
 	}
 
