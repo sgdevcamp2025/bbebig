@@ -1,4 +1,4 @@
-package com.bbebig.chatserver.global.config;
+package com.bbebig.chatserver.global.config.kafka;
 
 import com.bbebig.chatserver.domain.dto.ChatMessageDto;
 import com.bbebig.chatserver.domain.dto.ConnectionEventDto;

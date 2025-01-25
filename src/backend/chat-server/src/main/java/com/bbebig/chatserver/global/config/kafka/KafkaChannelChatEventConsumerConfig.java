@@ -1,4 +1,4 @@
-package com.bbebig.chatserver.global.config;
+package com.bbebig.chatserver.global.config.kafka;
 
 import com.bbebig.chatserver.domain.dto.ChatMessageDto;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import java.util.*;
 @EnableKafka
 @Configuration
 @Slf4j
-public class KafkaChatConsumerConfig {
+public class KafkaChannelChatEventConsumerConfig {
 
 	@Value("${spring.kafka.bootstrap-servers}")
 	private String bootstrapAddress;

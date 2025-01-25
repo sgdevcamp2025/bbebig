@@ -47,11 +47,7 @@ public class StompHandler implements ChannelInterceptor {
 		// 클라이언트(브라우저, 앱)에서 connect() 시 아래 헤더를 전송했다고 가정
 		String platform = Optional.ofNullable(headerAccessor.getFirstNativeHeader("Platform"))
 				.orElse("WEB");
-		String deviceId = Optional.ofNullable(headerAccessor.getFirstNativeHeader("Device-Id"))
-				.orElse("NONE");
 		String deviceType = Optional.ofNullable(headerAccessor.getFirstNativeHeader("Device-Type"))
-				.orElse("NONE");
-		String tabId = Optional.ofNullable(headerAccessor.getFirstNativeHeader("Tab-Id"))
 				.orElse("NONE");
 		String currentRoomType = Optional.ofNullable(headerAccessor.getFirstNativeHeader("Room-Type"))
 				.orElse(null);
@@ -85,8 +81,8 @@ public class StompHandler implements ChannelInterceptor {
 
 			// 세션 매니저에 (sessionId -> memberId) 저장
 			sessionManager.saveConnectSessionInfo(sessionId, memberId);
-			log.info("[Chat] StompHandler: CONNECT - memberId={}, sessionId={}, platform={}, tabId={}, roomType={}, channelId={}, serverId={}",
-					memberId, sessionId, platform, tabId, currentRoomType, currentChannelId, currentServerId);
+			log.info("[Chat] StompHandler: CONNECT - memberId={}, sessionId={}, platform={}, roomType={}, channelId={}, serverId={}",
+					memberId, sessionId, platform, currentRoomType, currentChannelId, currentServerId);
 
 			MemberResponseDto memberInfo = memberClient.getMemberInfo(memberId);
 			if (memberInfo == null || memberInfo.getCode() != 200) {
@@ -100,9 +96,7 @@ public class StompHandler implements ChannelInterceptor {
 					.socketSessionId(sessionId)
 					.connectedServerIp(serverIp + ":" + serverPort)
 					.platform(platform)
-					.deviceId(deviceId)
 					.deviceType(deviceType)
-					.tabId(tabId)
 					.currentRoomType(currentRoomType)
 					.currentChannelId(currentChannelId)
 					.currentServerId(currentServerId)
@@ -117,8 +111,8 @@ public class StompHandler implements ChannelInterceptor {
 
 			// 세션 매니저에서 제거
 			sessionManager.deleteConnectSessionInfo(sessionId, memberId);
-			log.info("[Chat] StompHandler: DISCONNECT - memberId={}, sessionId={}, platform={}, tabId={}, deviceId={}, deviceType={}",
-					memberId, sessionId, platform, tabId, deviceId, deviceType);
+			log.info("[Chat] StompHandler: DISCONNECT - memberId={}, sessionId={}, platform={}, deviceType={}",
+					memberId, sessionId, platform, deviceType);
 
 			ConnectionEventDto connectionEventDto = ConnectionEventDto.builder()
 					.memberId(memberId)
@@ -126,8 +120,6 @@ public class StompHandler implements ChannelInterceptor {
 					.socketSessionId(sessionId)
 					.connectedServerIp(serverIp + ":" + serverPort)
 					.platform(platform)
-					.tabId(tabId)
-					.deviceId(deviceId)
 					.deviceType(deviceType)
 					.build();
 
