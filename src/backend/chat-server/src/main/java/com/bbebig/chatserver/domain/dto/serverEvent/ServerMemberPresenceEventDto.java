@@ -9,5 +9,7 @@ public class ServerMemberPresenceEventDto extends ServerEventDto {
 
 	private Long memberId;
 
-	private String status; // ONLINE, OFFLINE
+	private String actualStatus; // ONLINE, OFFLINE, AWAY, BUSY, INVISIBLE
+
+	private String globalStatus; // ONLINE, OFFLINE, AWAY, BUSY, INVISIBLE
 }

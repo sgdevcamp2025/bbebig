@@ -46,7 +46,7 @@ public class KafkaServerEventConsumerConfig {
 	}
 
 	@Bean
-	public ConcurrentKafkaListenerContainerFactory<String, ServerEventDto> kafkaListenerContainerFactory() {
+	public ConcurrentKafkaListenerContainerFactory<String, ServerEventDto> serverEventListener() {
 		ConcurrentKafkaListenerContainerFactory<String, ServerEventDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(consumerFactory());
 		factory.setConcurrency(1); // 단일 컨슈머 설정

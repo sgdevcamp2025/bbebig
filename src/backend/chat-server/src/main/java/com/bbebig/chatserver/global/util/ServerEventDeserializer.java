@@ -15,7 +15,6 @@ public class ServerEventDeserializer implements Deserializer<ServerEventDto> {
 	@Override
 	public ServerEventDto deserialize(String topic, byte[] data) {
 		try {
-			// JSON 데이터 파싱
 			JsonNode jsonNode = objectMapper.readTree(data);
 
 			// JSON 내 `type` 필드를 기반으로 `ServerEventType` 결정
