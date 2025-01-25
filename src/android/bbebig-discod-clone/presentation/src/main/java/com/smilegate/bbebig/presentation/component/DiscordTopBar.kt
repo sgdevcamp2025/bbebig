@@ -18,8 +18,8 @@ import com.smilegate.devcamp.presentation.R
 @Composable
 fun DiscordTopBar(
     modifier: Modifier,
-    onBackClick: () -> Unit,
     backButtonColor: Color,
+    onBackClick: () -> Unit,
 ) {
     Box(
         modifier = modifier.background(color = Color.Transparent),

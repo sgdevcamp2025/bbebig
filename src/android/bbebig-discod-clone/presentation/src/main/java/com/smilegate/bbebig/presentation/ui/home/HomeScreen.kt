@@ -52,8 +52,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.smilegate.bbebig.presentation.component.DiscordEmptyTitleContainer
 import com.smilegate.bbebig.presentation.component.DiscordRoundButton
+import com.smilegate.bbebig.presentation.component.DiscordTitleContainer
 import com.smilegate.bbebig.presentation.model.SampleChannel
 import com.smilegate.bbebig.presentation.model.SampleServerList
 import com.smilegate.bbebig.presentation.model.ServerType
@@ -170,7 +170,7 @@ private fun EmptyServerContent(
 ) {
     Box(modifier = modifier) {
         Text(modifier = Modifier.align(Alignment.TopStart), fontSize = 24.sp, text = "서버")
-        DiscordEmptyTitleContainer(
+        DiscordTitleContainer(
             modifier = Modifier
                 .align(Alignment.Center)
                 .padding(vertical = 20.dp),
@@ -406,7 +406,7 @@ fun DMContentContainer(
 @Composable
 private fun EmptyFriendListContainer(modifier: Modifier, onClickAddFriend: () -> Unit) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        DiscordEmptyTitleContainer(
+        DiscordTitleContainer(
             modifier = Modifier.wrapContentSize(),
             firstTitleResId = R.string.dm_empty_title,
             secondTitleResId = R.string.dm_sub_title,
