@@ -1,6 +1,11 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useCallback, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 
+import { registerRequestSchema } from '@/apis/schema/auth'
+import { RegisterSchema } from '@/apis/schema/types/auth'
+import authService from '@/apis/service/auth'
 import AuthInput from '@/components/auth-input'
 import CheckBox from '@/components/check-box'
 import CustomButton from '@/components/custom-button'
@@ -11,19 +16,49 @@ function RegisterPage() {
   const [movePage, setMovePage] = useState(false)
   const [checked, setChecked] = useState(false)
 
-  const handleMoveLoginPage = useCallback(
-    (path: string) => {
-      setMovePage(true)
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors }
+  } = useForm<RegisterSchema>({
+    resolver: zodResolver(registerRequestSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+      name: '',
+      nickname: '',
+      birthDate: ''
+    }
+  })
 
-      setTimeout(() => {
-        navigate(path)
-      }, 500)
+  const handleMoveLoginPage = useCallback(() => {
+    setMovePage(true)
+
+    setTimeout(() => {
+      navigate('/login')
+    }, 500)
+  }, [navigate])
+
+  const setBirthdate = useCallback(
+    (value: string) => {
+      setValue('birthDate', value)
     },
-    [navigate]
+    [setValue]
+  )
+
+  const signUp = useCallback(
+    async (data: RegisterSchema) => {
+      await authService.register(data)
+
+      handleMoveLoginPage()
+    },
+    [handleMoveLoginPage]
   )
 
   return (
     <form
+      onSubmit={handleSubmit(signUp)}
       className={`p-8 bg-brand-10 w-[480px] rounded-lg motion-opacity-in-20 motion-translate-y-in-25 motion-blur-in-5 ${
         movePage ? 'motion-opacity-out-20 motion-translate-y-out-25 motion-blur-out-100' : ''
       }`}>
@@ -32,20 +67,33 @@ function RegisterPage() {
         <div className='flex flex-col gap-5 mt-5'>
           <AuthInput
             label='이메일'
+            error={errors.email?.message}
             required
+            {...register('email')}
           />
-          <AuthInput label='별명' />
+          <AuthInput
+            label='별명'
+            error={errors.nickname?.message}
+            {...register('nickname')}
+          />
           <AuthInput
             label='사용자명'
+            error={errors.name?.message}
             required
+            {...register('name')}
           />
           <AuthInput
             label='비밀번호'
+            type='password'
+            error={errors.password?.message}
             required
+            {...register('password')}
           />
           <DateInput
             label='생년월일'
             required
+            error={errors.birthDate?.message}
+            setDate={setBirthdate}
           />
           <div>
             <CheckBox
@@ -58,6 +106,7 @@ function RegisterPage() {
           </div>
           <div>
             <CustomButton
+              type='submit'
               variant='primary'
               size='small'
               width='full'
@@ -70,7 +119,7 @@ function RegisterPage() {
             </div>
             <button
               type='button'
-              onClick={() => handleMoveLoginPage('/login')}
+              onClick={handleMoveLoginPage}
               className='text-sm w-min-[130px] mt-5 w-auto h-4 text-text-link'>
               <span>이미 계정이 있으신가요?</span>
             </button>

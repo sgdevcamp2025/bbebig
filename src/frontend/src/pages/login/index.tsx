@@ -1,12 +1,19 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useCallback, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 
+import { loginRequestSchema } from '@/apis/schema/auth'
+import { LoginSchema } from '@/apis/schema/types/auth'
+import authService from '@/apis/service/auth'
 import AuthInput from '@/components/auth-input'
 import CustomButton from '@/components/custom-button'
-
 function LoginPage() {
   const navigate = useNavigate()
   const [movePage, setMovePage] = useState(false)
+  const { register, handleSubmit } = useForm<LoginSchema>({
+    resolver: zodResolver(loginRequestSchema)
+  })
 
   const handleMoveSignUpPage = useCallback(() => {
     setMovePage(true)
@@ -16,8 +23,21 @@ function LoginPage() {
     }, 500)
   }, [navigate])
 
+  const signIn = useCallback(
+    async (data: LoginSchema) => {
+      await authService.login(data)
+
+      setMovePage(true)
+      setTimeout(() => {
+        navigate('/@me')
+      }, 500)
+    },
+    [navigate]
+  )
+
   return (
     <form
+      onSubmit={handleSubmit(signIn)}
       className={`p-8 bg-brand-10 rounded-lg motion-opacity-in-20 motion-translate-y-in-25 motion-blur-in-5 ${
         movePage ? 'motion-opacity-out-20 motion-translate-y-out-25 motion-blur-out-100' : ''
       }`}>
@@ -32,11 +52,14 @@ function LoginPage() {
               <AuthInput
                 label='이메일 또는 전화번호'
                 required
+                {...register('email')}
               />
             </div>
             <AuthInput
               label='비밀번호'
+              type='password'
               required
+              {...register('password')}
             />
             <button className='text-sm text-text-link mb-5'>비밀번호를 잊으셨나요?</button>
             <CustomButton

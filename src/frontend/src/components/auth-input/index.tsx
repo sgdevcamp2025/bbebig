@@ -1,10 +1,10 @@
-import { ComponentPropsWithoutRef } from 'react'
+import { ComponentProps } from 'react'
 
 type Props = {
   label: string
   required?: boolean
   error?: string
-} & ComponentPropsWithoutRef<'input'>
+} & ComponentProps<'input'>
 
 function AuthInput({ label, required, error, ...props }: Props) {
   return (

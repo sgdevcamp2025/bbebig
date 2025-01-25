@@ -1,10 +1,12 @@
 import axiosInstance from '../config/axios-instance'
 import { LoginSchema, RegisterSchema } from '../schema/types/auth'
 
-function authService() {
+const AUTH_BASE_PATH = '/auth-server'
+
+const authService = () => {
   const login = async (data: LoginSchema) => {
     try {
-      const response = await axiosInstance.post('/auth/login', data)
+      const response = await axiosInstance.post(`${AUTH_BASE_PATH}/login`, data)
       return response.data
     } catch (error) {
       console.error(error)
@@ -14,7 +16,7 @@ function authService() {
 
   const register = async (data: RegisterSchema) => {
     try {
-      const response = await axiosInstance.post('/auth/register', data)
+      const response = await axiosInstance.post(`${AUTH_BASE_PATH}/register`, data)
       return response.data
     } catch (error) {
       console.error(error)
