@@ -11,7 +11,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun DiscordEmptyTitleContainer(modifier: Modifier, firstTitleResId: Int, secondTitleResId: Int) {
+fun DiscordTitleContainer(modifier: Modifier, firstTitleResId: Int, secondTitleResId: Int) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
