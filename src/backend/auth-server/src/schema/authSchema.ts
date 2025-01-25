@@ -15,9 +15,7 @@ const signInSchema = {
       code: z.number(),
       message: z.string(),
       result: z.object({
-        email: z.string(),
         accessToken: z.string(),
-        nickname: z.string(),
       }),
     }),
     400: commonResponseSchema,
