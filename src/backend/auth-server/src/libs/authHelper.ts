@@ -50,7 +50,7 @@ const verifyPassword = async (email: string, password: string) => {
 };
 
 const generateAccessToken = (user: { id: number; email: string }) => {
-  const accessToken = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, {
+  const accessToken = jwt.sign({ id: user.id }, SECRET_KEY, {
     expiresIn: ACCESS_TOKEN_EXPIRES,
   });
   return accessToken;
