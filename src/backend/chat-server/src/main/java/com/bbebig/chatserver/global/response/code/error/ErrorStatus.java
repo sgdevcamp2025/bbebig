@@ -25,7 +25,8 @@ public enum ErrorStatus implements BaseErrorCode {
     CHAT_ROOM_MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "C403", "채팅방에 참여한 멤버가 존재하지 않습니다."),
 
     // 카프카 이벤트 관련
-    INVALID_SERVER_EVENT_TYPE(HttpStatus.SERVICE_UNAVAILABLE, "SK500", "유효하지 않은 서버 이벤트 타입입니다.")
+    INVALID_SERVER_EVENT_TYPE(HttpStatus.SERVICE_UNAVAILABLE, "SK500", "유효하지 않은 서버 이벤트 타입입니다."),
+    INVALID_NOTIFICATION_EVENT_TYPE(HttpStatus.SERVICE_UNAVAILABLE, "SK501", "유효하지 않은 알림 이벤트 타입입니다."),
 
     ;
 
