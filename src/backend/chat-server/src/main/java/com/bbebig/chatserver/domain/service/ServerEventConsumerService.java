@@ -13,8 +13,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ServerEventConsumerService {
 
-	private final ObjectMapper objectMapper;
-
 	private final SimpMessageSendingOperations messagingTemplate;
 
 	@KafkaListener(topics = "${spring.kafka.topic.server-event}", groupId = "${spring.kafka.consumer.group-id.server-event}", containerFactory = "serverEventListener")

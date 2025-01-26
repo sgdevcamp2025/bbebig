@@ -36,7 +36,7 @@ public class MessageProducerService {
 		kafkaTemplateForDmChat.send(dmChatTopic, messageDto);
 	}
 
-	// 세션 이벤트 메시지 전송
+	// 연결 이벤트 메시지 전송
 	public void sendMessageForSession(ConnectionEventDto sessionDto) {
 		kafkaTemplateForSession.send(sessionEventTopic, sessionDto);
 	}

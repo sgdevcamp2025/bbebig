@@ -51,7 +51,7 @@ public class KafkaDmChatEventConsumerConfig {
 
 	// 멀티쓰레드에 대한 동기화 제공하는 컨슈머를 생산하기 위한 Factory
 	@Bean
-	public ConcurrentKafkaListenerContainerFactory<String, ChatMessageDto> kafkaListenerContainerFactory(){
+	public ConcurrentKafkaListenerContainerFactory<String, ChatMessageDto> dmChatListener(){
 		ConcurrentKafkaListenerContainerFactory<String, ChatMessageDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(consumerFactory());
 		factory.setConcurrency(1); // 쓰레드 개수

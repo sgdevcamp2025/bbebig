@@ -12,16 +12,31 @@ import java.util.List;
 public class ChatMessageDto {
 
 	private Long id;
+
 	private ChannelType channelType;
+
 	private MessageType messageType;
+
 	private String type;
+
+	// 채널인 경우
 	private Long serverId;
+
 	private Long channelId;
+
 	private Long channelSeq;
+
 	private Long sendMemberId;
+
 	private String content;
+
 	private List<ChatFileDto> attachedFiles;
+
+	// DM 채널인 경우
+	private List<Long> targetMemberIds;
+
 	private LocalDateTime createdAt;
+
 	private LocalDateTime updatedAt;
 
 	public enum MessageType {
