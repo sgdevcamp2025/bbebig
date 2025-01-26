@@ -39,5 +39,9 @@
     <string name="server_join_hint">htttps://discord.gg/hTKzmak</string>
     <string name="server_join_btn_text">초대 링크로 참가하기</string>
     <string name="server_join_how_input_link">초대는 https://discord.com/hTKzmak, hTKzmak, 또는\nhttps://discord.gg/cool-people와 같은 형태여야 해요.</string>
+    <string name="add_friend_input_title">친구로 추가하고 싶은 사람이 있나요?</string>
+    <string name="add_friend_hint">사용자명으로 입력하기</string>
+    <string name="add_friend_title">사용자명으로 추가</string>
+    <string name="add_friend_request">친구 요청 보내기</string>
 
 </resources>
