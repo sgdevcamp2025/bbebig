@@ -1,5 +1,6 @@
 package com.bbebig.chatserver.global.config.kafka;
 
+import com.bbebig.chatserver.domain.dto.ChannelEventDto;
 import com.bbebig.chatserver.domain.dto.ChatMessageDto;
 import com.bbebig.chatserver.domain.dto.ConnectionEventDto;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -47,12 +48,23 @@ public class KafkaProducerConfig {
 
 	// 세션 이벤트(웹소켓 연결) Producer
 	@Bean
-	public ProducerFactory<String, ConnectionEventDto> producerFactoryForSession(){
+	public ProducerFactory<String, ConnectionEventDto> producerFactoryForConnection(){
 		return new DefaultKafkaProducerFactory<>(producerConfigurations());
 	}
 
 	@Bean
-	public KafkaTemplate<String, ConnectionEventDto> kafkaTemplateForSession(){
-		return new KafkaTemplate<>(producerFactoryForSession());
+	public KafkaTemplate<String, ConnectionEventDto> kafkaTemplateForConnection(){
+		return new KafkaTemplate<>(producerFactoryForConnection());
+	}
+
+	// 채널 이벤트 (채널을 현재 보고있음, 떠남) Producer
+	@Bean
+	public ProducerFactory<String, ChannelEventDto> producerFactoryForChannelEvent(){
+		return new DefaultKafkaProducerFactory<>(producerConfigurations());
+	}
+
+	@Bean
+	public KafkaTemplate<String, ChannelEventDto> kafkaTemplateForChannelEvent(){
+		return new KafkaTemplate<>(producerFactoryForChannelEvent());
 	}
 }

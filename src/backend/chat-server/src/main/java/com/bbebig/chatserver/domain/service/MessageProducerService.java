@@ -24,7 +24,7 @@ public class MessageProducerService {
 
 	private final KafkaTemplate<String, ChatMessageDto> kafkaTemplateForDmChat;
 
-	private final KafkaTemplate<String, ConnectionEventDto> kafkaTemplateForSession;
+	private final KafkaTemplate<String, ConnectionEventDto> kafkaTemplateForConnection;
 
 	// 채널 채팅 메시지 전송
 	public void sendMessageForChannelChat(ChatMessageDto messageDto) {
@@ -38,7 +38,7 @@ public class MessageProducerService {
 
 	// 연결 이벤트 메시지 전송
 	public void sendMessageForSession(ConnectionEventDto sessionDto) {
-		kafkaTemplateForSession.send(sessionEventTopic, sessionDto);
+		kafkaTemplateForConnection.send(sessionEventTopic, sessionDto);
 	}
 
 }
