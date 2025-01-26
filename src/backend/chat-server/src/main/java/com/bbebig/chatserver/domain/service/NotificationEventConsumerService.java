@@ -28,12 +28,13 @@ public class NotificationEventConsumerService {
 				|| notificationEventDto instanceof DmMemberActionEventDto
 				|| notificationEventDto instanceof FriendPresenceEventDto
 				|| notificationEventDto instanceof DmMemberPresenceEventDto) {
+			if (sessionManager.isExistMemberId(notificationEventDto.getMemberId())) {
+				messagingTemplate.convertAndSend("/queue/" + notificationEventDto.getMemberId() + "/notification", notificationEventDto);
+			}
+		} else {
 			log.error("[Chat] NotificationEventConsumerService: 알려지지 않은 알림 이벤트 타입 수신. NotificationEventDto: {}", notificationEventDto);
-			return;
 		}
 
-		if (sessionManager.isExistMemberId(notificationEventDto.getMemberId())) {
-			messagingTemplate.convertAndSend("/queue/" + notificationEventDto.getMemberId() + "/notification", notificationEventDto);
-		}
+
 	}
 }

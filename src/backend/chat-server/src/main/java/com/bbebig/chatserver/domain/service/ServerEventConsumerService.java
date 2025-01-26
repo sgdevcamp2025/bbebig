@@ -1,7 +1,6 @@
 package com.bbebig.chatserver.domain.service;
 
 import com.bbebig.chatserver.domain.dto.serverEvent.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -26,10 +25,10 @@ public class ServerEventConsumerService {
 				|| serverEventDto instanceof ServerCategoryEventDto
 				|| serverEventDto instanceof ServerMemberPresenceEventDto
 				|| serverEventDto instanceof ServerMemberActionEventDto) {
+			messagingTemplate.convertAndSend("/topic/server/" + serverEventDto.getServerId(), serverEventDto);
+		} else {
 			log.error("[Chat] ServerEventConsumerService: 알려지지 않은 서버 이벤트 타입 수신. ServerEventDto: {}", serverEventDto);
-			return;
 		}
-		messagingTemplate.convertAndSend("/topic/server/" + serverEventDto.getServerId(), serverEventDto);
 
 	}
 }
