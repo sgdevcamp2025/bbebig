@@ -48,5 +48,6 @@
     <string name="create_server_btn">서버 만들기</string>
     <string name="create_server_input_title">서버 이름</string>
     <string name="create_server_hint">사용할 서버 이름을 입력해주세요</string>
+    <string name="msg_send_hint">메시지를 입력해주세요</string>
 
 </resources>
