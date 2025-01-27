@@ -1,11 +1,11 @@
 import { FastifyInstance, FastifyReply } from 'fastify';
 import { FastifyRequest } from 'fastify';
-import { generateHash, verifyAccessToken } from 'src/libs/authHelper';
+import { generateHash } from 'src/libs/authHelper';
 import { ERROR_MESSAGE, REDIS_KEY } from 'src/libs/constants';
 import { SUCCESS_MESSAGE } from 'src/libs/constants';
 import { handleError } from 'src/libs/errorHelper';
 import authService from 'src/service/authService';
-
+import handleSuccess from 'src/libs/responseHelper';
 function authController() {
   const login = async (req: FastifyRequest, res: FastifyReply, app: FastifyInstance) => {
     const { email, password } = req.body as { email: string; password: string };
@@ -21,16 +21,15 @@ function authController() {
     });
 
     const result = {
-      email: values.email,
       accessToken: values.accessToken,
     };
 
     app.redis.set(REDIS_KEY.refreshToken(values.id), values.refreshToken);
 
-    return {
+    handleSuccess(res, {
       ...SUCCESS_MESSAGE.loginOk,
       result,
-    };
+    });
   };
 
   const register = async (req: FastifyRequest, res: FastifyReply) => {
@@ -47,7 +46,7 @@ function authController() {
 
       await authService.register(email, hashedPassword, name, nickname, new Date(birthDate));
 
-      return SUCCESS_MESSAGE.registerOk;
+      handleSuccess(res, SUCCESS_MESSAGE.registerOk);
     } catch (error) {
       handleError(res, ERROR_MESSAGE.duplicateEmail, error);
     }
@@ -69,7 +68,7 @@ function authController() {
         path: '/',
       });
 
-      return SUCCESS_MESSAGE.logoutOk;
+      handleSuccess(res, SUCCESS_MESSAGE.logoutOk);
     } catch (error) {
       handleError(res, ERROR_MESSAGE.badRequest, error);
     }
@@ -94,36 +93,15 @@ function authController() {
 
       const result = await authService.refresh(refreshToken, redisRefreshToken);
 
-      return {
+      app.redis.set(REDIS_KEY.refreshToken(id), result.refreshToken);
+
+      handleSuccess(res, {
         ...SUCCESS_MESSAGE.refreshToken,
         result,
-      };
+      });
     } catch (error) {
       handleError(res, ERROR_MESSAGE.unauthorized, error);
     }
-  };
-
-  const verifyToken = async (req: FastifyRequest, res: FastifyReply) => {
-    const authorization = req.headers.authorization;
-    if (!authorization) {
-      handleError(res, ERROR_MESSAGE.unauthorized);
-      return;
-    }
-
-    const decode = await verifyAccessToken(authorization);
-
-    if (!decode) {
-      handleError(res, ERROR_MESSAGE.unauthorized);
-      return;
-    }
-
-    return {
-      ...SUCCESS_MESSAGE.accessTokenOk,
-      result: {
-        id: decode.id,
-        email: decode.email,
-      },
-    };
   };
 
   return {
@@ -131,7 +109,6 @@ function authController() {
     register,
     logout,
     refresh,
-    verifyToken,
   };
 }
 

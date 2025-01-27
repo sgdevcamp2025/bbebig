@@ -49,13 +49,6 @@ const authRoute = async (app: FastifyInstance) => {
     preHandler: [verifySignIn],
     handler: instanceWrapper(authController.refresh),
   });
-
-  app.withTypeProvider<ZodTypeProvider>().route({
-    method: 'POST',
-    url: '/verify-token',
-    schema: verifyTokenSchema,
-    handler: authController.verifyToken,
-  });
 };
 
 export default authRoute;
