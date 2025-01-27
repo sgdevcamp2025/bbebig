@@ -54,6 +54,14 @@ const ERROR_MESSAGE = {
     code: 412,
     message: 'Precondition Failed',
   },
+  verifyTokenFailed: {
+    code: 401,
+    message: 'Verify Token Failed',
+    result: {
+      memberId: -1,
+      valid: false,
+    },
+  },
   serverError: {
     code: 500,
     message: 'Server Error',
@@ -80,6 +88,10 @@ const SUCCESS_MESSAGE = {
   registerOk: {
     code: 201,
     message: 'register success!',
+  },
+  verifyTokenOk: {
+    code: 200,
+    message: 'token verify success!',
   },
 } as const;
 

@@ -99,6 +99,23 @@ const verifyEmailSchema = {
   },
 };
 
+const tokenDecodeSchema = {
+  tags: ['auth'],
+  description: '토큰을 복호화 합니다.',
+  headers,
+  response: {
+    200: z.object({
+      code: z.number(),
+      message: z.string(),
+      result: z.object({
+        memberId: z.number(),
+        valid: z.boolean(),
+      }),
+    }),
+    400: commonResponseSchema,
+  },
+};
+
 export {
   logoutSchema,
   refreshTokenSchema,
@@ -106,4 +123,5 @@ export {
   registerSchema,
   signInSchema,
   verifyEmailSchema,
+  tokenDecodeSchema,
 };

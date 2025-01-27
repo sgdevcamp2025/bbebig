@@ -5,6 +5,7 @@ import {
   refreshTokenSchema,
   registerSchema,
   signInSchema,
+  tokenDecodeSchema,
   verifyEmailSchema,
   verifyTokenSchema,
 } from '../../schema/authSchema';
@@ -48,6 +49,13 @@ const authRoute = async (app: FastifyInstance) => {
     schema: refreshTokenSchema,
     preHandler: [verifySignIn],
     handler: instanceWrapper(authController.refresh),
+  });
+
+  app.withTypeProvider<ZodTypeProvider>().route({
+    method: 'GET',
+    url: '/verify-token',
+    schema: tokenDecodeSchema,
+    handler: instanceWrapper(authController.verifyToken),
   });
 };
 

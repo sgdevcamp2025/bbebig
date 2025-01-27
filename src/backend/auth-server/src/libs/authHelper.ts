@@ -97,7 +97,27 @@ const verifyAccessToken = async (accessToken: string) => {
     const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
     return decoded;
   } catch (error) {
-    throw error;
+    throw ERROR_MESSAGE.unauthorized;
+  }
+};
+
+const shortAccessTokenDecode = async (accessToken: string) => {
+  try {
+    const token = accessToken.split(' ')[1];
+    const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
+    return Boolean(decoded);
+  } catch (error) {
+    throw ERROR_MESSAGE.unauthorized;
+  }
+};
+
+const accessTokenDecode = async (accessToken: string) => {
+  try {
+    const token = accessToken.split(' ')[1];
+    const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
+    return decoded;
+  } catch (error) {
+    throw ERROR_MESSAGE.unauthorized;
   }
 };
 
@@ -111,4 +131,6 @@ export {
   verifyAccessToken,
   shortVerifyRefreshToken,
   verifySignIn,
+  accessTokenDecode,
+  shortAccessTokenDecode,
 };

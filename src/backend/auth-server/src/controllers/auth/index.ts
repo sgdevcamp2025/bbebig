@@ -104,11 +104,31 @@ function authController() {
     }
   };
 
+  const verifyToken = async (req: FastifyRequest, res: FastifyReply) => {
+    const accessToken = req.headers.authorization;
+    if (!accessToken) {
+      handleError(res, ERROR_MESSAGE.unauthorized);
+      return;
+    }
+
+    try {
+      const result = await authService.verifyToken(accessToken);
+
+      handleSuccess(res, {
+        ...SUCCESS_MESSAGE.verifyTokenOk,
+        result,
+      });
+    } catch (error) {
+      handleError(res, ERROR_MESSAGE.verifyTokenFailed, error);
+    }
+  };
+
   return {
     login,
     register,
     logout,
     refresh,
+    verifyToken,
   };
 }
 

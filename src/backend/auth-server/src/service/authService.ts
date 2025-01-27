@@ -1,6 +1,8 @@
 import {
+  accessTokenDecode,
   generateAccessToken,
   generateRefreshToken,
+  shortAccessTokenDecode,
   verifyPassword,
   verifyRefreshToken,
 } from '../libs/authHelper';
@@ -91,10 +93,30 @@ function authService() {
     }
   };
 
+  const verifyToken = async (accessToken: string) => {
+    try {
+      const isTokenValid = await shortAccessTokenDecode(accessToken);
+      if (!isTokenValid) throw ERROR_MESSAGE.verifyTokenFailed;
+
+      const authenticationUser = await accessTokenDecode(accessToken);
+
+      const userInfo = {
+        memberId: authenticationUser.id,
+        valid: true,
+      };
+
+      return userInfo;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
   return {
     register,
     loginWithPassword,
     refresh,
+    verifyToken,
   };
 }
 
