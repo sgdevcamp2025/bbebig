@@ -40,11 +40,11 @@ const config: Pick<Config, 'presets' | 'content' | 'theme' | 'plugins'> = {
         'gray-70': '#404248'
       },
       backgroundImage: {
-        'auth-background': "url('./src/assets/image/auth/background.svg')",
-        'landing-background': "url('./src/assets/image/homepage/background-art.png')",
-        'landing-hero-background': "url('./src/assets/image/homepage/hero-character.webp')",
-        'landing-shine-1': "url('./src/assets/image/homepage/background-shine-1.webp')",
-        'landing-shine-2': "url('./src/assets/image/homepage/background-shine-2.webp')",
+        'auth-background': "url('/image/auth/background.svg')",
+        'landing-background': "url('/image/homepage/background-art.png')",
+        'landing-hero-background': "url('/image/homepage/hero-character.webp')",
+        'landing-shine-1': "url('/image/homepage/background-shine-1.webp')",
+        'landing-shine-2': "url('/image/homepage/background-shine-2.webp')",
         'video-banner-background': 'linear-gradient(135deg,#fff6,#ffffff12)',
         'bottom-border-background':
           'linear-gradient(135deg, #ffffff4d, #ffffff0d), linear-gradient(261deg, #2e1a8e, #0e0e5c)'
