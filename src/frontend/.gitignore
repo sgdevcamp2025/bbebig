@@ -37,3 +37,7 @@ dist-ssr
 
 # tsbuildinfo
 tsconfig.tsbuildinfo
+
+.env
+.env.production
+.env.development
