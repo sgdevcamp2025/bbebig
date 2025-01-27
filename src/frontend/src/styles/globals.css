@@ -1,9 +1,25 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 
 * {
   box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: #1a1c1e #2a2d31;
+}
+
+/* Chrome, Edge, Safari */
+*::-webkit-scrollbar {
+  width: 2px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #2a2d31;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #2a2d31;
+  border-radius: 2px;
 }
 
 @layer base {

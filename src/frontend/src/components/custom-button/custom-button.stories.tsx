@@ -1,12 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
-import Button from '.'
 import CustomButton from '.'
-import { CustomButtonVariants } from './variants'
 
 const meta = {
-  title: 'Component/Button',
-  component: Button,
+  title: 'Component/CustomButton',
+  component: CustomButton,
   parameters: {
     layout: 'centered'
   },
@@ -14,7 +12,15 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: Object.values(CustomButtonVariants)
+      options: ['primary', 'secondary']
+    },
+    size: {
+      control: 'select',
+      options: ['small', 'medium', 'large']
+    },
+    width: {
+      control: 'select',
+      options: ['full', 'half']
     }
   }
 } satisfies Meta<typeof CustomButton>
@@ -22,9 +28,16 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const GrayBadge: Story = {
+export const PrimaryButton: Story = {
   args: {
-    variant: CustomButtonVariants.primary,
-    children: 'click me!'
-  }
+    variant: 'primary',
+    children: 'click me!',
+    size: 'small',
+    width: 'full'
+  },
+  render: (args) => (
+    <div className='w-[480px]'>
+      <CustomButton {...args} />
+    </div>
+  )
 }

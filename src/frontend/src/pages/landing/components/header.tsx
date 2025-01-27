@@ -1,5 +1,6 @@
-const discordLogo =
-  'https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/6257d23c5fb25be7e0b6e220_Open%20Source%20Projects%20_%20Discord-7.svg'
+import { Link } from 'react-router-dom'
+
+import { discordLogo } from '@/libs/discordAssetsPath'
 
 const navigation = [
   {
@@ -65,9 +66,11 @@ function Header({ isLogin }: Props) {
             ))}
           </ul>
           <div className='flex h-[38px] items-center rounded-full bg-white'>
-            <a className='px-4 py-[7px] text-[14px] font-semibold leading-6 text-black transition-colors hover:text-brand'>
+            <Link
+              to={isLogin ? '/discord' : '/login'}
+              className='px-4 py-[7px] text-[14px] font-semibold leading-6 text-black transition-colors hover:text-brand'>
               {isLogin ? 'Discord 열기' : '로그인'}
-            </a>
+            </Link>
           </div>
         </div>
       </header>
