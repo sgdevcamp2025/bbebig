@@ -11,3 +11,13 @@ eureka:
 spring:
   application:
     name: apigateway-server
+
+eas:
+  passport:
+    secret: ${PASSPORT_SECRET_KEY}
+    expiration: ${PASSPORT_EXPIRATION}
+    header: ${PASSPORT_HEADER}
+
+auth:
+  server:
+    url: ${AUTH_SERVER_URL}
