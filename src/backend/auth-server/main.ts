@@ -72,7 +72,7 @@ app
   .register(fastifyRedis, {
     host: REDIS_HOST,
     port: Number(REDIS_PORT),
-    closeClient: false,
+    closeClient: true,
     connectTimeout: 10000,
   })
   .ready((err) => {

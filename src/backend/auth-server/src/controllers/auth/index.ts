@@ -6,8 +6,9 @@ import { SUCCESS_MESSAGE } from 'src/libs/constants';
 import { handleError } from 'src/libs/errorHelper';
 import authService from 'src/service/authService';
 import handleSuccess from 'src/libs/responseHelper';
+import redis from 'src/libs/redis';
 function authController() {
-  const login = async (req: FastifyRequest, res: FastifyReply, app: FastifyInstance) => {
+  const login = async (req: FastifyRequest, res: FastifyReply) => {
     try {
       const { email, password } = req.body as { email: string; password: string };
 
@@ -35,7 +36,7 @@ function authController() {
         accessToken: values.accessToken,
       };
 
-      app.redis.set(REDIS_KEY.refreshToken(values.id), values.refreshToken);
+      await redis.set(REDIS_KEY.refreshToken(values.id), values.refreshToken);
 
       handleSuccess(
         res,
@@ -46,7 +47,24 @@ function authController() {
         200,
       );
     } catch (error) {
-      handleError(res, ERROR_MESSAGE.notFound, error);
+      console.error(error);
+      if (error.code === ERROR_MESSAGE.notFound.code) {
+        handleError(res, ERROR_MESSAGE.notFound, error);
+      }
+
+      if (error.code === ERROR_MESSAGE.passwordNotMatch.code) {
+        handleError(res, ERROR_MESSAGE.passwordNotMatch, error);
+      }
+
+      if (error.code === ERROR_MESSAGE.badRequest.code) {
+        handleError(res, ERROR_MESSAGE.badRequest, error);
+      }
+
+      if (error.code === ERROR_MESSAGE.tooManyRequests.code) {
+        handleError(res, ERROR_MESSAGE.tooManyRequests, error);
+      }
+
+      handleError(res, ERROR_MESSAGE.serverError, error);
     }
   };
 
@@ -70,7 +88,7 @@ function authController() {
     }
   };
 
-  const logout = async (req: FastifyRequest, res: FastifyReply, app: FastifyInstance) => {
+  const logout = async (req: FastifyRequest, res: FastifyReply) => {
     const id = req.user?.id;
     const refreshToken = req.cookies.refresh_token;
 
@@ -80,7 +98,7 @@ function authController() {
     }
 
     try {
-      await app.redis.del(REDIS_KEY.refreshToken(id));
+      await redis.del(REDIS_KEY.refreshToken(id));
 
       res.clearCookie('refresh_token', {
         path: '/',
@@ -92,7 +110,7 @@ function authController() {
     }
   };
 
-  const refresh = async (req: FastifyRequest, res: FastifyReply, app: FastifyInstance) => {
+  const refresh = async (req: FastifyRequest, res: FastifyReply) => {
     const id = req.user?.id;
     const refreshToken = req.cookies.refresh_token;
 
@@ -102,7 +120,7 @@ function authController() {
     }
 
     try {
-      const redisRefreshToken = await app.redis.get(REDIS_KEY.refreshToken(id));
+      const redisRefreshToken = await redis.get(REDIS_KEY.refreshToken(id));
 
       if (!redisRefreshToken) {
         handleError(res, ERROR_MESSAGE.unauthorized);
@@ -111,7 +129,7 @@ function authController() {
 
       const result = await authService.refresh(refreshToken, redisRefreshToken);
 
-      app.redis.set(REDIS_KEY.refreshToken(id), result.refreshToken);
+      await redis.set(REDIS_KEY.refreshToken(id), result.refreshToken);
 
       handleSuccess(res, {
         ...SUCCESS_MESSAGE.refreshToken,

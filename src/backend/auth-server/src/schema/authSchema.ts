@@ -19,8 +19,14 @@ const signInSchema = {
       }),
     }),
     400: z.object({
-      code: z.enum(['AUTH_001', 'AUTH_003', 'AUTH_009', 'AUTH_012']),
-      message: z.enum(['Bad Request', 'Password Not Match', 'Not Found', 'Server Error']),
+      code: z.enum(['AUTH_001', 'AUTH_003', 'AUTH_009', 'AUTH_012', 'AUTH_013']),
+      message: z.enum([
+        'Bad Request',
+        'Password Not Match',
+        'Not Found',
+        'Server Error',
+        'Too Many Requests',
+      ]),
     }),
   },
 };

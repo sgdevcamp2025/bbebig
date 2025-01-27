@@ -5,11 +5,14 @@ import {
   SECRET_KEY,
   ROUND,
   ERROR_MESSAGE,
+  REDIS_KEY,
 } from './constants';
 import bcrypt from 'bcrypt';
 import db from './db';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { handleError } from './errorHelper';
+import { checkRateLimit } from './rateLimit';
+import redis from './redis';
 
 const generateHash = (pwd: string) => {
   return bcrypt.hashSync(pwd, ROUND);
@@ -31,6 +34,10 @@ const duplicateVerifyUser = async (email: string) => {
 
 const verifyPassword = async (email: string, password: string) => {
   try {
+    const identifier = email;
+
+    await checkRateLimit(identifier);
+
     const encryptedPwd = await db.member.findUnique({
       where: {
         email,
@@ -44,6 +51,9 @@ const verifyPassword = async (email: string, password: string) => {
 
     const isPasswordCorrect = bcrypt.compareSync(password, encryptedPwd.password);
     if (!isPasswordCorrect) throw ERROR_MESSAGE.passwordNotMatch;
+
+    await redis.del(REDIS_KEY.rateLimit(identifier));
+    await redis.del(REDIS_KEY.blocked(identifier));
 
     return true;
   } catch (error) {

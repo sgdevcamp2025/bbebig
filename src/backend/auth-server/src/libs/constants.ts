@@ -64,6 +64,10 @@ const ERROR_MESSAGE = {
     code: `${AUTH_PREFIX}012`,
     message: 'Server Error',
   },
+  tooManyRequests: {
+    code: `${AUTH_PREFIX}013`,
+    message: 'Too Many Requests',
+  },
 } as const;
 
 const SUCCESS_MESSAGE = {
@@ -102,6 +106,8 @@ const SUCCESS_MESSAGE = {
 } as const;
 
 const REDIS_KEY = {
+  rateLimit: (identifier: string) => `rateLimit:${identifier}`,
+  blocked: (identifier: string) => `blocked:${identifier}`,
   refreshToken: (userId: number) => `refreshToken:${userId}`,
 } as const;
 
