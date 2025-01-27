@@ -14,83 +14,79 @@ const REDIS_IMAGE = process.env.REDIS_IMAGE;
 const REDIS_VOLUME = process.env.REDIS_VOLUME;
 
 const ERROR_MESSAGE = {
+  badRequest: {
+    code: 'AUTH_001',
+    message: 'Bad Request',
+  },
   duplicateEmail: {
-    code: 400,
+    code: 'AUTH_002',
     message: 'Duplicate Email',
   },
   passwordNotMatch: {
-    code: 400,
+    code: 'AUTH_003',
     message: 'Password Not Match',
   },
-  badRequest: {
-    code: 400,
-    message: 'Bad Request',
-  },
   unauthorized: {
-    code: 401,
+    code: 'AUTH_004',
     message: 'Unauthorized',
   },
   invalidToken: {
-    code: 401,
+    code: 'AUTH_005',
     message: 'Invalid token',
   },
   notExpired: {
-    code: 401,
+    code: 'AUTH_006',
     message: 'Token Not Expired',
   },
   forbidden: {
-    code: 403,
+    code: 'AUTH_007',
     message: 'Forbidden',
   },
   alreadySignup: {
-    code: 403,
+    code: 'AUTH_008',
     message: 'Already Sign Up',
   },
   notFound: {
-    code: 404,
+    code: 'AUTH_009',
     message: 'Not Found',
   },
   preconditionFailed: {
-    code: 412,
+    code: 'AUTH_010',
     message: 'Precondition Failed',
   },
   verifyTokenFailed: {
-    code: 401,
+    code: 'AUTH_011',
     message: 'Verify Token Failed',
-    result: {
-      memberId: -1,
-      valid: false,
-    },
   },
   serverError: {
-    code: 500,
+    code: 'AUTH_012',
     message: 'Server Error',
   },
 } as const;
 
 const SUCCESS_MESSAGE = {
   loginOk: {
-    code: 200,
+    code: 'AUTH_100',
     message: 'Login Ok!',
   },
   logoutOk: {
-    code: 205,
+    code: 'AUTH_101',
     message: 'Logout success!',
   },
   refreshToken: {
-    code: 201,
+    code: 'AUTH_102',
     message: 'refresh success',
   },
   accessTokenOk: {
-    code: 200,
+    code: 'AUTH_103',
     message: 'access token ok',
   },
   registerOk: {
-    code: 201,
+    code: 'AUTH_104',
     message: 'register success!',
   },
   verifyTokenOk: {
-    code: 200,
+    code: 'AUTH_105',
     message: 'token verify success!',
   },
 } as const;

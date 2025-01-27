@@ -96,7 +96,7 @@ app.setErrorHandler((err, req, reply) => {
     return handleError(
       reply,
       {
-        code: 400,
+        ...ERROR_MESSAGE.badRequest,
         message: err.validation[0].params.issue.message,
       },
       err,

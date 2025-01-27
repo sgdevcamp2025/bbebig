@@ -12,7 +12,7 @@ const signInSchema = {
   }),
   response: {
     200: z.object({
-      code: z.number(),
+      code: z.string(),
       message: z.string(),
       result: z.object({
         accessToken: z.string(),
@@ -105,14 +105,21 @@ const tokenDecodeSchema = {
   headers,
   response: {
     200: z.object({
-      code: z.number(),
+      code: z.string(),
       message: z.string(),
       result: z.object({
         memberId: z.number(),
         valid: z.boolean(),
       }),
     }),
-    400: commonResponseSchema,
+    400: z.object({
+      code: z.string(),
+      message: z.string(),
+      result: z.object({
+        memberId: z.number().default(-1),
+        valid: z.boolean().default(false),
+      }),
+    }),
   },
 };
 
