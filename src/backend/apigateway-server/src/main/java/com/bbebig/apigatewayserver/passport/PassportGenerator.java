@@ -25,7 +25,7 @@ public class PassportGenerator {
         // Protobuf 객체 생성
         Passport passport = Passport.newBuilder()
                 .setPassportId(UUID.randomUUID().toString())
-                .setUserId(userId)
+                .setMemberId(userId)
                 .setIssuedAt(now)
                 .setExpiresAt(expire)
                 .setAuthLevel(authLevel)
