@@ -57,3 +57,25 @@ fun Modifier.noRippleSingleClick(
         }
     }
 }
+
+fun Modifier.rippleClick(
+    onClick: () -> Unit,
+): Modifier = composed {
+    clickable(
+        indication = rememberRipple(),
+        interactionSource = remember { MutableInteractionSource() },
+    ) {
+        onClick()
+    }
+}
+
+fun Modifier.noRippleClick(
+    onClick: () -> Unit,
+): Modifier = composed {
+    clickable(
+        indication = null,
+        interactionSource = remember { MutableInteractionSource() },
+    ) {
+        onClick()
+    }
+}
