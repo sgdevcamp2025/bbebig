@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.smilegate.bbebig.presentation.theme.Gray25
@@ -31,13 +32,15 @@ fun DiscordTextField(
     modifier: Modifier,
     textFieldState: TextFieldState,
     textHint: String = "",
+    isSingLine: Boolean = true,
     keyboardType: KeyboardType = KeyboardType.Text,
+    radius: Dp = 8.dp,
     isPasswordType: Boolean = false,
 ) {
     BasicTextField(
         modifier = modifier,
         state = textFieldState,
-        lineLimits = TextFieldLineLimits.SingleLine,
+        lineLimits = if (isSingLine) TextFieldLineLimits.SingleLine else TextFieldLineLimits.MultiLine(maxHeightInLines = 5),
         textStyle = TextStyle.Default.copy(
             color = Gray90,
             fontSize = 16.sp,
@@ -51,7 +54,7 @@ fun DiscordTextField(
         decorator = { innerTextField ->
             Box(
                 modifier = modifier
-                    .clip(RoundedCornerShape(8.dp))
+                    .clip(RoundedCornerShape(radius))
                     .background(Gray25)
                     .padding(vertical = 15.dp, horizontal = 20.dp),
             ) {
