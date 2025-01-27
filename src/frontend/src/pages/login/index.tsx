@@ -34,7 +34,7 @@ function LoginPage() {
       setMovePage(true)
 
       setTimeout(() => {
-        navigate('/@me')
+        navigate('/channels/@me', { replace: true })
       }, 500)
     },
     [navigate, setUserLogin]
