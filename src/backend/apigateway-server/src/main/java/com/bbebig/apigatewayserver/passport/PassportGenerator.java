@@ -7,13 +7,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
- * Passport를 발급
+ * Passport를 발급하는 서비스 클래스
  */
 @Service
 public class PassportGenerator {
 
     @Value("${eas.passport.expiration}")
-    private static long EXPIRE_SECONDS;
+    private long EXPIRE_SECONDS;
 
     /**
      * 사용자 정보를 받아 Passport 생성 + HMAC 서명 + Base64

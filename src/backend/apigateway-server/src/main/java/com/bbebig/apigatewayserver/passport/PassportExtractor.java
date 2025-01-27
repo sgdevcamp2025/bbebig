@@ -2,16 +2,16 @@ package com.bbebig.apigatewayserver.passport;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 /**
- * Passport를 헤더에서 추출
+ * Passport를 헤더에서 추출하는 서비스 클래스
  */
-@Component
+@Service
 public class PassportExtractor {
 
     @Value("${eas.passport.header}")
-    private static String PASSPORT_HEADER;
+    private String PASSPORT_HEADER;
 
     /**
      * WebFlux 방식, 헤더에서 Passport를 추출

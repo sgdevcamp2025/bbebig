@@ -9,7 +9,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
 
 /**
- * HMAC 서명 유틸
+ * HMAC 서명 유틸리티 클래스
  */
 public class HmacUtil {
 
@@ -17,6 +17,7 @@ public class HmacUtil {
     private static String SECRET_KEY;
 
     private static final String HMAC_SHA256 = "HmacSHA256";
+    private static final int HMAC_LENGTH = 32;
 
     /**
      * 원본(직렬화된 Passport) -> HMAC 계산 -> [원본 + HMAC] -> Base64 인코딩
@@ -24,8 +25,9 @@ public class HmacUtil {
     public static String signPassport(byte[] rawData) {
         try {
             byte[] hmac = computeHmacSHA256(rawData);
-
             byte[] combined = new byte[rawData.length + hmac.length];
+
+            // 데이터 결합
             System.arraycopy(rawData, 0, combined, 0, rawData.length);
             System.arraycopy(hmac, 0, combined, rawData.length, hmac.length);
 
@@ -41,16 +43,20 @@ public class HmacUtil {
     public static byte[] validatePassport(String base64Passport) {
         try {
             byte[] combined = Base64.getDecoder().decode(base64Passport);
-            if (combined.length < 32) {
+
+            if (combined.length < HMAC_LENGTH) {
                 throw new ErrorHandler(ErrorStatus.PASSPORT_DATA_TOO_SHORT);
             }
-            int dataLength = combined.length - 32;
+
+            int dataLength = combined.length - HMAC_LENGTH;
             byte[] rawData = new byte[dataLength];
-            byte[] hmac = new byte[32];
+            byte[] hmac = new byte[HMAC_LENGTH];
 
+            // 데이터와 HMAC 분리
             System.arraycopy(combined, 0, rawData, 0, dataLength);
-            System.arraycopy(combined, dataLength, hmac, 0, 32);
+            System.arraycopy(combined, dataLength, hmac, 0, HMAC_LENGTH);
 
+            // HMAC 검증
             byte[] expected = computeHmacSHA256(rawData);
             if (!MessageDigest.isEqual(expected, hmac)) {
                 throw new ErrorHandler(ErrorStatus.PASSPORT_HMAC_MISMATCH);

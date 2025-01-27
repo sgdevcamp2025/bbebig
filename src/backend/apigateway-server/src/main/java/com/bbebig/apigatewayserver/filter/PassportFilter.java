@@ -16,8 +16,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-// Spring Cloud Gateway에서 모든 요청을 가로채서 Passport를 확인하거나,
-// 없으면 Auth 서버로 JWT 검증 후 Passport 발급
+/**
+ * Spring Cloud Gateway에서 모든 요청을 가로채 Passport를 확인하거나,
+ * 없으면 Auth 서버로 JWT 검증 후 Passport 발급.
+ */
 @Configuration
 @RequiredArgsConstructor
 public class PassportFilter {
@@ -33,24 +35,24 @@ public class PassportFilter {
     private String authServerUrl;
 
     @Value("${eas.passport.header}")
-    private static String PASSPORT_HEADER;
+    private String PASSPORT_HEADER;
 
     @Bean
     public GlobalFilter passportFilter() {
         return (exchange, chain) -> {
-
             String xPassport = passportExtractor.extractPassport(exchange.getRequest().getHeaders());
 
             if (xPassport != null && !xPassport.isEmpty()) {
-                // CASE 1) 이미 Passport가 있을 경우 검증
                 return handleExistingPassport(exchange, chain, xPassport);
             } else {
-                // CASE 2) Passport가 없으면 -> JWT 체크
                 return handleMissingPassport(exchange, chain);
             }
         };
     }
 
+    /**
+     * CASE 1: 이미 Passport가 있을 경우 검증
+     */
     private Mono<Void> handleExistingPassport(ServerWebExchange exchange, GatewayFilterChain chain, String xPassport) {
         try {
             passportValidator.validatePassport(xPassport);
@@ -60,16 +62,22 @@ public class PassportFilter {
         }
     }
 
+    /**
+     * CASE 2: Passport가 없을 경우 JWT 확인 후 Passport 발급
+     */
     private Mono<Void> handleMissingPassport(ServerWebExchange exchange, GatewayFilterChain chain) {
         String authHeader = exchange.getResponse().getHeaders().getFirst(AUTHORIZATION_HEADER);
         if (authHeader == null || !authHeader.startsWith(BEARER_PREFIX)) {
             return respondWithUnauthorized(exchange);
         }
-        String jwt = authHeader.substring(7);
-        return validateJwtAndGeneratedPassport(exchange, chain, jwt);
+        String jwt = authHeader.substring(BEARER_PREFIX.length());
+        return validateJwtAndGeneratePassport(exchange, chain, jwt);
     }
 
-    private Mono<Void> validateJwtAndGeneratedPassport(ServerWebExchange exchange, GatewayFilterChain chain, String jwt) {
+    /**
+     * Auth 서버로 JWT 검증 및 Passport 발급
+     */
+    private Mono<Void> validateJwtAndGeneratePassport(ServerWebExchange exchange, GatewayFilterChain chain, String jwt) {
         WebClient webClient = WebClient.create();
         return webClient.get()
                 .uri(authServerUrl + "/auth-server/verify-token")
@@ -82,21 +90,24 @@ public class PassportFilter {
                         return respondWithUnauthorized(exchange);
                     }
 
-                    // 유효한 토큰일 경우: Passport 발급
+                    // 유효한 토큰일 경우 -> Passport 발급
                     String newPassport = passportGenerator.generatePassport(
                             response.getMemberId(),
                             PassportAuthLevel.HIGH.toString()
                     );
 
-                    ServerWebExchange mutated = exchange.mutate()
+                    ServerWebExchange mutatedExchange = exchange.mutate()
                             .request(r -> r.headers(h -> h.set(PASSPORT_HEADER, newPassport)))
                             .build();
 
-                    return chain.filter(mutated);
+                    return chain.filter(mutatedExchange);
                 })
                 .onErrorResume(ex -> respondWithUnauthorized(exchange));
     }
 
+    /**
+     * Unauthorized 응답
+     */
     private Mono<Void> respondWithUnauthorized(ServerWebExchange exchange) {
         exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
         return exchange.getResponse().setComplete();
