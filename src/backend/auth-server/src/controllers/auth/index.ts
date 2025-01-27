@@ -8,28 +8,46 @@ import authService from 'src/service/authService';
 import handleSuccess from 'src/libs/responseHelper';
 function authController() {
   const login = async (req: FastifyRequest, res: FastifyReply, app: FastifyInstance) => {
-    const { email, password } = req.body as { email: string; password: string };
+    try {
+      const { email, password } = req.body as { email: string; password: string };
 
-    const values = await authService.loginWithPassword(email, password);
+      if (!email || !password) {
+        handleError(res, ERROR_MESSAGE.badRequest);
+        return;
+      }
 
-    res.setCookie('refresh_token', values.refreshToken, {
-      sameSite: true,
-      httpOnly: true,
-      secure: true,
-      path: '/',
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-    });
+      const values = await authService.loginWithPassword(email, password);
 
-    const result = {
-      accessToken: values.accessToken,
-    };
+      if (!values) {
+        handleError(res, ERROR_MESSAGE.notFound);
+        return;
+      }
 
-    app.redis.set(REDIS_KEY.refreshToken(values.id), values.refreshToken);
+      res.setCookie('refresh_token', values.refreshToken, {
+        sameSite: true,
+        httpOnly: true,
+        secure: true,
+        path: '/',
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+      });
 
-    handleSuccess(res, {
-      ...SUCCESS_MESSAGE.loginOk,
-      result,
-    });
+      const result = {
+        accessToken: values.accessToken,
+      };
+
+      app.redis.set(REDIS_KEY.refreshToken(values.id), values.refreshToken);
+
+      handleSuccess(
+        res,
+        {
+          ...SUCCESS_MESSAGE.loginOk,
+          result,
+        },
+        200,
+      );
+    } catch (error) {
+      handleError(res, ERROR_MESSAGE.notFound, error);
+    }
   };
 
   const register = async (req: FastifyRequest, res: FastifyReply) => {
@@ -46,7 +64,7 @@ function authController() {
 
       await authService.register(email, hashedPassword, name, nickname, new Date(birthDate));
 
-      handleSuccess(res, SUCCESS_MESSAGE.registerOk);
+      handleSuccess(res, SUCCESS_MESSAGE.registerOk, 201);
     } catch (error) {
       handleError(res, ERROR_MESSAGE.duplicateEmail, error);
     }
@@ -68,7 +86,7 @@ function authController() {
         path: '/',
       });
 
-      handleSuccess(res, SUCCESS_MESSAGE.logoutOk);
+      handleSuccess(res, SUCCESS_MESSAGE.logoutOk, 205);
     } catch (error) {
       handleError(res, ERROR_MESSAGE.badRequest, error);
     }
@@ -114,10 +132,14 @@ function authController() {
     try {
       const result = await authService.verifyToken(accessToken);
 
-      handleSuccess(res, {
-        ...SUCCESS_MESSAGE.verifyTokenOk,
-        result,
-      });
+      handleSuccess(
+        res,
+        {
+          ...SUCCESS_MESSAGE.verifyTokenOk,
+          result,
+        },
+        200,
+      );
     } catch (error) {
       handleError(res, ERROR_MESSAGE.verifyTokenFailed, error);
     }

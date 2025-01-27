@@ -40,10 +40,12 @@ const verifyPassword = async (email: string, password: string) => {
       },
     });
 
-    if (!encryptedPwd?.password) return false;
+    if (!encryptedPwd?.password) throw ERROR_MESSAGE.notFound;
 
-    const result = bcrypt.compareSync(password, encryptedPwd.password);
-    return result;
+    const isPasswordCorrect = bcrypt.compareSync(password, encryptedPwd.password);
+    if (!isPasswordCorrect) throw ERROR_MESSAGE.passwordNotMatch;
+
+    return true;
   } catch (error) {
     throw error;
   }
