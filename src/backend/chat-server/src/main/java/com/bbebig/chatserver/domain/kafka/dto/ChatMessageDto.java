@@ -3,6 +3,7 @@ package com.bbebig.chatserver.domain.kafka.dto;
 import com.bbebig.chatserver.domain.chat.model.ChannelType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.Builder;
 import lombok.Data;
 
@@ -43,9 +44,11 @@ public class ChatMessageDto {
 	private List<Long> targetMemberIds; // 메시지 대상자 목록 (DM일 경우)
 
 	// CREATE 시 필요
+	@PastOrPresent(message = "생성 시간은 현재 시간 이전이어야 합니다.")
 	private LocalDateTime createdAt;
 
 	// UPDATE 시 필요
+	@PastOrPresent(message = "수정 시간은 현재 시간 이전이어야 합니다.")
 	private LocalDateTime updatedAt;
 
 	public enum MessageType {
