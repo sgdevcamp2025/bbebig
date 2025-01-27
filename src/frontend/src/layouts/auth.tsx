@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom'
 
-import { discordLogo } from '@/libs/discordAssetsPath'
+import { discordLogo } from '@/libs/discord-assets-path'
 function AuthLayout() {
   return (
     <div className='w-full h-screen flex justify-center items-center overflow-auto relative bg-auth-background bg-cover'>

@@ -1,6 +1,6 @@
 import { ArrowDownToLine } from 'lucide-react'
 
-import deviceHelper from '@/libs/deviceHelper'
+import deviceHelper from '@/libs/device-helper'
 
 function HomeHero() {
   return (
