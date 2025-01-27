@@ -13,6 +13,7 @@ import java.util.List;
 @Builder
 public class ChatMessageDto {
 
+	// UPDATE, DELETE 시 필요
 	private Long id; // 메시지 ID (Snowflake로 생성)
 
 	@NotNull(message = "채널 타입은 null일 수 없습니다.")
@@ -22,7 +23,7 @@ public class ChatMessageDto {
 	private MessageType messageType;
 
 	@NotEmpty(message = "타입(type)은 비어 있을 수 없습니다.")
-	private String type; // 메시지의 세부 타입 (사용자 정의)
+	private String type; // MESSAGE_CREATE, MESSAGE_UPDATE, MESSAGE_DELETE
 
 	// 채널 관련 필드
 	private Long serverId;
@@ -41,7 +42,10 @@ public class ChatMessageDto {
 	// DM 채널 관련 필드
 	private List<Long> targetMemberIds; // 메시지 대상자 목록 (DM일 경우)
 
+	// CREATE 시 필요
 	private LocalDateTime createdAt;
+
+	// UPDATE 시 필요
 	private LocalDateTime updatedAt;
 
 	public enum MessageType {

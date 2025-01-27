@@ -1,10 +1,16 @@
 package com.bbebig.chatserver.domain.kafka.dto;
 
 import com.bbebig.chatserver.domain.chat.model.ChannelType;
+import lombok.Builder;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
+@Data
+@Builder
 public class ChannelEventDto {
+
+	private Long memberId;
 
 	// ENTER, LEAVE
 	private String type;

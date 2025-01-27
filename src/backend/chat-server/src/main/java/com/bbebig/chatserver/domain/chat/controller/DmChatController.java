@@ -10,6 +10,8 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -26,10 +28,25 @@ public class DmChatController {
 			return;
 		}
 
-		long messageId = snowflakeGenerator.nextId();
-		messageDto.setId(messageId);
+		messageDto.setId(snowflakeGenerator.nextId());
+		validateTimestamps(messageDto);
+		
 		log.info("[Chat] DmChatController: DM 채팅 메시지 전송. id = {}, senderId = {}, type = {}, messageType = {}", messageDto.getId(), messageDto.getSendMemberId(), messageDto.getType(), messageDto.getMessageType());
 		messageProducerService.sendMessageForDmChat(messageDto);
+	}
+
+	private void validateTimestamps(ChatMessageDto messageDto) {
+		// createdAt 검증
+		if (messageDto.getCreatedAt() == null || messageDto.getCreatedAt().isAfter(LocalDateTime.now())) {
+			log.warn("[Chat] DmChatController: createdAt 값이 유효하지 않아 기본값으로 설정. messageId: {}, received: {}", messageDto.getId(), messageDto.getCreatedAt());
+			messageDto.setCreatedAt(LocalDateTime.now());
+		}
+
+		// updatedAt 검증
+		if (messageDto.getUpdatedAt() != null && messageDto.getUpdatedAt().isAfter(LocalDateTime.now())) {
+			log.warn("[Chat] DmChatController: updatedAt 값이 미래 시간으로 설정되어 기본값으로 변경. messageId: {}, received: {}", messageDto.getId(), messageDto.getUpdatedAt());
+			messageDto.setUpdatedAt(LocalDateTime.now());
+		}
 	}
 
 }
