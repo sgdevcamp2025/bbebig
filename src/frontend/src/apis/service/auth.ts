@@ -1,12 +1,15 @@
 import axiosInstance from '../config/axios-instance'
-import { LoginSchema, RegisterSchema } from '../schema/types/auth'
+import { LoginResponseSchema, LoginSchema, RegisterSchema } from '../schema/types/auth'
 
 const AUTH_BASE_PATH = '/auth-server'
 
 const authService = () => {
   const login = async (data: LoginSchema) => {
     try {
-      const response = await axiosInstance.post(`${AUTH_BASE_PATH}/login`, data)
+      const response = await axiosInstance.post<LoginResponseSchema>(
+        `${AUTH_BASE_PATH}/login`,
+        data
+      )
       return response.data
     } catch (error) {
       console.error(error)

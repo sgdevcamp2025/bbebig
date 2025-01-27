@@ -11,7 +11,7 @@ const loginRequestSchema = z.object({
 })
 
 const loginResponseSchema = commonResponseSchema.extend({
-  data: z.object({
+  result: z.object({
     accessToken: z.string()
   })
 })
