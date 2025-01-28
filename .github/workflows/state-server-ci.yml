@@ -25,7 +25,9 @@ jobs:
           java-version: 17
 
       - name: Build with Gradle
-        run: ./src/backend/${{ env.SERVER_NAME }}/gradlew clean build -x test
+        run: |
+          cd src/backend/state-server
+          ./gradlew clean build -x test
 
       - name: Log in to DockerHub
         uses: docker/login-action@v2
@@ -35,5 +37,5 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t ${{ env.DOCKERHUB_USERNAME }}/${{ env.SERVER_NAME }}:latest ./src/backend/${{ env.SERVER_NAME }}
+          docker build -t ${{ env.DOCKERHUB_USERNAME }}/${{ env.SERVER_NAME }}:latest .
           docker push ${{ env.DOCKERHUB_USERNAME }}/${{ env.SERVER_NAME }}:latest
