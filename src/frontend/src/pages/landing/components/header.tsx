@@ -55,8 +55,10 @@ function Header({ isLogin }: Props) {
             className='h-auto w-[124px]'
           />
           <ul className='flex flex-row mobile-range:hidden tablet-range:hidden'>
-            {navigation.map((item) => (
-              <li className='mx-[10px] p-[10px]'>
+            {navigation.map((item, index) => (
+              <li
+                key={index}
+                className='mx-[10px] p-[10px]'>
                 <a
                   href={item.href}
                   className='focus:text-underline font-semibold text-white'>
