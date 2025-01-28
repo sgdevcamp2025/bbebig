@@ -1,8 +1,5 @@
 package com.bbebig.searchserver.domain.search.service;
 
-import com.bbebig.searchserver.domain.search.domain.ChannelChatMessage;
-import com.bbebig.searchserver.domain.search.domain.ChannelChatMessageElastic;
-import com.bbebig.searchserver.domain.search.domain.DmChatMessage;
 import com.bbebig.searchserver.domain.search.dto.ChatMessageDtoConverter;
 import com.bbebig.searchserver.domain.search.repository.ChannelChatMessageElasticRepository;
 import com.bbebig.searchserver.domain.search.repository.ChannelChatMessageRepository;
@@ -12,6 +9,8 @@ import com.bbebig.searchserver.global.kafka.dto.ChatMessageDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Slf4j
 @Service
