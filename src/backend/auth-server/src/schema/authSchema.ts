@@ -12,14 +12,14 @@ const signInSchema = {
   }),
   response: {
     200: z.object({
-      code: z.string().default('AUTH_100'),
+      code: z.string().default('AUTH100'),
       message: z.string().default('Login Ok!'),
       result: z.object({
         accessToken: z.string(),
       }),
     }),
     400: z.object({
-      code: z.enum(['AUTH_001', 'AUTH_003', 'AUTH_009', 'AUTH_012', 'AUTH_013']),
+      code: z.enum(['AUTH001', 'AUTH003', 'AUTH009', 'AUTH012', 'AUTH013']),
       message: z.enum([
         'Bad Request',
         'Password Not Match',
@@ -61,11 +61,11 @@ const registerSchema = {
   }),
   response: {
     201: z.object({
-      code: z.string().default('AUTH_104'),
+      code: z.string().default('AUTH104'),
       message: z.string().default('register success!'),
     }),
     400: z.object({
-      code: z.enum(['AUTH_002', 'AUTH_008', 'AUTH_010', 'AUTH_012']),
+      code: z.enum(['AUTH002', 'AUTH008', 'AUTH010', 'AUTH012']),
       message: z.enum([
         'Duplicate Email',
         'Already Sign Up',
@@ -81,7 +81,7 @@ const refreshTokenSchema = {
   description: '리프레시 토큰을 발급 받습니다.',
   response: {
     201: z.object({
-      code: z.string().default('AUTH_102'),
+      code: z.string().default('AUTH102'),
       message: z.string().default('refresh success'),
       result: z.object({
         accessToken: z.string(),
@@ -97,11 +97,11 @@ const logoutSchema = {
   headers,
   response: {
     205: z.object({
-      code: z.string().default('AUTH_101'),
+      code: z.string().default('AUTH101'),
       message: z.string().default('Logout success!'),
     }),
     400: z.object({
-      code: z.enum(['AUTH_001', 'AUTH_004', 'AUTH_012']),
+      code: z.enum(['AUTH001', 'AUTH004', 'AUTH012']),
       message: z.enum(['Bad Request', 'Unauthorized', 'Server Error']),
     }),
   },
@@ -113,11 +113,11 @@ const verifyTokenSchema = {
   headers,
   response: {
     200: z.object({
-      code: z.string().default('AUTH_105'),
+      code: z.string().default('AUTH105'),
       message: z.string().default('token verify success!'),
     }),
     401: z.object({
-      code: z.enum(['AUTH_004', 'AUTH_011']),
+      code: z.enum(['AUTH004', 'AUTH011']),
       message: z.enum(['Unauthorized', 'Verify Token Failed']),
     }),
   },
@@ -131,11 +131,11 @@ const verifyEmailSchema = {
   }),
   response: {
     200: z.object({
-      code: z.enum(['AUTH_106']),
+      code: z.enum(['AUTH106']),
       message: z.enum(['email verify success!']),
     }),
     400: z.object({
-      code: z.enum(['AUTH_001', 'AUTH_002', 'AUTH_012']),
+      code: z.enum(['AUTH001', 'AUTH002', 'AUTH012']),
       message: z.enum(['Bad Request', 'Duplicate Email', 'Server Error']),
     }),
   },
@@ -147,7 +147,7 @@ const tokenDecodeSchema = {
   headers,
   response: {
     200: z.object({
-      code: z.string().default('AUTH_107'),
+      code: z.string().default('AUTH107'),
       message: z.string().default('token decode success!'),
       result: z.object({
         memberId: z.number(),
@@ -155,7 +155,7 @@ const tokenDecodeSchema = {
       }),
     }),
     400: z.object({
-      code: z.enum(['AUTH_001', 'AUTH_004', 'AUTH_012']),
+      code: z.enum(['AUTH001', 'AUTH004', 'AUTH012']),
       message: z.enum(['Bad Request', 'Unauthorized', 'Server Error']),
       result: z.object({
         memberId: z.number().default(-1),

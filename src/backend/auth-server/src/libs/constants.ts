@@ -13,7 +13,7 @@ const REDIS_CONTAINER_NAME = process.env.REDIS_CONTAINER_NAME;
 const REDIS_IMAGE = process.env.REDIS_IMAGE;
 const REDIS_VOLUME = process.env.REDIS_VOLUME;
 
-const AUTH_PREFIX = 'AUTH_';
+const AUTH_PREFIX = 'AUTH';
 
 const ERROR_MESSAGE = {
   badRequest: {
