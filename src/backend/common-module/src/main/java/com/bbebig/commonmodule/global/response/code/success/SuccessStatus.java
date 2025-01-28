@@ -1,4 +1,4 @@
-package com.bbebig.commonmodule.response.code.success;
+package com.bbebig.commonmodule.global.response.code.success;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

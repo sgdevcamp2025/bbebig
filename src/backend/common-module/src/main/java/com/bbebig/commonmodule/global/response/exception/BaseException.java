@@ -1,4 +1,4 @@
-package com.bbebig.commonmodule.response.exception;
+package com.bbebig.commonmodule.global.response.exception;
 
 /**
  * 추상 클래스 BaseException

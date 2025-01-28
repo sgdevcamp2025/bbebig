@@ -1,6 +1,6 @@
-package com.bbebig.commonmodule.response.exception;
+package com.bbebig.commonmodule.global.response.exception;
 
-import com.bbebig.commonmodule.response.code.error.BaseErrorCode;
+import com.bbebig.commonmodule.global.response.code.error.BaseErrorCode;
 
 /**
  * 클래스 ErrorHandler

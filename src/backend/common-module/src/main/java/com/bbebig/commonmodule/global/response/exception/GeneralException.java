@@ -1,7 +1,7 @@
-package com.bbebig.commonmodule.response.exception;
+package com.bbebig.commonmodule.global.response.exception;
 
-import com.bbebig.commonmodule.response.code.error.BaseErrorCode;
-import com.bbebig.commonmodule.response.code.error.ErrorReasonDTO;
+import com.bbebig.commonmodule.global.response.code.error.BaseErrorCode;
+import com.bbebig.commonmodule.global.response.code.error.ErrorReasonDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

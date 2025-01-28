@@ -1,8 +1,8 @@
 package com.bbebig.commonmodule.passport;
 
 import com.bbebig.commonmodule.proto.PassportProto.Passport;
-import com.bbebig.commonmodule.response.code.error.ErrorStatus;
-import com.bbebig.commonmodule.response.exception.ErrorHandler;
+import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
+import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;

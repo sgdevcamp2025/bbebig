@@ -1,4 +1,4 @@
-package com.bbebig.commonmodule.response.code.error;
+package com.bbebig.commonmodule.global.response.code.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,7 +22,8 @@ public enum ErrorStatus implements BaseErrorCode {
     PASSPORT_HMAC_MISMATCH(HttpStatus.UNAUTHORIZED, "PASSPORT03", "HMAC 서명이 일치하지 않습니다."),
     PASSPORT_INVALID_DATA(HttpStatus.BAD_REQUEST, "PASSPORT04", "유효하지 않은 Passport 데이터 또는 Base64 형식입니다."),
     PASSPORT_INVALID_OR_TAMPERED(HttpStatus.BAD_REQUEST, "PASSPORT05", "유효하지 않거나 변조된 Passport 데이터입니다."),
-    PASSPORT_EXPIRED(HttpStatus.UNAUTHORIZED, "PASSPORT06", "Passport 토큰이 만료되었습니다.");
+    PASSPORT_EXPIRED(HttpStatus.UNAUTHORIZED, "PASSPORT06", "Passport 토큰이 만료되었습니다."),
+    PASSPORT_HEADER_MISSING(HttpStatus.UNAUTHORIZED, "PASSPORT07", "Passport 헤더가 누락되었습니다."),
     ;
 
     private final HttpStatus httpStatus;

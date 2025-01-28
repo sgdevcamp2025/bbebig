@@ -1,4 +1,4 @@
-package com.bbebig.commonmodule.response.exception;
+package com.bbebig.commonmodule.global.response.exception;
 
 import org.springframework.http.HttpStatus;
 

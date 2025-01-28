@@ -1,7 +1,7 @@
-package com.bbebig.commonmodule.response.code;
+package com.bbebig.commonmodule.global.response.code;
 
-import com.bbebig.commonmodule.response.code.success.BaseCode;
-import com.bbebig.commonmodule.response.code.success.SuccessStatus;
+import com.bbebig.commonmodule.global.response.code.success.BaseCode;
+import com.bbebig.commonmodule.global.response.code.success.SuccessStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;

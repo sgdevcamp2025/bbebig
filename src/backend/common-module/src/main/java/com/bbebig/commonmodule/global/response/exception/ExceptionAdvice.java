@@ -1,8 +1,8 @@
-package com.bbebig.commonmodule.response.exception;
+package com.bbebig.commonmodule.global.response.exception;
 
-import com.bbebig.commonmodule.response.code.CommonResponse;
-import com.bbebig.commonmodule.response.code.error.ErrorReasonDTO;
-import com.bbebig.commonmodule.response.code.error.ErrorStatus;
+import com.bbebig.commonmodule.global.response.code.CommonResponse;
+import com.bbebig.commonmodule.global.response.code.error.ErrorReasonDTO;
+import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.*;
 import lombok.extern.slf4j.Slf4j;

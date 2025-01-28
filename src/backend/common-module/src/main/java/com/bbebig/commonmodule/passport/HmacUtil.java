@@ -1,7 +1,7 @@
 package com.bbebig.commonmodule.passport;
 
-import com.bbebig.commonmodule.response.code.error.ErrorStatus;
-import com.bbebig.commonmodule.response.exception.ErrorHandler;
+import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
+import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
