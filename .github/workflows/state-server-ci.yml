@@ -11,7 +11,7 @@ jobs:
     
     env:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
       SERVER_NAME: state-server   # 필요한 경우 바꿔주세요
 
     steps:
@@ -30,10 +30,10 @@ jobs:
           ./gradlew clean build -x test
 
       - name: Log in to DockerHub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ env.DOCKERHUB_USERNAME }}
-          password: ${{ env.DOCKERHUB_PASSWORD }}
+          password: ${{ env.DOCKERHUB_TOKEN }}
 
       - name: Build and push Docker image
         run: |
