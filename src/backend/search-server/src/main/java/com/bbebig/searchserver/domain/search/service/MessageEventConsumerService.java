@@ -28,6 +28,7 @@ public class MessageEventConsumerService {
 		}
 
 		chatMessageService.saveChannelMessageToMongo(chatMessageDto);
+		chatMessageService.saveChannelMessageToElastic(chatMessageDto);
 	}
 
 	@KafkaListener(topics = "${spring.kafka.topic.dm-chat-event}", groupId = "${spring.kafka.consumer.group-id.dm-chat-event}", containerFactory = "dmChatListener")
@@ -43,6 +44,7 @@ public class MessageEventConsumerService {
 		}
 
 		chatMessageService.saveDmMessageToMongo(chatMessageDto);
+		chatMessageService.saveDmMessageToElastic(chatMessageDto);
 	}
 }
 
