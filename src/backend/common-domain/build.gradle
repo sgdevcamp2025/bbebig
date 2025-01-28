@@ -1,0 +1,64 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.4.1'
+	id 'io.spring.dependency-management' version '1.1.7'
+	id 'com.google.protobuf' version '0.9.4'
+}
+
+group = 'com.bbebig'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// Spring
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// Validation
+	implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+
+	// Lombok
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// Protobuf
+	implementation 'com.google.protobuf:protobuf-java:3.21.12'
+}
+
+protobuf {
+	protoc {
+		artifact = "com.google.protobuf:protoc:3.21.12"
+	}
+	generatedFilesBaseDir = "$buildDir/generated"
+
+	generateProtoTasks {
+		all().forEach { task ->
+			task.builtins {
+				java {}
+			}
+		}
+	}
+}
+
+sourceSets {
+	main {
+		proto {
+			srcDir 'src/main/proto'
+		}
+		java {
+			srcDirs += "$buildDir/generated/source/proto/main/java"
+		}
+	}
+}
+
+tasks.named("processResources") {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
