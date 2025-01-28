@@ -2,6 +2,9 @@ spring:
   application:
     name: search-server
 
+server:
+  port: 9201
+
 eureka:
   client:
     register-with-eureka: true
@@ -10,3 +13,14 @@ eureka:
       defaultZone: http://localhost:8761/eureka
   instance:
     instance-id: ${spring.cloud.client.ip-address}:${spring.application.instance_id:${random.value}}
+
+
+elasticsearch:
+  host: ${ELASTICSEARCH_HOST:localhost}
+  port: ${ELASTICSEARCH_POST:9200}
+
+mongodb:
+  host: ${MONGODB_HOST:localhost}
+  port: ${MONGODB_PORT:27017}
+  database: ${MONGODB_DATABASE:bbebigdb}
+
