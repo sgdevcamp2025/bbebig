@@ -1,6 +1,8 @@
 import {
+  accessTokenDecode,
   generateAccessToken,
   generateRefreshToken,
+  shortAccessTokenDecode,
   verifyPassword,
   verifyRefreshToken,
 } from '../libs/authHelper';
@@ -41,10 +43,11 @@ function authService() {
         },
       });
 
-      if (!authenticationUser) throw ERROR_MESSAGE.notFound;
+      if (!authenticationUser) return false;
 
       const isPasswordCorrect = await verifyPassword(email, password);
-      if (!isPasswordCorrect) throw ERROR_MESSAGE.passwordNotMatch;
+
+      if (!isPasswordCorrect) return false;
 
       const accessToken = generateAccessToken({
         id: Number(authenticationUser.id),
@@ -91,10 +94,30 @@ function authService() {
     }
   };
 
+  const verifyToken = async (accessToken: string) => {
+    try {
+      const isTokenValid = await shortAccessTokenDecode(accessToken);
+      if (!isTokenValid) throw ERROR_MESSAGE.verifyTokenFailed;
+
+      const authenticationUser = await accessTokenDecode(accessToken);
+
+      const userInfo = {
+        memberId: authenticationUser.id,
+        valid: true,
+      };
+
+      return userInfo;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
   return {
     register,
     loginWithPassword,
     refresh,
+    verifyToken,
   };
 }
 

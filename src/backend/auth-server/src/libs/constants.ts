@@ -13,77 +13,101 @@ const REDIS_CONTAINER_NAME = process.env.REDIS_CONTAINER_NAME;
 const REDIS_IMAGE = process.env.REDIS_IMAGE;
 const REDIS_VOLUME = process.env.REDIS_VOLUME;
 
+const AUTH_PREFIX = 'AUTH';
+
 const ERROR_MESSAGE = {
+  badRequest: {
+    code: `${AUTH_PREFIX}001`,
+    message: 'Bad Request',
+  },
   duplicateEmail: {
-    code: 400,
+    code: `${AUTH_PREFIX}002`,
     message: 'Duplicate Email',
   },
   passwordNotMatch: {
-    code: 400,
+    code: `${AUTH_PREFIX}003`,
     message: 'Password Not Match',
   },
-  badRequest: {
-    code: 400,
-    message: 'Bad Request',
-  },
   unauthorized: {
-    code: 401,
+    code: `${AUTH_PREFIX}004`,
     message: 'Unauthorized',
   },
   invalidToken: {
-    code: 401,
+    code: `${AUTH_PREFIX}005`,
     message: 'Invalid token',
   },
   notExpired: {
-    code: 401,
+    code: `${AUTH_PREFIX}006`,
     message: 'Token Not Expired',
   },
   forbidden: {
-    code: 403,
+    code: `${AUTH_PREFIX}007`,
     message: 'Forbidden',
   },
   alreadySignup: {
-    code: 403,
+    code: `${AUTH_PREFIX}008`,
     message: 'Already Sign Up',
   },
   notFound: {
-    code: 404,
+    code: `${AUTH_PREFIX}009`,
     message: 'Not Found',
   },
   preconditionFailed: {
-    code: 412,
+    code: `${AUTH_PREFIX}010`,
     message: 'Precondition Failed',
   },
+  verifyTokenFailed: {
+    code: `${AUTH_PREFIX}011`,
+    message: 'Verify Token Failed',
+  },
   serverError: {
-    code: 500,
+    code: `${AUTH_PREFIX}012`,
     message: 'Server Error',
+  },
+  tooManyRequests: {
+    code: `${AUTH_PREFIX}013`,
+    message: 'Too Many Requests',
   },
 } as const;
 
 const SUCCESS_MESSAGE = {
   loginOk: {
-    code: 200,
+    code: `${AUTH_PREFIX}100`,
     message: 'Login Ok!',
   },
   logoutOk: {
-    code: 205,
+    code: `${AUTH_PREFIX}101`,
     message: 'Logout success!',
   },
   refreshToken: {
-    code: 201,
+    code: `${AUTH_PREFIX}102`,
     message: 'refresh success',
   },
   accessTokenOk: {
-    code: 200,
+    code: `${AUTH_PREFIX}103`,
     message: 'access token ok',
   },
   registerOk: {
-    code: 201,
+    code: `${AUTH_PREFIX}104`,
     message: 'register success!',
+  },
+  verifyTokenOk: {
+    code: `${AUTH_PREFIX}105`,
+    message: 'token verify success!',
+  },
+  verifyEmailOk: {
+    code: `${AUTH_PREFIX}106`,
+    message: 'email verify success!',
+  },
+  tokenDecodeOk: {
+    code: `${AUTH_PREFIX}107`,
+    message: 'token decode success!',
   },
 } as const;
 
 const REDIS_KEY = {
+  rateLimit: (identifier: string) => `rateLimit:${identifier}`,
+  blocked: (identifier: string) => `blocked:${identifier}`,
   refreshToken: (userId: number) => `refreshToken:${userId}`,
 } as const;
 

@@ -72,7 +72,7 @@ app
   .register(fastifyRedis, {
     host: REDIS_HOST,
     port: Number(REDIS_PORT),
-    closeClient: false,
+    closeClient: true,
     connectTimeout: 10000,
   })
   .ready((err) => {
@@ -96,7 +96,7 @@ app.setErrorHandler((err, req, reply) => {
     return handleError(
       reply,
       {
-        code: 400,
+        ...ERROR_MESSAGE.badRequest,
         message: err.validation[0].params.issue.message,
       },
       err,

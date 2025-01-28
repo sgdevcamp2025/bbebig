@@ -4,9 +4,10 @@ import { CommonResponseType } from 'src/schema/type';
 function handleSuccess(
   res: FastifyReply,
   data: CommonResponseType,
+  code: number = 200,
   callback?: (res: FastifyReply) => void,
 ) {
-  res.status(200).send(data);
+  res.status(code).send(data);
   callback?.(res);
 }
 
