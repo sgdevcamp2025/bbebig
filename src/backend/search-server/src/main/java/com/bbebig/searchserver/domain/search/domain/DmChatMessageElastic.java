@@ -25,18 +25,10 @@ public class DmChatMessageElastic {
 	@Field(type = FieldType.Long)
 	private Long sendMemberId;
 
-	@Field(type = FieldType.Long)
-	private List<Long> targetMemberIds;
-
 	@Field(type = FieldType.Text)
 	private String content;
-
-	@Field(type = FieldType.Nested)
-	private List<ChatFileDto> attachedFiles;
 
 	@Field(type = FieldType.Date)
 	private LocalDateTime createdAt;
 
-	@Field(type = FieldType.Date)
-	private LocalDateTime updatedAt;
 }

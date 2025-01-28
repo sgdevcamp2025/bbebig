@@ -43,9 +43,7 @@ public class ChatMessageDtoConverter {
 				.channelId(messageDto.getChannelId())
 				.sendMemberId(messageDto.getSendMemberId())
 				.content(messageDto.getContent())
-				.attachedFiles(messageDto.getAttachedFiles())
 				.createdAt(messageDto.getCreatedAt() != null ? messageDto.getCreatedAt() : null)
-				.updatedAt(messageDto.getType().equals("MESSAGE_UPDATE") ? messageDto.getUpdatedAt() : null)
 				.build();
 	}
 
@@ -55,10 +53,7 @@ public class ChatMessageDtoConverter {
 				.channelId(messageDto.getChannelId())
 				.sendMemberId(messageDto.getSendMemberId())
 				.content(messageDto.getContent())
-				.targetMemberIds(messageDto.getTargetMemberIds())
-				.attachedFiles(messageDto.getAttachedFiles())
 				.createdAt(messageDto.getCreatedAt() != null ? messageDto.getCreatedAt() : null)
-				.updatedAt(messageDto.getType().equals("MESSAGE_UPDATE") ? messageDto.getUpdatedAt() : null)
 				.build();
 	}
 

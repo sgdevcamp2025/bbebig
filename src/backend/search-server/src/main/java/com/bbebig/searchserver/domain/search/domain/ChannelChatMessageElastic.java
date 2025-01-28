@@ -31,12 +31,6 @@ public class ChannelChatMessageElastic {
 	@Field(type = FieldType.Text)
 	private String content;
 
-	@Field(type = FieldType.Nested)
-	private List<ChatFileDto> attachedFiles;
-
 	@Field(type = FieldType.Date)
 	private LocalDateTime createdAt;
-
-	@Field(type = FieldType.Date)
-	private LocalDateTime updatedAt;
 }
