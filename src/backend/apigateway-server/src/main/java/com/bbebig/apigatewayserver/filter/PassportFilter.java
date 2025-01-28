@@ -1,9 +1,9 @@
 package com.bbebig.apigatewayserver.filter;
 
 import com.bbebig.apigatewayserver.dto.JwtValidateResponse;
-import com.bbebig.commondomain.passport.PassportExtractor;
-import com.bbebig.commondomain.passport.PassportGenerator;
-import com.bbebig.commondomain.passport.PassportValidator;
+import com.bbebig.commonmodule.passport.PassportExtractor;
+import com.bbebig.commonmodule.passport.PassportGenerator;
+import com.bbebig.commonmodule.passport.PassportValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;

@@ -1,4 +1,4 @@
 rootProject.name = 'apigateway-server'
 
-include(":common-domain")
-findProject(":common-domain")?.projectDir = file("../common-domain")
+include(":common-module")
+findProject(":common-module")?.projectDir = file("../common-module")
