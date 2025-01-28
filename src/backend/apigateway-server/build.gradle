@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.4.1'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'com.google.protobuf' version '0.9.4' // Protobuf 플러그인
 }
 
 group = 'com.bbebig'
@@ -28,10 +29,26 @@ ext {
 }
 
 dependencies {
+    // 공통 모듈 추가
+    implementation project(":common-domain")
+
+    // Spring
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // Spring Cloud
     implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
+    // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+
+    // Protobuf
+    implementation 'com.google.protobuf:protobuf-java:3.21.12'
+
+    // dotenv
+    implementation 'io.github.cdimascio:java-dotenv:5.2.2'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
