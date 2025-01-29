@@ -50,7 +50,7 @@ fun LiveChatScreen(
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceBetween,
@@ -155,7 +155,7 @@ private fun LiveChatTopBar(
                 drawableResId = R.drawable.ic_speaker,
                 colorFilter = ColorFilter.tint(color = Color.Black),
             )
-            
+
             if (isVideoChat) {
                 StableImage(
                     modifier = Modifier
@@ -220,7 +220,6 @@ private fun ChatToolContainer(
         )
     }
 }
-
 
 @Composable
 private fun ParticipantItem(
