@@ -2,12 +2,10 @@ package com.bbebig.searchserver.domain.search.controller;
 
 import com.bbebig.searchserver.domain.search.domain.ChannelChatMessageElastic;
 import com.bbebig.searchserver.domain.search.domain.DmChatMessageElastic;
-import com.bbebig.searchserver.domain.search.dto.SearchRequestDto;
 import com.bbebig.searchserver.domain.search.service.SearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,7 +26,7 @@ public class SearchController {
 	public Page<ChannelChatMessageElastic> searchChannelMessagesByContentAndDate(
 			@RequestBody ServerChannelChatSearchRequestDto request, @PathVariable Long serverId) {
 		log.info("[Search] SearchController: 키워드 기반 채널 채팅 검색 요청. serverID: {}, keyword: {}", serverId, request.getKeyword());
-		return searchService.searchChannelMessagesByContentAndDate(request, serverId);
+		return searchService.searchChannelMessagesByOptions(request, serverId);
 	}
 
 	// 기본 DM 채팅 검색
@@ -36,7 +34,7 @@ public class SearchController {
 	public Page<DmChatMessageElastic> searchDmMessagesByContent(
 			@RequestBody DmChatSearchRequestDto requestDto, @PathVariable Long channelId) {
 		log.info("[Search] SearchController: 키워드 기반 DM 채팅 검색 요청. channelID: {}, keyword: {}", channelId, requestDto.getKeyword());
-		return searchService.searchDmMessagesByContent(requestDto, channelId);
+		return searchService.searchDmMessagesByOptions(requestDto, channelId);
 	}
 
 }

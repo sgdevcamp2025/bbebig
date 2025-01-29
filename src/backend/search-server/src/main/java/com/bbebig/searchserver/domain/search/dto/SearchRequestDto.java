@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class SearchRequestDto {
 
@@ -14,6 +15,9 @@ public class SearchRequestDto {
 	@Builder
 	public static class ServerChannelChatSearchRequestDto {
 		private String keyword;
+		private Long senderId;
+		private LocalDateTime date;
+		private List<SearchOption> options;
 		private int page;
 		private int size;
 	}
@@ -25,6 +29,9 @@ public class SearchRequestDto {
 	@Builder
 	public static class DmChatSearchRequestDto {
 		private String keyword;
+		private Long senderId;
+		private LocalDateTime date;
+		private List<SearchOption> options;
 		private int page;
 		private int size;
 	}
