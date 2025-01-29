@@ -3,6 +3,8 @@ import { ArrowDownToLine } from 'lucide-react'
 import deviceHelper from '@/utils/device-helper'
 
 function Bottom() {
+  if (!import.meta.env.SSR) return null
+
   return (
     <div className='flex flex-col items-center justify-center'>
       <div className='flex flex-col items-center justify-center text-white'>

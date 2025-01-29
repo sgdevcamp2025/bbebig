@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "ES2020",
     "useDefineForClassFields": true,
+    "types": ["node", "vite/client"],
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
@@ -31,9 +32,9 @@
     "app/**/*.ts",
     "app/**/*.tsx",
     "app/routes",
-    "app/layouts",
-    "app/pages/landing/components",
-    "app/pages/channel",
-    "app/pages/auth/my"
+    "src/layouts",
+    "src/pages/landing/components",
+    "src/pages/channel",
+    "src/pages/auth/my"
   ]
 }

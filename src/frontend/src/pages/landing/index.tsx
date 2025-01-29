@@ -6,10 +6,9 @@ import HomeHero from './components/home-hero'
 import VideoBanner from './components/video-banner'
 
 function LandingPage() {
-  const isLogin = false
   return (
     <div className='h-full min-h-screen w-full bg-landing-background bg-cover'>
-      <Header isLogin={isLogin} />
+      <Header />
       <HomeHero />
       {discordIntroduceVideo.map((videoBanner, index) => (
         <VideoBanner

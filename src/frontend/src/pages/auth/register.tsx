@@ -2,7 +2,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-
 import { registerRequestSchema } from '@/apis/schema/auth'
 import { RegisterSchema } from '@/apis/schema/types/auth'
 import authService from '@/apis/service/auth'
