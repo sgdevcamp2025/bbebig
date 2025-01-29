@@ -39,6 +39,10 @@ public class SearchService {
 			ServerChannelChatSearchRequestDto requestDto, Long serverId) {
 		PageRequest pageable = PageRequest.of(requestDto.getPage(), requestDto.getSize());
 
+		if (requestDto.getOptions() == null || requestDto.getOptions().isEmpty()) {
+			throw new IllegalArgumentException("At least one search option must be provided.");
+		}
+
 		try {
 			SearchRequest searchRequest = createSearchRequest(
 					CHANNEL_CHAT_INDEX,
@@ -71,6 +75,10 @@ public class SearchService {
 	public Page<DmChatMessageElastic> searchDmMessagesByOptions(
 			DmChatSearchRequestDto requestDto, Long channelId) {
 		PageRequest pageable = PageRequest.of(requestDto.getPage(), requestDto.getSize());
+
+		if (requestDto.getOptions() == null || requestDto.getOptions().isEmpty()) {
+			throw new IllegalArgumentException("At least one search option must be provided.");
+		}
 
 		try {
 			SearchRequest searchRequest = createSearchRequest(
