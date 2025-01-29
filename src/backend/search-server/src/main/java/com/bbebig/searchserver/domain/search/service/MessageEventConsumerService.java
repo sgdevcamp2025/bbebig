@@ -14,7 +14,9 @@ public class MessageEventConsumerService {
 
 	private final ChatMessageService chatMessageService;
 
-
+	/**
+	 * 채널 채팅 메시지 이벤트 처리 (CREATE, UPDATE, DELETE)
+	 */
 	@KafkaListener(topics = "${spring.kafka.topic.channel-chat-event}", groupId = "${spring.kafka.consumer.group-id.channel-chat-event}", containerFactory = "channelChatListener")
 	public void consumeForChannelChatEvent(ChatMessageDto chatMessageDto) {
 		if (chatMessageDto == null) {
@@ -27,10 +29,24 @@ public class MessageEventConsumerService {
 			return;
 		}
 
-		chatMessageService.saveChannelMessageToMongo(chatMessageDto);
-		chatMessageService.saveChannelMessageToElastic(chatMessageDto);
+		switch (chatMessageDto.getType()) {
+			case "MESSAGE_CREATE":
+				chatMessageService.saveChannelMessage(chatMessageDto);
+				break;
+			case "MESSAGE_UPDATE":
+				chatMessageService.updateChannelMessage(chatMessageDto);
+				break;
+			case "MESSAGE_DELETED":
+				chatMessageService.deleteChannelMessage(chatMessageDto.getId());
+				break;
+			default:
+				log.warn("[Chat] MessageEventConsumerService: 처리할 수 없는 메시지 타입. ChatMessageDto: {}", chatMessageDto);
+		}
 	}
 
+	/**
+	 * DM 채팅 메시지 이벤트 처리 (CREATE, UPDATE, DELETE)
+	 */
 	@KafkaListener(topics = "${spring.kafka.topic.dm-chat-event}", groupId = "${spring.kafka.consumer.group-id.dm-chat-event}", containerFactory = "dmChatListener")
 	public void consumeForDmChatEvent(ChatMessageDto chatMessageDto) {
 		if (chatMessageDto == null) {
@@ -43,8 +59,18 @@ public class MessageEventConsumerService {
 			return;
 		}
 
-		chatMessageService.saveDmMessageToMongo(chatMessageDto);
-		chatMessageService.saveDmMessageToElastic(chatMessageDto);
+		switch (chatMessageDto.getType()) {
+			case "MESSAGE_CREATE":
+				chatMessageService.saveDmMessage(chatMessageDto);
+				break;
+			case "MESSAGE_UPDATE":
+				chatMessageService.updateDmMessage(chatMessageDto);
+				break;
+			case "MESSAGE_DELETED":
+				chatMessageService.deleteDmMessage(chatMessageDto.getId());
+				break;
+			default:
+				log.warn("[Chat] MessageEventConsumerService: 처리할 수 없는 메시지 타입. ChatMessageDto: {}", chatMessageDto);
+		}
 	}
 }
-

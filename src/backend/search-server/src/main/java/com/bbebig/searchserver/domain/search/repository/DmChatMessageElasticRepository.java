@@ -20,4 +20,6 @@ public interface DmChatMessageElasticRepository extends ElasticsearchRepository<
 
 	Page<DmChatMessageElastic> findByContentContainingAndChannelIdAndCreatedAtBetween(
 			String keyword, Long channelId, LocalDateTime start, LocalDateTime end, Pageable pageable);
+
+
 }

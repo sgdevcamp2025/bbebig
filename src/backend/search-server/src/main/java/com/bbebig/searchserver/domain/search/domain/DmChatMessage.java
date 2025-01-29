@@ -33,4 +33,20 @@ public class DmChatMessage {
 	private LocalDateTime updatedAt;
 
 	private MessageType messageType;
+
+	private Boolean isDeleted;
+
+	public void updateContent(String content) {
+		this.content = content;
+		this.updatedAt = LocalDateTime.now();
+	}
+
+	public void delete() {
+		this.isDeleted = true;
+		this.updatedAt = LocalDateTime.now();
+	}
+
+	public boolean isDeleted() {
+		return this.isDeleted;
+	}
 }
