@@ -8,11 +8,10 @@ import { LoginSchema } from '@/apis/schema/types/auth'
 import authService from '@/apis/service/auth'
 import AuthInput from '@/components/auth-input'
 import CustomButton from '@/components/custom-button'
-import { useAuthStore } from '@/store/auth/AuthContext'
+
 function LoginPage() {
   const navigate = useNavigate()
   const [movePage, setMovePage] = useState(false)
-  const { setUserLogin } = useAuthStore()
   const { register, handleSubmit } = useForm<LoginSchema>({
     resolver: zodResolver(loginRequestSchema)
   })
@@ -27,9 +26,7 @@ function LoginPage() {
 
   const signIn = useCallback(
     async (data: LoginSchema) => {
-      const response = await authService.login(data)
-
-      setUserLogin(response.result.accessToken)
+      await authService.login(data)
 
       setMovePage(true)
 
@@ -37,7 +34,7 @@ function LoginPage() {
         navigate('/channels/@me', { replace: true })
       }, 500)
     },
-    [navigate, setUserLogin]
+    [navigate]
   )
 
   return (
