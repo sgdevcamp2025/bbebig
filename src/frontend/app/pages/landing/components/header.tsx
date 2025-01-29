@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 
-import { discordLogo } from '@/libs/discord-assets-path'
+import { discordLogo } from '@/constants/discord-assets-path'
 
 const navigation = [
   {

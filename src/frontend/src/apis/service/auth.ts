@@ -6,11 +6,7 @@ const AUTH_BASE_PATH = '/auth-server'
 const authService = () => {
   const login = async (data: LoginSchema) => {
     try {
-      const response = await axiosInstance.post<LoginResponseSchema>(
-        `${AUTH_BASE_PATH}/login`,
-        data
-      )
-      return response.data
+      const res = await axiosInstance.post<LoginResponseSchema>(`${AUTH_BASE_PATH}/login`, data)
     } catch (error) {
       console.error(error)
       throw error

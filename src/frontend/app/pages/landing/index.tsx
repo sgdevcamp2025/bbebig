@@ -1,4 +1,4 @@
-import { discordIntroduceVideo } from '@/libs/discord-assets-path'
+import { discordIntroduceVideo } from '@/constants/discord-assets-path'
 
 import Footer from './components/footer'
 import Header from './components/header'
