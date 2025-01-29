@@ -8,7 +8,7 @@ function cookie() {
   }
 
   const setCookie = (name: string, value: string) => {
-    document.cookie = `${name}=${value}; path=/; expires=${new Date(Date.now() + COOKIE_EXPIRE_TIME * 24 * 60 * 60 * 1000).toUTCString()};`
+    document.cookie = `${name}=${value}; path=/; expires=${new Date(Date.now() + COOKIE_EXPIRE_TIME * 24 * 60 * 60 * 1000).toUTCString()}; httpOnly; samesite=strict`
   }
 
   const deleteCookie = (name: string) => {
