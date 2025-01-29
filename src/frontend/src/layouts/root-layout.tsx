@@ -1,6 +1,6 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet } from 'react-router'
 
-function LandingLayout() {
+function RootLayout() {
   return (
     <div className='h-full min-h-screen max-w-full bg-blue-10'>
       <title>Discord Clone</title>
@@ -9,4 +9,4 @@ function LandingLayout() {
   )
 }
 
-export default LandingLayout
+export default RootLayout

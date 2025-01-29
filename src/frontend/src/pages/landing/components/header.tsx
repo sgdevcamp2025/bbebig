@@ -1,6 +1,7 @@
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 
-import { discordLogo } from '@/libs/discord-assets-path'
+import { discordLogo } from '@/constants/discord-assets-path'
+import useLoginStore from '@/stores/use-login-store'
 
 const navigation = [
   {
@@ -37,11 +38,9 @@ const navigation = [
   }
 ] as const
 
-interface Props {
-  isLogin: boolean
-}
+function Header() {
+  const isLogin = useLoginStore((state) => state.isLogin)
 
-function Header({ isLogin }: Props) {
   return (
     <div className='absolute left-0 right-0 top-0 mobile-range:sticky mobile-range:top-0 mobile-range:z-50 mobile-range:bg-blue-30'>
       <header

@@ -1,7 +1,7 @@
 import { cva, VariantProps } from 'class-variance-authority'
 import { ComponentPropsWithoutRef } from 'react'
 
-import { cn } from '@/utils/cn'
+import { cn } from '@/libs/cn'
 
 type Props = VariantProps<typeof buttonVariants> & ComponentPropsWithoutRef<'button'>
 
