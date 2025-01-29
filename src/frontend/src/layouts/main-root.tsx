@@ -1,4 +1,4 @@
-import { Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { Outlet, useLocation, useNavigate } from 'react-router'
 
 import ServerIcon from '@/components/server-icon'
 import { cn } from '@/libs/cn'

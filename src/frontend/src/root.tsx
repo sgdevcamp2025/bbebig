@@ -1,5 +1,4 @@
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
-import { isRouteErrorResponse } from 'react-router-dom'
+import { Links, Meta, Outlet, Scripts, ScrollRestoration, isRouteErrorResponse } from 'react-router'
 import '@/styles/globals.css'
 import type { Route } from '@/types/route'
 

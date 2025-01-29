@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 
 import { discordLogo } from '@/constants/discord-assets-path'
 import useLoginStore from '@/stores/use-login-store'

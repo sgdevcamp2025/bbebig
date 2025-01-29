@@ -1,10 +1,7 @@
 import { ArrowDownToLine } from 'lucide-react'
-
 import deviceHelper from '@/utils/device-helper'
 
 function HomeHero() {
-  if (!import.meta.env.SSR) return null
-
   return (
     <div className='h-dvh-screen bg-landing-shine-1 desktop-large:bg-[length:96%_96%] desktop-large:bg-[position:100%_-33%] desktop-xlarge:pb-[13rem] bg-cover bg-no-repeat pb-[7.25rem] pt-[8rem]'>
       <div className='padding-global'>
