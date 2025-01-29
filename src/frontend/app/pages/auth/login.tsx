@@ -2,12 +2,12 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-
 import { loginRequestSchema } from '@/apis/schema/auth'
 import { LoginSchema } from '@/apis/schema/types/auth'
 import authService from '@/apis/service/auth'
 import AuthInput from '@/components/auth-input'
 import CustomButton from '@/components/custom-button'
+import useLoginStore from '@/stores/use-login-store'
 
 function LoginPage() {
   const navigate = useNavigate()
@@ -15,6 +15,8 @@ function LoginPage() {
   const { register, handleSubmit } = useForm<LoginSchema>({
     resolver: zodResolver(loginRequestSchema)
   })
+
+  const login = useLoginStore((state) => state.login)
 
   const handleMoveSignUpPage = useCallback(() => {
     setMovePage(true)
@@ -28,6 +30,7 @@ function LoginPage() {
     async (data: LoginSchema) => {
       await authService.login(data)
 
+      login()
       setMovePage(true)
 
       setTimeout(() => {

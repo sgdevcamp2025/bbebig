@@ -1,6 +1,6 @@
 import { ComponentPropsWithoutRef, useState } from 'react'
 
-import { cn } from '@/utils/cn'
+import { cn } from '@/libs/cn'
 
 type Props = {
   imageUrl: string | null

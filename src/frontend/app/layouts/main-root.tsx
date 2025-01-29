@@ -1,7 +1,7 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 
 import ServerIcon from '@/components/server-icon'
-import { cn } from '@/utils/cn'
+import { cn } from '@/libs/cn'
 
 const myServerList = [
   {

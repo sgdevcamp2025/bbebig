@@ -3,14 +3,15 @@ function deviceHelper() {
 
   if (!isBrowser) {
     return {
+      isBrowser: false,
       isMac: false,
       isWindows: false
     }
   }
 
-  const platform = navigator.platform?.toLowerCase() ?? ''
-  const isMac = platform.includes('mac')
-  const isWindows = platform.includes('win')
+  const userAgent = navigator.userAgent.toLowerCase()
+  const isMac = userAgent.includes('mac')
+  const isWindows = userAgent.includes('win')
 
   return {
     isBrowser,
