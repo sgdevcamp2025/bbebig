@@ -39,7 +39,36 @@ const config: Pick<Config, 'presets' | 'content' | 'theme' | 'plugins'> = {
         'gray-50': '#b4b8bf',
         'gray-60': 'hsl(213.75 calc(1 * 8.081%) 61.176% / 1)',
         'gray-70': '#404248',
-        'gray-80': 'hsl(228 calc(1 * 6.024%) 32.549% / 0.48)'
+        'gray-80': 'hsl(228 calc(1 * 6.024%) 32.549% / 0.48)',
+
+        'discord-gray': {
+          50: '#ECEDEE',
+          100: '#DCDDDE',
+          200: '#B9BBBE',
+          300: '#8E9297',
+          400: '#72767D',
+          500: '#4F545C',
+          600: '#36393F',
+          700: '#2F3136',
+          800: '#202225',
+          900: '#18191C'
+        },
+        'discord-status': {
+          online: '#43B581',
+          idle: '#FAA61A',
+          dnd: '#F04747',
+          offline: '#747F8D'
+        },
+        'discord-brand': {
+          DEFAULT: '#5865F2',
+          hover: '#4752C4',
+          active: '#3C45A5'
+        },
+        'discord-font-color': {
+          normal: '#dcddde',
+          muted: '#72767d',
+          link: '#00b0f4'
+        }
       },
       backgroundImage: {
         'auth-background': "url('/image/auth/background.svg')",
