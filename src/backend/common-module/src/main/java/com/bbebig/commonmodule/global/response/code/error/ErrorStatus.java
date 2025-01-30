@@ -24,12 +24,6 @@ public enum ErrorStatus implements BaseErrorCode {
     PASSPORT_INVALID_OR_TAMPERED(HttpStatus.BAD_REQUEST, "PASSPORT05", "유효하지 않거나 변조된 Passport 데이터입니다."),
     PASSPORT_EXPIRED(HttpStatus.UNAUTHORIZED, "PASSPORT06", "Passport 토큰이 만료되었습니다."),
     PASSPORT_HEADER_MISSING(HttpStatus.UNAUTHORIZED, "PASSPORT07", "Passport 헤더가 누락되었습니다."),
-
-    // 카프카 이벤트 관련
-    INVALID_SERVER_EVENT_TYPE(HttpStatus.SERVICE_UNAVAILABLE, "KAFKA01", "유효하지 않은 서버 이벤트 타입입니다."),
-    INVALID_NOTIFICATION_EVENT_TYPE(HttpStatus.SERVICE_UNAVAILABLE, "KAFKA02", "유효하지 않은 알림 이벤트 타입입니다."),
-
-
     ;
 
     private final HttpStatus httpStatus;
