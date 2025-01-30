@@ -2,6 +2,10 @@ spring:
   application:
     name: search-server
 
+  data:
+    mongodb:
+      uri: mongodb://${MONGODB_HOST:localhost}:${MONGODB_PORT:27017}/${MONGODB_DATABASE:bbebigdb}
+
 server:
   port: 9201
 
@@ -17,10 +21,6 @@ eureka:
 
 elasticsearch:
   host: ${ELASTICSEARCH_HOST:localhost}
-  port: ${ELASTICSEARCH_POST:9200}
+  port: ${ELASTICSEARCH_PORT:9200}
 
-mongodb:
-  host: ${MONGODB_HOST:localhost}
-  port: ${MONGODB_PORT:27017}
-  database: ${MONGODB_DATABASE:bbebigdb}
 

@@ -25,7 +25,7 @@ public class SearchController {
 	@PostMapping("/search/server/{serverId}")
 	public Page<ChannelChatMessageElastic> searchChannelMessagesByContentAndDate(
 			@RequestBody SearchMessageRequestDto requestDto, @PathVariable Long serverId) {
-		log.info("[Search] SearchController: 키워드 기반 채널 채팅 검색 요청. serverID: {}, keyword: {}", serverId, request.getKeyword());
+		log.info("[Search] SearchController: 키워드 기반 채널 채팅 검색 요청. serverID: {}, keyword: {}", serverId, requestDto.getKeyword());
 		return searchService.searchChannelMessagesByOptions(requestDto, serverId);
 	}
 
