@@ -104,32 +104,28 @@ app.setErrorHandler((err, req, reply) => {
 });
 
 // 데이터베이스 연결 테스트 함수
-async function testDatabaseConnection() {
-  try {
-    console.log('Database URL:', {
-      url: process.env.DATABASE_URL?.replace(/\/\/.*:.*@/, '//[HIDDEN_CREDENTIALS]@'),
-    });
+// async function testDatabaseConnection() {
+//   try {
+//     console.log('Database URL:', {
+//       url: process.env.DATABASE_URL?.replace(/\/\/.*:.*@/, '//[HIDDEN_CREDENTIALS]@'),
+//     });
 
-    // 간단한 쿼리로 연결 테스트
-    await db.$queryRaw`SELECT 1+1 as result`;
-    console.log('✅ Database connection successful');
+//     // 간단한 쿼리로 연결 테스트
+//     await db.$queryRaw`SELECT 1+1 as result`;
+//     console.log('✅ Database connection successful');
 
-    // 추가로 데이터베이스 정보 확인
-    const dbInfo = await db.$queryRaw`SELECT @@hostname, @@port, database()`;
-    console.log('Database Info:', dbInfo);
-  } catch (error) {
-    console.error('❌ Database connection failed:', error);
-    throw error;
-  }
-}
+//     // 추가로 데이터베이스 정보 확인
+//     const dbInfo = await db.$queryRaw`SELECT @@hostname, @@port, database()`;
+//     console.log('Database Info:', dbInfo);
+//   } catch (error) {
+//     console.error('❌ Database connection failed:', error);
+//     throw error;
+//   }
+// }
 
 const start = async () => {
   try {
-    await testDatabaseConnection();
-
-    await app.ready(() => {
-      console.log('Server is ready', app.server.address());
-    });
+    // await testDatabaseConnection();
 
     await app.listen({ port: Number(SERVER_PORT), host: '0.0.0.0' });
     console.log(`listening on port ${SERVER_PORT}`);
