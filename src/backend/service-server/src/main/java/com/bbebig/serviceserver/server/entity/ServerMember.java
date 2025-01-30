@@ -1,6 +1,6 @@
 package com.bbebig.serviceserver.server.entity;
 
-import com.bbebig.serviceserver.global.common.BaseTimeEntity;
+import com.bbebig.commonmodule.global.common.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
