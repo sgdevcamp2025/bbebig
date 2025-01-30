@@ -1,6 +1,5 @@
 import js from '@eslint/js'
 import globals from 'globals'
-import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 import prettierPlugin from 'eslint-plugin-prettier'
 import onlyWarn from 'eslint-plugin-only-warn'
@@ -32,7 +31,6 @@ export default tseslint.config(
     },
     plugins: {
       'react-hooks': reactHooks,
-      'react-refresh': reactRefresh,
       'unused-imports': unusedImports,
       prettier: prettierPlugin,
       'simple-import-sort': simpleImportSort,

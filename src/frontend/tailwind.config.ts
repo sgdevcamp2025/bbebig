@@ -2,7 +2,7 @@ import type { Config } from 'tailwindcss'
 import tailwindCSSMotion from 'tailwindcss-motion'
 
 const config: Pick<Config, 'presets' | 'content' | 'theme' | 'plugins'> = {
-  content: ['./src/**/*.tsx'],
+  content: ['./app/**/*.tsx', './src/**/*.tsx'],
   theme: {
     extend: {
       colors: {

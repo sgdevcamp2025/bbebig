@@ -1,6 +1,5 @@
 import { ArrowDownToLine } from 'lucide-react'
-
-import deviceHelper from '@/libs/device-helper'
+import deviceHelper from '@/utils/device-helper'
 
 function Bottom() {
   return (

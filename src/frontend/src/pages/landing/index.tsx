@@ -1,4 +1,4 @@
-import { discordIntroduceVideo } from '@/libs/discord-assets-path'
+import { discordIntroduceVideo } from '@/constants/discord-assets-path'
 
 import Footer from './components/footer'
 import Header from './components/header'
@@ -6,10 +6,9 @@ import HomeHero from './components/home-hero'
 import VideoBanner from './components/video-banner'
 
 function LandingPage() {
-  const isLogin = false
   return (
     <div className='h-full min-h-screen w-full bg-landing-background bg-cover'>
-      <Header isLogin={isLogin} />
+      <Header />
       <HomeHero />
       {discordIntroduceVideo.map((videoBanner, index) => (
         <VideoBanner

@@ -24,7 +24,7 @@ src/
   └── utils # 유틸리티
 ```
 
-### 스크립트
+### 로컬환경 스크립트
 
 ```bash
 # 개발 서버 실행
@@ -35,4 +35,11 @@ yarn build
 
 # 빌드 파일 실행
 yarn start
+```
+
+### 도커 환경 설정
+
+```bash
+# 도커 컨테이너 실행
+docker compose up -d
 ```

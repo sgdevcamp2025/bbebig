@@ -1,8 +1,8 @@
 import { ChevronDownIcon } from 'lucide-react'
 import { Dispatch, ReactNode, SetStateAction, useRef, useState } from 'react'
 
-import useClickOutside from '@/hooks/useClickOutside'
-import { cn } from '@/utils/cn'
+import { cn } from '@/libs/cn'
+import useClickOutside from '@/hooks/use-click-outside'
 
 interface Props {
   label: string
