@@ -1,11 +1,12 @@
-version: '3.8'
 services:
   auth-server:
     build: .
     ports:
-      - '8083:8083'
+      - '${SERVER_PORT}:${SERVER_PORT}'
     env_file:
       - ./.env.production
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
     depends_on:
       - redis
     restart: always
@@ -13,15 +14,17 @@ services:
       - auth-network
 
   redis:
-    image: redis:alpine
-    container_name: redis-local
+    image: ${REDIS_IMAGE}
+    container_name: ${REDIS_CONTAINER_NAME}
     ports:
-      - '6379:6379'
+      - '${REDIS_PORT}:${REDIS_PORT}'
+    volumes:
+      - ${REDIS_VOLUME}:/data
     command: redis-server --appendonly yes
     networks:
       - auth-network
     healthcheck:
-      test: ['CMD', 'redis-server', '--ping']
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -30,3 +33,7 @@ services:
 networks:
   auth-network:
     driver: bridge
+
+volumes:
+  auth-redis-data:
+    name: ${REDIS_VOLUME}

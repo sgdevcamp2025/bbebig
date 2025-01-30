@@ -1,12 +1,11 @@
-import { FastifyInstance, FastifyReply } from 'fastify';
-import { FastifyRequest } from 'fastify';
-import { generateHash } from 'src/libs/authHelper';
-import { ERROR_MESSAGE, REDIS_KEY } from 'src/libs/constants';
-import { SUCCESS_MESSAGE } from 'src/libs/constants';
-import { handleError } from 'src/libs/errorHelper';
-import authService from 'src/service/authService';
-import handleSuccess from 'src/libs/responseHelper';
-import redis from 'src/libs/redis';
+import { FastifyRequest, FastifyReply } from 'fastify';
+import { generateHash } from '../../libs/authHelper';
+import { ERROR_MESSAGE, REDIS_KEY } from '../../libs/constants';
+import { SUCCESS_MESSAGE } from '../../libs/constants';
+import { handleError } from '../../libs/errorHelper';
+import authService from '../../service/authService';
+import handleSuccess from '../../libs/responseHelper';
+import redis from '../../libs/redis';
 function authController() {
   const login = async (req: FastifyRequest, res: FastifyReply) => {
     try {

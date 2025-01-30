@@ -12,20 +12,16 @@ import { FastifyCookieOptions } from '@fastify/cookie';
 import routes from './src/routes';
 import cors from '@fastify/cors';
 import fastifyCookie from '@fastify/cookie';
-import {
-  ERROR_MESSAGE,
-  REDIS_HOST,
-  REDIS_PORT,
-  SECRET_KEY,
-  SERVER_PORT,
-} from './src/libs/constants';
+import { ERROR_MESSAGE, isDevelopment, SECRET_KEY, SERVER_PORT } from './src/libs/constants';
 import fastifyRedis from '@fastify/redis';
 import { currentAuthPlugin } from './src/plugin/authPlugin';
 import { fastifySwagger } from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 import { z } from 'zod';
 import { hasZodFastifySchemaValidationErrors } from 'fastify-type-provider-zod';
-import { handleError } from 'src/libs/errorHelper';
+import { handleError } from './src/libs/errorHelper';
+import redis from './src/libs/redis';
+import db from './src/libs/db';
 
 const app = Fastify({
   logger: true,
@@ -57,23 +53,22 @@ app.register(fastifySwagger, {
   }),
 });
 
-app.register(fastifySwaggerUi, {
-  routePrefix: '/docs',
-  uiConfig: {
-    docExpansion: 'full',
-    deepLinking: true,
-  },
-});
+if (isDevelopment) {
+  app.register(fastifySwaggerUi, {
+    routePrefix: '/docs',
+    uiConfig: {
+      docExpansion: 'full',
+      deepLinking: true,
+    },
+  });
+}
 
 app.register(currentAuthPlugin);
 app.register(routes);
 
 app
   .register(fastifyRedis, {
-    host: REDIS_HOST,
-    port: Number(REDIS_PORT),
-    closeClient: true,
-    connectTimeout: 10000,
+    client: redis,
   })
   .ready((err) => {
     if (err) {
@@ -108,10 +103,32 @@ app.setErrorHandler((err, req, reply) => {
   }
 });
 
+// 데이터베이스 연결 테스트 함수
+async function testDatabaseConnection() {
+  try {
+    console.log('Database URL:', {
+      url: process.env.DATABASE_URL?.replace(/\/\/.*:.*@/, '//[HIDDEN_CREDENTIALS]@'),
+    });
+
+    // 간단한 쿼리로 연결 테스트
+    await db.$queryRaw`SELECT 1+1 as result`;
+    console.log('✅ Database connection successful');
+
+    // 추가로 데이터베이스 정보 확인
+    const dbInfo = await db.$queryRaw`SELECT @@hostname, @@port, database()`;
+    console.log('Database Info:', dbInfo);
+  } catch (error) {
+    console.error('❌ Database connection failed:', error);
+    throw error;
+  }
+}
+
 const start = async () => {
   try {
+    await testDatabaseConnection();
+
     await app.ready(() => {
-      console.log('Registered routes:', app.printRoutes());
+      console.log('Server is ready', app.server.address());
     });
 
     await app.listen({ port: Number(SERVER_PORT), host: '0.0.0.0' });

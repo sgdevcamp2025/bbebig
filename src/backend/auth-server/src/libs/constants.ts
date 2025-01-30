@@ -1,9 +1,13 @@
 import { Secret } from 'jsonwebtoken';
 
-const SERVER_PORT = Number(process.env.SERVER_PORT) || 8083;
+const isDevelopment = process.env.NODE_ENV === 'development';
+const isProduction = process.env.NODE_ENV === 'production';
+
+const SERVER_PORT = Number(process.env.SERVER_PORT);
 const SERVER_URL = process.env.SERVER_URL;
-const ROUND = Number(process.env.HASH_ROUND) || 10;
+const ROUND = Number(process.env.HASH_ROUND);
 const SECRET_KEY = process.env.SECRET_KEY as Secret;
+const DATABASE_URL = process.env.DATABASE_URL;
 const ACCESS_TOKEN_EXPIRES = process.env.ACCESS_TOKEN_EXPIRES;
 const REFRESH_TOKEN_EXPIRES = process.env.REFRESH_TOKEN_EXPIRES;
 const REDIS_HOST = process.env.REDIS_HOST;
@@ -112,8 +116,11 @@ const REDIS_KEY = {
 } as const;
 
 export {
+  isDevelopment,
+  isProduction,
   SERVER_PORT,
   SERVER_URL,
+  DATABASE_URL,
   ROUND,
   SECRET_KEY,
   ACCESS_TOKEN_EXPIRES,
