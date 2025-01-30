@@ -24,6 +24,13 @@ public enum ErrorStatus implements BaseErrorCode {
     PASSPORT_INVALID_OR_TAMPERED(HttpStatus.BAD_REQUEST, "PASSPORT05", "유효하지 않거나 변조된 Passport 데이터입니다."),
     PASSPORT_EXPIRED(HttpStatus.UNAUTHORIZED, "PASSPORT06", "Passport 토큰이 만료되었습니다."),
     PASSPORT_HEADER_MISSING(HttpStatus.UNAUTHORIZED, "PASSPORT07", "Passport 헤더가 누락되었습니다."),
+
+    // SERVICE
+    SERVER_NOT_FOUND(HttpStatus.NOT_FOUND, "SERVICE401", "서버를 찾을 수 없습니다."),
+    SERVER_OWNER_FORBIDDEN(HttpStatus.FORBIDDEN, "SERVICE402", "서버장 권한이 없습니다."),
+
+
+
     ;
 
     private final HttpStatus httpStatus;

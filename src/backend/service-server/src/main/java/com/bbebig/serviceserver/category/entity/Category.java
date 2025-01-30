@@ -1,6 +1,6 @@
 package com.bbebig.serviceserver.category.entity;
 
-import com.bbebig.serviceserver.global.common.BaseTimeEntity;
+import com.bbebig.commonmodule.global.common.BaseTimeEntity;
 import com.bbebig.serviceserver.server.entity.Server;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
