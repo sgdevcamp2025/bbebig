@@ -30,6 +30,12 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
+	// Kafka
+	implementation 'org.springframework.kafka:spring-kafka'
+
+	// JSON 처리
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+
 	// Protobuf
 	implementation 'com.google.protobuf:protobuf-java:3.21.12'
 }
