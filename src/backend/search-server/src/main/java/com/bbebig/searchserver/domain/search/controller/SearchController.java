@@ -24,15 +24,15 @@ public class SearchController {
 
 	@PostMapping("/search/server/{serverId}")
 	public Page<ChannelChatMessageElastic> searchChannelMessagesByContentAndDate(
-			@RequestBody ServerChannelChatSearchRequestDto request, @PathVariable Long serverId) {
+			@RequestBody SearchMessageRequestDto requestDto, @PathVariable Long serverId) {
 		log.info("[Search] SearchController: 키워드 기반 채널 채팅 검색 요청. serverID: {}, keyword: {}", serverId, request.getKeyword());
-		return searchService.searchChannelMessagesByOptions(request, serverId);
+		return searchService.searchChannelMessagesByOptions(requestDto, serverId);
 	}
 
 	// 기본 DM 채팅 검색
 	@PostMapping("/search/dm/{channelId}")
 	public Page<DmChatMessageElastic> searchDmMessagesByContent(
-			@RequestBody DmChatSearchRequestDto requestDto, @PathVariable Long channelId) {
+			@RequestBody SearchMessageRequestDto requestDto, @PathVariable Long channelId) {
 		log.info("[Search] SearchController: 키워드 기반 DM 채팅 검색 요청. channelID: {}, keyword: {}", channelId, requestDto.getKeyword());
 		return searchService.searchDmMessagesByOptions(requestDto, channelId);
 	}

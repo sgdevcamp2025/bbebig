@@ -13,28 +13,15 @@ public class SearchRequestDto {
 	 */
 	@Data
 	@Builder
-	public static class ServerChannelChatSearchRequestDto {
+	public static class SearchMessageRequestDto {
 		private String keyword;
 		private Long senderId;
-		private LocalDateTime date;
+		private LocalDateTime afterDate;
+		private LocalDateTime beforeDate;
+		private LocalDateTime exactDate;
 		private List<SearchOption> options;
 		private int page;
 		private int size;
 	}
-
-	/**
-	 * DM 채팅 기본 검색 DTO
-	 */
-	@Data
-	@Builder
-	public static class DmChatSearchRequestDto {
-		private String keyword;
-		private Long senderId;
-		private LocalDateTime date;
-		private List<SearchOption> options;
-		private int page;
-		private int size;
-	}
-
 
 }
