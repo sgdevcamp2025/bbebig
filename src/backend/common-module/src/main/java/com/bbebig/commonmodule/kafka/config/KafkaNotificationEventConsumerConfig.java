@@ -42,14 +42,14 @@ public class KafkaNotificationEventConsumerConfig {
 	}
 
 	@Bean
-	public ConsumerFactory<String, NotificationEventDto> consumerFactory() {
+	public ConsumerFactory<String, NotificationEventDto> consumerFactoryForNotificationEvent() {
 		return new DefaultKafkaConsumerFactory<>(consumerConfigurations());
 	}
 
 	@Bean
 	public ConcurrentKafkaListenerContainerFactory<String, NotificationEventDto> notificationEventListener() {
 		ConcurrentKafkaListenerContainerFactory<String, NotificationEventDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
-		factory.setConsumerFactory(consumerFactory());
+		factory.setConsumerFactory(consumerFactoryForNotificationEvent());
 		factory.setConcurrency(1); // 단일 컨슈머 설정
 		return factory;
 	}

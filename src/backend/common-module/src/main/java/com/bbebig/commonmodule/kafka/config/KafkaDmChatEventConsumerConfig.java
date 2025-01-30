@@ -44,7 +44,7 @@ public class KafkaDmChatEventConsumerConfig {
 
 	// 채팅 관련 Consumer 생성
 	@Bean
-	public ConsumerFactory<String, ChatMessageDto> consumerFactory(){
+	public ConsumerFactory<String, ChatMessageDto> consumerFactoryForDmChatEvent(){
 		return new DefaultKafkaConsumerFactory<>(consumerConfigurations(), new StringDeserializer(),
 				new JsonDeserializer<>(ChatMessageDto.class));
 	}
@@ -53,7 +53,7 @@ public class KafkaDmChatEventConsumerConfig {
 	@Bean
 	public ConcurrentKafkaListenerContainerFactory<String, ChatMessageDto> dmChatListener(){
 		ConcurrentKafkaListenerContainerFactory<String, ChatMessageDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
-		factory.setConsumerFactory(consumerFactory());
+		factory.setConsumerFactory(consumerFactoryForDmChatEvent());
 		factory.setConcurrency(1); // 쓰레드 개수
 		return factory;
 	}

@@ -37,24 +37,24 @@ public class KafkaProducerConfig {
 
 	// 채팅 Producer 생성
 	@Bean
-	public ProducerFactory<String, ChatMessageDto> producerFactoryForChat(){
+	public ProducerFactory<String, ChatMessageDto> producerFactoryForChatEvent(){
 		return new DefaultKafkaProducerFactory<>(producerConfigurations());
 	}
 
 	@Bean
 	public KafkaTemplate<String, ChatMessageDto> kafkaTemplateForChat(){
-		return new KafkaTemplate<>(producerFactoryForChat());
+		return new KafkaTemplate<>(producerFactoryForChatEvent());
 	}
 
 	// 세션 이벤트(웹소켓 연결) Producer
 	@Bean
-	public ProducerFactory<String, ConnectionEventDto> producerFactoryForConnection(){
+	public ProducerFactory<String, ConnectionEventDto> producerFactoryForConnectionEvent(){
 		return new DefaultKafkaProducerFactory<>(producerConfigurations());
 	}
 
 	@Bean
 	public KafkaTemplate<String, ConnectionEventDto> kafkaTemplateForConnection(){
-		return new KafkaTemplate<>(producerFactoryForConnection());
+		return new KafkaTemplate<>(producerFactoryForConnectionEvent());
 	}
 
 	// 채널 이벤트 (채널을 현재 보고있음, 떠남) Producer

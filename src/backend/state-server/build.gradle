@@ -49,6 +49,12 @@ dependencies {
 
     implementation 'com.google.protobuf:protobuf-java:3.21.12'
 
+    // Dotenv
+    implementation 'io.github.cdimascio:java-dotenv:5.2.2'
+
+    // Swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
+
 }
 
 dependencyManagement {

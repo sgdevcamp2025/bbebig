@@ -1,6 +1,6 @@
 package com.bbebig.commonmodule.kafka.config;
+
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerEventDto;
-import com.bbebig.commonmodule.kafka.util.ServerEventDeserializer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,12 +17,12 @@ import java.util.Map;
 
 @EnableKafka
 @Configuration
-public class KafkaServerEventConsumerConfig {
+public class KafkaConnectionEventConsumerConfig {
 
 	@Value("${spring.kafka.bootstrap-servers}")
 	private String bootstrapAddress;
 
-	@Value("${spring.kafka.consumer.group-id.server-event}")
+	@Value("${spring.kafka.consumer.group-id.connection-event}")
 	private String baseGroupId;
 
 	@Value("${eureka.instance.instance-id}")
@@ -34,21 +34,21 @@ public class KafkaServerEventConsumerConfig {
 		configurations.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
 		configurations.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
 		configurations.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-		configurations.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ServerEventDeserializer.class);
+		configurations.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
 		configurations.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
 		configurations.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest"); // 최신 메시지
 		return configurations;
 	}
 
 	@Bean
-	public ConsumerFactory<String, ServerEventDto> consumerFactoryForServerEvent() {
+	public ConsumerFactory<String, ServerEventDto> consumerFactoryForConnectionEvent() {
 		return new DefaultKafkaConsumerFactory<>(consumerConfigurations());
 	}
 
 	@Bean
-	public ConcurrentKafkaListenerContainerFactory<String, ServerEventDto> serverEventListener() {
+	public ConcurrentKafkaListenerContainerFactory<String, ServerEventDto> connectionEventListener() {
 		ConcurrentKafkaListenerContainerFactory<String, ServerEventDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
-		factory.setConsumerFactory(consumerFactoryForServerEvent());
+		factory.setConsumerFactory(consumerFactoryForConnectionEvent());
 		factory.setConcurrency(1); // 단일 컨슈머 설정
 		return factory;
 	}

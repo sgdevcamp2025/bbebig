@@ -30,6 +30,7 @@ spring:
         notification-event: "notificationEventGroup"
         server-event: "serverEventGroup"
         channel-event: "channelEventGroup"
+        connection-event: "connectionEventGroup"
 
       enable-auto-commit: true
       auto-offset-reset: latest
