@@ -1,4 +1,3 @@
-import { useNavigate, useParams } from 'react-router-dom'
 import { useState } from 'react'
 import { cn } from '@/libs/cn'
 import { Category } from '@/types/channel'
@@ -7,11 +6,17 @@ type SidebarProps = {
   type: 'dm' | 'server'
   serverName?: string
   categories?: Category[]
+  selectedChannelId?: string
+  onChannelSelect?: (channelId: number) => void
 }
 
-function Sidebar({ type, serverName, categories }: SidebarProps) {
-  const navigate = useNavigate()
-  const { serverId, channelId } = useParams()
+function Sidebar({
+  type,
+  serverName,
+  categories = [],
+  selectedChannelId,
+  onChannelSelect
+}: SidebarProps) {
   const [expandedCategories, setExpandedCategories] = useState<number[]>([])
 
   const toggleCategory = (categoryId: number) => {
@@ -22,8 +27,8 @@ function Sidebar({ type, serverName, categories }: SidebarProps) {
 
   if (type === 'dm') {
     return (
-      <div className='w-60 bg-discord-gray-800 h-screen flex flex-col'>
-        <div className='h-12 px-4 flex items-center border-b border-discord-gray-700'>
+      <div className='w-60 bg-discord-gray-700 h-screen flex flex-col'>
+        <div className='h-12 px-4 flex items-center justify-between border-b border-discord-gray-800'>
           <span className='text-discord-font-color-normal font-medium'>개인 대화창</span>
         </div>
       </div>
@@ -87,10 +92,10 @@ function Sidebar({ type, serverName, categories }: SidebarProps) {
                 {category.channels.map((channel) => (
                   <button
                     key={channel.id}
-                    onClick={() => navigate(`/channels/${serverId}/${channel.id}`)}
+                    onClick={() => onChannelSelect?.(channel.id)}
                     className={cn(
                       'w-full flex items-center px-2 py-1 rounded transition-colors',
-                      channelId === String(channel.id)
+                      selectedChannelId && Number(selectedChannelId) === channel.id
                         ? 'bg-discord-gray-500 text-white'
                         : 'text-discord-font-color-muted hover:bg-discord-gray-600'
                     )}>

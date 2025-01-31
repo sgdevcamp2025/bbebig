@@ -3,8 +3,6 @@ import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
 import ServerIcon from '@/components/server-icon'
 import { cn } from '@/libs/cn'
 import { useEffect } from 'react'
-import Sidebar from '@/components/side-bar'
-import { ServerChannelList } from '@/types/channel'
 
 const myServerList = [
   {
@@ -30,31 +28,6 @@ const myServerList = [
   }
 ] as const
 
-const myChannelList: ServerChannelList = {
-  1: [
-    {
-      id: 1,
-      name: '채팅 채널',
-      position: 0,
-      channels: [
-        { id: 1, name: '일반', type: 'VOICE', position: 0, privateStatus: false },
-        { id: 2, name: '공지사항', type: 'TEXT', position: 1, privateStatus: false }
-      ]
-    }
-  ],
-  2: [
-    {
-      id: 3,
-      name: '개발 채널',
-      position: 0,
-      channels: [
-        { id: 5, name: '프론트엔드', type: 'TEXT', position: 0, privateStatus: false },
-        { id: 6, name: '백엔드', type: 'TEXT', position: 1, privateStatus: false }
-      ]
-    }
-  ]
-} as const
-
 const MainRootLayout = () => {
   const location = useLocation()
   const navigate = useNavigate()
@@ -76,9 +49,6 @@ const MainRootLayout = () => {
       navigate('/channels/@me', { replace: true })
     }
   }, [serverId, navigate])
-
-  const currentServer = myServerList.find((server) => server.serverId.toString() === serverId)
-  const categories = currentServer ? myChannelList[currentServer.serverId] : []
 
   return (
     <div className='flex'>
@@ -132,12 +102,6 @@ const MainRootLayout = () => {
           ))}
         </ul>
       </nav>
-
-      <Sidebar
-        type={serverId === '@me' ? 'dm' : 'server'}
-        serverName={currentServer?.name}
-        categories={categories}
-      />
 
       <div className='flex-1 bg-gray-20'>
         <Outlet />
