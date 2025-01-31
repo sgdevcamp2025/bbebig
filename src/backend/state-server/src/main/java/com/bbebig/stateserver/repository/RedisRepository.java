@@ -1,6 +1,7 @@
 package com.bbebig.stateserver.repository;
 
 import com.bbebig.commonmodule.kafka.dto.ConnectionEventDto;
+import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
 import com.bbebig.stateserver.client.MemberClient;
 import com.bbebig.stateserver.domain.DeviceInfo;
 import com.bbebig.stateserver.domain.MemberPresenceStatus;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 @RequiredArgsConstructor
 public class RedisRepository {
 
-	private static final String MEMBER_KEY_PREFIX = "member:";
+	private static final String STATE_KEY_PREFIX = "state:";
 	private static final String MEMBER_STATUS_KEY_SUFFIX = ":memberStatus";
 
 	private final RedisTemplate<String, Object> redisTemplate;
@@ -28,16 +29,16 @@ public class RedisRepository {
 
 	// TODO : 반환 타입 잘 고민해보기
 
-	public void handleConnection(ConnectionEventDto connectionEventDto) {
-		String key = MEMBER_KEY_PREFIX + connectionEventDto.getMemberId() + MEMBER_STATUS_KEY_SUFFIX;
+	public MemberPresenceStatus saveConnectionEvent(ConnectionEventDto connectionEventDto) {
+		String key = STATE_KEY_PREFIX + connectionEventDto.getMemberId() + MEMBER_STATUS_KEY_SUFFIX;
 
 		MemberPresenceStatus status = loadMemberPresenceStatus(key);
 		if (status == null) {
 			MemberGlobalStatusResponseDto responseDto = memberClient.getMemberGlobalStatus(connectionEventDto.getMemberId());
 			status = MemberPresenceStatus.builder()
 					.globalStatus(responseDto.getGlobalStatus())
-					.actualStatus("ONLINE")
-					.lastActivityTime(LocalDateTime.now().toString())
+					.actualStatus(PresenceType.ONLINE)
+					.lastActivityTime(LocalDateTime.now())
 					.devices(new ArrayList<>())
 					.build();
 		}
@@ -56,6 +57,7 @@ public class RedisRepository {
 		status.getDevices().add(deviceInfo);
 
 		saveMemberPresenceStatus(key, status);
+		return status;
 	}
 
 	private MemberPresenceStatus loadMemberPresenceStatus(String key) {

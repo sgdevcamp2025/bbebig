@@ -31,6 +31,7 @@ spring:
         server-event: "serverEventGroup"
         channel-event: "channelEventGroup"
         connection-event: "connectionEventGroup"
+        presence-event: "presenceEventGroup"
 
       enable-auto-commit: true
       auto-offset-reset: latest
