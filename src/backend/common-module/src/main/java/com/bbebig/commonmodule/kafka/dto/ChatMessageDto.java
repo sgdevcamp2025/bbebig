@@ -1,6 +1,6 @@
 package com.bbebig.commonmodule.kafka.dto;
 
-import com.bbebig.chatserver.domain.chat.model.ChannelType;
+import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;

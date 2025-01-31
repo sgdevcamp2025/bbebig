@@ -3,6 +3,7 @@ package com.bbebig.commonmodule.kafka.config;
 import com.bbebig.commonmodule.kafka.dto.ChannelEventDto;
 import com.bbebig.commonmodule.kafka.dto.ChatMessageDto;
 import com.bbebig.commonmodule.kafka.dto.ConnectionEventDto;
+import com.bbebig.commonmodule.kafka.dto.PresenceEventDto;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ser.std.StringSerializer;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -66,5 +67,16 @@ public class KafkaProducerConfig {
 	@Bean
 	public KafkaTemplate<String, ChannelEventDto> kafkaTemplateForChannelEvent(){
 		return new KafkaTemplate<>(producerFactoryForChannelEvent());
+	}
+
+	// 접속 이벤트 Producer
+	@Bean
+	public ProducerFactory<String, PresenceEventDto> producerFactoryForPresenceEvent(){
+		return new DefaultKafkaProducerFactory<>(producerConfigurations());
+	}
+
+	@Bean
+	public KafkaTemplate<String, PresenceEventDto> kafkaTemplateForPresenceEvent(){
+		return new KafkaTemplate<>(producerFactoryForPresenceEvent());
 	}
 }
