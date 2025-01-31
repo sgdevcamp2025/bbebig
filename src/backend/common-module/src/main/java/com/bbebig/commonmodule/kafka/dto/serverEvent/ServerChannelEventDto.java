@@ -1,10 +1,12 @@
 package com.bbebig.commonmodule.kafka.dto.serverEvent;
 
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.SuperBuilder;
 
-@Builder
+@SuperBuilder
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class ServerChannelEventDto extends ServerEventDto {
 
 	Long categoryId;

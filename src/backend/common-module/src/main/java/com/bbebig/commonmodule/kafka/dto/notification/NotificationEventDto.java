@@ -1,10 +1,10 @@
 package com.bbebig.commonmodule.kafka.dto.notification;
 
-import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 public abstract class NotificationEventDto {
 
 	Long memberId;

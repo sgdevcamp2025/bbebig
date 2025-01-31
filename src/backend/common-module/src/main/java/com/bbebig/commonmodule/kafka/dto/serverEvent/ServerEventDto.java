@@ -1,10 +1,10 @@
 package com.bbebig.commonmodule.kafka.dto.serverEvent;
 
-import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 public abstract class ServerEventDto {
 
 	Long serverId;

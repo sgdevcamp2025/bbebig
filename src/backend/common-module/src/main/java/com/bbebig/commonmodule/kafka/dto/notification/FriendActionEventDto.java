@@ -1,10 +1,12 @@
 package com.bbebig.commonmodule.kafka.dto.notification;
 
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
+@EqualsAndHashCode(callSuper=false)
 public class FriendActionEventDto extends NotificationEventDto {
 
 	private Long friendId;
