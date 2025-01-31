@@ -3,6 +3,8 @@ FROM gradle:7.6.4-jdk17 AS build
 
 WORKDIR /apps
 COPY . .
+COPY ../common-module .
+
 RUN ./gradlew clean generateProto
 RUN ./gradlew build -x test
 
