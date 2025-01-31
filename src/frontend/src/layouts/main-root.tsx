@@ -4,32 +4,33 @@ import ServerIcon from '@/components/server-icon'
 import { cn } from '@/libs/cn'
 import { useEffect } from 'react'
 import Sidebar from '@/components/side-bar'
+import { ServerChannelList } from '@/types/channel'
 
 const myServerList = [
   {
     serverId: 1,
-    name: '서버 이름',
+    name: '서버 이름1',
     image: 'https://placehold.co/75',
     alarm: true,
     channelId: 1
   },
   {
     serverId: 2,
-    name: '서버 이름',
+    name: '서버 이름2',
     image: 'https://placehold.co/75',
     alarm: false,
     channelId: 2
   },
   {
     serverId: 3,
-    name: '서버 이름',
+    name: '서버 이름3',
     image: 'https://placehold.co/75',
     alarm: false,
     channelId: 3
   }
 ] as const
 
-const myChannelList = {
+const myChannelList: ServerChannelList = {
   1: [
     {
       id: 1,
@@ -52,7 +53,7 @@ const myChannelList = {
       ]
     }
   ]
-} as unknown as Record<number, any>
+} as const
 
 const MainRootLayout = () => {
   const location = useLocation()
@@ -69,7 +70,6 @@ const MainRootLayout = () => {
   }
 
   const { serverId } = useParams<{ serverId: string }>()
-  console.log(serverId)
 
   useEffect(() => {
     if (!serverId) {
