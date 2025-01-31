@@ -1,0 +1,27 @@
+services:
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.5.0
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node # 단일 노드로 실행
+      - xpack.security.enabled=true # 보안 활성화
+      - ELASTIC_PASSWORD=bbebig1234
+      - bootstrap.memory_lock=true # 메모리 잠금 활성화
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m # Elasticsearch JVM 메모리 설정
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - bbebig-network
+
+volumes:
+  es-data:
+
+networks:
+  bbebig-network:
+    external: true
