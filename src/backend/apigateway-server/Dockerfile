@@ -3,7 +3,7 @@ FROM gradle:7.6.4-jdk17 AS build
 
 WORKDIR /apps
 COPY . .
-RUN ./gradlew clean genrateProto
+RUN ./gradlew clean generateProto
 
 
 # runtime stage
