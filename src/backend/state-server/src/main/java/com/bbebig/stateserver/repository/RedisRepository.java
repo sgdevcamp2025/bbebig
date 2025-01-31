@@ -60,6 +60,11 @@ public class RedisRepository {
 		return status;
 	}
 
+	public MemberPresenceStatus getMemberPresenceStatus(Long memberId) {
+		String key = STATE_KEY_PREFIX + memberId + MEMBER_STATUS_KEY_SUFFIX;
+		return loadMemberPresenceStatus(key);
+	}
+
 	private MemberPresenceStatus loadMemberPresenceStatus(String key) {
 		Object obj = redisTemplate.opsForValue().get(key);
 		if (obj instanceof MemberPresenceStatus) {
