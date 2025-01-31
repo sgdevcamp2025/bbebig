@@ -2,7 +2,6 @@ package com.bbebig.stateserver.controller;
 
 import com.bbebig.commonmodule.global.response.code.CommonResponse;
 import com.bbebig.commonmodule.passport.annotation.PassportUser;
-import com.bbebig.commonmodule.proto.PassportProto;
 import com.bbebig.commonmodule.proto.PassportProto.Passport;
 import com.bbebig.stateserver.dto.StateResponseDto.*;
 import com.bbebig.stateserver.service.StateService;
