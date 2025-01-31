@@ -11,6 +11,7 @@ import com.bbebig.serviceserver.server.dto.response.ServerNameUpdateResponseDto;
 import com.bbebig.serviceserver.server.dto.response.ServerReadResponseDto;
 import com.bbebig.serviceserver.server.service.ServerService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -42,7 +43,7 @@ public class ServerController {
     })
     @PostMapping("")
     public CommonResponse<ServerCreateResponseDto> createServer(
-            @PassportUser Passport passport,
+            @Parameter(hidden = true) @PassportUser Passport passport,
             @RequestBody ServerCreateRequestDto serverCreateRequestDto
     ) {
         log.info("[Service] 서버 생성 요청: ownerId = {}", passport.getMemberId());
@@ -56,7 +57,7 @@ public class ServerController {
     })
     @GetMapping("/{serverId}")
     public CommonResponse<ServerReadResponseDto> readServer(
-            @PassportUser Passport passport,
+            @Parameter(hidden = true) @PassportUser Passport passport,
             @PathVariable Long serverId
     ) {
         log.info("[Service] 서버 조회 요청: memberId = {}, serverId = {}", passport.getMemberId(), serverId);
@@ -70,7 +71,7 @@ public class ServerController {
     })
     @PatchMapping("/{serverId}/name")
     public CommonResponse<ServerNameUpdateResponseDto> updateServerName(
-            @PassportUser Passport passport,
+            @Parameter(hidden = true) @PassportUser Passport passport,
             @PathVariable Long serverId,
             @RequestBody ServerNameUpdateRequestDto serverNameUpdateRequestDto
     ) {
@@ -85,7 +86,7 @@ public class ServerController {
     })
     @PatchMapping("/{serverId}/image")
     public CommonResponse<ServerImageUpdateResponseDto> updateServerImage(
-            @PassportUser Passport passport,
+            @Parameter(hidden = true) @PassportUser Passport passport,
             @PathVariable Long serverId,
             @RequestBody ServerImageUpdateRequestDto serverImageUpdateRequestDto
     ) {
@@ -100,7 +101,7 @@ public class ServerController {
     })
     @DeleteMapping("/{serverId}")
     public CommonResponse<ServerDeleteResponseDto> deleteServer(
-            @PassportUser Passport passport,
+            @Parameter(hidden = true) @PassportUser Passport passport,
             @PathVariable Long serverId
     ) {
         log.info("[Service] 서버 삭제 요청: memberId = {}, serverId = {}", passport.getMemberId(), serverId);
