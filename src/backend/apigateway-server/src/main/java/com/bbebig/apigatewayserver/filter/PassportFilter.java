@@ -5,11 +5,13 @@ import com.bbebig.commonmodule.passport.PassportExtractor;
 import com.bbebig.commonmodule.passport.PassportGenerator;
 import com.bbebig.commonmodule.passport.PassportValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
-import org.springframework.cloud.gateway.filter.GlobalFilter;
-import org.springframework.context.annotation.Bean;
+import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -18,8 +20,8 @@ import reactor.core.publisher.Mono;
  * Spring Cloud Gateway에서 모든 요청을 가로채 Passport를 확인하거나,
  * 없으면 Auth 서버로 JWT 검증 후 Passport 발급.
  */
-@RequiredArgsConstructor
-public class PassportFilter {
+@Component
+public class PassportFilter extends AbstractGatewayFilterFactory<PassportFilter.Config> {
 
     private final PassportExtractor passportExtractor;
     private final PassportValidator passportValidator;
@@ -34,8 +36,18 @@ public class PassportFilter {
     @Value("${eas.passport.header}")
     private String PASSPORT_HEADER;
 
-    @Bean
-    public GlobalFilter passportFilter() {
+    @Autowired
+    public PassportFilter(PassportExtractor passportExtractor,
+                          PassportValidator passportValidator,
+                          PassportGenerator passportGenerator) {
+        super(Config.class);
+        this.passportExtractor = passportExtractor;
+        this.passportValidator = passportValidator;
+        this.passportGenerator = passportGenerator;
+    }
+
+    @Override
+    public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
             String xPassport = passportExtractor.extractPassport(exchange.getRequest().getHeaders());
 
@@ -108,5 +120,9 @@ public class PassportFilter {
     private Mono<Void> respondWithUnauthorized(ServerWebExchange exchange) {
         exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
         return exchange.getResponse().setComplete();
+    }
+
+    public static class Config {
+        // 필요할 경우 설정 추가 가능
     }
 }
