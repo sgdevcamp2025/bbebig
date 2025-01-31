@@ -1,7 +1,6 @@
 package com.bbebig.commonmodule.kafka.config;
 
 import com.bbebig.commonmodule.kafka.dto.PresenceEventDto;
-import com.bbebig.commonmodule.kafka.dto.notification.NotificationEventDto;
 import com.bbebig.commonmodule.kafka.util.NotificationEventDeserializer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -19,7 +18,7 @@ import java.util.Map;
 
 @EnableKafka
 @Configuration
-public class KafkaPresenceEventConsumer {
+public class KafkaPresenceEventConsumerConfig {
 
 	@Value("${spring.kafka.bootstrap-servers}")
 	private String bootstrapAddress;
