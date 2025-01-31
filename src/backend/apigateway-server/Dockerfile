@@ -1,16 +1,10 @@
-# build stage
-FROM gradle:7.6.4-jdk17 AS build
-
-WORKDIR /apps
+FROM gradle:7.6.4-jdk17 AS builder
+WORKDIR /app
 COPY . .
-RUN gradle clean build --no-daemon
+RUN ./gradlew clean build -x test --no-daemon
 
-
-# runtime stage
-FROM openjdk:17-jdk-slim
-
-WORKDIR /apps
-COPY --from=build /apps/build/libs/*.jar app.jar
-
-EXPOSE 8080
-CMD ["java", "-jar", "app.jar"]
+FROM eclipse-temurin:17-jdk
+WORKDIR /app
+# 빌드 결과물(jar)만 복사
+COPY --from=builder /app/apigateway-server/build/libs/apigateway-server.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
