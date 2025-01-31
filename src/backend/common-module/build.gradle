@@ -1,5 +1,6 @@
 plugins {
 	id 'java-library'
+	id 'org.springframework.boot' version '3.4.1'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'com.google.protobuf' version '0.9.4'
 }
@@ -19,7 +20,6 @@ repositories {
 
 dependencies {
 	// Spring
-	implementation platform("org.springframework.boot:spring-boot-dependencies:3.4.1")
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
@@ -27,9 +27,8 @@ dependencies {
 	implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
 
 	// Lombok
-	compileOnly 'org.projectlombok:lombok:1.18.28'
-	annotationProcessor 'org.projectlombok:lombok:1.18.28'
-
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
 
 	// Protobuf
 	implementation 'com.google.protobuf:protobuf-java:3.21.12'
