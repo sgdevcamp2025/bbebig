@@ -27,8 +27,9 @@ dependencies {
 	implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
 
 	// Lombok
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+	compileOnly 'org.projectlombok:lombok:1.18.28'
+	annotationProcessor 'org.projectlombok:lombok:1.18.28'
+
 
 	// Protobuf
 	implementation 'com.google.protobuf:protobuf-java:3.21.12'
