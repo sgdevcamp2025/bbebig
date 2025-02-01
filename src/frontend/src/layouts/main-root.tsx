@@ -93,7 +93,8 @@ const MainRootLayout = () => {
           ))}
         </ul>
       </nav>
-      <div className='flex-1 bg-gray-20'>
+      <div className='flex-1 bg-gray-20 relative'>
+        <div className='h-[52px] w-60 absolute left-0 px-2 pb-[1px] bottom-0 bg-black-92'></div>
         <Outlet />
       </div>
     </div>
