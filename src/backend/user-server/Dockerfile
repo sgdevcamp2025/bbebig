@@ -3,8 +3,10 @@ FROM gradle:7.6.4-jdk17 AS build
 
 WORKDIR /apps
 COPY . .
-RUN ./gradlew clean build --no-daemon
+COPY ../common-module .
 
+RUN ./gradlew clean generateProto
+RUN ./gradlew build -x test
 
 # runtime stage
 FROM openjdk:17-jdk-slim
