@@ -41,6 +41,6 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          cd src/backend
-          docker build -t ${{ env.DOCKERHUB_USERNAME }}/${{ env.SERVER_NAME }}:latest -f ${{ env.SERVER_NAME }}/Dockerfile .
+          cd src/backend/${{ env.SERVER_NAME }}
+          docker build -t ${{ env.DOCKERHUB_USERNAME }}/${{ env.SERVER_NAME }}:latest .
           docker push ${{ env.DOCKERHUB_USERNAME }}/${{ env.SERVER_NAME }}:latest
