@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.4.1'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'com.google.protobuf' version '0.9.4'
 }
 
 group = 'com.bbebig'
@@ -24,6 +25,9 @@ repositories {
 }
 
 dependencies {
+	// 공통 모듈
+	implementation project(":common-module")
+
 	// WebSocket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
@@ -36,6 +40,9 @@ dependencies {
 
 	// Kurento
 	implementation 'org.kurento:kurento-client:6.18.0'
+
+	// Protobuf
+	implementation 'com.google.protobuf:protobuf-java:3.21.12'
 
 	// 테스트
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
