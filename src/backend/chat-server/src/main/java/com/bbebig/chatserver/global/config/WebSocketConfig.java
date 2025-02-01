@@ -1,7 +1,7 @@
 package com.bbebig.chatserver.global.config;
 
-import com.bbebig.chatserver.handler.StompErrorHandler;
-import com.bbebig.chatserver.handler.StompHandler;
+import com.bbebig.chatserver.domain.chat.handler.StompErrorHandler;
+import com.bbebig.chatserver.domain.chat.handler.StompHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
