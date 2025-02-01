@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,10 +34,9 @@ public class StateController {
 			@ApiResponse(responseCode = "200", description = "서버 생성 성공", useReturnTypeSchema = true),
 			@ApiResponse(responseCode = "400", description = "", content = @Content)
 	})
-	@GetMapping("/state/check/member")
-	public CommonResponse<MemberStatusResponseDto> checkMemberState(
-			@Parameter(hidden = true) @PassportUser Passport passport) {
-		log.info("[State] Check member state: {}", passport.getMemberId());
-		return CommonResponse.onSuccess(stateService.checkMemberState(passport.getMemberId()));
+	@GetMapping("/state/check/member/{memberId}")
+	public CommonResponse<MemberStatusResponseDto> checkMemberState(@PathVariable @Parameter(description = "사용자 ID") Long memberId) {
+		log.info("[State] Check member state: {}", memberId);
+		return CommonResponse.onSuccess(stateService.checkMemberState(memberId));
 	}
 }

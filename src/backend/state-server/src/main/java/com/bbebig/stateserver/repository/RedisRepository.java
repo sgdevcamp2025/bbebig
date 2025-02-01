@@ -1,5 +1,6 @@
 package com.bbebig.stateserver.repository;
 
+import com.bbebig.commonmodule.kafka.dto.ChannelEventDto;
 import com.bbebig.commonmodule.kafka.dto.ConnectionEventDto;
 import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
 import com.bbebig.stateserver.client.MemberClient;
@@ -50,7 +51,7 @@ public class RedisRepository {
 				.lastActiveTime(LocalDateTime.now().toString())
 				.build();
 		if (deviceInfo.getPlatform().equals("ANDROID")) {
-			deviceInfo.updateCurrent(connectionEventDto.getCurrentRoomType(),
+			deviceInfo.updateCurrent(connectionEventDto.getCurrentChannelType(),
 					connectionEventDto.getCurrentChannelId(), connectionEventDto.getCurrentServerId());
 		}
 
@@ -63,6 +64,33 @@ public class RedisRepository {
 	public MemberPresenceStatus getMemberPresenceStatus(Long memberId) {
 		String key = STATE_KEY_PREFIX + memberId + MEMBER_STATUS_KEY_SUFFIX;
 		return loadMemberPresenceStatus(key);
+	}
+
+	public void updateMemberCurrentRoom(ChannelEventDto channelEventDto) {
+		String key = STATE_KEY_PREFIX + channelEventDto.getMemberId() + MEMBER_STATUS_KEY_SUFFIX;
+		MemberPresenceStatus status = loadMemberPresenceStatus(key);
+
+		if (status == null) {
+			log.error("[State] RedisRepository: 멤버 상태 정보 없음");
+			return;
+		}
+
+
+		if (channelEventDto.getType().equals("JOIN")) {
+			status.getDevices().forEach(deviceInfo -> {
+				if (deviceInfo.getSocketSessionId().equals(channelEventDto.getSessionId())) {
+					deviceInfo.updateCurrent(channelEventDto.getChannelType(), channelEventDto.getChannelId(), channelEventDto.getServerId());
+				}
+			});
+		} else if (channelEventDto.getType().equals("LEAVE")) {
+			status.getDevices().forEach(deviceInfo -> {
+				if (deviceInfo.getSocketSessionId().equals(channelEventDto.getSessionId())) {
+					deviceInfo.updateCurrent(null, null, null);
+				}
+			});
+		}
+
+		saveMemberPresenceStatus(key, status);
 	}
 
 	private MemberPresenceStatus loadMemberPresenceStatus(String key) {

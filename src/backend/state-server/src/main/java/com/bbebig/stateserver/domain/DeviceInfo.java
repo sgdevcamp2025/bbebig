@@ -1,5 +1,6 @@
 package com.bbebig.stateserver.domain;
 
+import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
 import lombok.Builder;
 import lombok.Data;
 
@@ -17,14 +18,14 @@ public class DeviceInfo {
 
 	private String lastActiveTime;
 
-	private String currentRoomType;
+	private ChannelType currentChannelType;
 
-	private String currentChannelId;
+	private Long currentChannelId;
 
-	private String currentServerId;
+	private Long currentServerId;
 
-	public void updateCurrent(String currentRoomType, String currentChannelId, String currentServerId) {
-		this.currentRoomType = currentRoomType;
+	public void updateCurrent(ChannelType currentChannelType, Long currentChannelId, Long currentServerId) {
+		this.currentChannelType = currentChannelType;
 		this.currentChannelId = currentChannelId;
 		this.currentServerId = currentServerId;
 	}

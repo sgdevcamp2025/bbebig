@@ -1,5 +1,6 @@
 package com.bbebig.commonmodule.kafka.dto;
 
+import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
 import lombok.Builder;
 import lombok.Data;
 
@@ -21,10 +22,10 @@ public class ConnectionEventDto {
 	private String deviceType;
 
 	// Andorid인 경우 (로컬에 정보가 있기 때문에 한번에 요청 가능)\
-	private String currentRoomType;
+	private ChannelType currentChannelType;
 
-	private String currentChannelId;
+	private Long currentChannelId;
 
-	private String currentServerId;
+	private Long currentServerId;
 
 }
