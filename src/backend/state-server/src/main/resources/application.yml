@@ -1,3 +1,6 @@
+server:
+  port: 9040
+
 spring:
   application:
     name: state-server
