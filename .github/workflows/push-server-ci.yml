@@ -3,10 +3,10 @@ name: Push Server Image
 on:
   push:
     branches:
-      - dev/push-server # 서버 별로 변경 필요
+      - dev/push-server   # 서버 별로 변경 필요
   pull_request:
     branches:
-      - dev/push-server # 서버 별로 변경 필요
+      - dev/push-server   # 서버 별로 변경 필요
 
 jobs:
   build-and-push:
@@ -15,7 +15,7 @@ jobs:
     env:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-      SERVER_NAME: push-server   # 서버 별로 변경 필요
+      SERVER_NAME: push-server  # 서버 별로 변경 필요
 
     steps:
       - name: Check out repository
