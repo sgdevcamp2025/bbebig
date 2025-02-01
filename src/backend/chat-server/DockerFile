@@ -1,18 +1,7 @@
-# build stage
-FROM gradle:7.6.4-jdk17 AS build
+FROM openjdk:17
+WORKDIR /app
+# 빌드된 Spring Boot JAR 파일을 복사
+COPY build/libs/chat-server-0.0.1-SNAPSHOT.jar chat-server.jar
 
-WORKDIR /apps
-COPY . .
-COPY ../common-module .
-
-RUN ./gradlew clean generateProto
-RUN ./gradlew build -x test
-
-# runtime stage
-FROM openjdk:17-jdk-slim
-
-WORKDIR /apps
-COPY --from=build /apps/build/libs/*.jar app.jar
-
-EXPOSE 9050
-CMD ["java", "-jar", "app.jar"]
+# JAR 파일 실행
+ENTRYPOINT ["java", "-jar", "chat-server.jar"]
