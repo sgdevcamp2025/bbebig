@@ -67,10 +67,10 @@ public class ConnectionEventConsumerService {
 	private MemberPresenceStatus handleConnectionEvent(ConnectionEventDto connectionEventDto) {
 		String key = RedisKeys.getMemberStatusKey(connectionEventDto.getMemberId());
 
-		MemberPresenceStatus status = redisRepository.loadMemberPresenceStatus(key);
-		if (status == null) {
+		MemberPresenceStatus memberPresenceStatus = redisRepository.loadMemberPresenceStatus(key);
+		if (memberPresenceStatus == null) {
 			MemberGlobalStatusResponseDto memberGlobalStatus = memberClient.getMemberGlobalStatus(connectionEventDto.getMemberId());
-			status = MemberPresenceStatus.builder()
+			memberPresenceStatus = MemberPresenceStatus.builder()
 					.memberId(connectionEventDto.getMemberId())
 					.globalStatus(memberGlobalStatus.getGlobalStatus())
 					.actualStatus(PresenceType.ONLINE)
@@ -78,8 +78,8 @@ public class ConnectionEventConsumerService {
 					.devices(new ArrayList<>())
 					.build();
 		} else {
-			status.setActualStatus(PresenceType.ONLINE);
-			status.updateLastActivityTime(LocalDateTime.now());
+			memberPresenceStatus.setActualStatus(PresenceType.ONLINE);
+			memberPresenceStatus.updateLastActivityTime(LocalDateTime.now());
 		}
 
 		DeviceInfo deviceInfo = DeviceInfo.builder()
@@ -95,32 +95,32 @@ public class ConnectionEventConsumerService {
 					connectionEventDto.getCurrentChannelId(), connectionEventDto.getCurrentServerId());
 		}
 
-		status.getDevices().add(deviceInfo);
+		memberPresenceStatus.getDevices().add(deviceInfo);
 
-		redisRepository.saveMemberPresenceStatus(key, status);
-		return status;
+		redisRepository.saveMemberPresenceStatus(key, memberPresenceStatus);
+		return memberPresenceStatus;
 	}
 
 	// 연결 끊어짐 이벤트를 확인하여, 상태 정보를 삭제하거나 업데이트
 	private MemberPresenceStatus handleDisconnectionEvent(ConnectionEventDto connectionEventDto) {
 		String key = RedisKeys.getMemberStatusKey(connectionEventDto.getMemberId());
-		MemberPresenceStatus status = redisRepository.loadMemberPresenceStatus(key);
+		MemberPresenceStatus memberPresenceStatus = redisRepository.loadMemberPresenceStatus(key);
 
-		if (status == null) {
+		if (memberPresenceStatus == null) {
 			log.error("[State] RedisRepository: 웹소켓 연결 끊어짐 처리시, 멤버 상태 정보 없음");
 			return null;
 		} else {
-			status.getDevices().removeIf(deviceInfo -> deviceInfo.getSocketSessionId().equals(connectionEventDto.getSocketSessionId()));
+			memberPresenceStatus.getDevices().removeIf(deviceInfo -> deviceInfo.getSocketSessionId().equals(connectionEventDto.getSocketSessionId()));
 
-			if (status.getDevices().isEmpty()) {
-				status.setActualStatus(PresenceType.OFFLINE);
+			if (memberPresenceStatus.getDevices().isEmpty()) {
+				memberPresenceStatus.setActualStatus(PresenceType.OFFLINE);
 			}
-			status.updateLastActivityTime(LocalDateTime.now());
-			redisRepository.saveMemberPresenceStatus(key, status);
+			memberPresenceStatus.updateLastActivityTime(LocalDateTime.now());
+			redisRepository.saveMemberPresenceStatus(key, memberPresenceStatus);
 		}
 
-		redisRepository.saveMemberPresenceStatus(key, status);
-		return status;
+		redisRepository.saveMemberPresenceStatus(key, memberPresenceStatus);
+		return memberPresenceStatus;
 	}
 
 }
