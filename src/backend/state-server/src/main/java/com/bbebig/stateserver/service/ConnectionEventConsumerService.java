@@ -6,6 +6,7 @@ import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
 import com.bbebig.stateserver.client.MemberClient;
 import com.bbebig.stateserver.domain.DeviceInfo;
 import com.bbebig.stateserver.domain.MemberPresenceStatus;
+import com.bbebig.stateserver.dto.DtoConverter;
 import com.bbebig.stateserver.global.util.RedisKeys;
 import com.bbebig.stateserver.repository.RedisRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,15 +34,11 @@ public class ConnectionEventConsumerService {
 			log.error("[State] ConnectionEventConsumerService: 연결 이벤트 정보 없음");
 			return;
 		}
+		// 연결 이벤트인지, 연결 끊어짐 이벤트인지 확인
 		if (connectionEventDto.getType().equals("CONNECT")) {
 			MemberPresenceStatus memberPresenceStatus = handleConnectionEvent(connectionEventDto);
 
-			PresenceEventDto presenceEventDto = PresenceEventDto.builder()
-					.memberId(connectionEventDto.getMemberId())
-					.globalStatus(memberPresenceStatus.getGlobalStatus())
-					.actualStatus(memberPresenceStatus.getActualStatus())
-					.lastActivityTime(memberPresenceStatus.getLastActivityTime())
-					.build();
+			PresenceEventDto presenceEventDto = DtoConverter.convertMemberPresenceStatusToPresenceEventDto(memberPresenceStatus);
 
 			kafkaProducerService.sendPresenceEvent(presenceEventDto);
 		} else if (connectionEventDto.getType().equals("DISCONNECT")) {
@@ -49,6 +46,7 @@ public class ConnectionEventConsumerService {
 
 			PresenceEventDto presenceEventDto;
 
+			// 연결 끊어짐 이벤트 처리 도중 Redis에 상태 정보가 없는 경우
 			if (memberPresenceStatus == null) {
 				log.error("[State] ConnectionEventConsumerService: 연결 해제 이벤트 처리 도중 Redis에 상태 정보가 없어서 처리 실패. memberId: {}", connectionEventDto.getMemberId());
 				presenceEventDto = PresenceEventDto.builder()
@@ -58,12 +56,7 @@ public class ConnectionEventConsumerService {
 						.lastActivityTime(LocalDateTime.now())
 						.build();
 			} else {
-				presenceEventDto = PresenceEventDto.builder()
-						.memberId(connectionEventDto.getMemberId())
-						.globalStatus(memberPresenceStatus.getGlobalStatus())
-						.actualStatus(memberPresenceStatus.getActualStatus())
-						.lastActivityTime(memberPresenceStatus.getLastActivityTime())
-						.build();
+				presenceEventDto = DtoConverter.convertMemberPresenceStatusToPresenceEventDto(memberPresenceStatus);
 			}
 			kafkaProducerService.sendPresenceEvent(presenceEventDto);
 		}
@@ -78,6 +71,7 @@ public class ConnectionEventConsumerService {
 		if (status == null) {
 			MemberGlobalStatusResponseDto memberGlobalStatus = memberClient.getMemberGlobalStatus(connectionEventDto.getMemberId());
 			status = MemberPresenceStatus.builder()
+					.memberId(connectionEventDto.getMemberId())
 					.globalStatus(memberGlobalStatus.getGlobalStatus())
 					.actualStatus(PresenceType.ONLINE)
 					.lastActivityTime(LocalDateTime.now())
@@ -95,7 +89,8 @@ public class ConnectionEventConsumerService {
 				.lastActiveTime(LocalDateTime.now())
 				.build();
 
-		if (deviceInfo.getPlatform().equals("ANDROID")) {
+		// 안드로이드 기기인 경우, 로컬에 있던 정보가 있다면 현재 채널 정보를 업데이트
+		if (deviceInfo.getPlatform().equals("ANDROID") && connectionEventDto.getCurrentChannelType() != null) {
 			deviceInfo.updateCurrent(connectionEventDto.getCurrentChannelType(),
 					connectionEventDto.getCurrentChannelId(), connectionEventDto.getCurrentServerId());
 		}

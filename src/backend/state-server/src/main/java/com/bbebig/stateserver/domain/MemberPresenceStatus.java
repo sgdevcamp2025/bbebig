@@ -11,6 +11,8 @@ import java.util.List;
 @Builder
 public class MemberPresenceStatus {
 
+	private Long memberId;
+
 	private PresenceType globalStatus;
 
 	private PresenceType actualStatus;

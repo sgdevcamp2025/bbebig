@@ -1,20 +1,11 @@
 package com.bbebig.stateserver.repository;
 
-import com.bbebig.commonmodule.kafka.dto.ChannelEventDto;
-import com.bbebig.commonmodule.kafka.dto.ConnectionEventDto;
-import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
-import com.bbebig.stateserver.client.MemberClient;
-import com.bbebig.stateserver.domain.DeviceInfo;
 import com.bbebig.stateserver.domain.MemberPresenceStatus;
-import com.bbebig.stateserver.dto.MemberResponseDto.MemberGlobalStatusResponseDto;
 import com.bbebig.stateserver.global.util.RedisKeys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 
 @Slf4j
 @Service
@@ -23,9 +14,6 @@ public class RedisRepository {
 
 	// TODO : RedisTemplate<String, Object>만 해도 되는지 이해하기
 	private final RedisTemplate<String, Object> redisTemplate;
-
-	private final MemberClient memberClient;
-
 
 	// 멤버 상태 정보를 저장
 	public void saveMemberPresenceStatus(String key, MemberPresenceStatus status) {
