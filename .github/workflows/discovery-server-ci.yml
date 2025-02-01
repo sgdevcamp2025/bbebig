@@ -1,12 +1,12 @@
-name: Build and Push State Server Image
+name: Push Server Image
 
 on:
   push:
     branches:
-      - dev/discovery-server
+      - dev/discovery-server   # 서버 별로 변경 필요
   pull_request:
     branches:
-      - dev/discovery-server
+      - dev/discovery-server   # 서버 별로 변경 필요
 
 jobs:
   build-and-push:
@@ -15,7 +15,7 @@ jobs:
     env:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-      SERVER_NAME: discovery-server   # 필요한 경우 바꿔주세요
+      SERVER_NAME: discovery-server   # 서버 별로 변경 필요
 
     steps:
       - name: Check out repository
@@ -26,11 +26,6 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 17
-
-      - name: Build with Gradle
-        run: |
-          cd src/backend/${{ env.SERVER_NAME }}
-          ./gradlew clean build -x test
 
       - name: Log in to DockerHub
         uses: docker/login-action@v3
