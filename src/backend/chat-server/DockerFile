@@ -14,5 +14,5 @@ FROM openjdk:17-jdk-slim
 WORKDIR /apps
 COPY --from=build /apps/build/libs/*.jar app.jar
 
-EXPOSE 9010
+EXPOSE 9050
 CMD ["java", "-jar", "app.jar"]
