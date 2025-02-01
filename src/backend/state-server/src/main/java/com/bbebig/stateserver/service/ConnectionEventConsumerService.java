@@ -2,7 +2,6 @@ package com.bbebig.stateserver.service;
 
 import com.bbebig.commonmodule.kafka.dto.ConnectionEventDto;
 import com.bbebig.commonmodule.kafka.dto.PresenceEventDto;
-import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
 import com.bbebig.stateserver.domain.MemberPresenceStatus;
 import com.bbebig.stateserver.repository.RedisRepository;
 import lombok.RequiredArgsConstructor;

@@ -1,5 +1,6 @@
 package com.bbebig.commonmodule.kafka.dto.notification;
 
+import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
@@ -13,5 +14,5 @@ public class DmMemberPresenceEventDto extends NotificationEventDto {
 
 	private Long channelId;
 
-	private String globalStatus; // ONLINE, OFFLINE, AWAY, BUSY, INVISIBLE
+	private PresenceType globalStatus; // ONLINE, OFFLINE, AWAY, BUSY, INVISIBLE
 }
