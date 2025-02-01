@@ -7,6 +7,7 @@ import com.bbebig.stateserver.client.MemberClient;
 import com.bbebig.stateserver.domain.DeviceInfo;
 import com.bbebig.stateserver.domain.MemberPresenceStatus;
 import com.bbebig.stateserver.dto.MemberResponseDto.MemberGlobalStatusResponseDto;
+import com.bbebig.stateserver.global.util.RedisKeys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -20,80 +21,19 @@ import java.util.ArrayList;
 @RequiredArgsConstructor
 public class RedisRepository {
 
-	private static final String STATE_KEY_PREFIX = "state:";
-	private static final String MEMBER_STATUS_KEY_SUFFIX = ":memberStatus";
-
+	// TODO : RedisTemplate<String, Object>만 해도 되는지 이해하기
 	private final RedisTemplate<String, Object> redisTemplate;
 
 	private final MemberClient memberClient;
 
 
-	// TODO : 반환 타입 잘 고민해보기
-
-	public MemberPresenceStatus saveConnectionEvent(ConnectionEventDto connectionEventDto) {
-		String key = STATE_KEY_PREFIX + connectionEventDto.getMemberId() + MEMBER_STATUS_KEY_SUFFIX;
-
-		MemberPresenceStatus status = loadMemberPresenceStatus(key);
-		if (status == null) {
-			MemberGlobalStatusResponseDto responseDto = memberClient.getMemberGlobalStatus(connectionEventDto.getMemberId());
-			status = MemberPresenceStatus.builder()
-					.globalStatus(responseDto.getGlobalStatus())
-					.actualStatus(PresenceType.ONLINE)
-					.lastActivityTime(LocalDateTime.now())
-					.devices(new ArrayList<>())
-					.build();
-		}
-
-		DeviceInfo deviceInfo = DeviceInfo.builder()
-				.platform(connectionEventDto.getPlatform())
-				.socketSessionId(connectionEventDto.getSocketSessionId())
-				.connectedServerIp(connectionEventDto.getConnectedServerIp())
-				.lastActiveTime(LocalDateTime.now().toString())
-				.build();
-		if (deviceInfo.getPlatform().equals("ANDROID")) {
-			deviceInfo.updateCurrent(connectionEventDto.getCurrentChannelType(),
-					connectionEventDto.getCurrentChannelId(), connectionEventDto.getCurrentServerId());
-		}
-
-		status.getDevices().add(deviceInfo);
-
-		saveMemberPresenceStatus(key, status);
-		return status;
+	// 멤버 상태 정보를 저장
+	public void saveMemberPresenceStatus(String key, MemberPresenceStatus status) {
+		redisTemplate.opsForValue().set(key, status);
 	}
 
-	public MemberPresenceStatus getMemberPresenceStatus(Long memberId) {
-		String key = STATE_KEY_PREFIX + memberId + MEMBER_STATUS_KEY_SUFFIX;
-		return loadMemberPresenceStatus(key);
-	}
-
-	public void updateMemberCurrentRoom(ChannelEventDto channelEventDto) {
-		String key = STATE_KEY_PREFIX + channelEventDto.getMemberId() + MEMBER_STATUS_KEY_SUFFIX;
-		MemberPresenceStatus status = loadMemberPresenceStatus(key);
-
-		if (status == null) {
-			log.error("[State] RedisRepository: 멤버 상태 정보 없음");
-			return;
-		}
-
-
-		if (channelEventDto.getType().equals("JOIN")) {
-			status.getDevices().forEach(deviceInfo -> {
-				if (deviceInfo.getSocketSessionId().equals(channelEventDto.getSessionId())) {
-					deviceInfo.updateCurrent(channelEventDto.getChannelType(), channelEventDto.getChannelId(), channelEventDto.getServerId());
-				}
-			});
-		} else if (channelEventDto.getType().equals("LEAVE")) {
-			status.getDevices().forEach(deviceInfo -> {
-				if (deviceInfo.getSocketSessionId().equals(channelEventDto.getSessionId())) {
-					deviceInfo.updateCurrent(null, null, null);
-				}
-			});
-		}
-
-		saveMemberPresenceStatus(key, status);
-	}
-
-	private MemberPresenceStatus loadMemberPresenceStatus(String key) {
+	// 멤버 상태 정보를 불러옴
+	public MemberPresenceStatus loadMemberPresenceStatus(String key) {
 		Object obj = redisTemplate.opsForValue().get(key);
 		if (obj instanceof MemberPresenceStatus) {
 			return (MemberPresenceStatus) obj;
@@ -101,8 +41,10 @@ public class RedisRepository {
 		return null;
 	}
 
-	private void saveMemberPresenceStatus(String key, MemberPresenceStatus status) {
-		redisTemplate.opsForValue().set(key, status);
+	// 멤버 상태 정보 조회
+	public MemberPresenceStatus getMemberPresenceStatus(Long memberId) {
+		String key = RedisKeys.getMemberStatusKey(memberId);
+		return loadMemberPresenceStatus(key);
 	}
 
 }

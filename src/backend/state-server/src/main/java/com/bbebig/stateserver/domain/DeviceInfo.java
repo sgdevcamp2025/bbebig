@@ -4,11 +4,13 @@ import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 public class DeviceInfo {
 
-	private String deviceId;
+//	private String deviceId;
 
 	private String platform;
 
@@ -16,7 +18,7 @@ public class DeviceInfo {
 
 	private String connectedServerIp;
 
-	private String lastActiveTime;
+	private LocalDateTime lastActiveTime;
 
 	private ChannelType currentChannelType;
 
@@ -28,5 +30,9 @@ public class DeviceInfo {
 		this.currentChannelType = currentChannelType;
 		this.currentChannelId = currentChannelId;
 		this.currentServerId = currentServerId;
+	}
+
+	public void updateLastActiveTime(LocalDateTime lastActiveTime) {
+		this.lastActiveTime = lastActiveTime;
 	}
 }

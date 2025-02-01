@@ -18,4 +18,16 @@ public class MemberPresenceStatus {
 	private LocalDateTime lastActivityTime;
 
 	private List<DeviceInfo> devices;
+
+	public void updateLastActivityTime(LocalDateTime lastActivityTime) {
+		this.lastActivityTime = lastActivityTime;
+	}
+
+	public void updateGlobalStatus(PresenceType globalStatus) {
+		this.globalStatus = globalStatus;
+	}
+
+	public void updateActualStatus(PresenceType actualStatus) {
+		this.actualStatus = actualStatus;
+	}
 }
