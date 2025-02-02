@@ -13,7 +13,7 @@ const meta = {
     avatarUrl: {
       control: 'text'
     },
-    customPresenceStatus: {
+    status: {
       control: 'select',
       options: ['ONLINE', 'OFFLINE', 'NOT_DISTURB', 'INVISIBLE']
     },
@@ -31,7 +31,7 @@ export const PrimaryAvatar: Story = {
   args: {
     statusColor: 'black',
     avatarUrl: '/image/common/default-avatar.png',
-    customPresenceStatus: 'ONLINE',
+    status: 'ONLINE',
     size: 'lg'
   }
 }
