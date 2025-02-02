@@ -5,10 +5,6 @@ plugins {
     id 'com.google.protobuf' version '0.9.4' // Protobuf 플러그인
 }
 
-jar {
-    enabled = false
-}
-
 group = 'com.bbebig'
 version = '0.0.1-SNAPSHOT'
 
