@@ -325,6 +325,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/plugin-transform-react-jsx-self@npm:^7.25.9":
+  version: 7.25.9
+  resolution: "@babel/plugin-transform-react-jsx-self@npm:7.25.9"
+  dependencies:
+    "@babel/helper-plugin-utils": "npm:^7.25.9"
+  peerDependencies:
+    "@babel/core": ^7.0.0-0
+  checksum: 10c0/ce0e289f6af93d7c4dc6b385512199c5bb138ae61507b4d5117ba88b6a6b5092f704f1bdf80080b7d69b1b8c36649f2a0b250e8198667d4d30c08bbb1546bd99
+  languageName: node
+  linkType: hard
+
+"@babel/plugin-transform-react-jsx-source@npm:^7.25.9":
+  version: 7.25.9
+  resolution: "@babel/plugin-transform-react-jsx-source@npm:7.25.9"
+  dependencies:
+    "@babel/helper-plugin-utils": "npm:^7.25.9"
+  peerDependencies:
+    "@babel/core": ^7.0.0-0
+  checksum: 10c0/fc9ee08efc9be7cbd2cc6788bbf92579adf3cab37912481f1b915221be3d22b0613b5b36a721df5f4c0ab65efe8582fcf8673caab83e6e1ce4cc04ceebf57dfa
+  languageName: node
+  linkType: hard
+
 "@babel/plugin-transform-typescript@npm:^7.25.9":
   version: 7.26.7
   resolution: "@babel/plugin-transform-typescript@npm:7.26.7"
@@ -2783,7 +2805,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/babel__core@npm:^7.18.0":
+"@types/babel__core@npm:^7.18.0, @types/babel__core@npm:^7.20.5":
   version: 7.20.5
   resolution: "@types/babel__core@npm:7.20.5"
   dependencies:
@@ -3023,6 +3045,21 @@ __metadata:
     "@typescript-eslint/types": "npm:8.20.0"
     eslint-visitor-keys: "npm:^4.2.0"
   checksum: 10c0/e95d8b2685e8beb6637bf2e9d06e4177a400d3a2b142ba749944690f969ee3186b750082fd9bf34ada82acf1c5dd5970201dfd97619029c8ecca85fb4b50dbd8
+  languageName: node
+  linkType: hard
+
+"@vitejs/plugin-react@npm:^4.3.4":
+  version: 4.3.4
+  resolution: "@vitejs/plugin-react@npm:4.3.4"
+  dependencies:
+    "@babel/core": "npm:^7.26.0"
+    "@babel/plugin-transform-react-jsx-self": "npm:^7.25.9"
+    "@babel/plugin-transform-react-jsx-source": "npm:^7.25.9"
+    "@types/babel__core": "npm:^7.20.5"
+    react-refresh: "npm:^0.14.2"
+  peerDependencies:
+    vite: ^4.2.0 || ^5.0.0 || ^6.0.0
+  checksum: 10c0/38a47a1dbafae0b97142943d83ee3674cb3331153a60b1a3fd29d230c12c9dfe63b7c345b231a3450168ed8a9375a9a1a253c3d85e9efdc19478c0d56b98496c
   languageName: node
   linkType: hard
 
@@ -5416,6 +5453,7 @@ __metadata:
     "@types/node": "npm:^20"
     "@types/react": "npm:^19.0.1"
     "@types/react-dom": "npm:^19.0.1"
+    "@vitejs/plugin-react": "npm:^4.3.4"
     autoprefixer: "npm:^10.4.20"
     axios: "npm:^1.7.9"
     class-variance-authority: "npm:^0.7.1"
@@ -7752,7 +7790,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-refresh@npm:^0.14.0":
+"react-refresh@npm:^0.14.0, react-refresh@npm:^0.14.2":
   version: 0.14.2
   resolution: "react-refresh@npm:0.14.2"
   checksum: 10c0/875b72ef56b147a131e33f2abd6ec059d1989854b3ff438898e4f9310bfcc73acff709445b7ba843318a953cb9424bcc2c05af2b3d80011cee28f25aef3e2ebb
