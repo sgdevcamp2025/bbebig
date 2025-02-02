@@ -12,7 +12,7 @@ RUN ./gradlew build -x test
 FROM openjdk:17-jdk-slim
 
 WORKDIR /apps
-COPY --from=build /build/libs/apigateway-server-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /apps/build/libs/apigateway-server-0.0.1-SNAPSHOT.jar app.jar
 
 EXPOSE 8080
 CMD ["java", "-jar", "app.jar"]
