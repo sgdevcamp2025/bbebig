@@ -53,15 +53,13 @@ app.register(fastifySwagger, {
   }),
 });
 
-if (isDevelopment) {
-  app.register(fastifySwaggerUi, {
-    routePrefix: '/docs',
-    uiConfig: {
-      docExpansion: 'full',
-      deepLinking: true,
-    },
-  });
-}
+app.register(fastifySwaggerUi, {
+  routePrefix: '/docs',
+  uiConfig: {
+    docExpansion: 'full',
+    deepLinking: true,
+  },
+});
 
 app.register(currentAuthPlugin);
 app.register(routes);
