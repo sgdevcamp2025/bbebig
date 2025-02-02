@@ -1,26 +1,27 @@
-import { Outlet, useLocation, useNavigate } from 'react-router'
+import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
 
 import ServerIcon from '@/components/server-icon'
 import { cn } from '@/libs/cn'
+import { useEffect } from 'react'
 
 const myServerList = [
   {
     serverId: 1,
-    name: '서버 이름',
+    name: '서버 이름1',
     image: 'https://placehold.co/75',
     alarm: true,
     channelId: 1
   },
   {
     serverId: 2,
-    name: '서버 이름',
+    name: '서버 이름2',
     image: 'https://placehold.co/75',
     alarm: false,
     channelId: 2
   },
   {
     serverId: 3,
-    name: '서버 이름',
+    name: '서버 이름3',
     image: 'https://placehold.co/75',
     alarm: false,
     channelId: 3
@@ -40,6 +41,14 @@ const MainRootLayout = () => {
   const handleClickMyServer = () => {
     navigate('/channels/@me')
   }
+
+  const { serverId } = useParams<{ serverId: string }>()
+
+  useEffect(() => {
+    if (!serverId) {
+      navigate('/channels/@me', { replace: true })
+    }
+  }, [serverId, navigate])
 
   return (
     <div className='flex'>

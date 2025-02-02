@@ -11,8 +11,10 @@ export default [
 
     layout('layouts/main-root.tsx', [
       ...prefix('channels', [
-        route('@me', 'pages/my/index.tsx'),
-        route(':serverId/:channelId', 'pages/channel/index.tsx')
+        layout('layouts/server-layout.tsx', [
+          route(':serverId/:channelId', 'pages/channel/index.tsx')
+        ]),
+        layout('layouts/dm-layout.tsx', [route('@me', 'pages/my/index.tsx')])
       ])
     ])
   ])
