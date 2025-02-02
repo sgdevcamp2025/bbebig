@@ -1,34 +1,41 @@
+version: '3.8'
+
 services:
   auth-server:
     build: .
     ports:
-      - '${SERVER_PORT}:${SERVER_PORT}'
+      - '9000:9000'
     env_file:
       - ./.env.production
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     depends_on:
       - redis
+      - mysql
     restart: always
     networks:
       - auth-network
 
   redis:
-    image: ${REDIS_IMAGE}
-    container_name: ${REDIS_CONTAINER_NAME}
+    image: redis
+    container_name: redis
     ports:
-      - '${REDIS_PORT}:${REDIS_PORT}'
+      - '6379:6379'
     volumes:
-      - ${REDIS_VOLUME}:/data
-    command: redis-server --appendonly yes
+      - auth-redis-data:/data
     networks:
       - auth-network
-    healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 5s
+    
+  mysql:
+    image: mysql
+    container_name: mysql
+    ports:
+    - '3307:3306'
+    networks:
+      - auth-network
+    environment:
+      MYSQL_ROOT_PASSWORD: bbebig
 
 networks:
   auth-network:
@@ -36,4 +43,4 @@ networks:
 
 volumes:
   auth-redis-data:
-    name: ${REDIS_VOLUME}
+    name: auth-redis-data
