@@ -1,6 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { fn } from '@storybook/test'
-import { useState } from 'react'
 
 import Avatar from '.'
 
@@ -16,10 +14,12 @@ const meta = {
       control: 'text'
     },
     customPresenceStatus: {
-      control: 'text'
+      control: 'select',
+      options: ['ONLINE', 'OFFLINE', 'NOT_DISTURB', 'INVISIBLE']
     },
     size: {
-      control: 'text'
+      control: 'select',
+      options: ['sm', 'lg']
     }
   }
 } satisfies Meta<typeof Avatar>
@@ -29,8 +29,9 @@ type Story = StoryObj<typeof meta>
 
 export const PrimaryAvatar: Story = {
   args: {
-    avatarUrl: '/images/common/default-avatar.png',
+    statusColor: 'black',
+    avatarUrl: '/image/common/default-avatar.png',
     customPresenceStatus: 'ONLINE',
-    size: 'md'
+    size: 'lg'
   }
 }
