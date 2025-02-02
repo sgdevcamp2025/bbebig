@@ -28,6 +28,8 @@ const config: Pick<Config, 'presets' | 'content' | 'theme' | 'plugins'> = {
         'black-70': '#252628',
         'black-80': 'hsl(225 calc(1 * 6.25%) 12.549% / 1)',
         'black-90': '#1a1c1e',
+        'black-92': 'hsl(228 calc(1*6.667%) 14.706% /1)',
+        'black-100': '#000',
         'red-10': '#de2761',
         'blue-10': '#1a2081',
         'blue-20': '#00002a',
