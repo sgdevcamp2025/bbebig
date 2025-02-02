@@ -14,23 +14,6 @@ java {
     }
 }
 
-jar {
-    enabled = false
-}
-
-bootJar {
-    archiveClassifier.set("")
-    manifest {
-        attributes(
-                'Main-Class': 'com.bbebig.apigatewayserver.ApigatewayServerApplication' // 실제 메인 클래스 경로
-        )
-    }
-}
-
-jar {
-    enabled = false
-}
-
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
