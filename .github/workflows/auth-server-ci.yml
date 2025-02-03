@@ -32,9 +32,9 @@ jobs:
 
       - name: Inject ENV_FILE
         run: |
-          printf "%s" "${{ secrets.ENV_FILE }}" > src/backend/auth-server/.env.production
-          ls -lah src/backend/auth-server
-          cat src/backend/auth-server/.env.production || echo "File not found"
+          cd ./src/backend/auth-server
+          touch ./.env.production
+          echo "${{ env.ENV_FILE }}" > ./.env.production
 
       - name: Log in to DockerHub
         uses: docker/login-action@v3
