@@ -4,7 +4,6 @@ plugins {
     id 'com.google.protobuf' version '0.9.4'
 }
 
-
 group = 'com.bbebig'
 version = '0.0.1-SNAPSHOT'
 
