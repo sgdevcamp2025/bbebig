@@ -23,4 +23,13 @@ elasticsearch:
   host: ${ELASTICSEARCH_HOST:localhost}
   port: ${ELASTICSEARCH_PORT:9200}
 
+eas:
+  passport:
+    secretKey: ${PASSPORT_SECRET_KEY}
+    expiration: ${PASSPORT_EXPIRATION}
+    header: ${PASSPORT_HEADER}
+    algorithm: ${PASSPORT_ALGORITHM}
 
+auth:
+  server:
+    url: ${AUTH_SERVER_URL}
