@@ -1,3 +1,6 @@
+server:
+  port: 9040
+
 spring:
   application:
     name: state-server
@@ -7,6 +10,34 @@ spring:
     redis:
       port: 6379
       host: localhost
+
+  kafka:
+    bootstrap-servers: localhost:9092
+
+    topic:
+      channel-chat-event: "channelChatEvent"
+      dm-chat-event: "dmChatEvent"
+      connection-event: "connectionEvent"
+      presence-event: "presenceEvent"
+      notification-event: "notificationEvent"
+      server-event: "serverEvent"
+      channel-event: "channelEvent"
+
+    producer:
+      bootstrap-servers: localhost:9092
+
+    consumer:
+      group-id:
+        channel-chat-event: "channelChatEventGroup"
+        dm-chat-event: "dmChatEventGroup"
+        notification-event: "notificationEventGroup"
+        server-event: "serverEventGroup"
+        channel-event: "channelEventGroup"
+        connection-event: "connectionEventGroup"
+        presence-event: "presenceEventGroup"
+
+      enable-auto-commit: true
+      auto-offset-reset: latest
 
 
 eureka:
