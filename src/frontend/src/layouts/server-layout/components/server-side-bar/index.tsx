@@ -2,21 +2,19 @@ import { useState } from 'react'
 import { cn } from '@/libs/cn'
 import { Category } from '@/types/channel'
 
-type SidebarProps = {
-  type: 'dm' | 'server'
+type ServerSideBarProps = {
   serverName?: string
   categories?: Category[]
   selectedChannelId?: string
   onChannelSelect?: (channelId: number) => void
 }
 
-function Sidebar({
-  type,
+function ServerSideBar({
   serverName,
   categories = [],
   selectedChannelId,
   onChannelSelect
-}: SidebarProps) {
+}: ServerSideBarProps) {
   const [expandedCategories, setExpandedCategories] = useState<number[]>([])
 
   const toggleCategory = (categoryId: number) => {
@@ -25,22 +23,11 @@ function Sidebar({
     )
   }
 
-  if (type === 'dm') {
-    return (
-      <div className='w-60 bg-discord-gray-700 h-screen flex flex-col'>
-        <div className='h-12 px-4 flex items-center justify-between border-b border-discord-gray-800'>
-          <span className='text-discord-font-color-normal font-medium'>개인 대화창</span>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div className='w-60 bg-discord-gray-700 h-screen flex flex-col'>
       <div className='h-12 px-4 flex items-center justify-between border-b border-discord-gray-800'>
         <h2 className='text-discord-font-color-normal font-semibold'>{serverName}</h2>
         <svg
-          xmlns='http://www.w3.org/2000/svg'
           width='9'
           height='9'
           viewBox='0 0 9 9'
@@ -69,7 +56,6 @@ function Sidebar({
                   expandedCategories.includes(category.id) ? 'rotate-0' : '-rotate-90'
                 )}>
                 <svg
-                  xmlns='http://www.w3.org/2000/svg'
                   width='9'
                   height='9'
                   viewBox='0 0 9 9'
@@ -101,7 +87,6 @@ function Sidebar({
                     )}>
                     <span className='mr-1'>
                       <svg
-                        xmlns='http://www.w3.org/2000/svg'
                         width='16'
                         height='16'
                         viewBox='0 0 14 15'
@@ -128,4 +113,4 @@ function Sidebar({
   )
 }
 
-export default Sidebar
+export default ServerSideBar
