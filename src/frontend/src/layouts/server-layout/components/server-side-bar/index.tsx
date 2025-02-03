@@ -78,6 +78,7 @@ function ServerSideBar({
                 {category.channels.map((channel) => (
                   <button
                     key={channel.id}
+                    type='button'
                     onClick={() => onChannelSelect?.(channel.id)}
                     className={cn(
                       'w-full flex items-center px-2 py-1 rounded transition-colors',

@@ -117,6 +117,7 @@ function ChannelPage() {
 
           <button
             className='flex ml-5 px-3'
+            type='button'
             onClick={sendMessage}>
             <img src='/image/chat/send.svg' />
           </button>
