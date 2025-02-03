@@ -31,10 +31,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Inject ENV_FILE
-        run: |
-          cd ./src/backend/auth-server
-          touch ./.env.production
-          echo "${{ env.ENV_FILE }}" > ./.env.production
+        run: echo "${{ env.ENV_FILE }}" > .env.production
 
       - name: Log in to DockerHub
         uses: docker/login-action@v3
