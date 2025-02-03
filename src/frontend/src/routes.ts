@@ -9,7 +9,7 @@ export default [
       route('register', 'pages/auth/register.tsx')
     ]),
 
-    layout('layouts/main-root.tsx', [
+    layout('layouts/main-layout/index.tsx', [
       ...prefix('channels', [
         layout('layouts/server-layout/index.tsx', [
           route(':serverId/:channelId', 'pages/channel/index.tsx')

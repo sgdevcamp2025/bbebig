@@ -2,7 +2,11 @@ import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
 
 import ServerIcon from '@/components/server-icon'
 import { cn } from '@/libs/cn'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import Avatar from '@/components/avatar'
+import { CustomPresenceStatus, User } from '@/types/user'
+import ProfileStatusButton from './components/profile-status-button'
+import { statusKo } from '@/constants/status'
 
 const myServerList = [
   {
@@ -28,11 +32,27 @@ const myServerList = [
   }
 ] as const
 
+const mockUser = {
+  id: 1,
+  name: '지형',
+  email: 'test@test.com',
+  customPresenceStatus: 'ONLINE',
+  introduction: '안녕하세요',
+  introductionEmoji: '👋',
+  avatarUrl: '/image/common/default-avatar.png',
+  status: 'ONLINE',
+  statusColor: 'black'
+} as const
+
 const MainRootLayout = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const pathname =
     location.pathname.split('/')[1] === 'channels' ? location.pathname.split('/')[2] : null
+
+  const [isMicrophoneMuted, setIsMicrophoneMuted] = useState(false)
+  const [isSoundMuted, setIsSoundMuted] = useState(false)
+  const [isProfileCardOpen, setIsProfileCardOpen] = useState(false)
 
   const handleClickServer = (serverId: number, channelId: number) => {
     navigate(`/channels/${serverId}/${channelId}`)
@@ -40,6 +60,22 @@ const MainRootLayout = () => {
 
   const handleClickMyServer = () => {
     navigate('/channels/@me')
+  }
+
+  const handleClickMicrophone = () => {
+    setIsMicrophoneMuted(!isMicrophoneMuted)
+  }
+
+  const handleClickSound = () => {
+    setIsSoundMuted(!isSoundMuted)
+  }
+
+  const handleClickSetting = () => {
+    console.log('setting')
+  }
+
+  const handleClickProfile = () => {
+    console.log('profile')
   }
 
   const { serverId } = useParams<{ serverId: string }>()
@@ -103,7 +139,56 @@ const MainRootLayout = () => {
         </ul>
       </nav>
       <div className='flex-1 bg-gray-20 relative'>
-        <div className='h-[52px] w-60 absolute left-0 px-2 pb-[1px] bottom-0 bg-black-92'></div>
+        <div className='h-[52px] w-60 absolute left-0 px-1 pb-[1px] bottom-0 bg-black-92 flex items-center justify-between gap-2'>
+          <button
+            aria-label='프로필 버튼'
+            type='button'
+            onClick={handleClickProfile}
+            className='flex gap-2 flex-1 hover:bg-gray-80 rounded-md p-1 group'>
+            <Avatar
+              avatarUrl={mockUser.avatarUrl}
+              size='sm'
+              status={mockUser.status}
+              statusColor={mockUser.statusColor}
+            />
+            <div className='flex flex-col'>
+              <span className='text-text-normal text-left text-sm font-medium text-white leading-[18px]'>
+                {mockUser.name}
+              </span>
+              <div className='h-[13px] overflow-hidden'>
+                <div className='flex flex-col h-[13px] leading-[13px] group-hover:translate-y-[-100%] transition-all duration-300'>
+                  <span className='text-[13px] text-left text-gray-10'>
+                    {statusKo[mockUser.status]} 표시
+                  </span>
+                  <span className='text-[13px] text-left text-gray-10'>
+                    {mockUser.email.split('@')[0]}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </button>
+
+          <div className='flex items-center justify-center'>
+            <ProfileStatusButton
+              aria-label='마이크 버튼'
+              onClick={handleClickMicrophone}
+              icon='microphone'
+              isMuted={isMicrophoneMuted}
+            />
+            <ProfileStatusButton
+              aria-label='소리 버튼'
+              onClick={handleClickSound}
+              icon='sound'
+              isMuted={isSoundMuted}
+            />
+            <ProfileStatusButton
+              aria-label='설정 버튼'
+              onClick={handleClickSetting}
+              icon='settings'
+              isMuted={false}
+            />
+          </div>
+        </div>
         <Outlet />
       </div>
     </div>
