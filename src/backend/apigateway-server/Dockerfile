@@ -9,14 +9,12 @@ RUN ./gradlew clean generateProto
 RUN ./gradlew build -x test
 
 RUN ls -al /apps/
-RUN ls -al /apps/apigateway-server/build/libs/
 
 # runtime stage
 FROM openjdk:17-jdk-slim
 
 WORKDIR /apps
 RUN ls -al /apps/
-RUN ls -al /apps/apigateway-server/build/libs/
 COPY --from=build /apps/build/libs/*.jar app.jar
 
 EXPOSE 8080
