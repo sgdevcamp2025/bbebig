@@ -15,7 +15,7 @@ jobs:
     env:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-      ENV_FILE: ${{ secrets.ENV_FILE }}
+      ENV_FILE: ${{ secrets.AUTH_ENV }}
       SERVER_NAME: auth-server  # 서버 별로 변경 필요
     
     strategy:
@@ -31,7 +31,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Inject ENV_FILE
-        run: echo "${{ env.ENV_FILE }}" > src/backend/auth-server/.env.production
+        run: echo "${{ env.ENV_FILE }}" > src/backend/${{ env.SERVER_NAME }}/.env.production
 
       - name: Log in to DockerHub
         uses: docker/login-action@v3
