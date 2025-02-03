@@ -4,6 +4,7 @@ plugins {
     id 'com.google.protobuf' version '0.9.4'
 }
 
+
 group = 'com.bbebig'
 version = '0.0.1-SNAPSHOT'
 
@@ -32,6 +33,9 @@ dependencies {
 
     // Protobuf
     implementation 'com.google.protobuf:protobuf-java:3.21.12'
+
+    // Kafka
+    implementation 'org.springframework.kafka:spring-kafka'
 }
 
 protobuf {
