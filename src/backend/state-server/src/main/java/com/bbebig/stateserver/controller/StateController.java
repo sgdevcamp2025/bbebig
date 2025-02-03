@@ -37,4 +37,6 @@ public class StateController {
 		log.info("[State] Check member state: {}", memberId);
 		return CommonResponse.onSuccess(stateService.checkMemberState(memberId));
 	}
+
+
 }

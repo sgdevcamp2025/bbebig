@@ -18,10 +18,17 @@ public class StateService {
 	public MemberStatusResponseDto checkMemberState(Long memberId) {
 		log.info("[State] Check member state: {}", memberId);
 		MemberPresenceStatus memberPresenceStatus = redisRepository.getMemberPresenceStatus(memberId);
+		if (memberPresenceStatus == null) {
+			// TODO : 추후 예외 처리 로직 추가
+			log.error("[State] StateService: 사용자 상태 정보 없음. memberId: {}", memberId);
+			return null;
+		}
 		return MemberStatusResponseDto.builder()
 				.memberId(memberId)
 				.globalStatus(memberPresenceStatus.getGlobalStatus().toString())
 				.actualStatus(memberPresenceStatus.getActualStatus().toString())
 				.build();
 	}
+
+
 }
