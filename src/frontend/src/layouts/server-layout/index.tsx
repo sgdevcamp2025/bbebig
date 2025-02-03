@@ -1,6 +1,6 @@
-import Sidebar from '@/components/side-bar'
 import { ServerChannelList } from '@/types/channel'
 import { Outlet, useNavigate, useParams } from 'react-router'
+import ServerSidebar from './components/server-side-bar'
 
 const myChannelList: ServerChannelList = {
   1: [
@@ -38,8 +38,7 @@ function ServerLayout() {
 
   return (
     <div className='flex'>
-      <Sidebar
-        type='server'
+      <ServerSidebar
         serverName={`서버 ${serverId}`}
         categories={categories}
         onChannelSelect={handleChannelSelect}
