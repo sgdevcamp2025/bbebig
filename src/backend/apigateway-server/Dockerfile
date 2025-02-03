@@ -6,14 +6,14 @@ COPY . .
 
 WORKDIR /apps/apigateway-server
 
-RUN gradle clean generateProto
-RUN gradle bootJar -x test
+RUN ./gradlew clean generateProto
+RUN ./gradlew build -x test
 
 # runtime stage
 FROM openjdk:17-jdk-slim
 WORKDIR /apps
 
-COPY --from=build /apps/apigateway-server/build/libs/*.jar app.jar
+COPY --from=build /apps/apigateway-server/build/libs/*SNAPSHOT.jar app.jar
 
 EXPOSE 8080
 CMD ["java", "-jar", "app.jar"]
