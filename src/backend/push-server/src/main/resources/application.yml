@@ -1,1 +1,13 @@
-spring.application.name=push-server
+server:
+  port: 9060
+
+spring:
+  application:
+    name: push-server
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka
