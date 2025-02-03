@@ -1,11 +1,16 @@
+server:
+  port: 9010
+
 spring:
   application:
-    name: user-db
+    name: user-server
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/user_dev
     username: user
     password: password
+
   jpa:
     hibernate:
       ddl-auto: none
@@ -13,3 +18,21 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka
+
+eas:
+  passport:
+    secretKey: ${PASSPORT_SECRET_KEY}
+    expiration: ${PASSPORT_EXPIRATION}
+    header: ${PASSPORT_HEADER}
+    algorithm: ${PASSPORT_ALGORITHM}
+
+auth:
+  server:
+    url: ${AUTH_SERVER_URL}
