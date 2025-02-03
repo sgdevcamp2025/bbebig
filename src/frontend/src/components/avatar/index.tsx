@@ -1,40 +1,50 @@
-import { User } from '@/types/user'
-import { cva, type VariantProps } from 'class-variance-authority'
+import { cn } from '@/libs/cn'
+import { cva } from 'class-variance-authority'
+import { CSSProperties, ComponentProps } from 'react'
 
-type Props = Pick<User, 'avatarUrl' | 'customPresenceStatus'> & VariantProps<typeof avatar>
+import StatusIcon from '../status-icon'
 
-const avatar = cva('rounded-full', {
+type Props = {
+  avatarUrl: string
+  statusColor: CSSProperties['color']
+} & ComponentProps<typeof StatusIcon>
+
+const avatarSize = cva('rounded-full', {
   variants: {
     size: {
-      sm: 'h-[24px] w-[24px]',
-      md: 'h-[40px] w-[40px]',
-      lg: 'h-[64px] w-[64px]'
-    },
-    status: {
-      ONLINE: 'bg-green-500',
-      OFFLINE: 'bg-gray-500',
-      NOT_DISTURB: 'bg-red-500',
-      INVISIBLE: 'bg-gray-500'
+      sm: 'h-10 w-10',
+      lg: 'h-20 w-20'
     }
-  },
-  defaultVariants: {
-    size: 'md',
-    status: 'OFFLINE'
   }
 })
 
-function Avatar({ avatarUrl, size, customPresenceStatus }: Props) {
+const statusWrapperSize = cva('rounded-full flex items-center justify-center', {
+  variants: {
+    size: {
+      sm: 'h-[12px] w-[12px]',
+      lg: 'h-[28px] w-[28px]'
+    }
+  }
+})
+
+function Avatar({ avatarUrl, size, statusColor = 'black', status }: Props) {
   return (
     <div
       aria-label='avatar'
-      className={avatar({ size })}>
+      className={cn(avatarSize({ size }), 'relative')}>
       <img
         src={avatarUrl}
         alt='avatar'
-        className={avatar({ size })}
+        className={avatarSize({ size })}
       />
-      <div className='absolute bottom-0 right-0'>
-        <div className={avatar({ status: customPresenceStatus })}></div>
+      <div
+        className={cn(statusWrapperSize({ size }), 'absolute bottom-0 right-0')}
+        style={{ backgroundColor: statusColor }}>
+        <StatusIcon
+          status={status}
+          size={size}
+          defaultBackgroundColor={statusColor}
+        />
       </div>
     </div>
   )
