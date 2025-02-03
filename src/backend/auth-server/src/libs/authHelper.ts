@@ -5,11 +5,14 @@ import {
   SECRET_KEY,
   ROUND,
   ERROR_MESSAGE,
+  REDIS_KEY,
 } from './constants';
 import bcrypt from 'bcrypt';
 import db from './db';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { handleError } from './errorHelper';
+import { checkRateLimit } from './rateLimit';
+import redis from './redis';
 
 const generateHash = (pwd: string) => {
   return bcrypt.hashSync(pwd, ROUND);
@@ -31,6 +34,10 @@ const duplicateVerifyUser = async (email: string) => {
 
 const verifyPassword = async (email: string, password: string) => {
   try {
+    const identifier = email;
+
+    await checkRateLimit(identifier);
+
     const encryptedPwd = await db.member.findUnique({
       where: {
         email,
@@ -40,24 +47,29 @@ const verifyPassword = async (email: string, password: string) => {
       },
     });
 
-    if (!encryptedPwd?.password) return false;
+    if (!encryptedPwd?.password) throw ERROR_MESSAGE.notFound;
 
-    const result = bcrypt.compareSync(password, encryptedPwd.password);
-    return result;
+    const isPasswordCorrect = bcrypt.compareSync(password, encryptedPwd.password);
+    if (!isPasswordCorrect) throw ERROR_MESSAGE.passwordNotMatch;
+
+    await redis.del(REDIS_KEY.rateLimit(identifier));
+    await redis.del(REDIS_KEY.blocked(identifier));
+
+    return true;
   } catch (error) {
     throw error;
   }
 };
 
-const generateAccessToken = (user: { id: number; email: string }) => {
-  const accessToken = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, {
+const generateAccessToken = (user: { id: number }) => {
+  const accessToken = jwt.sign({ id: user.id }, SECRET_KEY, {
     expiresIn: ACCESS_TOKEN_EXPIRES,
   });
   return accessToken;
 };
 
-const generateRefreshToken = (user: { id: number; email: string }) => {
-  const refreshToken = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, {
+const generateRefreshToken = (user: { id: number }) => {
+  const refreshToken = jwt.sign({ id: user.id }, SECRET_KEY, {
     expiresIn: REFRESH_TOKEN_EXPIRES,
   });
   return refreshToken;
@@ -65,9 +77,8 @@ const generateRefreshToken = (user: { id: number; email: string }) => {
 
 const verifySignIn = async (req: FastifyRequest, res: FastifyReply) => {
   const id = req.user?.id;
-  const email = req.user?.email;
 
-  if (id && email) {
+  if (id) {
     return;
   } else {
     handleError(res, ERROR_MESSAGE.unauthorized);
@@ -98,7 +109,27 @@ const verifyAccessToken = async (accessToken: string) => {
     const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
     return decoded;
   } catch (error) {
-    throw error;
+    throw ERROR_MESSAGE.unauthorized;
+  }
+};
+
+const shortAccessTokenDecode = async (accessToken: string) => {
+  try {
+    const token = accessToken.split(' ')[1];
+    const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
+    return Boolean(decoded);
+  } catch (error) {
+    throw ERROR_MESSAGE.unauthorized;
+  }
+};
+
+const accessTokenDecode = async (accessToken: string) => {
+  try {
+    const token = accessToken.split(' ')[1];
+    const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
+    return decoded;
+  } catch (error) {
+    throw ERROR_MESSAGE.unauthorized;
   }
 };
 
@@ -112,4 +143,6 @@ export {
   verifyAccessToken,
   shortVerifyRefreshToken,
   verifySignIn,
+  accessTokenDecode,
+  shortAccessTokenDecode,
 };
