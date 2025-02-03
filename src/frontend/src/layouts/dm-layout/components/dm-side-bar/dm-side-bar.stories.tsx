@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import DmSideBar from '.'
 
 const meta = {
-  title: 'Layout/DmSideBar',
+  title: 'Layout/Dm-Layout/DmSideBar',
   component: DmSideBar,
   parameters: {
     layout: 'fullscreen'
