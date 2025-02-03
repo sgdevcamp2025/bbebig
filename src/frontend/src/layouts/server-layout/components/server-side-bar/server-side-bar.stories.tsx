@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import ServerSideBar from '.'
 
 const meta = {
-  title: 'Layout/Server-Layout/ServerSidebar',
+  title: 'Layout/ServerLayout/ServerSidebar',
   component: ServerSideBar,
   parameters: {
     layout: 'fullscreen'
