@@ -4,9 +4,9 @@ import ServerIcon from '@/components/server-icon'
 import { cn } from '@/libs/cn'
 import { useEffect, useState } from 'react'
 import Avatar from '@/components/avatar'
-import { CustomPresenceStatus, User } from '@/types/user'
 import ProfileStatusButton from './components/profile-status-button'
 import { statusKo } from '@/constants/status'
+import ProfileCard from './components/profile-card'
 
 const myServerList = [
   {
@@ -34,7 +34,7 @@ const myServerList = [
 
 const mockUser = {
   id: 1,
-  name: '지형',
+  name: '서정우',
   email: 'test@test.com',
   customPresenceStatus: 'ONLINE',
   introduction: '안녕하세요',
@@ -75,7 +75,7 @@ const MainRootLayout = () => {
   }
 
   const handleClickProfile = () => {
-    console.log('profile')
+    setIsProfileCardOpen(!isProfileCardOpen)
   }
 
   const { serverId } = useParams<{ serverId: string }>()
@@ -139,6 +139,17 @@ const MainRootLayout = () => {
         </ul>
       </nav>
       <div className='flex-1 bg-gray-20 relative'>
+        {isProfileCardOpen && (
+          <div className='absolute left-0 bottom-0'>
+            <div
+              className='fixed z-[2000] left-0 bottom-0 w-full h-full'
+              onClick={handleClickProfile}
+            />
+            <div className='fixed z-[2001] left-[33px] bottom-[46px]'>
+              <ProfileCard />
+            </div>
+          </div>
+        )}
         <div className='h-[52px] w-60 absolute left-0 px-1 pb-[1px] bottom-0 bg-black-92 flex items-center justify-between gap-2'>
           <button
             aria-label='프로필 버튼'

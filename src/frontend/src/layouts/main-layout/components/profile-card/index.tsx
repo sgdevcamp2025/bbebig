@@ -49,7 +49,7 @@ export function Content({ name, email, status, avatarUrl, backgroundUrl }: Props
         <div className='flex flex-col pt-7'>
           <div className='flex flex-col pb-3'>
             <p className='text-white-100 text-[20px] font-bold'>{name}</p>
-            <p className='text-gray-50 text-[14px]'>{email}</p>
+            <p className='text-gray-50 text-[14px]'>{email.split('@')[0]}</p>
           </div>
           <div className='flex flex-col gap-2 p-2'>
             <ul className='flex flex-col gap-2'>
@@ -59,7 +59,10 @@ export function Content({ name, email, status, avatarUrl, backgroundUrl }: Props
                   onClick={handleClickEditProfile}>
                   <div className='flex items-center gap-1'>
                     <div className='w-4 h-4 flex items-center justify-center'>
-                      <img src='/icon/menu/edit.svg' />
+                      <img
+                        src='/icon/menu/edit-profile.svg'
+                        alt='프로필 편집'
+                      />
                     </div>
                     <p className='text-gray-50 text-[14px]'>프로필 편집</p>
                   </div>
@@ -91,11 +94,12 @@ export function Content({ name, email, status, avatarUrl, backgroundUrl }: Props
                   onClick={handleClickLogout}
                   className='w-full'>
                   <div className='flex items-center justify-between'>
-                    <div className='flex gap-1'>
-                      <div className='w-4 h-4 group flex items-center justify-center'>
+                    <div className='flex gap-1 items-center'>
+                      <div className='w-4 h-4 flex items-center justify-center'>
                         <img
                           src='/icon/menu/minus-user.svg'
-                          className='fill-discord-status-offline text-gray-50 group-hover:fill-white-100 transition-all duration-300'
+                          className='fill-discord-status-offline text-gray-50'
+                          alt='로그아웃'
                         />
                       </div>
                       <p className='text-gray-50 text-[14px]'>로그아웃</p>
@@ -113,11 +117,12 @@ export function Content({ name, email, status, avatarUrl, backgroundUrl }: Props
 }
 
 const profileCard = {
-  name: '지형',
-  email: 'jihyeong@gmail.com',
+  name: '서정우',
+  email: 'test@test.com',
   status: 'ONLINE',
   avatarUrl: '/image/common/default-avatar.png',
-  backgroundUrl: '/image/common/default-background.png'
+  backgroundUrl:
+    'https://cdn.discordapp.com/banners/419411480677580820/a_b6a40ef738c6f8221793be39094cce00.png'
 } as const
 
 function ProfileCard() {
