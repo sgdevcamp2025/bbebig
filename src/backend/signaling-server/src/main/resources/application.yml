@@ -1,0 +1,24 @@
+server:
+  port: 9070
+
+spring:
+  application:
+    name: signaling-server
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka
+
+eas:
+  passport:
+    secretKey: ${PASSPORT_SECRET_KEY}
+    expiration: ${PASSPORT_EXPIRATION}
+    header: ${PASSPORT_HEADER}
+    algorithm: ${PASSPORT_ALGORITHM}
+
+auth:
+  server:
+    url: ${AUTH_SERVER_URL}

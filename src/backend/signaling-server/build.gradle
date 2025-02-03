@@ -24,9 +24,19 @@ repositories {
 	mavenCentral()
 }
 
+ext {
+	set('springCloudVersion', "2024.0.0")
+}
+
 dependencies {
 	// 공통 모듈
 	implementation project(":common-module")
+
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// Spring Cloud
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
 	// WebSocket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
@@ -34,6 +44,9 @@ dependencies {
 	// Lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	// Dotenv
+	implementation 'io.github.cdimascio:java-dotenv:5.2.2'
 
 	// Validation
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -51,4 +64,10 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
 }
