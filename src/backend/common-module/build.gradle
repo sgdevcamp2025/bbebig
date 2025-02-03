@@ -61,10 +61,6 @@ sourceSets {
     }
 }
 
-jar {
-    enabled = false
-}
-
 tasks.named("processResources") {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
