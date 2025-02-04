@@ -7,7 +7,7 @@ import Avatar from '@/components/avatar'
 import ProfileStatusButton from './components/profile-status-button'
 import { statusKo } from '@/constants/status'
 import ProfileCard from './components/profile-card'
-import SettingModal from './components/setting-modal'
+import SettingModal, { SettingModalTabsID } from './components/setting-modal'
 
 const myServerList = [
   {
@@ -52,7 +52,7 @@ const MainRootLayout = () => {
     location.pathname.split('/')[1] === 'channels' ? location.pathname.split('/')[2] : null
 
   const [settingModalState, setSettingModalState] = useState({
-    itemId: -1,
+    itemId: SettingModalTabsID.none,
     isOpen: false
   })
 
@@ -78,22 +78,21 @@ const MainRootLayout = () => {
 
   const handleClickSetting = () => {
     setSettingModalState({
-      itemId: 101,
+      itemId: SettingModalTabsID.myAccount,
       isOpen: true
     })
   }
 
   const handleClickEditProfileSettingModal = () => {
     setSettingModalState({
-      itemId: 102,
+      itemId: SettingModalTabsID.myProfile,
       isOpen: true
     })
-    console.log('edit profile')
   }
 
   const handleClickSettingModalClose = () => {
     setSettingModalState({
-      itemId: -1,
+      itemId: SettingModalTabsID.none,
       isOpen: false
     })
   }

@@ -87,7 +87,7 @@ export function Content({ name, email, status, avatarUrl, backgroundUrl, onEditP
             <p className='text-white-100 text-[20px] font-bold'>{name}</p>
             <p className='text-gray-50 text-[14px]'>{email.split('@')[0]}</p>
           </div>
-          <div className='flex flex-col gap-2 p-2'>
+          <div className='p-2'>
             <ul className='flex flex-col gap-2'>
               {menuItems.map((item, index) => (
                 <MenuItem
