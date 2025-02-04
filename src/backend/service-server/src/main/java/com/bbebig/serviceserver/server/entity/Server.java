@@ -1,6 +1,7 @@
 package com.bbebig.serviceserver.server.entity;
 
 import com.bbebig.commonmodule.global.common.BaseTimeEntity;
+import com.bbebig.serviceserver.server.dto.request.ServerUpdateRequestDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,13 +36,9 @@ public class Server extends BaseTimeEntity {
     @Column(name = "server_image_url", length = 1024)
     private String serverImageUrl;
 
-    // 서버의 이름 업데이트
-    public void updateName(String name) {
-        this.name = name;
-    }
-
-    // 서버의 이미지 업데이트
-    public void updateServerImageUrl(String serverImageUrl) {
-        this.serverImageUrl = serverImageUrl;
+    // 서버 업데이트
+    public void update(ServerUpdateRequestDto serverUpdateRequestDto) {
+        this.name = serverUpdateRequestDto.getServerName();
+        this.serverImageUrl = serverUpdateRequestDto.getServerImageUrl();
     }
 }

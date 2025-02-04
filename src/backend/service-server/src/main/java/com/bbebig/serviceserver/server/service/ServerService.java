@@ -2,15 +2,23 @@ package com.bbebig.serviceserver.server.service;
 
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
+import com.bbebig.serviceserver.category.entity.Category;
+import com.bbebig.serviceserver.category.repository.CategoryRepository;
+import com.bbebig.serviceserver.channel.entity.Channel;
+import com.bbebig.serviceserver.channel.entity.ChannelMember;
+import com.bbebig.serviceserver.channel.entity.ChannelType;
+import com.bbebig.serviceserver.channel.repository.ChannelMemberRepository;
+import com.bbebig.serviceserver.channel.repository.ChannelRepository;
 import com.bbebig.serviceserver.server.dto.request.ServerCreateRequestDto;
-import com.bbebig.serviceserver.server.dto.request.ServerImageUpdateRequestDto;
-import com.bbebig.serviceserver.server.dto.request.ServerNameUpdateRequestDto;
+import com.bbebig.serviceserver.server.dto.request.ServerUpdateRequestDto;
 import com.bbebig.serviceserver.server.dto.response.ServerCreateResponseDto;
 import com.bbebig.serviceserver.server.dto.response.ServerDeleteResponseDto;
-import com.bbebig.serviceserver.server.dto.response.ServerImageUpdateResponseDto;
-import com.bbebig.serviceserver.server.dto.response.ServerNameUpdateResponseDto;
+import com.bbebig.serviceserver.server.dto.response.ServerUpdateResponseDto;
 import com.bbebig.serviceserver.server.dto.response.ServerReadResponseDto;
+import com.bbebig.serviceserver.server.entity.Role;
 import com.bbebig.serviceserver.server.entity.Server;
+import com.bbebig.serviceserver.server.entity.ServerMember;
+import com.bbebig.serviceserver.server.repository.ServerMemberRepository;
 import com.bbebig.serviceserver.server.repository.ServerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,18 +28,78 @@ import org.springframework.stereotype.Service;
 public class ServerService {
 
     private final ServerRepository serverRepository;
+    private final ServerMemberRepository serverMemberRepository;
+    private final CategoryRepository categoryRepository;
+    private final ChannelRepository channelRepository;
+    private final ChannelMemberRepository channelMemberRepository;
 
     /**
      * 서버 생성
      */
     public ServerCreateResponseDto createServer(Long memberId, ServerCreateRequestDto serverCreateRequestDto) {
         Server server = Server.builder()
-                .name(serverCreateRequestDto.getName())
+                .name(serverCreateRequestDto.getServerName())
                 .ownerId(memberId)
                 .serverImageUrl(serverCreateRequestDto.getServerImageUrl())
                 .build();
 
+        // TODO: 마일스톤2 에서 Passport 에 member 정보 넣기
+        ServerMember serverMember = ServerMember.builder()
+                .server(server)
+                .memberId(memberId)
+                .memberNickname(null)
+                .memberProfileImageUrl(null)
+                .role(Role.OWNER)
+                .build();
+
+        Category chatCategory = Category.builder()
+                .server(server)
+                .name("채팅 채널")
+                .position(1)
+                .build();
+
+        Channel chatChannel = Channel.builder()
+                .server(server)
+                .category(chatCategory)
+                .name("일반")
+                .position(1)
+                .channelType(ChannelType.CHAT)
+                .privateStatus(false)
+                .build();
+
+        ChannelMember chatChannelMember = ChannelMember.builder()
+                .channel(chatChannel)
+                .serverMember(serverMember)
+                .build();
+
+        Category streamCategory = Category.builder()
+                .server(server)
+                .name("음성 채널")
+                .position(2)
+                .build();
+
+        Channel streamChannel = Channel.builder()
+                .server(server)
+                .category(streamCategory)
+                .name("일반")
+                .position(1)
+                .channelType(ChannelType.STREAM)
+                .privateStatus(false)
+                .build();
+
+        ChannelMember streamChannelMember = ChannelMember.builder()
+                .channel(streamChannel)
+                .serverMember(serverMember)
+                .build();
+
         serverRepository.save(server);
+        serverMemberRepository.save(serverMember);
+        categoryRepository.save(chatCategory);
+        categoryRepository.save(streamCategory);
+        channelRepository.save(chatChannel);
+        channelMemberRepository.save(chatChannelMember);
+        channelRepository.save(streamChannel);
+        channelMemberRepository.save(streamChannelMember);
 
         return ServerCreateResponseDto.convertToServerCreateResponseDto(server);
     }
@@ -43,39 +111,27 @@ public class ServerService {
         Server server = serverRepository.findById(serverId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
 
-        // TODO: memberId가 서버에 속한 인원인지 확인하는 로직 추가
+        // 서버에 속한 멤버인지 확인
+        if (!serverMemberRepository.existsByServerIdAndMemberId(serverId, memberId)) {
+            throw new ErrorHandler(ErrorStatus.SERVER_MEMBER_FORBIDDEN);
+        }
 
         return ServerReadResponseDto.convertToServerReadResponseDto(server);
     }
 
     /**
-     * 서버 이름 업데이트
+     * 서버 업데이트
      */
-    public ServerNameUpdateResponseDto updateServerName(Long memberId, Long serverId, ServerNameUpdateRequestDto serverNameUpdateRequestDto) {
+    public ServerUpdateResponseDto updateServerName(Long memberId, Long serverId, ServerUpdateRequestDto serverUpdateRequestDto) {
         Server server = serverRepository.findById(serverId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
 
         // 서버장 권한 체크
         checkServerOwner(memberId, server);
 
-        server.updateName(serverNameUpdateRequestDto.getName());
+        server.update(serverUpdateRequestDto);
 
-        return ServerNameUpdateResponseDto.convertToServerNameUpdateResponseDto(server);
-    }
-
-    /**
-     * 서버 이미지 업데이트
-     */
-    public ServerImageUpdateResponseDto updateServerImage(Long memberId, Long serverId, ServerImageUpdateRequestDto serverImageUpdateRequestDto) {
-        Server server = serverRepository.findById(serverId)
-                .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
-
-        // 서버장 권한 체크
-        checkServerOwner(memberId, server);
-
-        server.updateServerImageUrl(serverImageUpdateRequestDto.getServerImageUrl());
-
-        return ServerImageUpdateResponseDto.convertToServerImageUpdateResponseDto(server);
+        return ServerUpdateResponseDto.convertToServerUpdateResponseDto(server);
     }
 
     /**
