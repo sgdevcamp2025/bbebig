@@ -104,7 +104,7 @@ function ChannelPage() {
             className='ml-3'
             width={25}
             height={25}
-            src='/image/chat/plus.svg'
+            src='/icon/chat/plus.svg'
             alt='+'
           />
 

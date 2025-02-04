@@ -1,3 +1,4 @@
+import CloseButton from '@/components/close-button'
 import Modal from '@/components/modal'
 import { cn } from '@/libs/cn'
 import { useState } from 'react'
@@ -102,15 +103,17 @@ function SettingModal({ channelName, isOpen, onClose }: Props) {
             </nav>
           </div>
 
-          <div className='flex flex-[1_1_800px] bg-brand-10 p-6'>
+          <div className='relative flex flex-[1_1_800px] bg-brand-10 p-6'>
             <div className='flex flex-col gap-5 w-full'>
-              <h2 className='text-lg font-bold text-white'>{currentTab?.name}</h2>
-
+              <div className='flex items-center justify-between pr-[40px]'>
+                <h2 className='text-lg font-bold text-white'>{currentTab?.name}</h2>
+                <CloseButton onClick={onClose} />
+              </div>
               <div className='flex flex-col gap-3'>
                 {currentTab?.settings.map((setting) => (
                   <span
                     key={setting.id}
-                    className='text-xs text-white-20'>
+                    className='text- text-white-20'>
                     {setting.name}
                   </span>
                 ))}
