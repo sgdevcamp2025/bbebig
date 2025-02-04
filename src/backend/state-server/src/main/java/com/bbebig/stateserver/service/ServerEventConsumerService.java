@@ -9,8 +9,8 @@ import com.bbebig.stateserver.client.ServiceClient;
 import com.bbebig.stateserver.dto.ServiceResponseDto.MemberServerListResponseDto;
 import com.bbebig.stateserver.dto.ServiceResponseDto.ServerMemberListResponseDto;
 import com.bbebig.stateserver.dto.StateResponseDto.MemberStatusResponseDto;
-import com.bbebig.stateserver.repository.MemberRedisRepository;
-import com.bbebig.stateserver.repository.ServerRedisRepository;
+import com.bbebig.stateserver.repository.MemberRedisRepositoryImpl;
+import com.bbebig.stateserver.repository.ServerRedisRepositoryImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -24,8 +24,8 @@ import java.util.Set;
 public class ServerEventConsumerService {
 
 	private final StateService stateService;
-	private final MemberRedisRepository memberRedisRepository;
-	private final ServerRedisRepository serverRedisRepository;
+	private final MemberRedisRepositoryImpl memberRedisRepositoryImpl;
+	private final ServerRedisRepositoryImpl serverRedisRepositoryImpl;
 	private final ServiceClient serviceClient;
 
 	@KafkaListener(topics = "${spring.kafka.topic.server-event}", groupId = "${spring.kafka.consumer.group-id.server-event}", containerFactory = "serverEventListener")
@@ -41,12 +41,12 @@ public class ServerEventConsumerService {
 			Long serverId = eventDto.getServerId();
 
 			// 캐싱된 서버 멤버 상태 정보가 없으면 서버 멤버 상태 정보를 조회하여 저장
-			if (!serverRedisRepository.existsServerMemberPresenceStatus(serverId)) {
+			if (!serverRedisRepositoryImpl.existsServerMemberPresenceStatus(serverId)) {
 				makeServerMemberPresenceStatus(serverId);
 			}
 
 			// 캐싱된 멤버별로 참여한 서버 목록이 없으면 멤버별로 참여한 서버 목록을 조회하여 저장
-			if (!memberRedisRepository.existsMemberServerList(eventDto.getMemberId())) {
+			if (!memberRedisRepositoryImpl.existsMemberServerList(eventDto.getMemberId())) {
 				makeMemberServerList(eventDto.getMemberId());
 			}
 
@@ -55,7 +55,7 @@ public class ServerEventConsumerService {
 					.actualStatus(eventDto.getActualStatus())
 					.build();
 
-			serverRedisRepository.saveServerMemberPresenceStatus(serverId, eventDto.getMemberId(), status);
+			serverRedisRepositoryImpl.saveServerMemberPresenceStatus(serverId, eventDto.getMemberId(), status);
 
 		} else if (serverEventDto.getType().equals(ServerEventType.SERVER_MEMBER_ACTION.toString())) {
 			ServerMemberActionEventDto eventDto = (ServerMemberActionEventDto) serverEventDto;
@@ -63,7 +63,7 @@ public class ServerEventConsumerService {
 			Long serverId = eventDto.getServerId();
 
 			// 캐싱된 서버 멤버 상태 정보가 없으면 서버 멤버 상태 정보를 조회하여 저장
-			if (!serverRedisRepository.existsServerMemberPresenceStatus(serverId)) {
+			if (!serverRedisRepositoryImpl.existsServerMemberPresenceStatus(serverId)) {
 				makeServerMemberPresenceStatus(serverId);
 			}
 			handleMemberActionEvent(eventDto);
@@ -82,8 +82,8 @@ public class ServerEventConsumerService {
 		Long serverId = eventDto.getServerId();
 
 		if (eventDto.getType().equals("JOIN")) {
-			serverRedisRepository.addServerMemberToSet(serverId, eventDto.getMemberId());
-			memberRedisRepository.addMemberServerToSet(eventDto.getMemberId(), serverId);
+			serverRedisRepositoryImpl.addServerMemberToSet(serverId, eventDto.getMemberId());
+			memberRedisRepositoryImpl.addMemberServerToSet(eventDto.getMemberId(), serverId);
 
 			// 멤버 상태 정보를 조회하여 서버별 멤버 상태 정보에 저장
 			MemberStatusResponseDto memberStatusResponseDto = stateService.checkMemberState(eventDto.getMemberId());
@@ -96,12 +96,12 @@ public class ServerEventConsumerService {
 					.globalStatus(memberStatusResponseDto.getGlobalStatus())
 					.actualStatus(memberStatusResponseDto.getActualStatus())
 					.build();
-			serverRedisRepository.saveServerMemberPresenceStatus(serverId, eventDto.getMemberId(), status);
+			serverRedisRepositoryImpl.saveServerMemberPresenceStatus(serverId, eventDto.getMemberId(), status);
 
 		} else if (eventDto.getType().equals("LEAVE")) {
-			serverRedisRepository.removeServerMemberFromSet(serverId, eventDto.getMemberId());
-			serverRedisRepository.removeServerMemberPresenceStatus(serverId, eventDto.getMemberId());
-			memberRedisRepository.removeMemberServerFromSet(eventDto.getMemberId(), serverId);
+			serverRedisRepositoryImpl.removeServerMemberFromSet(serverId, eventDto.getMemberId());
+			serverRedisRepositoryImpl.removeServerMemberPresenceStatus(serverId, eventDto.getMemberId());
+			memberRedisRepositoryImpl.removeMemberServerFromSet(eventDto.getMemberId(), serverId);
 		} else {
 			log.error("[State] ServerEventConsumerService: 서버 멤버 행동 이벤트 타입이 잘못되었습니다. memberId : {}, eventDto: {}", eventDto.getMemberId(), eventDto);
 		}
@@ -111,11 +111,11 @@ public class ServerEventConsumerService {
 	private void makeServerMemberPresenceStatus(Long serverId) {
 
 		// 캐싱된 서버에 참여한 멤버 목록이 없으면 서버에 참여한 멤버 목록을 조회하여 저장
-		if (!serverRedisRepository.existsServerMemberList(serverId)) {
+		if (!serverRedisRepositoryImpl.existsServerMemberList(serverId)) {
 			makeServerMemberList(serverId);
 		}
 
-		Set<Long> serverMemberList = serverRedisRepository.getServerMemberList(serverId);
+		Set<Long> serverMemberList = serverRedisRepositoryImpl.getServerMemberList(serverId);
 		if (serverMemberList == null || serverMemberList.isEmpty()) {
 			log.error("[State] ServerEventConsumerService: 서버 멤버 정보 생성 실패. serverId: {}", serverId);
 			return;
@@ -127,7 +127,7 @@ public class ServerEventConsumerService {
 					.globalStatus(memberStatusResponseDto.getGlobalStatus())
 					.actualStatus(memberStatusResponseDto.getActualStatus())
 					.build();
-			serverRedisRepository.saveServerMemberPresenceStatus(serverId, memberId, status);
+			serverRedisRepositoryImpl.saveServerMemberPresenceStatus(serverId, memberId, status);
 		}
 	}
 
@@ -138,7 +138,7 @@ public class ServerEventConsumerService {
 			log.error("[State] ServerEventConsumerService: 서버 멤버 정보 불러오기 실패. serverId: {}", serverId);
 			return;
 		}
-		serverRedisRepository.saveServerMemberSet(serverId, responseDto.getMemberIdList());
+		serverRedisRepositoryImpl.saveServerMemberSet(serverId, responseDto.getMemberIdList());
 	}
 
 	// 멤버별로 참여한 서버 목록을 조회하여 저장
@@ -148,6 +148,6 @@ public class ServerEventConsumerService {
 			log.error("[State] ServerEventConsumerService: 서버 멤버 정보 불러오기 실패. memberId: {}", memberId);
 			return;
 		}
-		memberRedisRepository.saveMemberServerSet(memberId, memberServerList.getServerIdList());
+		memberRedisRepositoryImpl.saveMemberServerSet(memberId, memberServerList.getServerIdList());
 	}
 }
