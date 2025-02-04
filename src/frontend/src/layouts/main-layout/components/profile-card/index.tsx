@@ -13,9 +13,20 @@ type Props = {
   backgroundUrl: string | null
 }
 
-export function Content({ name, email, status, avatarUrl, backgroundUrl }: Props) {
+type ContentProps = {
+  onEditProfile: () => void
+} & Props
+
+export function Content({
+  name,
+  email,
+  status,
+  avatarUrl,
+  backgroundUrl,
+  onEditProfile
+}: ContentProps) {
   const handleClickEditProfile = () => {
-    console.log('edit profile')
+    onEditProfile()
   }
 
   const handleClickStatus = () => {
@@ -55,6 +66,7 @@ export function Content({ name, email, status, avatarUrl, backgroundUrl }: Props
             <ul className='flex flex-col gap-2'>
               <li className='flex items-center p-2 hover:bg-gray-80 rounded-md'>
                 <button
+                  className='w-full h-full'
                   type='button'
                   onClick={handleClickEditProfile}>
                   <div className='flex items-center gap-1'>
@@ -73,7 +85,7 @@ export function Content({ name, email, status, avatarUrl, backgroundUrl }: Props
                 <button
                   type='button'
                   onClick={handleClickStatus}
-                  className='w-full'>
+                  className='w-full h-full'>
                   <div className='flex items-center justify-between w-full'>
                     <div className='flex items-center gap-1'>
                       <div className='w-4 h-4 flex items-center justify-center'>
@@ -92,7 +104,7 @@ export function Content({ name, email, status, avatarUrl, backgroundUrl }: Props
                 <button
                   type='button'
                   onClick={handleClickLogout}
-                  className='w-full'>
+                  className='w-full h-full'>
                   <div className='flex items-center justify-between'>
                     <div className='flex gap-1 items-center'>
                       <div className='w-4 h-4 flex items-center justify-center'>
@@ -125,7 +137,11 @@ const profileCard = {
     'https://cdn.discordapp.com/banners/419411480677580820/a_b6a40ef738c6f8221793be39094cce00.png'
 } as const
 
-function ProfileCard() {
+type ProfileCardProps = {
+  onEditProfile: () => void
+}
+
+function ProfileCard({ onEditProfile }: ProfileCardProps) {
   const loading = false
 
   return (
@@ -135,7 +151,10 @@ function ProfileCard() {
           <LoadingIcon />
         </div>
       ) : (
-        <Content {...profileCard} />
+        <Content
+          {...profileCard}
+          onEditProfile={onEditProfile}
+        />
       )}
     </div>
   )

@@ -1,12 +1,15 @@
-import { useEffect, type PropsWithChildren } from 'react'
+import { useEffect, type PropsWithChildren, type CSSProperties } from 'react'
 import Portal from '../portal'
+import { cn } from '@/libs/cn'
 
 type Props = {
   isOpen: boolean
   onClose?: () => void
+  backgroundColor?: CSSProperties['backgroundColor']
+  className?: string
 }
 
-function Modal({ children, isOpen, onClose }: PropsWithChildren<Props>) {
+function Modal({ children, isOpen, onClose, className }: PropsWithChildren<Props>) {
   useEffect(
     function ScrollLock() {
       if (isOpen) {
@@ -41,7 +44,7 @@ function Modal({ children, isOpen, onClose }: PropsWithChildren<Props>) {
         <>
           <div
             onClick={onClose}
-            className='fixed z-[9000] inset-0 bg-black/70 flex justify-center items-center'
+            className={cn('fixed z-[9000] inset-0 flex justify-center items-center', className)}
           />
           <div className='absolute z-[9999] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
             {children}
