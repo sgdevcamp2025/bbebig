@@ -94,6 +94,36 @@ function ServerSideBar({
                       />
                     </span>
                     <span className='flex-1 ml-1 text-left'>{channel.name}</span>
+
+                    <div
+                      className={cn(
+                        'flex items-center gap-2 transition-opacity',
+                        selectedChannelId && Number(selectedChannelId) === channel.id
+                          ? 'opacity-100'
+                          : 'opacity-0 group-hover:opacity-100'
+                      )}>
+                      {channel.type === 'VOICE' && (
+                        <img
+                          src='/icon/channel/threads.svg'
+                          width={15}
+                          height={15}
+                          alt='스레드'
+                        />
+                      )}
+
+                      <img
+                        src='/icon/channel/invite.svg'
+                        width={15}
+                        height={15}
+                        alt='초대'
+                      />
+                      <img
+                        src='/icon/channel/setting.svg'
+                        width={15}
+                        height={15}
+                        alt='설정'
+                      />
+                    </div>
                   </button>
                 ))}
               </div>
