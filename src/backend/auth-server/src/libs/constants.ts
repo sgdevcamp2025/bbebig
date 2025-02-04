@@ -3,6 +3,7 @@ import { Secret } from 'jsonwebtoken';
 const isDevelopment = process.env.NODE_ENV === 'development';
 const isProduction = process.env.NODE_ENV === 'production';
 
+const SERVER_IP = process.env.SERVER_IP;
 const SERVER_PORT = Number(process.env.SERVER_PORT);
 const SERVER_URL = process.env.SERVER_URL;
 const ROUND = Number(process.env.HASH_ROUND);
@@ -118,6 +119,7 @@ const REDIS_KEY = {
 export {
   isDevelopment,
   isProduction,
+  SERVER_IP,
   SERVER_PORT,
   SERVER_URL,
   DATABASE_URL,
