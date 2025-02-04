@@ -21,7 +21,7 @@ import { z } from 'zod';
 import { hasZodFastifySchemaValidationErrors } from 'fastify-type-provider-zod';
 import { handleError } from './src/libs/errorHelper';
 import redis from './src/libs/redis';
-import EurekaClient from 'src/libs/eureka';
+import EurekaClient from './src/libs/eureka';
 
 const eurekaConfig = {
   instance: {
