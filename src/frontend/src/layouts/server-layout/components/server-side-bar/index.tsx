@@ -95,8 +95,7 @@ function ServerSideBar({
                     <span className='mr-1'>
                       <img
                         src={`/icon/channel/type-${channel.type.toLocaleLowerCase()}.svg`}
-                        width={15}
-                        height={15}
+                        className='w-[15px] h-[15px]'
                       />
                     </span>
                     <span className='flex-1 ml-1 text-left'>{channel.name}</span>
@@ -111,24 +110,23 @@ function ServerSideBar({
                       {channel.type === 'VOICE' && (
                         <img
                           src='/icon/channel/threads.svg'
-                          width={15}
-                          height={15}
+                          className='w-[15px] h-[15px]'
                           alt='스레드'
                         />
                       )}
 
                       <img
                         src='/icon/channel/invite.svg'
-                        width={15}
-                        height={15}
+                        className='w-[15px] h-[15px]'
                         alt='초대'
                       />
 
-                      <button onClick={() => handleOpenSettings(channel.id, channel.name)}>
+                      <button
+                        type='button'
+                        onClick={() => handleOpenSettings(channel.id, channel.name)}>
                         <img
                           src='/icon/channel/setting.svg'
-                          width={15}
-                          height={15}
+                          className='w-[15px] h-[15px]'
                           alt='설정'
                         />
                       </button>
@@ -141,13 +139,11 @@ function ServerSideBar({
         ))}
       </div>
 
-      {selectedChannel && (
-        <SettingModal
-          channelName={selectedChannel.name}
-          isOpen={!!selectedChannel}
-          onClose={() => setSelectedChannel(null)}
-        />
-      )}
+      <SettingModal
+        channelName={selectedChannel?.name ?? ''}
+        isOpen={!!selectedChannel}
+        onClose={() => setSelectedChannel(null)}
+      />
     </div>
   )
 }

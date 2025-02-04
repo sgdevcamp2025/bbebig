@@ -94,8 +94,7 @@ function SettingModal({ channelName, isOpen, onClose }: Props) {
                 className='flex items-center px-3 text-base font-medium h-10 w-[192px] text-white-20 gap-2 border-t-[0.2px] border-discord-gray-400'>
                 채널 삭제하기
                 <img
-                  width={15}
-                  height={15}
+                  className='w-[15px] h-[15px]'
                   src='/icon/channel/delete.svg'
                   alt='삭제'
                 />
@@ -113,7 +112,7 @@ function SettingModal({ channelName, isOpen, onClose }: Props) {
                 {currentTab?.settings.map((setting) => (
                   <span
                     key={setting.id}
-                    className='text- text-white-20'>
+                    className='text-xs text-white-20'>
                     {setting.name}
                   </span>
                 ))}
