@@ -9,6 +9,8 @@ import java.util.List;
 public interface ServerMemberRepository extends JpaRepository<ServerMember, Long> {
     boolean existsByServerIdAndMemberId(Long serverId, Long memberId);
 
+    List<ServerMember> findAllByMemberId(Long memberId);
+
     // 특정 서버 내 멤버 ID 리스트를 기준으로 ServerMember 찾기 (비공개 채널용)
     List<ServerMember> findByServerAndMemberIdIn(Server server, List<Long> memberIds);
 

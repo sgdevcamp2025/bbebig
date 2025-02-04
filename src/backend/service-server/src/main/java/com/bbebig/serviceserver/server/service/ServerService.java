@@ -11,17 +11,17 @@ import com.bbebig.serviceserver.channel.repository.ChannelMemberRepository;
 import com.bbebig.serviceserver.channel.repository.ChannelRepository;
 import com.bbebig.serviceserver.server.dto.request.ServerCreateRequestDto;
 import com.bbebig.serviceserver.server.dto.request.ServerUpdateRequestDto;
-import com.bbebig.serviceserver.server.dto.response.ServerCreateResponseDto;
-import com.bbebig.serviceserver.server.dto.response.ServerDeleteResponseDto;
-import com.bbebig.serviceserver.server.dto.response.ServerUpdateResponseDto;
-import com.bbebig.serviceserver.server.dto.response.ServerReadResponseDto;
-import com.bbebig.serviceserver.server.entity.Role;
+import com.bbebig.serviceserver.server.dto.response.*;
+import com.bbebig.serviceserver.server.entity.RoleType;
 import com.bbebig.serviceserver.server.entity.Server;
 import com.bbebig.serviceserver.server.entity.ServerMember;
 import com.bbebig.serviceserver.server.repository.ServerMemberRepository;
 import com.bbebig.serviceserver.server.repository.ServerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +49,7 @@ public class ServerService {
                 .memberId(memberId)
                 .memberNickname(null)
                 .memberProfileImageUrl(null)
-                .role(Role.OWNER)
+                .roleType(RoleType.OWNER)
                 .build();
 
         Category chatCategory = Category.builder()
@@ -117,6 +117,19 @@ public class ServerService {
         }
 
         return ServerReadResponseDto.convertToServerReadResponseDto(server);
+    }
+
+    /**
+     * 서버 목록 조회
+     */
+    public ServerListReadResponseDto readServerList(Long memberId) {
+        List<ServerMember> serverMembers = serverMemberRepository.findAllByMemberId(memberId);
+
+        List<Server> servers = serverMembers.stream()
+                .map(ServerMember::getServer)
+                .toList();
+
+        return ServerListReadResponseDto.convertToServerListReadResponseDto(servers);
     }
 
     /**

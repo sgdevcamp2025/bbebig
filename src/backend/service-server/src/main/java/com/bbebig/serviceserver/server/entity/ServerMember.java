@@ -36,6 +36,7 @@ public class ServerMember extends BaseTimeEntity {
     @Column(name = "member_profile_image_url")
     private String memberProfileImageUrl;
 
-    @Column(name = "role")
-    private Role role;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role_type")
+    private RoleType roleType;
 }
