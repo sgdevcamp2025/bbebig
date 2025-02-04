@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { cn } from '@/libs/cn'
 import { Category } from '@/types/channel'
+import SettingModal from '../setting-modal'
 
 type ServerSideBarProps = {
   serverName?: string
@@ -16,11 +17,16 @@ function ServerSideBar({
   onChannelSelect
 }: ServerSideBarProps) {
   const [expandedCategories, setExpandedCategories] = useState<number[]>([])
+  const [selectedChannel, setSelectedChannel] = useState<{ id: number; name: string } | null>(null)
 
   const toggleCategory = (categoryId: number) => {
     setExpandedCategories((prev) =>
       prev.includes(categoryId) ? prev.filter((id) => id !== categoryId) : [...prev, categoryId]
     )
+  }
+
+  const handleOpenSettings = (channelId: number, channelName: string) => {
+    setSelectedChannel({ id: channelId, name: channelName })
   }
 
   return (
@@ -88,12 +94,43 @@ function ServerSideBar({
                     )}>
                     <span className='mr-1'>
                       <img
-                        src={`/image/channel/type-${channel.type.toLocaleLowerCase()}.svg`}
-                        width={15}
-                        height={15}
+                        src={`/icon/channel/type-${channel.type.toLocaleLowerCase()}.svg`}
+                        className='w-[15px] h-[15px]'
                       />
                     </span>
                     <span className='flex-1 ml-1 text-left'>{channel.name}</span>
+
+                    <div
+                      className={cn(
+                        'flex items-center gap-2 transition-opacity',
+                        selectedChannelId && Number(selectedChannelId) === channel.id
+                          ? 'opacity-100'
+                          : 'opacity-0 group-hover:opacity-100'
+                      )}>
+                      {channel.type === 'VOICE' && (
+                        <img
+                          src='/icon/channel/threads.svg'
+                          className='w-[15px] h-[15px]'
+                          alt='스레드'
+                        />
+                      )}
+
+                      <img
+                        src='/icon/channel/invite.svg'
+                        className='w-[15px] h-[15px]'
+                        alt='초대'
+                      />
+
+                      <button
+                        type='button'
+                        onClick={() => handleOpenSettings(channel.id, channel.name)}>
+                        <img
+                          src='/icon/channel/setting.svg'
+                          className='w-[15px] h-[15px]'
+                          alt='설정'
+                        />
+                      </button>
+                    </div>
                   </button>
                 ))}
               </div>
@@ -101,6 +138,12 @@ function ServerSideBar({
           </div>
         ))}
       </div>
+
+      <SettingModal
+        channelName={selectedChannel?.name ?? ''}
+        isOpen={!!selectedChannel}
+        onClose={() => setSelectedChannel(null)}
+      />
     </div>
   )
 }
