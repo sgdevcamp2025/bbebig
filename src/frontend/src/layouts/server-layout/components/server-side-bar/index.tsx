@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { cn } from '@/libs/cn'
 import { Category } from '@/types/channel'
+import SettingModal from '../setting-modal'
 
 type ServerSideBarProps = {
   serverName?: string
@@ -16,11 +17,16 @@ function ServerSideBar({
   onChannelSelect
 }: ServerSideBarProps) {
   const [expandedCategories, setExpandedCategories] = useState<number[]>([])
+  const [selectedChannel, setSelectedChannel] = useState<{ id: number; name: string } | null>(null)
 
   const toggleCategory = (categoryId: number) => {
     setExpandedCategories((prev) =>
       prev.includes(categoryId) ? prev.filter((id) => id !== categoryId) : [...prev, categoryId]
     )
+  }
+
+  const handleOpenSettings = (channelId: number, channelName: string) => {
+    setSelectedChannel({ id: channelId, name: channelName })
   }
 
   return (
@@ -117,12 +123,15 @@ function ServerSideBar({
                         height={15}
                         alt='초대'
                       />
-                      <img
-                        src='/icon/channel/setting.svg'
-                        width={15}
-                        height={15}
-                        alt='설정'
-                      />
+
+                      <button onClick={() => handleOpenSettings(channel.id, channel.name)}>
+                        <img
+                          src='/icon/channel/setting.svg'
+                          width={15}
+                          height={15}
+                          alt='설정'
+                        />
+                      </button>
                     </div>
                   </button>
                 ))}
@@ -131,6 +140,14 @@ function ServerSideBar({
           </div>
         ))}
       </div>
+
+      {selectedChannel && (
+        <SettingModal
+          channelName={selectedChannel.name}
+          isOpen={!!selectedChannel}
+          onClose={() => setSelectedChannel(null)}
+        />
+      )}
     </div>
   )
 }
