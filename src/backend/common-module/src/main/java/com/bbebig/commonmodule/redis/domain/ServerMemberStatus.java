@@ -1,4 +1,4 @@
-package com.bbebig.stateserver.domain;
+package com.bbebig.commonmodule.redis.domain;
 
 import lombok.Builder;
 import lombok.Data;

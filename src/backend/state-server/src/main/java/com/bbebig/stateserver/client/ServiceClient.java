@@ -11,4 +11,6 @@ public interface ServiceClient {
 	@GetMapping("info/{serverId}/list/member")
 	ServerMemberListResponseDto getServerMemberList(@PathVariable(value = "serverId") Long serverId);
 
+	@GetMapping("info/list/server/{memberId}")
+	MemberServerListResponseDto getMemberServerList(@PathVariable(value = "memberId") Long memberId);
 }

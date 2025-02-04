@@ -1,4 +1,4 @@
-package com.bbebig.stateserver.domain;
+package com.bbebig.commonmodule.redis.domain;
 
 import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
 import lombok.Builder;

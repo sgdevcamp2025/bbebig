@@ -1,8 +1,7 @@
 package com.bbebig.stateserver.repository;
 
 import com.bbebig.commonmodule.redis.RedisKeys;
-import com.bbebig.stateserver.domain.MemberPresenceStatus;
-import com.bbebig.stateserver.domain.ServerMemberStatus;
+import com.bbebig.commonmodule.redis.domain.ServerMemberStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -16,24 +15,27 @@ import java.util.stream.Collectors;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class RedisRepository {
+public class ServerRedisRepository {
 
 	private final RedisTemplate<String, Object> redisTemplate;
 
-	//서버별 멤버 목록(server:{serverId}:memberList)을 Set 자료구조로 관리
+	/**
+	 * 서버에 참여하고 있는 멤버 목록을 Hash 구조로 저장
+	 * ex) server:{serverId}:serverMemberList => Set<MemberId>
+	 */
 	public void saveServerMemberSet(Long serverId, List<Long> memberIdList) {
 		String key = RedisKeys.getServerMemberListKey(serverId);
 		redisTemplate.opsForSet().add(key, memberIdList.toArray());
 	}
 
 
-	// 서버별 멤버 목록에 멤버 추가
+	// 서버에 참여중인 멤버 목록에 멤버 추가
 	public void addServerMemberToSet(Long serverId, Long memberId) {
 		String key = RedisKeys.getServerMemberListKey(serverId);
 		redisTemplate.opsForSet().add(key, memberId);
 	}
 
-	// 서버별 멤버 목록에서 멤버 삭제
+	// 서버에 참여중인 멤버 목록에서 멤버 삭제
 	public void removeServerMemberFromSet(Long serverId, Long memberId) {
 		String key = RedisKeys.getServerMemberListKey(serverId);
 		redisTemplate.opsForSet().remove(key, memberId);
@@ -45,10 +47,7 @@ public class RedisRepository {
 		return Boolean.TRUE.equals(redisTemplate.hasKey(key));
 	}
 
-	/**
-	 * 서버별 멤버 목록 조회
-	 * ex) SMEMBERS server:1001:memberList
-	 */
+	// 서버에 참여중인 멤버 목록 반환
 	public Set<Long> getServerMemberList(Long serverId) {
 		String key = RedisKeys.getServerMemberListKey(serverId);
 		Set<Object> memberSet = redisTemplate.opsForSet().members(key);
@@ -62,31 +61,8 @@ public class RedisRepository {
 	}
 
 	/**
-	 * 개별 유저의 presence 상태(key=state:{memberId}:memberStatus)를 ValueOperations로 저장
-	 * ex) set("state:1:memberStatus", MemberPresenceStatus)
-	 */
-	public void saveMemberPresenceStatus(Long memberId, MemberPresenceStatus status) {
-		String key = RedisKeys.getMemberStatusKey(memberId);
-		redisTemplate.opsForValue().set(key, status);
-		log.info("[RedisRepository] saveMemberPresenceStatus -> key={}, status={}", key, status);
-	}
-
-	/**
-	 * 개별 유저의 presence 상태 조회
-	 * ex) get("state:1:memberStatus") => MemberPresenceStatus
-	 */
-	public MemberPresenceStatus getMemberPresenceStatus(Long memberId) {
-		String key = RedisKeys.getMemberStatusKey(memberId);
-		Object obj = redisTemplate.opsForValue().get(key);
-		if (obj instanceof MemberPresenceStatus) {
-			return (MemberPresenceStatus) obj;
-		}
-		return null;
-	}
-
-	/**
-	 * 서버별 멤버 상태(server:{serverId}:serverMemberStatus) -> Hash
-	 * field=memberId, value=ServerMemberStatus
+	 * 서버별 멤버 상태 정보를 Hash 구조로 저장
+	 * (server:{serverId}:serverMemberStatus) => ServerMemberStatus
 	 */
 	public void saveServerMemberPresenceStatus(Long serverId, Long memberId, ServerMemberStatus status) {
 		String key = RedisKeys.getServerMemberPresenceStatusKey(serverId);
@@ -100,17 +76,13 @@ public class RedisRepository {
 		redisTemplate.opsForHash().delete(key, String.valueOf(memberId));
 	}
 
-	/**
-	 * 서버별 멤버 상태 캐시 존재 여부
-	 */
+	// 서버별 멤버 상태 정보 조회
 	public boolean existsServerMemberPresenceStatus(Long serverId) {
 		String key = RedisKeys.getServerMemberPresenceStatusKey(serverId);
 		return Boolean.TRUE.equals(redisTemplate.hasKey(key));
 	}
 
-	/**
-	 * 서버별 특정 멤버 상태 조회
-	 */
+	// 서버별 멤버 상태 정보 조회
 	public ServerMemberStatus getServerMemberStatus(Long serverId, Long memberId) {
 		String key = RedisKeys.getServerMemberPresenceStatusKey(serverId);
 		Object obj = redisTemplate.opsForHash().get(key, String.valueOf(memberId));
@@ -120,9 +92,7 @@ public class RedisRepository {
 		return null;
 	}
 
-	/**
-	 * 객체를 Long으로 변환(내부 유틸)
-	 */
+	// 객체를 Long으로 변환 (내부 메서드)
 	private Long convertToLong(Object obj) {
 		try {
 			if (obj instanceof Long) {
@@ -134,4 +104,5 @@ public class RedisRepository {
 			return null;
 		}
 	}
+
 }

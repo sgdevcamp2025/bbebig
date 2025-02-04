@@ -1,16 +1,14 @@
 package com.bbebig.stateserver.service;
 
 import com.bbebig.commonmodule.kafka.dto.ChannelEventDto;
-import com.bbebig.stateserver.domain.DeviceInfo;
-import com.bbebig.stateserver.domain.MemberPresenceStatus;
-import com.bbebig.stateserver.global.util.RedisKeys;
-import com.bbebig.stateserver.repository.RedisRepository;
+import com.bbebig.commonmodule.redis.domain.DeviceInfo;
+import com.bbebig.commonmodule.redis.domain.MemberPresenceStatus;
+import com.bbebig.stateserver.repository.MemberRedisRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -18,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChannelEventConsumerService {
 
-	private final RedisRepository redisRepository;
+	private final MemberRedisRepository memberRedisRepository;
 
 	@KafkaListener(topics = "${spring.kafka.topic.channel-event}", groupId = "${spring.kafka.consumer.group-id.channel-event}", containerFactory = "channelEventListener")
 	public void consumeForChannelEvent(ChannelEventDto channelEventDto) {
@@ -40,7 +38,7 @@ public class ChannelEventConsumerService {
 
 	// 채널 참여 이벤트 처리
 	private MemberPresenceStatus handleJoinEvent(ChannelEventDto channelEventDto) {
-		MemberPresenceStatus memberPresenceStatus = redisRepository.getMemberPresenceStatus(channelEventDto.getMemberId());
+		MemberPresenceStatus memberPresenceStatus = memberRedisRepository.getMemberPresenceStatus(channelEventDto.getMemberId());
 		if (memberPresenceStatus == null) {
 			// TODO : 추후 예외 처리 로직 추가
 			log.error("[State] ChannelEventConsumerService: 채널 참여 이벤트 처리 도중 Redis에 상태 정보가 없어서 처리 실패. memberId: {}", channelEventDto.getMemberId());
@@ -61,13 +59,13 @@ public class ChannelEventConsumerService {
 			}
 		});
 
-		redisRepository.saveMemberPresenceStatus(RedisKeys.getMemberStatusKey(channelEventDto.getMemberId()), memberPresenceStatus);
+		memberRedisRepository.saveMemberPresenceStatus(channelEventDto.getMemberId(), memberPresenceStatus);
 		return memberPresenceStatus;
 	}
 
 	// 채널 퇴장 이벤트 처리
 	private MemberPresenceStatus handleLeaveEvent(ChannelEventDto channelEventDto) {
-		MemberPresenceStatus memberPresenceStatus = redisRepository.getMemberPresenceStatus(channelEventDto.getMemberId());
+		MemberPresenceStatus memberPresenceStatus = memberRedisRepository.getMemberPresenceStatus(channelEventDto.getMemberId());
 		if (memberPresenceStatus == null) {
 			// TODO : 추후 예외 처리 로직 추가
 			log.error("[State] ChannelEventConsumerService: 채널 퇴장 이벤트 처리 도중 Redis에 상태 정보가 없어서 처리 실패. memberId: {}", channelEventDto.getMemberId());
@@ -88,7 +86,7 @@ public class ChannelEventConsumerService {
 			}
 		});
 
-		redisRepository.saveMemberPresenceStatus(RedisKeys.getMemberStatusKey(channelEventDto.getMemberId()), memberPresenceStatus);
+		memberRedisRepository.saveMemberPresenceStatus(channelEventDto.getMemberId(), memberPresenceStatus);
 		return memberPresenceStatus;
 	}
 }
