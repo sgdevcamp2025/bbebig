@@ -88,7 +88,7 @@ function ServerSideBar({
                     )}>
                     <span className='mr-1'>
                       <img
-                        src={`/image/channel/type-${channel.type.toLocaleLowerCase()}.svg`}
+                        src={`/icon/channel/type-${channel.type.toLocaleLowerCase()}.svg`}
                         width={15}
                         height={15}
                       />

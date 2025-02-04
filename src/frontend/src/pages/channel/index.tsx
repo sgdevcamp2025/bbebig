@@ -55,7 +55,7 @@ function ChannelPage() {
           <img
             width={17}
             height={17}
-            src='/image/channel/type-text.svg'
+            src='/icon/channel/type-text.svg'
           />
           채널 {channelId}
         </span>
@@ -121,7 +121,7 @@ function ChannelPage() {
               <img
                 key={index}
                 alt={`${icon}-icon`}
-                src={`/image/chat/${icon}.svg`}
+                src={`/icon/chat/${icon}.svg`}
               />
             ))}
           </div>
@@ -130,7 +130,7 @@ function ChannelPage() {
             className='flex ml-5 px-3'
             type='button'
             onClick={sendMessage}>
-            <img src='/image/chat/send.svg' />
+            <img src='/icon/chat/send.svg' />
           </button>
         </div>
       </div>
