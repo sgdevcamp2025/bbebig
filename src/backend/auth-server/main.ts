@@ -12,7 +12,7 @@ import { FastifyCookieOptions } from '@fastify/cookie';
 import routes from './src/routes';
 import cors from '@fastify/cors';
 import fastifyCookie from '@fastify/cookie';
-import { ERROR_MESSAGE, EUREKA_IP, SECRET_KEY, SERVER_PORT } from './src/libs/constants';
+import { ERROR_MESSAGE, SERVER_IP, SECRET_KEY, SERVER_PORT } from './src/libs/constants';
 import fastifyRedis from '@fastify/redis';
 import { currentAuthPlugin } from './src/plugin/authPlugin';
 import { fastifySwagger } from '@fastify/swagger';
@@ -27,7 +27,7 @@ const eurekaConfig = {
   instance: {
     app: 'auth-server',
     hostName: 'auth-server',
-    ipAddr: EUREKA_IP as string,
+    ipAddr: SERVER_IP as string,
     port: 9000,
     vipAddress: 'auth-server',
     dataCenterInfo: {
