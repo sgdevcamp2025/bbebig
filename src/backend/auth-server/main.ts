@@ -12,7 +12,7 @@ import { FastifyCookieOptions } from '@fastify/cookie';
 import routes from './src/routes';
 import cors from '@fastify/cors';
 import fastifyCookie from '@fastify/cookie';
-import { ERROR_MESSAGE, isDevelopment, SECRET_KEY, SERVER_PORT } from './src/libs/constants';
+import { ERROR_MESSAGE, EUREKA_IP, SECRET_KEY, SERVER_PORT } from './src/libs/constants';
 import fastifyRedis from '@fastify/redis';
 import { currentAuthPlugin } from './src/plugin/authPlugin';
 import { fastifySwagger } from '@fastify/swagger';
@@ -21,7 +21,30 @@ import { z } from 'zod';
 import { hasZodFastifySchemaValidationErrors } from 'fastify-type-provider-zod';
 import { handleError } from './src/libs/errorHelper';
 import redis from './src/libs/redis';
-import db from './src/libs/db';
+import EurekaClient from 'src/libs/eureka';
+
+const eurekaConfig = {
+  instance: {
+    app: 'auth-server',
+    hostName: 'auth-server',
+    ipAddr: EUREKA_IP as string,
+    port: 9000,
+    vipAddress: 'auth-server',
+    dataCenterInfo: {
+      '@class': 'com.netflix.appinfo.InstanceInfo$AmazonInfo',
+      name: 'Amazon',
+    },
+  },
+  eureka: {
+    host: 'discovery-server',
+    port: 8761,
+    servicePath: '/eureka/apps',
+  },
+};
+
+const eurekaClient = new EurekaClient(eurekaConfig);
+
+eurekaClient.register();
 
 const app = Fastify({
   logger: true,
@@ -129,6 +152,7 @@ const start = async () => {
     console.log(`listening on port ${SERVER_PORT}`);
   } catch (error) {
     app.log.error(error);
+    eurekaClient.deregister();
     process.exit(1);
   }
 };
