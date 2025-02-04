@@ -118,7 +118,6 @@ public class MemberRedisRepositoryImpl implements MemberRedisRepository {
 	public void saveMemberPresenceStatus(Long memberId, MemberPresenceStatus status) {
 		String key = RedisKeys.getMemberStatusKey(memberId);
 		redisTemplate.opsForValue().set(key, status);
-		log.info("[RedisRepository] saveMemberPresenceStatus -> key={}, status={}", key, status);
 	}
 
 	// 개별 유저 presence 상태 정보 조회
@@ -131,8 +130,6 @@ public class MemberRedisRepositoryImpl implements MemberRedisRepository {
 		}
 		return null;
 	}
-
-
 
 	// 객체를 Long으로 변환 (내부 메서드)
 	public Long convertToLong(Object obj) {

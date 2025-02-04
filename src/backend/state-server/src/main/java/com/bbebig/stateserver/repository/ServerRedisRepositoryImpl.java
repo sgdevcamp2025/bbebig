@@ -73,15 +73,14 @@ public class ServerRedisRepositoryImpl implements ServerRedisRepository {
 	@Override
 	public void saveServerMemberPresenceStatus(Long serverId, Long memberId, ServerMemberStatus status) {
 		String key = RedisKeys.getServerMemberPresenceStatusKey(serverId);
-		redisTemplate.opsForHash().put(key, String.valueOf(memberId), status);
-		log.info("[RedisRepository] saveServerMemberPresenceStatus -> key={}, memberId={}, status={}", key, memberId, status);
+		redisTemplate.opsForHash().put(key, memberId, status);
 	}
 
 	// 서버별 멤버 상태 정보 삭제
 	@Override
 	public void removeServerMemberPresenceStatus(Long serverId, Long memberId) {
 		String key = RedisKeys.getServerMemberPresenceStatusKey(serverId);
-		redisTemplate.opsForHash().delete(key, String.valueOf(memberId));
+		redisTemplate.opsForHash().delete(key, memberId);
 	}
 
 	// 서버별 멤버 상태 정보 조회
@@ -95,11 +94,22 @@ public class ServerRedisRepositoryImpl implements ServerRedisRepository {
 	@Override
 	public ServerMemberStatus getServerMemberStatus(Long serverId, Long memberId) {
 		String key = RedisKeys.getServerMemberPresenceStatusKey(serverId);
-		Object obj = redisTemplate.opsForHash().get(key, String.valueOf(memberId));
+		Object obj = redisTemplate.opsForHash().get(key, memberId);
 		if (obj instanceof ServerMemberStatus) {
 			return (ServerMemberStatus) obj;
 		}
 		return null;
+	}
+
+	// 서버별 모든 멤버 상태 정보 조회
+	@Override
+	public List<ServerMemberStatus> getAllServerMemberStatus(Long serverId) {
+		String key = RedisKeys.getServerMemberPresenceStatusKey(serverId);
+		List<Object> statusList = redisTemplate.opsForHash().values(key);
+		return statusList.stream()
+				.filter(obj -> obj instanceof ServerMemberStatus)
+				.map(obj -> (ServerMemberStatus) obj)
+				.collect(Collectors.toList());
 	}
 
 	// 객체를 Long으로 변환 (내부 메서드)
