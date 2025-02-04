@@ -7,6 +7,7 @@ import lombok.Data;
 @Builder
 public class ServerMemberStatus {
 
+	private Long memberId;
 	private String actualStatus;            // "ONLINE", "OFFLINE", "DND", ...
 	private String globalStatus;      // if user is DND or INVISIBLE, etc.
 

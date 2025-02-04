@@ -34,7 +34,8 @@ public interface ServerRedisRepository {
 	Set<Long> getServerMemberList(Long serverId);
 
 	/**
-	 * 서버 멤버 상태 정보를 저장
+	 * 서버별 멤버 상태 정보를 Hash 구조로 저장
+	 * (server:{serverId}:serverMemberStatus) => ServerMemberStatus
 	 */
 	void saveServerMemberPresenceStatus(Long serverId, Long memberId, ServerMemberStatus status);
 
@@ -52,6 +53,11 @@ public interface ServerRedisRepository {
 	 * 서버 멤버 상태 정보 조회
 	 */
 	ServerMemberStatus getServerMemberStatus(Long serverId, Long memberId);
+
+	/**
+	 * 서버별 모든 멤버 상태 정보 조회
+	 */
+	List<ServerMemberStatus> getAllServerMemberStatus(Long serverId);
 
 	Long convertToLong(Object obj);
 }
