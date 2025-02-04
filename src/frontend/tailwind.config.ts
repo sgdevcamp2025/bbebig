@@ -42,6 +42,7 @@ const config: Pick<Config, 'presets' | 'content' | 'theme' | 'plugins'> = {
         'gray-60': 'hsl(213.75 calc(1 * 8.081%) 61.176% / 1)',
         'gray-70': '#404248',
         'gray-80': 'hsl(228 calc(1 * 6.024%) 32.549% / 0.48)',
+        'gray-90': 'hsl(213.75 calc(1*8.081%) 61.176% /1)',
 
         'discord-gray': {
           50: '#ECEDEE',
