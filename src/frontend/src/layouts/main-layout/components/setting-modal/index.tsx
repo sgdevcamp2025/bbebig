@@ -1,9 +1,8 @@
 import Modal from '@/components/modal'
 import { cn } from '@/libs/cn'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 type Props = {
-  tabId: number
   itemId: number
   isOpen: boolean
   onClose: () => void
@@ -43,16 +42,24 @@ const tabs = [
 function SettingModal({ itemId, isOpen, onClose }: Props) {
   const [currentItemId, setCurrentItemId] = useState(itemId)
 
+  useEffect(
+    function initialCurrentItemId() {
+      setCurrentItemId(itemId)
+    },
+    [itemId]
+  )
+
   const handleClickItem = (itemId: number) => {
-    console.log('itemId', itemId)
     setCurrentItemId(itemId)
   }
+
+  console.log('currentItemId', currentItemId)
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}>
-      <section className='w-dvw h-dvh bg-brand-10 motion-scale-in-90 motion-duration-[400ms] motion-ease-[cubic-bezier(1,-0.4,0.35,0.95)]'>
+      <section className='w-dvw h-dvh bg-brand-10 motion-opacity-in-20 motion-scale-in-90 animate-in fade-in-0 slide-in-from-bottom-10 duration-400 ease-in-out'>
         <div className='flex h-full'>
           <div className='flex justify-end flex-[1_0_auto] bg-gray-20'>
             <nav className='py-[60px] px-[6px] mt-[56px] flex flex-col gap-4'>

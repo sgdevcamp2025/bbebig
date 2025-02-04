@@ -52,7 +52,6 @@ const MainRootLayout = () => {
     location.pathname.split('/')[1] === 'channels' ? location.pathname.split('/')[2] : null
 
   const [settingModalState, setSettingModalState] = useState({
-    tabId: -1,
     itemId: -1,
     isOpen: false
   })
@@ -79,7 +78,6 @@ const MainRootLayout = () => {
 
   const handleClickSetting = () => {
     setSettingModalState({
-      tabId: 1,
       itemId: 101,
       isOpen: true
     })
@@ -87,7 +85,6 @@ const MainRootLayout = () => {
 
   const handleClickEditProfileSettingModal = () => {
     setSettingModalState({
-      tabId: 1,
       itemId: 102,
       isOpen: true
     })
@@ -96,7 +93,6 @@ const MainRootLayout = () => {
 
   const handleClickSettingModalClose = () => {
     setSettingModalState({
-      tabId: -1,
       itemId: -1,
       isOpen: false
     })
@@ -233,7 +229,6 @@ const MainRootLayout = () => {
         </div>
       </div>
       <SettingModal
-        tabId={settingModalState.tabId}
         itemId={settingModalState.itemId}
         isOpen={settingModalState.isOpen}
         onClose={handleClickSettingModalClose}
