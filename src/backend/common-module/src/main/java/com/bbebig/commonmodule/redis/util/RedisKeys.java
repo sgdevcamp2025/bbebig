@@ -1,4 +1,4 @@
-package com.bbebig.commonmodule.redis;
+package com.bbebig.commonmodule.redis.util;
 
 /**
  * Redis 키 생성 유틸리티.
