@@ -90,8 +90,8 @@ public class ServerController {
             @PathVariable Long serverId,
             @RequestBody ServerUpdateRequestDto serverUpdateRequestDto
     ) {
-        log.info("[Service] 서버 이름 업데이트 요청: memberId = {}, serverId = {}", passport.getMemberId(), serverId);
-        return CommonResponse.onSuccess(serverService.updateServerName(passport.getMemberId(), serverId, serverUpdateRequestDto));
+        log.info("[Service] 서버 업데이트 요청: memberId = {}, serverId = {}", passport.getMemberId(), serverId);
+        return CommonResponse.onSuccess(serverService.updateServer(passport.getMemberId(), serverId, serverUpdateRequestDto));
     }
 
     @Operation(summary = "서버 삭제 (서버장만 가능)", description = "서버를 삭제합니다.")
@@ -105,6 +105,6 @@ public class ServerController {
             @PathVariable Long serverId
     ) {
         log.info("[Service] 서버 삭제 요청: memberId = {}, serverId = {}", passport.getMemberId(), serverId);
-        return CommonResponse.onSuccess(serverService.deleteServer(serverId, serverId));
+        return CommonResponse.onSuccess(serverService.deleteServer(passport.getMemberId(), serverId));
     }
 }

@@ -83,7 +83,7 @@ public class ServerService {
                 .category(streamCategory)
                 .name("일반")
                 .position(1)
-                .channelType(ChannelType.STREAM)
+                .channelType(ChannelType.VOICE)
                 .privateStatus(false)
                 .build();
 
@@ -135,7 +135,7 @@ public class ServerService {
     /**
      * 서버 업데이트
      */
-    public ServerUpdateResponseDto updateServerName(Long memberId, Long serverId, ServerUpdateRequestDto serverUpdateRequestDto) {
+    public ServerUpdateResponseDto updateServer(Long memberId, Long serverId, ServerUpdateRequestDto serverUpdateRequestDto) {
         Server server = serverRepository.findById(serverId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
 
@@ -157,7 +157,6 @@ public class ServerService {
         // 서버장 권한 체크
         checkServerOwner(memberId, server);
 
-        // TODO: 삭제 조건 있는지 논의
         // TODO: ServerMember 삭제, Channel 삭제, ChannelMember 삭제, Category 삭제
 
         serverRepository.delete(server);
