@@ -9,6 +9,6 @@ import static com.bbebig.stateserver.dto.MemberResponseDto.*;
 @FeignClient(name = "member-server")
 public interface MemberClient {
 
-	@GetMapping("/member-server/info/{memberId}")
+	@GetMapping("/info/{memberId}/status-global")
 	MemberGlobalStatusResponseDto getMemberGlobalStatus(@PathVariable(value = "memberId") Long memberId);
 }

@@ -7,18 +7,11 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Data
 @EqualsAndHashCode(callSuper=false)
-public class ServerChannelEventDto extends ServerEventDto {
+public class ServerActionEventDto extends ServerEventDto {
 
-	Long categoryId;
+	private String serverName;
 
-	Long channelId;
-
-	String channelName;
-
-	String channelType; // CHAT, VOICE
-
-	Long order; // Channel 순서, DELETE 시에는 null
+	private String profileImageUrl;
 
 	String status; // CREATE, UPDATE, DELETE
-
 }

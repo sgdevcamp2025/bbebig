@@ -13,9 +13,11 @@ public class DmMemberActionEventDto extends NotificationEventDto {
 
 	private Long channelId;
 
+	private String channelType; // PRIVATE, GROUP
+
 	private String targetMemberNickName;
 
 	private String targetMemberProfileImageUrl;
 
-	private String action; // JOIN, LEAVE, UPDATE
+	private String status; // JOIN, LEAVE, UPDATE
 }

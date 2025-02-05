@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("/state-server")
+@RequestMapping("/state")
 @RequiredArgsConstructor
 @Tag(name = "서버", description = "서버 관련 API")
 public class StateController {
@@ -29,12 +29,26 @@ public class StateController {
 	// 사용자 상태 확인
 	@Operation(summary = "사용자 상태 확인", description = "사용자의 현재 상태와 실제 상태를 확인한다.")
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "서버 생성 성공", useReturnTypeSchema = true),
+			@ApiResponse(responseCode = "200", description = "상태 확인 성공", useReturnTypeSchema = true),
 			@ApiResponse(responseCode = "400", description = "", content = @Content)
 	})
-	@GetMapping("/state/check/member/{memberId}")
+	@GetMapping("/check/member/{memberId}")
 	public CommonResponse<MemberStatusResponseDto> checkMemberState(@PathVariable @Parameter(description = "사용자 ID") Long memberId) {
 		log.info("[State] Check member state: {}", memberId);
 		return CommonResponse.onSuccess(stateService.checkMemberState(memberId));
 	}
+
+	// 서버 멤버 상태 확인
+	@Operation(summary = "서버 멤버 상태 확인", description = "서버의 멤버들의 상태를 확인한다.")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "상태 확인 성공", useReturnTypeSchema = true),
+			@ApiResponse(responseCode = "400", description = "", content = @Content)
+	})
+	@GetMapping("/check/server/{serverId}/members")
+	public CommonResponse<ServerMemberPresenceResponseDto> checkServerMembersState(@PathVariable @Parameter(description = "서버 ID") Long serverId) {
+		log.info("[State] Check server members state: {}", serverId);
+		return CommonResponse.onSuccess(stateService.checkServerMembersState(serverId));
+	}
+
+
 }
