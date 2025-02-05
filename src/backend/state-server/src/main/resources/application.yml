@@ -9,7 +9,7 @@ spring:
   data:
     redis:
       port: 6379
-      host: http://redis
+      host: redis
 
   kafka:
     bootstrap-servers: kafka:9092
