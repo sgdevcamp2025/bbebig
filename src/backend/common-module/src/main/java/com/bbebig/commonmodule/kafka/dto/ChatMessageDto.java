@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.Builder;
 import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -50,6 +52,36 @@ public class ChatMessageDto {
 	// UPDATE 시 필요
 	@PastOrPresent(message = "수정 시간은 현재 시간 이전이어야 합니다.")
 	private LocalDateTime updatedAt;
+
+	// @JsonCreator와 @JsonProperty를 사용한 생성자
+	@JsonCreator
+	public ChatMessageDto(
+			@JsonProperty("id") Long id,
+			@JsonProperty("channelType") ChannelType channelType,
+			@JsonProperty("messageType") MessageType messageType,
+			@JsonProperty("type") String type,
+			@JsonProperty("serverId") Long serverId,
+			@JsonProperty("channelId") Long channelId,
+			@JsonProperty("sendMemberId") Long sendMemberId,
+			@JsonProperty("content") String content,
+			@JsonProperty("attachedFiles") List<ChatFileDto> attachedFiles,
+			@JsonProperty("targetMemberIds") List<Long> targetMemberIds,
+			@JsonProperty("createdAt") LocalDateTime createdAt,
+			@JsonProperty("updatedAt") LocalDateTime updatedAt
+	) {
+		this.id = id;
+		this.channelType = channelType;
+		this.messageType = messageType;
+		this.type = type;
+		this.serverId = serverId;
+		this.channelId = channelId;
+		this.sendMemberId = sendMemberId;
+		this.content = content;
+		this.attachedFiles = attachedFiles;
+		this.targetMemberIds = targetMemberIds;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
+	}
 
 	public enum MessageType {
 		TEXT, IMAGE, VIDEO, FILE, SYSTEM
