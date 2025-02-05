@@ -26,6 +26,8 @@ public class MessageEventConsumerService {
 			return;
 		}
 
+		log.info("[Chat] MessageEventConsumerService: 채팅 메시지 수신. ChatMessageDto: {}", chatMessageDto);
+
 		if (chatMessageDto.getChannelType() != ChannelType.CHANNEL) {
 			log.error("[Chat] MessageEventConsumerService: 채널 채팅 메시지가 아닙니다. ChatMessageDto: {}", chatMessageDto);
 			return;
