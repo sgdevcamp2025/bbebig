@@ -1,8 +1,8 @@
 package com.bbebig.chatserver.domain.chat.service;
 
-import com.bbebig.chatserver.domain.kafka.dto.ChannelEventDto;
-import com.bbebig.chatserver.domain.kafka.dto.ChatMessageDto;
-import com.bbebig.chatserver.domain.kafka.dto.ConnectionEventDto;
+import com.bbebig.commonmodule.kafka.dto.ChannelEventDto;
+import com.bbebig.commonmodule.kafka.dto.ChatMessageDto;
+import com.bbebig.commonmodule.kafka.dto.ConnectionEventDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;

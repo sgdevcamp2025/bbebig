@@ -1,6 +1,6 @@
 package com.bbebig.chatserver.domain.chat.service;
 
-import com.bbebig.chatserver.domain.kafka.dto.serverEvent.*;
+import com.bbebig.commonmodule.kafka.dto.serverEvent.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -24,7 +24,8 @@ public class ServerEventConsumerService {
 		if (serverEventDto instanceof ServerChannelEventDto
 				|| serverEventDto instanceof ServerCategoryEventDto
 				|| serverEventDto instanceof ServerMemberPresenceEventDto
-				|| serverEventDto instanceof ServerMemberActionEventDto) {
+				|| serverEventDto instanceof ServerMemberActionEventDto
+				|| serverEventDto instanceof ServerActionEventDto) {
 			messagingTemplate.convertAndSend("/topic/server/" + serverEventDto.getServerId(), serverEventDto);
 		} else {
 			log.error("[Chat] ServerEventConsumerService: 알려지지 않은 서버 이벤트 타입 수신. ServerEventDto: {}", serverEventDto);
