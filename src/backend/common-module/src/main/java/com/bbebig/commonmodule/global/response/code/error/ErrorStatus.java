@@ -28,9 +28,10 @@ public enum ErrorStatus implements BaseErrorCode {
     // SERVICE
     SERVER_NOT_FOUND(HttpStatus.NOT_FOUND, "SERVICE401", "서버를 찾을 수 없습니다."),
     SERVER_OWNER_FORBIDDEN(HttpStatus.FORBIDDEN, "SERVICE402", "서버장 권한이 없습니다."),
-
-
-
+    SERVER_MEMBER_FORBIDDEN(HttpStatus.FORBIDDEN, "SERVICE403", "서버에 속한 멤버가 아닙니다."),
+    CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "SERVICE404", "카테고리를 찾을 수 없습니다."),
+    CHANNEL_NOT_FOUND(HttpStatus.NOT_FOUND, "SERVICE405", "채널을 찾을 수 없습니다."),
+    CHANNEL_MEMBER_FORBIDDEN(HttpStatus.FORBIDDEN, "SERVICE406", "채널에 속한 멤버가 아닙니다."),
     ;
 
     private final HttpStatus httpStatus;
