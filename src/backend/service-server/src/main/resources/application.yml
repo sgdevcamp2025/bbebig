@@ -22,6 +22,41 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
+  data:
+    redis:
+      port: 6379
+      host: http://redis
+
+    kafka:
+      bootstrap-servers: http://kafka:9092
+
+      topic:
+        channel-chat-event: "channelChatEvent"
+        dm-chat-event: "dmChatEvent"
+        connection-event: "connectionEvent"
+        presence-event: "presenceEvent"
+        notification-event: "notificationEvent"
+        server-event: "serverEvent"
+        channel-event: "channelEvent"
+        member-event: "memberEvent"
+
+      producer:
+        bootstrap-servers: http://kafka:9092
+
+      consumer:
+        group-id:
+          channel-chat-event: "channelChatEventGroup"
+          dm-chat-event: "dmChatEventGroup"
+          notification-event: "notificationEventGroup"
+          server-event: "serverEventGroup"
+          channel-event: "channelEventGroup"
+          connection-event: "connectionEventGroup"
+          presence-event: "presenceEventGroup"
+          member-event: "memberEventGroup"
+
+        enable-auto-commit: true
+        auto-offset-reset: latest
+
 logging:
   level:
     org:
@@ -42,3 +77,14 @@ springdoc:
   swagger-ui:
     tags-sorter: alpha
     operations-sorter: method
+
+eas:
+  passport:
+    secretKey: ${PASSPORT_SECRET_KEY}
+    expiration: ${PASSPORT_EXPIRATION}
+    header: ${PASSPORT_HEADER}
+    algorithm: ${PASSPORT_ALGORITHM}
+
+auth:
+  server:
+    url: ${AUTH_SERVER_URL}
