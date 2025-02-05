@@ -4,10 +4,11 @@ import com.bbebig.chatserver.domain.chat.client.AuthClient;
 import com.bbebig.chatserver.domain.chat.client.MemberClient;
 import com.bbebig.chatserver.domain.chat.dto.response.AuthResponseDto;
 import com.bbebig.chatserver.domain.chat.dto.response.MemberResponseDto;
-import com.bbebig.chatserver.domain.kafka.dto.ConnectionEventDto;
 import com.bbebig.chatserver.domain.chat.repository.SessionManager;
 import com.bbebig.chatserver.domain.chat.service.MessageProducerService;
-import com.bbebig.chatserver.global.response.code.error.ErrorStatus;
+import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
+import com.bbebig.commonmodule.kafka.dto.ConnectionEventDto;
+import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -90,6 +91,8 @@ public class StompHandler implements ChannelInterceptor {
 				throw new MessageDeliveryException(ErrorStatus.MEMBER_NOT_FOUND.getMessage());
 			}
 
+
+
 			ConnectionEventDto connectionEventDto = ConnectionEventDto.builder()
 					.memberId(memberId)
 					.type("CONNECT")
@@ -97,9 +100,9 @@ public class StompHandler implements ChannelInterceptor {
 					.connectedServerIp(serverIp + ":" + serverPort)
 					.platform(platform)
 					.deviceType(deviceType)
-					.currentRoomType(currentRoomType)
-					.currentChannelId(currentChannelId)
-					.currentServerId(currentServerId)
+					.currentChannelType(currentRoomType != null ? ChannelType.valueOf(currentRoomType): null)
+					.currentChannelId(currentChannelId != null ? Long.parseLong(currentChannelId): null)
+					.currentServerId(currentServerId != null ? Long.parseLong(currentServerId): null)
 					.build();
 
 			messageProducerService.sendMessageForSession(connectionEventDto);

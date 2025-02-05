@@ -1,8 +1,8 @@
 package com.bbebig.chatserver.domain.chat.service;
 
-import com.bbebig.chatserver.domain.kafka.dto.ChatMessageDto;
-import com.bbebig.chatserver.domain.chat.model.ChannelType;
 import com.bbebig.chatserver.domain.chat.repository.SessionManager;
+import com.bbebig.commonmodule.kafka.dto.ChatMessageDto;
+import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
