@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public class MessageEventConsumerService {
 			log.error("[Chat] MessageEventConsumerService: 채널 채팅 메시지가 아닙니다. ChatMessageDto: {}", chatMessageDto);
 			return;
 		}
-		messagingTemplate.convertAndSend("/topic/server/" + chatMessageDto.getServerId(), chatMessageDto);
+		sendChannelMessageToWebSocket(chatMessageDto);
 	}
 
 	@KafkaListener(topics = "${spring.kafka.topic.dm-chat-event}", groupId = "${spring.kafka.consumer.group-id.dm-chat-event}", containerFactory = "dmChatListener")
@@ -56,8 +57,23 @@ public class MessageEventConsumerService {
 
 		for (Long memberId : memberIds) {
 			if (sessionManager.isExistMemberId(memberId)) {
-				messagingTemplate.convertAndSend("/queue/" + memberId, chatMessageDto);
+				sendDmMessageToWebSocket(chatMessageDto);
 			}
+		}
+	}
+
+
+	@Async
+	public void sendChannelMessageToWebSocket(ChatMessageDto chatMessageDto) {
+		log.info("[Chat] WebSocket 전송: /topic/server/{} - {}", chatMessageDto.getServerId(), chatMessageDto);
+		messagingTemplate.convertAndSend("/topic/server/" + chatMessageDto.getServerId(), chatMessageDto);
+	}
+
+	@Async
+	public void sendDmMessageToWebSocket(ChatMessageDto chatMessageDto) {
+		log.info("[Chat] WebSocket 전송: /queue/{} - {}", chatMessageDto.getTargetMemberIds(), chatMessageDto);
+		for (Long memberId : chatMessageDto.getTargetMemberIds()) {
+			messagingTemplate.convertAndSend("/queue/" + memberId, chatMessageDto);
 		}
 	}
 }
