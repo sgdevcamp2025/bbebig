@@ -27,4 +27,6 @@ dependencies {
     implementation(libs.navigation.compose)
     // compose coil
     implementation(libs.coil.compose)
+    // compose material2
+    implementation(libs.material)
 }

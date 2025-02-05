@@ -17,7 +17,7 @@ lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.9.3"
 composeBom = "2024.04.01"
 appcompat = "1.7.0"
-material = "1.10.0"
+material = "1.7.7"
 jetbrainsKotlinJvm = "2.0.0"
 room = "2.6.1"
 hilt = "2.52"
@@ -54,7 +54,7 @@ hilt-core = { group = "com.google.dagger", name = "hilt-core", version.ref = "hi
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinSerialization" }
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }
 
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+material = { group = "androidx.compose.material", name = "material", version.ref = "material" }
 
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 
