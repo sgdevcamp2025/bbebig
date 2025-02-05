@@ -6,11 +6,11 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ServerNameUpdateRequestDto {
-
-    @Schema(description = "사용자의 ID", example = "123", required = true)
-    private final Long memberId;
+public class ServerUpdateRequestDto {
 
     @Schema(description = "서버의 이름", example = "BBebig의 서버", required = true)
-    private final String name;
+    private final String serverName;
+
+    @Schema(description = "서버의 이미지", example = "https://...|null", required = true)
+    private final String serverImageUrl;
 }

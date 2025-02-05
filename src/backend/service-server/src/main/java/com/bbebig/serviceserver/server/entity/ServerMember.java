@@ -1,12 +1,7 @@
 package com.bbebig.serviceserver.server.entity;
 
-import com.bbebig.serviceserver.global.common.BaseTimeEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
+import com.bbebig.commonmodule.global.common.BaseTimeEntity;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,8 +22,9 @@ public class ServerMember extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "server_id")
-    private Long serverId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "server_id")
+    private Server server;
 
     @Column(name = "member_id")
     private Long memberId;
@@ -40,6 +36,7 @@ public class ServerMember extends BaseTimeEntity {
     @Column(name = "member_profile_image_url")
     private String memberProfileImageUrl;
 
-    @Column(name = "role")
-    private Role role;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role_type")
+    private RoleType roleType;
 }
