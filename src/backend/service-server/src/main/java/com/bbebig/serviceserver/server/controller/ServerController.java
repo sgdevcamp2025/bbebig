@@ -50,10 +50,10 @@ public class ServerController {
             @PathVariable Long serverId
     ) {
         log.info("[Service] 서버 정보 조회 요청: memberId = {}, serverId = {}", passport.getMemberId(), serverId);
-        return CommonResponse.onSuccess(serverService.readServer(passport.getMemberId(), serverId));
+        return CommonResponse.onSuccess(serverService.readServer(serverId));
     }
 
-    @Operation(summary = "서버 목록 조회 (PathVariable)", description = "서버 목록을 조회합니다. (PathVariable)")
+    @Operation(summary = "내가 속한 서버 목록 조회 (PathVariable)", description = "내가 속한 서버 목록을 조회합니다. (PathVariable)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "서버 목록 조회 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "", content = @Content)
@@ -66,7 +66,7 @@ public class ServerController {
         return CommonResponse.onSuccess(serverService.readServerList(memberId));
     }
 
-    @Operation(summary = "서버 목록 조회 (Passport)", description = "서버 목록을 조회합니다. (Passport)")
+    @Operation(summary = "내가 속한 서버 목록 조회 (Passport)", description = "내가 속한 서버 목록을 조회합니다. (Passport)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "서버 목록 조회 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "", content = @Content)

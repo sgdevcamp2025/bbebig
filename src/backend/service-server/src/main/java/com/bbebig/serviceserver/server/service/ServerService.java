@@ -107,14 +107,9 @@ public class ServerService {
     /**
      * 서버 정보 조회
      */
-    public ServerReadResponseDto readServer(Long memberId, Long serverId) {
+    public ServerReadResponseDto readServer(Long serverId) {
         Server server = serverRepository.findById(serverId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
-
-        // 서버에 속한 멤버인지 확인
-        if (!serverMemberRepository.existsByServerIdAndMemberId(serverId, memberId)) {
-            throw new ErrorHandler(ErrorStatus.SERVER_MEMBER_FORBIDDEN);
-        }
 
         return ServerReadResponseDto.convertToServerReadResponseDto(server);
     }
