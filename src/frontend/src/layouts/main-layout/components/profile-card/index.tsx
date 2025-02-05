@@ -3,7 +3,7 @@ import LoadingIcon from '@/components/loading-icon'
 import StatusIcon from '@/components/status-icon'
 import { statusKo } from '@/constants/status'
 import { CustomPresenceStatus } from '@/types/user'
-import { ChevronRightIcon } from 'lucide-react'
+import MenuItem from './menu-item'
 
 type Props = {
   name: string
@@ -11,11 +11,12 @@ type Props = {
   status: CustomPresenceStatus
   avatarUrl: string
   backgroundUrl: string | null
+  onEditProfile: () => void
 }
 
-export function Content({ name, email, status, avatarUrl, backgroundUrl }: Props) {
+export function Content({ name, email, status, avatarUrl, backgroundUrl, onEditProfile }: Props) {
   const handleClickEditProfile = () => {
-    console.log('edit profile')
+    onEditProfile()
   }
 
   const handleClickStatus = () => {
@@ -25,6 +26,41 @@ export function Content({ name, email, status, avatarUrl, backgroundUrl }: Props
   const handleClickLogout = () => {
     console.log('logout')
   }
+
+  const menuItems = [
+    {
+      onClick: handleClickEditProfile,
+      icon: (
+        <img
+          src='/icon/menu/edit-profile.svg'
+          alt='프로필 편집'
+        />
+      ),
+      text: '프로필 편집'
+    },
+    {
+      onClick: handleClickStatus,
+      icon: (
+        <StatusIcon
+          status={status}
+          size='sm'
+        />
+      ),
+      text: statusKo[status],
+      hasChevron: true
+    },
+    {
+      onClick: handleClickLogout,
+      icon: (
+        <img
+          src='/icon/menu/minus-user.svg'
+          alt='로그아웃'
+        />
+      ),
+      text: '로그아웃',
+      hasChevron: true
+    }
+  ]
 
   return (
     <div className='w-[308px] bg-black-100 rounded-[8px] border-black-90 border-[4px] overflow-hidden'>
@@ -51,63 +87,17 @@ export function Content({ name, email, status, avatarUrl, backgroundUrl }: Props
             <p className='text-white-100 text-[20px] font-bold'>{name}</p>
             <p className='text-gray-50 text-[14px]'>{email.split('@')[0]}</p>
           </div>
-          <div className='flex flex-col gap-2 p-2'>
+          <div className='p-2'>
             <ul className='flex flex-col gap-2'>
-              <li className='flex items-center p-2 hover:bg-gray-80 rounded-md'>
-                <button
-                  type='button'
-                  onClick={handleClickEditProfile}>
-                  <div className='flex items-center gap-1'>
-                    <div className='w-4 h-4 flex items-center justify-center'>
-                      <img
-                        src='/icon/menu/edit-profile.svg'
-                        alt='프로필 편집'
-                      />
-                    </div>
-                    <p className='text-gray-50 text-[14px]'>프로필 편집</p>
-                  </div>
-                </button>
-              </li>
-              <div className='w-full h-[1px] rounded-sm bg-[#ffffff3d]' />
-              <li className='flex items-center p-2 hover:bg-gray-80 rounded-md w-full mb-3'>
-                <button
-                  type='button'
-                  onClick={handleClickStatus}
-                  className='w-full'>
-                  <div className='flex items-center justify-between w-full'>
-                    <div className='flex items-center gap-1'>
-                      <div className='w-4 h-4 flex items-center justify-center'>
-                        <StatusIcon
-                          status={status}
-                          size='sm'
-                        />
-                      </div>
-                      <p className='text-gray-50 text-[14px]'>{statusKo[status]}</p>
-                    </div>
-                    <ChevronRightIcon className='w-[14px] h-[14px] text-gray-50' />
-                  </div>
-                </button>
-              </li>
-              <li className='flex items-center p-2 hover:bg-gray-80 rounded-md w-full'>
-                <button
-                  type='button'
-                  onClick={handleClickLogout}
-                  className='w-full'>
-                  <div className='flex items-center justify-between'>
-                    <div className='flex gap-1 items-center'>
-                      <div className='w-4 h-4 flex items-center justify-center'>
-                        <img
-                          src='/icon/menu/minus-user.svg'
-                          className='fill-discord-status-offline text-gray-50'
-                          alt='로그아웃'
-                        />
-                      </div>
-                      <p className='text-gray-50 text-[14px]'>로그아웃</p>
-                    </div>
-                    <ChevronRightIcon className='w-[14px] h-[14px] text-gray-50' />
-                  </div>
-                </button>
-              </li>
+              {menuItems.map((item, index) => (
+                <MenuItem
+                  key={index}
+                  onClick={item.onClick}
+                  icon={item.icon}
+                  text={item.text}
+                  hasChevron={item.hasChevron}
+                />
+              ))}
             </ul>
           </div>
         </div>
@@ -125,7 +115,11 @@ const profileCard = {
     'https://cdn.discordapp.com/banners/419411480677580820/a_b6a40ef738c6f8221793be39094cce00.png'
 } as const
 
-function ProfileCard() {
+type ProfileCardProps = {
+  onEditProfile: () => void
+}
+
+function ProfileCard({ onEditProfile }: ProfileCardProps) {
   const loading = false
 
   return (
@@ -135,7 +129,10 @@ function ProfileCard() {
           <LoadingIcon />
         </div>
       ) : (
-        <Content {...profileCard} />
+        <Content
+          {...profileCard}
+          onEditProfile={onEditProfile}
+        />
       )}
     </div>
   )

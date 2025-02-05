@@ -50,12 +50,11 @@ function ChannelPage() {
 
   return (
     <div className='flex-1 flex flex-col h-screen'>
-      <div className='h-12  border-b border-discord-gray-800 px-4 flex items-center'>
+      <div className='h-12 border-b border-discord-gray-800 px-4 flex items-center'>
         <span className='flex items-center gap-1.5 text-discord-font-color-normal font-medium'>
           <img
-            width={17}
-            height={17}
-            src='/image/channel/type-text.svg'
+            className='w-[17px] h-[17px]'
+            src='/icon/channel/type-text.svg'
           />
           채널 {channelId}
         </span>
@@ -101,10 +100,8 @@ function ChannelPage() {
       <div className='px-4 pb-4'>
         <div className='h-12 flex items-center bg-discord-gray-600 rounded-md'>
           <img
-            className='ml-3'
-            width={25}
-            height={25}
-            src='/image/chat/plus.svg'
+            className='ml-3 w-[25px] h-[25px]'
+            src='/icon/chat/plus.svg'
             alt='+'
           />
 
@@ -121,7 +118,7 @@ function ChannelPage() {
               <img
                 key={index}
                 alt={`${icon}-icon`}
-                src={`/image/chat/${icon}.svg`}
+                src={`/icon/chat/${icon}.svg`}
               />
             ))}
           </div>
@@ -130,7 +127,7 @@ function ChannelPage() {
             className='flex ml-5 px-3'
             type='button'
             onClick={sendMessage}>
-            <img src='/image/chat/send.svg' />
+            <img src='/icon/chat/send.svg' />
           </button>
         </div>
       </div>

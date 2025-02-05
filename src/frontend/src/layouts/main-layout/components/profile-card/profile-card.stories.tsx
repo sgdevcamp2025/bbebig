@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
 import { Content } from '.'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'Layout/MainLayout/ProfileCard',
@@ -20,6 +21,7 @@ export const PrimaryProfileCard: Story = {
     status: 'ONLINE',
     avatarUrl: '/image/common/default-avatar.png',
     backgroundUrl:
-      'https://cdn.discordapp.com/banners/419411480677580820/a_b6a40ef738c6f8221793be39094cce00.png'
+      'https://cdn.discordapp.com/banners/419411480677580820/a_b6a40ef738c6f8221793be39094cce00.png',
+    onEditProfile: () => fn()
   }
 }
