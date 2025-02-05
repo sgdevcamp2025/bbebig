@@ -88,3 +88,7 @@ eas:
 auth:
   server:
     url: ${AUTH_SERVER_URL}
+
+service:
+  server:
+    url: ${SERVICE_SERVER_URL}
