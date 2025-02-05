@@ -2,15 +2,9 @@ package com.bbebig.serviceserver.channel.entity;
 
 import com.bbebig.commonmodule.global.common.BaseTimeEntity;
 import com.bbebig.serviceserver.category.entity.Category;
+import com.bbebig.serviceserver.channel.dto.request.ChannelUpdateRequestDto;
 import com.bbebig.serviceserver.server.entity.Server;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,6 +39,15 @@ public class Channel extends BaseTimeEntity {
     @Column(name = "position")
     private int position;
 
-    @Column(name = "type")
-    private Type type;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "channel_type")
+    private ChannelType channelType;
+
+    @Column(name = "private_status")
+    private boolean privateStatus;
+
+    public void update(ChannelUpdateRequestDto channelUpdateRequestDto) {
+        this.name = channelUpdateRequestDto.getChannelName();
+        this.privateStatus = channelUpdateRequestDto.isPrivateStatus();
+    }
 }
