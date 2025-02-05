@@ -5117,6 +5117,7 @@ __metadata:
     tailwindcss-motion: "npm:^1.0.1"
     typescript: "npm:~5.6.2"
     typescript-eslint: "npm:^8.18.2"
+    vite: "npm:^6.0.11"
     vite-tsconfig-paths: "npm:^5.1.4"
     vitest: "npm:^3.0.5"
     zod: "npm:^3.24.1"
@@ -9066,7 +9067,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^5.0.0 || ^6.0.0":
+"vite@npm:^5.0.0 || ^6.0.0, vite@npm:^6.0.11":
   version: 6.0.11
   resolution: "vite@npm:6.0.11"
   dependencies:
