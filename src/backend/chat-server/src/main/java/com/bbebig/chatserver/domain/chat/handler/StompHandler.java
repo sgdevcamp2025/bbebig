@@ -31,7 +31,7 @@ public class StompHandler implements ChannelInterceptor {
 	private final WebApplicationContext webApplicationContext;
 	private final SessionManager sessionManager;
 	private final AuthClient authClient;
-	private final MemberClient memberClient;
+//	private final MemberClient memberClient;
 	private final MessageProducerService messageProducerService;
 
 	@Value("${spring.cloud.client.ip-address}")
@@ -87,11 +87,11 @@ public class StompHandler implements ChannelInterceptor {
 			log.info("[Chat] StompHandler: CONNECT - memberId={}, sessionId={}, platform={}, roomType={}, channelId={}, serverId={}",
 					memberId, sessionId, platform, currentRoomType, currentChannelId, currentServerId);
 
-			MemberResponseDto memberInfo = memberClient.getMemberInfo(memberId);
-			if (memberInfo == null || memberInfo.getCode() != 200) {
-				log.error("[Chat] StompHandler: 사용자 정보 조회 실패");
-				throw new MessageDeliveryException(ErrorStatus.MEMBER_NOT_FOUND.getMessage());
-			}
+//			MemberResponseDto memberInfo = memberClient.getMemberInfo(memberId);
+//			if (memberInfo == null || memberInfo.getCode() != 200) {
+//				log.error("[Chat] StompHandler: 사용자 정보 조회 실패");
+//				throw new MessageDeliveryException(ErrorStatus.MEMBER_NOT_FOUND.getMessage());
+//			}
 
 
 
