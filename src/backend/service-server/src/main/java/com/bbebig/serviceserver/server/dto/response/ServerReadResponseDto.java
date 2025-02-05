@@ -8,15 +8,15 @@ import lombok.Getter;
 @Builder
 public class ServerReadResponseDto {
 
-    private final Long id;
-    private final String name;
+    private final Long serverId;
+    private final String serverName;
     private final Long ownerId;
     private final String serverImageUrl;
 
     public static ServerReadResponseDto convertToServerReadResponseDto(Server server) {
         return ServerReadResponseDto.builder()
-                .id(server.getId())
-                .name(server.getName())
+                .serverId(server.getId())
+                .serverName(server.getName())
                 .ownerId(server.getOwnerId())
                 .serverImageUrl(server.getServerImageUrl())
                 .build();

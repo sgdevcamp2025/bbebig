@@ -11,16 +11,16 @@ import lombok.Getter;
 @Builder
 public class ServerDeleteResponseDto {
 
-    private final Long id;
+    private final Long serverId;
 
     @JsonCreator(mode = Mode.PROPERTIES)
-    public ServerDeleteResponseDto(@JsonProperty("id") Long id) {
-        this.id = id;
+    public ServerDeleteResponseDto(@JsonProperty("serverId") Long serverId) {
+        this.serverId = serverId;
     }
 
     public static ServerDeleteResponseDto convertToServerDeleteResponseDto(Server server) {
         return ServerDeleteResponseDto.builder()
-                .id(server.getId())
+                .serverId(server.getId())
                 .build();
     }
 }

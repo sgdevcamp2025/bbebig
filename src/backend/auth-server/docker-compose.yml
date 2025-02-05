@@ -1,32 +1,46 @@
 version: '3.8'
+
 services:
   auth-server:
     build: .
     ports:
-      - '8083:8083'
+      - '9000:9000'
     env_file:
       - ./.env.production
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     depends_on:
       - redis
+      - mysql
     restart: always
     networks:
       - auth-network
 
   redis:
-    image: redis:alpine
-    container_name: redis-local
+    image: redis
+    container_name: redis
     ports:
       - '6379:6379'
-    command: redis-server --appendonly yes
+    volumes:
+      - auth-redis-data:/data
     networks:
       - auth-network
-    healthcheck:
-      test: ['CMD', 'redis-server', '--ping']
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 5s
+    
+  mysql:
+    image: mysql
+    container_name: mysql
+    ports:
+    - '3307:3306'
+    networks:
+      - auth-network
+    environment:
+      MYSQL_ROOT_PASSWORD: bbebig
 
 networks:
   auth-network:
     driver: bridge
+
+volumes:
+  auth-redis-data:
+    name: auth-redis-data

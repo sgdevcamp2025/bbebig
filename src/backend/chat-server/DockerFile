@@ -1,7 +1,0 @@
-FROM openjdk:17
-WORKDIR /app
-# 빌드된 Spring Boot JAR 파일을 복사
-COPY build/libs/chat-server-0.0.1-SNAPSHOT.jar chat-server.jar
-
-# JAR 파일 실행
-ENTRYPOINT ["java", "-jar", "chat-server.jar"]

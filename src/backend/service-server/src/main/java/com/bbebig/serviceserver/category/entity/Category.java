@@ -1,6 +1,7 @@
 package com.bbebig.serviceserver.category.entity;
 
-import com.bbebig.serviceserver.global.common.BaseTimeEntity;
+import com.bbebig.commonmodule.global.common.BaseTimeEntity;
+import com.bbebig.serviceserver.category.dto.request.CategoryUpdateRequestDto;
 import com.bbebig.serviceserver.server.entity.Server;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,4 +40,8 @@ public class Category extends BaseTimeEntity {
 
     @Column(name = "position")
     private int position;
+
+    public void update(CategoryUpdateRequestDto categoryUpdateRequestDto) {
+        this.name = categoryUpdateRequestDto.getCategoryName();
+    }
 }
