@@ -33,6 +33,12 @@ dependencies {
 
     // Protobuf
     implementation 'com.google.protobuf:protobuf-java:3.21.12'
+
+    // Kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 protobuf {

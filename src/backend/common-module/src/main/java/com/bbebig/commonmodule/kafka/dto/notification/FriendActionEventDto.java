@@ -11,7 +11,7 @@ public class FriendActionEventDto extends NotificationEventDto {
 
 	private Long friendId;
 
-	private String action; // ADD, DELETE, UPDATE
+	private String status; // ADD, DELETE, UPDATE
 
 	private String friendNickName;
 
