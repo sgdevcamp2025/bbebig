@@ -12,7 +12,7 @@ spring:
       host: http://redis
 
   kafka:
-    bootstrap-servers: http://kafka:9092
+    bootstrap-servers: kafka:9092
 
     topic:
       channel-chat-event: "channelChatEvent"
@@ -24,7 +24,7 @@ spring:
       channel-event: "channelEvent"
 
     producer:
-      bootstrap-servers: http://kafka:9092
+      bootstrap-servers: kafka:9092
 
     consumer:
       group-id:
