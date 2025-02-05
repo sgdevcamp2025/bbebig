@@ -61,8 +61,8 @@ public class ServerEventConsumerService {
 			handleMemberActionEvent(eventDto);
 
 		} else if (serverEventDto.getType().equals(ServerEventType.SERVER_ACTION.toString())) {
-			// TODO : 서버 액션 이벤트 처리
-
+			ServerActionEventDto eventDto = (ServerActionEventDto) serverEventDto;
+			handleServerActionEvent(eventDto);
 		} else {
 			if (!(serverEventDto.getType().equals(ServerEventType.SERVER_CATEGORY.toString()) ||
 					serverEventDto.getType().equals(ServerEventType.SERVER_CHANNEL.toString()))) {
