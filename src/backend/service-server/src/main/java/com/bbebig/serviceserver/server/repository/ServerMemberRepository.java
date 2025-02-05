@@ -5,6 +5,7 @@ import com.bbebig.serviceserver.server.entity.ServerMember;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ServerMemberRepository extends JpaRepository<ServerMember, Long> {
     boolean existsByServerIdAndMemberId(Long serverId, Long memberId);
@@ -16,4 +17,6 @@ public interface ServerMemberRepository extends JpaRepository<ServerMember, Long
 
     // 특정 서버의 모든 멤버 조회 (공개 채널용)
     List<ServerMember> findByServer(Server server);
+
+    Optional<ServerMember> findByMemberIdAndServer(Long memberId, Server server);
 }
