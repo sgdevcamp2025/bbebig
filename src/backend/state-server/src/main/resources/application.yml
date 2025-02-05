@@ -22,6 +22,7 @@ spring:
       notification-event: "notificationEvent"
       server-event: "serverEvent"
       channel-event: "channelEvent"
+      member-event: "memberEvent"
 
     producer:
       bootstrap-servers: kafka:9092
@@ -35,6 +36,7 @@ spring:
         channel-event: "channelEventGroup"
         connection-event: "connectionEventGroup"
         presence-event: "presenceEventGroup"
+        member-event: "memberEventGroup"
 
       enable-auto-commit: true
       auto-offset-reset: latest
