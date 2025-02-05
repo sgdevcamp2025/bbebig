@@ -7,6 +7,7 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -20,15 +21,13 @@ public class SwaggerConfig {
                 .version("1.0")
                 .description("BBeBig Service Server API documentation");
 
-        SecurityScheme accessTokenScheme = new SecurityScheme()
-                .type(SecurityScheme.Type.HTTP)
-                .scheme("bearer")
-                .bearerFormat("JWT")
+        SecurityScheme passportScheme = new SecurityScheme()
+                .type(SecurityScheme.Type.APIKEY)
                 .in(SecurityScheme.In.HEADER)
-                .name("Authorization");
+                .name("X-Passport");
 
         SecurityRequirement securityRequirement = new SecurityRequirement()
-                .addList("Access Token");
+                .addList("X-Passport");
 
         // 배포 서버 URL
         Server productionServer = new Server()
@@ -43,7 +42,7 @@ public class SwaggerConfig {
 
         return new OpenAPI()
                 .info(info)
-                .components(new Components().addSecuritySchemes("Access Token", accessTokenScheme))
+                .components(new Components().addSecuritySchemes("X-Passport", passportScheme))
                 .addSecurityItem(securityRequirement)
                 .servers(List.of(productionServer, localServer));
     }

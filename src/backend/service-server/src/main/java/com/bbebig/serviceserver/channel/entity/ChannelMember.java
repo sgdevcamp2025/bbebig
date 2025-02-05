@@ -1,6 +1,6 @@
 package com.bbebig.serviceserver.channel.entity;
 
-import com.bbebig.serviceserver.global.common.BaseTimeEntity;
+import com.bbebig.commonmodule.global.common.BaseTimeEntity;
 import com.bbebig.serviceserver.server.entity.ServerMember;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
