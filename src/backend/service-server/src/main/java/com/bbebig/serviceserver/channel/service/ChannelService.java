@@ -43,6 +43,9 @@ public class ChannelService {
         Server server = serverRepository.findById(channelCreateRequestDto.getServerId())
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
 
+        // 서버장 권한 체크
+        checkServerOwner(memberId, server);
+
         // 카테고리 조회 (없으면 null)
         Category category = categoryRepository.findById(channelCreateRequestDto.getCategoryId())
                 .orElse(null);
@@ -116,17 +119,9 @@ public class ChannelService {
     /**
      * 채널 정보 조회
      */
-    public ChannelReadResponseDto readChannel(Long memberId, Long channelId) {
+    public ChannelReadResponseDto readChannel(Long channelId) {
         Channel channel = channelRepository.findById(channelId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.CHANNEL_NOT_FOUND));
-
-        ServerMember serverMember = serverMemberRepository.findByMemberIdAndServer(memberId, channel.getServer())
-                .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_MEMBER_FORBIDDEN));
-
-        // 서버에 속한 멤버인지 확인
-        if (!channelMemberRepository.existsByChannelIdAndServerMember(channel.getId(), serverMember)) {
-            throw new ErrorHandler(ErrorStatus.CHANNEL_MEMBER_FORBIDDEN);
-        }
 
         return ChannelReadResponseDto.convertToChannelReadResponseDto(channel);
     }
@@ -178,7 +173,9 @@ public class ChannelService {
         channelMemberRepository.saveAll(channelMembers);
     }
 
-    // 서버장 권한 체크
+    /**
+     * 서버장 권한 체크
+     */
     private void checkServerOwner(Long memberId, Server server) {
         if (!server.getOwnerId().equals(memberId)) {
             throw new ErrorHandler(ErrorStatus.SERVER_OWNER_FORBIDDEN);

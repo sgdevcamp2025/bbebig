@@ -7,6 +7,7 @@ import feign.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ChannelRepository extends JpaRepository<Channel, Long> {
@@ -17,4 +18,6 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
     // 특정 서버에서 카테고리가 없는 채널 중 position 최대값 찾기
     @Query("SELECT COALESCE(MAX(c.position), 0) FROM Channel c WHERE c.server = :server AND c.category IS NULL")
     Optional<Integer> findMaxPositionByServerAndCategoryIsNull(@Param("server") Server server);
+
+    List<Channel> findAllByCategory(Category category);
 }

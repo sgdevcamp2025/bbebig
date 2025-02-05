@@ -50,4 +50,12 @@ public class Channel extends BaseTimeEntity {
         this.name = channelUpdateRequestDto.getChannelName();
         this.privateStatus = channelUpdateRequestDto.isPrivateStatus();
     }
+
+    public void updateCategoryNull() {
+        this.category = null;
+    }
+
+    public void updatePosition(int position) {
+        this.position = position;
+    }
 }
