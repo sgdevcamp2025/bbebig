@@ -6,8 +6,8 @@ COPY . .
 
 WORKDIR /apps/state-server
 
-RUN gradle clean generateProto
-RUN gradle bootJar -x test
+RUN ./gradlew clean generateProto
+RUN ./gradlew bootJar -x test
 
 # runtime stage
 FROM openjdk:17-jdk-slim
@@ -15,5 +15,5 @@ WORKDIR /apps
 
 COPY --from=build /apps/state-server/build/libs/*.jar app.jar
 
-EXPOSE 8080
+EXPOSE 9040
 CMD ["java", "-jar", "app.jar"]
