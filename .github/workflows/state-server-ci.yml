@@ -1,18 +1,21 @@
-name: Build and Push State Server Image
+name: Push Server Image
 
 on:
   push:
     branches:
-      - dev/state-server
+      - dev/state-server   # 서버 별로 변경 필요
+  pull_request:
+    branches:
+      - dev/state-server   # 서버 별로 변경 필요
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    
+
     env:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-      SERVER_NAME: state-server   # 필요한 경우 바꿔주세요
+      SERVER_NAME: state-server   # 서버 별로 변경 필요
 
     steps:
       - name: Check out repository
@@ -24,11 +27,6 @@ jobs:
           distribution: 'temurin'
           java-version: 17
 
-      - name: Build with Gradle
-        run: |
-          cd src/backend/${{ env.SERVER_NAME }}
-          ./gradlew clean build -x test
-
       - name: Log in to DockerHub
         uses: docker/login-action@v3
         with:
@@ -37,6 +35,6 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t ${{ env.DOCKERHUB_USERNAME }}/${{ env.SERVER_NAME }}:latest \
-            ./src/backend/${{ env.SERVER_NAME }}
+          cd src/backend
+          docker build -t ${{ env.DOCKERHUB_USERNAME }}/${{ env.SERVER_NAME }}:latest -f ${{ env.SERVER_NAME }}/Dockerfile .
           docker push ${{ env.DOCKERHUB_USERNAME }}/${{ env.SERVER_NAME }}:latest
