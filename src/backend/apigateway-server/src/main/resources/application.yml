@@ -14,6 +14,74 @@ spring:
   main:
     web-application-type: reactive # WebFlux + Spring Web 함께 사용
 
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true # serviceId를 소문자로 관리
+      routes:
+        # Member Server 라우팅
+        - id: member-server
+          uri: lb://member-server
+          predicates:
+            - Path=/member/**
+          filters:
+            - name: PassportFilter
+
+        # Service Server 라우팅
+        - id: service-server
+          uri: lb://service-server
+          predicates:
+            - Path=/service/**
+          filters:
+            - name: PassportFilter
+
+        # Search Server 라우팅
+        - id: search-server
+          uri: lb://search-server
+          predicates:
+            - Path=/search/**
+          filters:
+            - name: PassportFilter
+
+        # 상태관리 서버(State Management Server)
+        - id: state-server
+          uri: lb://state-server
+          predicates:
+            - Path=/state/**
+          filters:
+            - name: PassportFilter
+
+        # 채팅 서버(Chat Server)
+        - id: chat-server
+          uri: lb://chat-server
+          predicates:
+            - Path=/chat/**
+          filters:
+            - name: PassportFilter
+
+        # 푸시 서버(Push Server)
+        - id: push-server
+          uri: lb://push-server
+          predicates:
+            - Path=/push/**
+          filters:
+            - name: PassportFilter
+
+        # 시그널링 서버(Signaling Server)
+        - id: signaling-server
+          uri: lb://signaling-server
+          predicates:
+            - Path=/signal/**
+
+        # 미디어 서버(Media Server)
+        - id: media-server
+          uri: lb://media-server
+          predicates:
+            - Path=/media/**
+
+
 eas:
   passport:
     secret: ${PASSPORT_SECRET_KEY}
