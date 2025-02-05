@@ -25,7 +25,8 @@ type Story = StoryObj<typeof meta>
 export const PrimaryDateInput: Story = {
   args: {
     label: '날짜 선택',
-    required: true
+    required: true,
+    setDate: () => {}
   },
   render: (args) => (
     <div className='w-full h-[500px] flex justify-center items-center'>
