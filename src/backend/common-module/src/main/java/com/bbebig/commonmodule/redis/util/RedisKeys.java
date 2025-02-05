@@ -116,7 +116,7 @@ public class RedisKeys {
 	 * Key pattern: "dm:{channelId}:memberList"
 	 * Type: Set
 	 * Value: memberId (Long/String)들의 집합
-	 * TTL: none (필요 시 추후 설정)
+	 * TTL: 1일 (24시간)
 	 * Used by: State Server, Service Server, Push Server 등
 	 *
 	 * 예시 Key: dm:1:memberList

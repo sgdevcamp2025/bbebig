@@ -2,6 +2,7 @@ package com.bbebig.stateserver.repository;
 
 import com.bbebig.commonmodule.redis.repository.DmRedisRepository;
 import com.bbebig.commonmodule.redis.util.RedisKeys;
+import com.bbebig.commonmodule.redis.util.RedisTTL;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -21,17 +23,22 @@ public class DmRedisRepositoryImpl implements DmRedisRepository {
 	/**
 	 * DM 채널에 참여하고 있는 멤버 목록을 Set 구조로 저장
 	 * ex) dm:{channelId}:memberList => Set<MemberId>
+	 * TTL: 1일
 	 */
 	@Override
 	public void saveDmMemberSet(Long channelId, List<Long> memberIdList) {
 		String key = RedisKeys.getDmMemberListKey(channelId);
 		redisTemplate.opsForSet().add(key, memberIdList.toArray());
+
+		redisTemplate.expire(key, RedisTTL.getPrivateDmMemberListTTLDate(), TimeUnit.SECONDS);
 	}
 
 	@Override
 	public void addDmMemberToSet(Long channelId, Long memberId) {
 		String key = RedisKeys.getDmMemberListKey(channelId);
 		redisTemplate.opsForSet().add(key, memberId);
+
+		redisTemplate.expire(key, RedisTTL.getPrivateDmMemberListTTLDate(), TimeUnit.SECONDS);
 	}
 
 	@Override
@@ -57,6 +64,12 @@ public class DmRedisRepositoryImpl implements DmRedisRepository {
 				.map(this::convertToLong)
 				.filter(obj -> obj != null)
 				.collect(Collectors.toSet());
+	}
+
+	@Override
+	public void deleteDmMemberList(Long channelId) {
+		String key = RedisKeys.getDmMemberListKey(channelId);
+		redisTemplate.delete(key);
 	}
 
 	// 객체를 Long으로 변환 (내부 메서드)

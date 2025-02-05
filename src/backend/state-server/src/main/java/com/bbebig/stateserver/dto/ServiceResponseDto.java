@@ -21,4 +21,11 @@ public class ServiceResponseDto {
 		private Long memberId;
 		private List<Long> serverIdList;
 	}
+
+	@Data
+	@Builder
+	public static class DmMemberListResponseDto {
+		private Long memberId;
+		private List<Long> dmMemberIdList;
+	}
 }

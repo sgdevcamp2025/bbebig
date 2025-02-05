@@ -1,9 +1,6 @@
 package com.bbebig.stateserver.service;
 
-import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerEventDto;
-import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerEventType;
-import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerMemberActionEventDto;
-import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerMemberPresenceEventDto;
+import com.bbebig.commonmodule.kafka.dto.serverEvent.*;
 import com.bbebig.commonmodule.redis.domain.ServerMemberStatus;
 import com.bbebig.stateserver.dto.StateResponseDto.MemberStatusResponseDto;
 import com.bbebig.stateserver.repository.MemberRedisRepositoryImpl;
@@ -63,6 +60,9 @@ public class ServerEventConsumerService {
 			}
 			handleMemberActionEvent(eventDto);
 
+		} else if (serverEventDto.getType().equals(ServerEventType.SERVER_ACTION.toString())) {
+			// TODO : 서버 액션 이벤트 처리
+
 		} else {
 			if (!(serverEventDto.getType().equals(ServerEventType.SERVER_CATEGORY.toString()) ||
 					serverEventDto.getType().equals(ServerEventType.SERVER_CHANNEL.toString()))) {
@@ -101,6 +101,23 @@ public class ServerEventConsumerService {
 		} else {
 			log.error("[State] ServerEventConsumerService: 서버 멤버 행동 이벤트 타입이 잘못되었습니다. memberId : {}, eventDto: {}", eventDto.getMemberId(), eventDto);
 		}
+	}
+
+	public void handleServerActionEvent(ServerActionEventDto eventDto) {
+		Long serverId = eventDto.getServerId();
+
+		if (eventDto.getStatus().equals("CREATE")) {
+			stateService.makeServerMemberPresenceStatus(serverId);
+			stateService.makeServerMemberList(serverId);
+		} else if (eventDto.getStatus().equals("DELETE")) {
+			serverRedisRepositoryImpl.deleteServerMemberStatus(serverId);
+			serverRedisRepositoryImpl.deleteServerMemberList(serverId);
+		} else {
+			if (!eventDto.getStatus().equals("UPDATE")) {
+				log.error("[State] ServerEventConsumerService: 서버 액션 이벤트 타입이 잘못되었습니다. eventDto: {}", eventDto);
+			}
+		}
+
 	}
 
 }

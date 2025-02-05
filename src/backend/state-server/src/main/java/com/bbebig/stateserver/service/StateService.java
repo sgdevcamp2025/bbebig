@@ -5,6 +5,7 @@ import com.bbebig.commonmodule.redis.domain.ServerMemberStatus;
 import com.bbebig.stateserver.client.ServiceClient;
 import com.bbebig.stateserver.dto.ServiceResponseDto.*;
 import com.bbebig.stateserver.dto.StateResponseDto.*;
+import com.bbebig.stateserver.repository.DmRedisRepositoryImpl;
 import com.bbebig.stateserver.repository.MemberRedisRepositoryImpl;
 import com.bbebig.stateserver.repository.ServerRedisRepositoryImpl;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class StateService {
 
 	private final MemberRedisRepositoryImpl memberRedisRepositoryImpl;
 	private final ServerRedisRepositoryImpl serverRedisRepositoryImpl;
+	private final DmRedisRepositoryImpl dmRedisRepositoryImpl;
 
 	private final ServiceClient serviceClient;
 
@@ -63,7 +65,7 @@ public class StateService {
 				.build();
 	}
 
-	// 서버 멤버 상태 정보를 조회하여 저장
+	// 서버 멤버 상태 정보를 조회하여 캐싱
 	public void makeServerMemberPresenceStatus(Long serverId) {
 
 		// 캐싱된 서버에 참여한 멤버 목록이 없으면 서버에 참여한 멤버 목록을 조회하여 저장
@@ -88,7 +90,7 @@ public class StateService {
 		}
 	}
 
-	// 서버에 참여한 멤버 목록을 조회하여 저장
+	// 서버에 참여한 멤버 목록을 조회하여 캐싱
 	public void makeServerMemberList(Long serverId) {
 		ServerMemberListResponseDto responseDto = serviceClient.getServerMemberList(serverId);
 		if (responseDto == null) {
@@ -98,7 +100,7 @@ public class StateService {
 		serverRedisRepositoryImpl.saveServerMemberSet(serverId, responseDto.getMemberIdList());
 	}
 
-	// 멤버별로 참여한 서버 목록을 조회하여 저장
+	// 멤버별로 참여한 서버 목록을 조회하여 캐싱
 	public void makeMemberServerList(Long memberId) {
 		MemberServerListResponseDto memberServerList = serviceClient.getMemberServerList(memberId);
 		if (memberServerList == null) {
@@ -106,6 +108,16 @@ public class StateService {
 			return;
 		}
 		memberRedisRepositoryImpl.saveMemberServerSet(memberId, memberServerList.getServerIdList());
+	}
+
+	// 디엠 채널별로 참여한 유저 조회 후 캐싱
+	public void makeDmMemberList(Long channelId) {
+		DmMemberListResponseDto dmMemberList = serviceClient.getDmMemberList(channelId);
+		if (dmMemberList == null) {
+			log.error("[State] ServerEventConsumerService: 디엠 멤버 정보 불러오기 실패. channelId: {}", channelId);
+			return;
+		}
+		dmRedisRepositoryImpl.saveDmMemberSet(channelId, dmMemberList.getDmMemberIdList());
 	}
 
 }

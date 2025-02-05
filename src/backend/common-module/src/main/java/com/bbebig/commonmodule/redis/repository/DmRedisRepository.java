@@ -31,6 +31,11 @@ public interface DmRedisRepository {
 	 */
 	Set<Long> getDmMemberList(Long channelId);
 
+	/**
+	 * DM 채널 삭제에 따른 DM 채널별 멤버 목록 삭제
+	 */
+	public void deleteDmMemberList(Long channelId);
+
 	Long convertToLong(Object obj);
 
 }

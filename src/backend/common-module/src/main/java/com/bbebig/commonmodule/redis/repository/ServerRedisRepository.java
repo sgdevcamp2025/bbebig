@@ -34,6 +34,11 @@ public interface ServerRedisRepository {
 	Set<Long> getServerMemberList(Long serverId);
 
 	/**
+	 * 서버 삭제에 따른 서버별 멤버 목록 삭제
+	 */
+	void deleteServerMemberList(Long serverId);
+
+	/**
 	 * 서버별 멤버 상태 정보를 Hash 구조로 저장
 	 * (server:{serverId}:serverMemberStatus) => ServerMemberStatus
 	 */
@@ -58,6 +63,11 @@ public interface ServerRedisRepository {
 	 * 서버별 모든 멤버 상태 정보 조회
 	 */
 	List<ServerMemberStatus> getAllServerMemberStatus(Long serverId);
+
+	/**
+	 * 서버 삭제에 따른 서버별 모든 멤버 상태 정보 삭제
+	 */
+	void deleteServerMemberStatus(Long serverId);
 
 	Long convertToLong(Object obj);
 }

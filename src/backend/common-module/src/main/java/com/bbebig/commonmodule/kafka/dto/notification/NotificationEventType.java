@@ -7,6 +7,7 @@ import java.util.Map;
 
 @Getter
 public enum NotificationEventType {
+	DM_ACTION("DM_ACTION"),
 	FRIEND_PRESENCE("FRIEND_PRESENCE"),
 	DM_MEMBER_PRESENCE("DM_MEMBER_PRESENCE"),
 	FRIEND_ACTION("FRIEND_UPDATE"),

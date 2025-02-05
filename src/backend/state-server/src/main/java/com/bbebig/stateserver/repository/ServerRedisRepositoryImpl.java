@@ -66,6 +66,13 @@ public class ServerRedisRepositoryImpl implements ServerRedisRepository {
 				.collect(Collectors.toSet());
 	}
 
+	// 서버 삭제에 따른 서버별 멤버 목록 삭제
+	@Override
+	public void deleteServerMemberList(Long serverId) {
+		String key = RedisKeys.getServerMemberListKey(serverId);
+		redisTemplate.delete(key);
+	}
+
 	/**
 	 * 서버별 멤버 상태 정보를 Hash 구조로 저장
 	 * (server:{serverId}:serverMemberStatus) => ServerMemberStatus
@@ -110,6 +117,13 @@ public class ServerRedisRepositoryImpl implements ServerRedisRepository {
 				.filter(obj -> obj instanceof ServerMemberStatus)
 				.map(obj -> (ServerMemberStatus) obj)
 				.collect(Collectors.toList());
+	}
+
+	// 서버 삭제에 따른 서버별  멤버 상태 정보 삭제
+	@Override
+	public void deleteServerMemberStatus(Long serverId) {
+		String key = RedisKeys.getServerMemberPresenceStatusKey(serverId);
+		redisTemplate.delete(key);
 	}
 
 	// 객체를 Long으로 변환 (내부 메서드)
