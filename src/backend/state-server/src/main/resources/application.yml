@@ -48,3 +48,14 @@ eureka:
       defaultZone: http://localhost:8761/eureka
   instance:
     instance-id: ${spring.cloud.client.ip-address}:${spring.application.instance_id:${random.value}}
+
+eas:
+  passport:
+    secretKey: ${PASSPORT_SECRET_KEY}
+    expiration: ${PASSPORT_EXPIRATION}
+    header: ${PASSPORT_HEADER}
+    algorithm: ${PASSPORT_ALGORITHM}
+
+auth:
+  server:
+    url: ${AUTH_SERVER_URL}
