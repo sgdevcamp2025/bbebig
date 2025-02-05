@@ -11,16 +11,16 @@ import lombok.Getter;
 @Builder
 public class ChannelCreateResponseDto {
 
-    private final Long id;
+    private final Long channelId;
 
     @JsonCreator(mode = Mode.PROPERTIES)
-    public ChannelCreateResponseDto(@JsonProperty("id") Long id) {
-        this.id = id;
+    public ChannelCreateResponseDto(@JsonProperty("channelId") Long channelId) {
+        this.channelId = channelId;
     }
 
     public static ChannelCreateResponseDto convertToChannelCreateResponseDto(Channel channel) {
         return ChannelCreateResponseDto.builder()
-                .id(channel.getId())
+                .channelId(channel.getId())
                 .build();
     }
 }
