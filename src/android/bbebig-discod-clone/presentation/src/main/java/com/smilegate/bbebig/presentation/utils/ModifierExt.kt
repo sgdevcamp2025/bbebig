@@ -2,7 +2,7 @@ package com.smilegate.bbebig.presentation.utils
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material.ripple
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,7 +21,7 @@ fun Modifier.rippleSingleClick(
     val coroutineScope = rememberCoroutineScope()
 
     clickable(
-        indication = rememberRipple(),
+        indication = ripple(bounded = false),
         interactionSource = remember { MutableInteractionSource() },
     ) {
         if (isClickable) {
@@ -62,7 +62,7 @@ fun Modifier.rippleClick(
     onClick: () -> Unit,
 ): Modifier = composed {
     clickable(
-        indication = rememberRipple(),
+        indication = ripple(bounded = false),
         interactionSource = remember { MutableInteractionSource() },
     ) {
         onClick()
