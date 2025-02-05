@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 9020
   servlet:
     encoding:
       charset: UTF-8
@@ -68,7 +68,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://discovery-server:8761/eureka
   instance:
     instance-id: ${spring.cloud.client.ip-address}:${spring.application.instance_id:${random.value}}
 
