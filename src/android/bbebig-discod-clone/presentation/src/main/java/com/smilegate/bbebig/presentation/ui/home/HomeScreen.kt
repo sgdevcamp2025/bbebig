@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -29,9 +30,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+//noinspection UsingMaterialAndMaterial3Libraries
+import androidx.compose.material.ModalBottomSheetLayout
+//noinspection UsingMaterialAndMaterial3Libraries
+import androidx.compose.material.ModalBottomSheetValue
+//noinspection UsingMaterialAndMaterial3Libraries
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -47,17 +56,20 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.smilegate.bbebig.presentation.component.DiscordParticipantContainer
 import com.smilegate.bbebig.presentation.component.DiscordRoundButton
 import com.smilegate.bbebig.presentation.component.DiscordTitleContainer
 import com.smilegate.bbebig.presentation.model.SampleChannel
 import com.smilegate.bbebig.presentation.model.SampleServerList
 import com.smilegate.bbebig.presentation.model.ServerType
 import com.smilegate.bbebig.presentation.theme.Blue70
+import com.smilegate.bbebig.presentation.theme.Gray10
 import com.smilegate.bbebig.presentation.theme.Gray30
 import com.smilegate.bbebig.presentation.theme.Gray40
 import com.smilegate.bbebig.presentation.theme.Gray50
@@ -67,6 +79,7 @@ import com.smilegate.bbebig.presentation.theme.Gray80
 import com.smilegate.bbebig.presentation.theme.White
 import com.smilegate.bbebig.presentation.utils.StableImage
 import com.smilegate.bbebig.presentation.utils.noRippleSingleClick
+import com.smilegate.bbebig.presentation.utils.rippleClick
 import com.smilegate.bbebig.presentation.utils.rippleSingleClick
 import com.smilegate.devcamp.presentation.R
 
@@ -374,7 +387,7 @@ private fun DMTopContainer(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun DMContentContainer(
+private fun DMContentContainer(
     modifier: Modifier,
     onClickAddFriend: () -> Unit,
     onClickSearch: () -> Unit,
@@ -513,6 +526,236 @@ private fun ChannelItem(
 }
 
 @Composable
+private fun LiveChatJoinBottomSheet(
+    modifier: Modifier,
+    isVisible: Boolean,
+    userName: String,
+    userIconResId: Int,
+    channelName: String,
+    participantList: List<Any>,
+    onClickMuteMic: () -> Unit,
+    onClickJoinLiveChat: () -> Unit,
+    onClickChannelChat: () -> Unit,
+    onClickInviteUser: () -> Unit,
+) {
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        skipHalfExpanded = true,
+    )
+
+    ModalBottomSheetLayout(
+        modifier = modifier,
+        sheetState = sheetState,
+        sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+        sheetContent = {
+            BottomSheetTopContainer(
+                modifier = Modifier
+                    .background(color = Gray10)
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp, vertical = 10.dp),
+                channelName = channelName,
+                onClickInviteUser = onClickInviteUser,
+            )
+            Box {
+                BottomSheetParticipateContainer(
+                    modifier = Modifier
+                        .heightIn(max = 500.dp)
+                        .fillMaxSize()
+                        .background(Gray10),
+                    userName = userName,
+                    participantList = participantList,
+                    userIconResId = userIconResId,
+                )
+                BottomUtilBarContainer(
+                    modifier = Modifier
+                        .padding(start = 10.dp, end = 10.dp, bottom = 5.dp)
+                        .fillMaxWidth()
+                        .clip(shape = RoundedCornerShape(30.dp))
+                        .background(Gray40)
+                        .align(Alignment.BottomCenter),
+                    onClickMuteMic = onClickMuteMic,
+                    onClickJoinLiveChat = onClickJoinLiveChat,
+                    onClickChannelChat = onClickChannelChat,
+                )
+            }
+        },
+    ) { Unit }
+
+    LaunchedEffect(isVisible) {
+        if (isVisible) {
+            sheetState.show()
+        } else {
+            sheetState.hide()
+        }
+    }
+}
+
+@Composable
+private fun BottomSheetParticipateContainer(
+    modifier: Modifier,
+    userName: String,
+    userIconResId: Int,
+    participantList: List<Any>,
+) {
+    LazyColumn(modifier = modifier) {
+        item {
+            ParticipantItem(
+                modifier = Modifier
+                    .padding(
+                        top = 10.dp,
+                        bottom = 90.dp,
+                        start = 20.dp,
+                        end = 20.dp,
+                    )
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(Gray50),
+                userName,
+                userIconResId,
+                participantList,
+            )
+        }
+    }
+}
+
+@Composable
+private fun BottomUtilBarContainer(
+    modifier: Modifier,
+    onClickMuteMic: () -> Unit,
+    onClickJoinLiveChat: () -> Unit,
+    onClickChannelChat: () -> Unit,
+) {
+    Row(
+        modifier = modifier.padding(vertical = 5.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        StableImage(
+            modifier = Modifier
+                .clip(shape = CircleShape)
+                .background(Gray50)
+                .rippleClick { onClickMuteMic() }
+                .size(50.dp)
+                .padding(10.dp),
+            drawableResId = R.drawable.ic_microphone,
+        )
+        Text(
+            modifier = Modifier
+                .padding(horizontal = 5.dp, vertical = 10.dp)
+                .clip(shape = RoundedCornerShape(30.dp))
+                .background(Color.Green)
+                .rippleClick { onClickJoinLiveChat() }
+                .padding(horizontal = 70.dp, vertical = 15.dp),
+            text = stringResource(R.string.bottom_join_chat),
+            textAlign = TextAlign.Center,
+            color = White,
+        )
+        StableImage(
+            modifier = Modifier
+                .clip(shape = CircleShape)
+                .background(Gray50)
+                .rippleClick { onClickChannelChat() }
+                .size(50.dp)
+                .padding(10.dp),
+            drawableResId = R.drawable.ic_msg,
+        )
+    }
+}
+
+@Composable
+private fun BottomSheetTopContainer(
+    modifier: Modifier,
+    channelName: String,
+    onClickInviteUser: () -> Unit,
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            StableImage(
+                modifier = Modifier
+                    .clip(shape = CircleShape)
+                    .background(color = Color.Black)
+                    .padding(6.dp)
+                    .size(15.dp),
+                drawableResId = R.drawable.ic_dropdown_menu,
+            )
+            ChannelNameContainer(
+                modifier = Modifier,
+                channelName = channelName,
+            )
+        }
+        StableImage(
+            modifier = Modifier
+                .clip(shape = CircleShape)
+                .background(color = Color.Black)
+                .rippleClick { onClickInviteUser() }
+                .padding(6.dp)
+                .size(15.dp),
+            drawableResId = R.drawable.ic_invite_user,
+        )
+    }
+}
+
+@Composable
+private fun ChannelNameContainer(modifier: Modifier, channelName: String) {
+    Row(
+        modifier = modifier
+            .padding(start = 10.dp)
+            .clip(shape = RoundedCornerShape(15.dp))
+            .background(color = Color.Black)
+            .padding(horizontal = 10.dp, vertical = 5.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            modifier = Modifier.padding(end = 3.dp),
+            text = channelName,
+            color = White,
+        )
+        StableImage(
+            modifier = Modifier
+                .size(15.dp)
+                .rotate(-90f),
+            drawableResId = R.drawable.ic_dropdown_menu,
+        )
+    }
+}
+
+@Composable
+private fun ParticipantItem(
+    modifier: Modifier,
+    userName: String,
+    userIconResId: Int,
+    participantList: List<Any>,
+) {
+    Column(
+        modifier = modifier,
+    ) {
+        participantList.forEachIndexed { index, participant ->
+            DiscordParticipantContainer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp, vertical = 10.dp),
+                userIconResId = userIconResId,
+                userName = userName,
+                userIconSize = 30.dp,
+            )
+            if (participantList.lastIndex != index) {
+                HorizontalDivider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 5.dp),
+                    thickness = 1.dp,
+                    color = Gray80,
+                )
+            }
+        }
+    }
+}
+
+@Composable
 @Preview
 private fun ServerItemPreview() {
     HomeScreen(
@@ -520,5 +763,43 @@ private fun ServerItemPreview() {
         onServerJoinClick = {},
         onClickInviteFriend = {},
         onSearchClick = {},
+    )
+}
+
+@Composable
+@Preview
+private fun LiveChatJoinBottomSheetPreview() {
+    LiveChatJoinBottomSheet(
+        modifier = Modifier.fillMaxSize(),
+        isVisible = true,
+        userName = "User Name",
+        userIconResId = R.drawable.ic_invite_user,
+        channelName = "Channel Name",
+        participantList = listOf(
+            Any(),
+            Any(),
+            Any(),
+            Any(),
+            Any(),
+            Any(),
+            Any(),
+            Any(),
+            Any(),
+            Any(),
+            Any(),
+            Any(),
+            Any(),
+            Any(),
+            Any(),
+            Any(),
+            Any(),
+            Any(),
+            Any(),
+            Any(),
+        ),
+        onClickMuteMic = {},
+        onClickJoinLiveChat = {},
+        onClickChannelChat = {},
+        onClickInviteUser = {},
     )
 }
