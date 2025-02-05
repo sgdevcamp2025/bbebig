@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package com.bbebig.commonmodule;
+
+option java_package = "com.bbebig.commonmodule.proto";
+option java_outer_classname = "PassportProto";
+
+message Passport {
+  string passport_id = 1;
+  int64 member_id = 2;
+  int64 issued_at = 3;
+  int64 expires_at = 4;
+  string auth_level = 5;
+}

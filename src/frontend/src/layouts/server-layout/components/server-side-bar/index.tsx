@@ -18,7 +18,6 @@ function ServerSideBar({
 }: ServerSideBarProps) {
   const [expandedCategories, setExpandedCategories] = useState<number[]>([])
   const [selectedChannel, setSelectedChannel] = useState<{ id: number; name: string } | null>(null)
-
   const toggleCategory = (categoryId: number) => {
     setExpandedCategories((prev) =>
       prev.includes(categoryId) ? prev.filter((id) => id !== categoryId) : [...prev, categoryId]
@@ -138,7 +137,6 @@ function ServerSideBar({
           </div>
         ))}
       </div>
-
       <SettingModal
         channelName={selectedChannel?.name ?? ''}
         isOpen={!!selectedChannel}
