@@ -1,5 +1,6 @@
 package com.bbebig.commonmodule.kafka.config;
 
+import com.bbebig.commonmodule.kafka.dto.ConnectionEventDto;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerEventDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -41,13 +42,13 @@ public class KafkaConnectionEventConsumerConfig {
 	}
 
 	@Bean
-	public ConsumerFactory<String, ServerEventDto> consumerFactoryForConnectionEvent() {
+	public ConsumerFactory<String, ConnectionEventDto> consumerFactoryForConnectionEvent() {
 		return new DefaultKafkaConsumerFactory<>(consumerConfigurations());
 	}
 
 	@Bean
-	public ConcurrentKafkaListenerContainerFactory<String, ServerEventDto> connectionEventListener() {
-		ConcurrentKafkaListenerContainerFactory<String, ServerEventDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+	public ConcurrentKafkaListenerContainerFactory<String, ConnectionEventDto> connectionEventListener() {
+		ConcurrentKafkaListenerContainerFactory<String, ConnectionEventDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(consumerFactoryForConnectionEvent());
 		factory.setConcurrency(1); // 단일 컨슈머 설정
 		return factory;

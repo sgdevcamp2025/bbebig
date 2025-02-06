@@ -37,4 +37,4 @@ out/
 .vscode/
 
 ### DotEnv ###
-.env
+src/main/resources/.env
