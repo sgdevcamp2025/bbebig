@@ -41,7 +41,8 @@ class EurekaClient {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text();
+        throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
       }
 
       console.log('서비스가 Eureka에 등록되었습니다');
