@@ -32,12 +32,16 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const options: string[] = ['option1', 'option2', 'option3']
+const options: { label: string; value: string }[] = [
+  { label: 'option1', value: 'option1' },
+  { label: 'option2', value: 'option2' },
+  { label: 'option3', value: 'option3' }
+]
 
 export const PrimarySelectBox: Story = {
   args: {
     label: '옵션 선택',
-    options,
+    options: options as { label: string; value: string }[],
     value: null,
     forward: 'top',
     onChange: fn()
@@ -46,14 +50,12 @@ export const PrimarySelectBox: Story = {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [value, setValue] = useState<string | null>(null)
 
+    const newArgs = { ...args, value, onChange: setValue }
     return (
       <div className='w-full h-[500px] flex items-center'>
         <div className='w-[480px]'>
-          <SelectBox
-            {...args}
-            value={value}
-            onChange={setValue}
-          />
+          {/** @ts-ignore */}
+          <SelectBox {...newArgs} />
         </div>
       </div>
     )

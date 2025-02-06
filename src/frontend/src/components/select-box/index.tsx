@@ -1,21 +1,26 @@
 import { CheckIcon, ChevronDownIcon } from 'lucide-react'
-import { ReactNode, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 
 import { cn } from '@/libs/cn'
 import useClickOutside from '@/hooks/use-click-outside'
 
-interface Props {
+type Option<T> = {
+  label: string
+  value: T
+}
+
+type Props<T> = {
   label?: string
-  options: string[]
+  options: Option<T>[]
   value: string | null
-  onChange: (value: string) => void
+  onChange: (value: T) => void
   mark?: boolean
   forward?: 'top' | 'bottom'
   className?: string
   required?: boolean
 }
 
-function SelectBox({
+const SelectBox = <T,>({
   label,
   options,
   value,
@@ -24,7 +29,7 @@ function SelectBox({
   mark = false,
   forward = 'top',
   ...props
-}: Props) {
+}: Props<T>) => {
   const [isOpen, setIsOpen] = useState(false)
   const selectRef = useRef<HTMLDivElement>(null)
   const [search, setSearch] = useState('')
@@ -33,8 +38,8 @@ function SelectBox({
     setSearch(e.target.value)
   }
 
-  const handleSelectOption = (option: string) => {
-    onChange(option)
+  const handleSelectOption = (option: Option<T>) => {
+    onChange(option.value)
     setSearch('')
     setIsOpen(false)
   }
@@ -56,12 +61,12 @@ function SelectBox({
       {isOpen ? (
         <div
           className={cn(
-            'z-10  absolute rounded-[3px] border-[1px] bg-gray-40 border-black-80 left-0 w-full h-fit max-h-[217px]',
+            'z-10  absolute rounded-[3px] border-[1px] overflow-scroll overflow-x-hidden pb-0 bg-gray-40 border-black-80 left-0 w-full h-fit max-h-[217px]',
             forward === 'top' ? 'bottom-[44px] rounded-b-none' : 'top-[44px] rounded-t-none'
           )}>
           <ul className='flex flex-col gap-2 overflow-y-auto h-full scrollbar-thin scrollbar-thumb-gray-10 scrollbar-track-black-70'>
             {customOptions.map((option, index) => {
-              const isSelected = value === option
+              const isSelected = value === option.label
               return (
                 <li
                   key={index}
@@ -73,7 +78,7 @@ function SelectBox({
                     )}`
                   )}
                   onClick={() => handleSelectOption(option)}>
-                  {option as ReactNode}
+                  {option.label}
                   {isSelected && mark ? (
                     <span className='rounded-full bg-brand w-5 h-5 flex items-center justify-center text-white-100'>
                       <CheckIcon className='w-[14px] h-[14px]' />
