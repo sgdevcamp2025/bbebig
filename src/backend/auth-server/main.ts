@@ -45,7 +45,7 @@ const eurekaConfig = {
   eureka: {
     host: 'discovery-server',
     port: 8761,
-    servicePath: '/eureka/apps/',
+    servicePath: '/eureka/apps',
   },
 };
 
