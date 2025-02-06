@@ -10,7 +10,7 @@ interface Props {
 }
 
 const year = Array.from({ length: 100 }, (_, i) => String(2025 - i))
-const month = Array.from({ length: 12 }, (_, i) => String(i + 1))
+const month = Array.from({ length: 12 }, (_, i) => String(i + 1) + '월')
 const day = Array.from({ length: 31 }, (_, i) => String(i + 1))
 
 function DateInput({ label, required, setDate, error }: Props) {
@@ -21,7 +21,7 @@ function DateInput({ label, required, setDate, error }: Props) {
   useEffect(
     function setBirthdateValue() {
       setDate(
-        `${selectedYear}-${String(selectedMonth).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`
+        `${selectedYear}-${String(selectedMonth).padStart(2, '0').replace('월', '')}-${String(selectedDay).padStart(2, '0').replace('일', '')}`
       )
     },
     [selectedYear, selectedMonth, selectedDay, setDate]
@@ -43,7 +43,6 @@ function DateInput({ label, required, setDate, error }: Props) {
         />
         <SelectBox
           label='월'
-          prefix='월'
           options={month}
           value={selectedMonth}
           onChange={setSelectedMonth}
