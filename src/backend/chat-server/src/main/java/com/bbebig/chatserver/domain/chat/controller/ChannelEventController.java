@@ -1,7 +1,7 @@
 package com.bbebig.chatserver.domain.chat.controller;
 
 import com.bbebig.chatserver.domain.chat.service.MessageProducerService;
-import com.bbebig.chatserver.domain.kafka.dto.ChannelEventDto;
+import com.bbebig.commonmodule.kafka.dto.ChannelEventDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

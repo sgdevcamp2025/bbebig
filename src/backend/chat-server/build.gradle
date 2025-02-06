@@ -72,6 +72,9 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// dotenv
+	implementation 'io.github.cdimascio:java-dotenv:5.2.2'
 }
 
 dependencyManagement {

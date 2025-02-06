@@ -1,7 +1,7 @@
 package com.bbebig.stateserver.dto;
 
 import com.bbebig.commonmodule.kafka.dto.PresenceEventDto;
-import com.bbebig.stateserver.domain.MemberPresenceStatus;
+import com.bbebig.commonmodule.redis.domain.MemberPresenceStatus;
 
 public class DtoConverter {
 

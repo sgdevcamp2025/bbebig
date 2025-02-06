@@ -26,6 +26,7 @@ public class NotificationEventDeserializer implements Deserializer<NotificationE
 			}
 
 			return switch (eventType) {
+				case DM_ACTION -> objectMapper.treeToValue(jsonNode, DmActionEventDto.class);
 				case FRIEND_PRESENCE -> objectMapper.treeToValue(jsonNode, FriendPresenceEventDto.class);
 				case DM_MEMBER_PRESENCE -> objectMapper.treeToValue(jsonNode, DmMemberPresenceEventDto.class);
 				case FRIEND_ACTION -> objectMapper.treeToValue(jsonNode, FriendActionEventDto.class);

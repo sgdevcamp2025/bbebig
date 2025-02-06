@@ -3,12 +3,11 @@ package com.bbebig.stateserver.service;
 import com.bbebig.commonmodule.kafka.dto.ConnectionEventDto;
 import com.bbebig.commonmodule.kafka.dto.PresenceEventDto;
 import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
+import com.bbebig.commonmodule.redis.domain.DeviceInfo;
+import com.bbebig.commonmodule.redis.domain.MemberPresenceStatus;
 import com.bbebig.stateserver.client.MemberClient;
-import com.bbebig.stateserver.domain.DeviceInfo;
-import com.bbebig.stateserver.domain.MemberPresenceStatus;
 import com.bbebig.stateserver.dto.DtoConverter;
-import com.bbebig.stateserver.global.util.RedisKeys;
-import com.bbebig.stateserver.repository.RedisRepository;
+import com.bbebig.stateserver.repository.MemberRedisRepositoryImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -24,7 +23,7 @@ import static com.bbebig.stateserver.dto.MemberResponseDto.*;
 @RequiredArgsConstructor
 public class ConnectionEventConsumerService {
 
-	private final RedisRepository redisRepository;
+	private final MemberRedisRepositoryImpl memberRedisRepositoryImpl;
 	private final KafkaProducerService kafkaProducerService;
 	private final MemberClient memberClient;
 
@@ -65,9 +64,7 @@ public class ConnectionEventConsumerService {
 
 	// 연결 이벤트를 처리하여, 상태 정보를 레디스에 저장
 	private MemberPresenceStatus handleConnectionEvent(ConnectionEventDto connectionEventDto) {
-		String key = RedisKeys.getMemberStatusKey(connectionEventDto.getMemberId());
-
-		MemberPresenceStatus memberPresenceStatus = redisRepository.loadMemberPresenceStatus(key);
+		MemberPresenceStatus memberPresenceStatus = memberRedisRepositoryImpl.getMemberPresenceStatus(connectionEventDto.getMemberId());
 		if (memberPresenceStatus == null) {
 			MemberGlobalStatusResponseDto memberGlobalStatus = memberClient.getMemberGlobalStatus(connectionEventDto.getMemberId());
 			memberPresenceStatus = MemberPresenceStatus.builder()
@@ -97,14 +94,13 @@ public class ConnectionEventConsumerService {
 
 		memberPresenceStatus.getDevices().add(deviceInfo);
 
-		redisRepository.saveMemberPresenceStatus(key, memberPresenceStatus);
+		memberRedisRepositoryImpl.saveMemberPresenceStatus(connectionEventDto.getMemberId(), memberPresenceStatus);
 		return memberPresenceStatus;
 	}
 
 	// 연결 끊어짐 이벤트를 확인하여, 상태 정보를 삭제하거나 업데이트
 	private MemberPresenceStatus handleDisconnectionEvent(ConnectionEventDto connectionEventDto) {
-		String key = RedisKeys.getMemberStatusKey(connectionEventDto.getMemberId());
-		MemberPresenceStatus memberPresenceStatus = redisRepository.loadMemberPresenceStatus(key);
+		MemberPresenceStatus memberPresenceStatus = memberRedisRepositoryImpl.getMemberPresenceStatus(connectionEventDto.getMemberId());
 
 		if (memberPresenceStatus == null) {
 			log.error("[State] RedisRepository: 웹소켓 연결 끊어짐 처리시, 멤버 상태 정보 없음");
@@ -116,10 +112,10 @@ public class ConnectionEventConsumerService {
 				memberPresenceStatus.setActualStatus(PresenceType.OFFLINE);
 			}
 			memberPresenceStatus.updateLastActivityTime(LocalDateTime.now());
-			redisRepository.saveMemberPresenceStatus(key, memberPresenceStatus);
+			memberRedisRepositoryImpl.saveMemberPresenceStatus(connectionEventDto.getMemberId(), memberPresenceStatus);
 		}
 
-		redisRepository.saveMemberPresenceStatus(key, memberPresenceStatus);
+		memberRedisRepositoryImpl.saveMemberPresenceStatus(connectionEventDto.getMemberId(), memberPresenceStatus);
 		return memberPresenceStatus;
 	}
 

@@ -1,8 +1,8 @@
 package com.bbebig.chatserver.domain.chat.service;
 
-import com.bbebig.chatserver.domain.kafka.dto.ChatMessageDto;
-import com.bbebig.chatserver.domain.chat.model.ChannelType;
 import com.bbebig.chatserver.domain.chat.repository.SessionManager;
+import com.bbebig.commonmodule.kafka.dto.ChatMessageDto;
+import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -25,6 +25,8 @@ public class MessageEventConsumerService {
 			log.error("[Chat] MessageEventConsumerService: 채팅 메시지 정보 없음");
 			return;
 		}
+
+		log.info("[Chat] MessageEventConsumerService: 채팅 메시지 수신. ChatMessageDto: {}", chatMessageDto);
 
 		if (chatMessageDto.getChannelType() != ChannelType.CHANNEL) {
 			log.error("[Chat] MessageEventConsumerService: 채널 채팅 메시지가 아닙니다. ChatMessageDto: {}", chatMessageDto);
@@ -58,4 +60,5 @@ public class MessageEventConsumerService {
 			}
 		}
 	}
+
 }

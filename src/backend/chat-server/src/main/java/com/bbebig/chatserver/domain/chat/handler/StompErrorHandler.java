@@ -1,6 +1,6 @@
 package com.bbebig.chatserver.domain.chat.handler;
 
-import com.bbebig.chatserver.global.response.code.error.ErrorStatus;
+import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;

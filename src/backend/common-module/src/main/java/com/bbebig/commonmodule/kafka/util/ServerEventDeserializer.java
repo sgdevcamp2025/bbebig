@@ -30,6 +30,7 @@ public class ServerEventDeserializer implements Deserializer<ServerEventDto> {
 				case SERVER_MEMBER_ACTION -> objectMapper.treeToValue(jsonNode, ServerMemberActionEventDto.class);
 				case SERVER_CHANNEL -> objectMapper.treeToValue(jsonNode, ServerChannelEventDto.class);
 				case SERVER_CATEGORY -> objectMapper.treeToValue(jsonNode, ServerCategoryEventDto.class);
+				case SERVER_ACTION -> objectMapper.treeToValue(jsonNode, ServerActionEventDto.class);
 			};
 		} catch (Exception e) {
 			throw new SerializationException("Error deserializing message", e);
