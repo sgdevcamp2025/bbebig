@@ -1,7 +1,7 @@
 import SelectBox from '@/components/select-box'
 import { useState } from 'react'
 import { LOCAL_STORAGE } from '@/constants/keys'
-import Slider from '@/components/\bslider'
+import Slider from '@/components/slider'
 import CustomButton from '@/components/custom-button'
 
 type VoiceSetting = {
