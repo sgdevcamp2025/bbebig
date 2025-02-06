@@ -1,0 +1,20 @@
+/* 기본 트랙 스타일 */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #4f5159;
+  height: 10px;
+  border-radius: 10px;
+}
+
+/* 썸네일(동그라미) 스타일 */
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  position: relative;
+  background: #ffffff;
+  z-index: 1;
+  width: 10px;
+  height: 24px;
+  border-radius: 4px;
+  cursor: pointer;
+}
