@@ -18,6 +18,13 @@ const meta = {
     },
     onChange: {
       type: 'function'
+    },
+    forward: {
+      control: 'select',
+      options: ['top', 'bottom']
+    },
+    mark: {
+      control: 'boolean'
     }
   }
 } satisfies Meta<typeof SelectBox>
@@ -32,6 +39,7 @@ export const PrimarySelectBox: Story = {
     label: '옵션 선택',
     options,
     value: null,
+    forward: 'top',
     onChange: fn()
   },
   render: (args) => {

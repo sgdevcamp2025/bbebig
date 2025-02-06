@@ -5,10 +5,10 @@ import { RefObject, useEffect } from 'react'
  * @param ref 외부 클릭 이벤트 핸들러를 적용할 요소
  * @param handler 외부 클릭 이벤트 핸들러
  */
-function useClickOutside(ref: RefObject<HTMLElement>, handler: () => void) {
+function useClickOutside(ref: RefObject<HTMLElement | null>, handler: () => void) {
   useEffect(() => {
     const listener = (event: MouseEvent | TouchEvent) => {
-      if (!ref.current || ref.current.contains(event.target as Node)) {
+      if (!ref?.current || ref.current.contains(event.target as Node)) {
         return
       }
       handler()

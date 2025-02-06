@@ -20,6 +20,11 @@ const buttonVariants = cva('', {
       full: 'w-full',
       half: 'w-1/2'
     }
+  },
+  defaultVariants: {
+    variant: 'primary',
+    size: 'small',
+    width: 'full'
   }
 })
 

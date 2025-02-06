@@ -1,20 +1,30 @@
-import { ChevronDownIcon } from 'lucide-react'
-import { Dispatch, ReactNode, SetStateAction, useRef, useState } from 'react'
+import { CheckIcon, ChevronDownIcon } from 'lucide-react'
+import { ReactNode, useRef, useState } from 'react'
 
 import { cn } from '@/libs/cn'
 import useClickOutside from '@/hooks/use-click-outside'
 
 interface Props {
-  label: string
+  label?: string
   options: string[]
   value: string | null
-  onChange: Dispatch<SetStateAction<string | null>>
+  onChange: (value: string) => void
+  mark?: boolean
+  forward?: 'top' | 'bottom'
   className?: string
   required?: boolean
-  prefix?: string
 }
 
-function SelectBox({ label, options, value, onChange, className, prefix = '', ...props }: Props) {
+function SelectBox({
+  label,
+  options,
+  value,
+  onChange,
+  className,
+  mark = false,
+  forward = 'top',
+  ...props
+}: Props) {
   const [isOpen, setIsOpen] = useState(false)
   const selectRef = useRef<HTMLDivElement>(null)
   const [search, setSearch] = useState('')
@@ -38,9 +48,17 @@ function SelectBox({ label, options, value, onChange, className, prefix = '', ..
   return (
     <div
       ref={selectRef}
-      className={cn('bg-black-80 rounded-[3px] relative', className)}>
+      className={cn(
+        'bg-black-80 rounded-[3px] relative',
+        isOpen ? (forward === 'bottom' ? 'rounded-b-none' : 'rounded-t-none') : '',
+        className
+      )}>
       {isOpen ? (
-        <div className='absolute top-[-217px] rounded-[3px] border-[1px] bg-gray-40 border-black-80 left-0 w-full h-[217px]'>
+        <div
+          className={cn(
+            'z-10  absolute rounded-[3px] border-[1px] bg-gray-40 border-black-80 left-0 w-full h-fit max-h-[217px]',
+            forward === 'top' ? 'bottom-[44px] rounded-b-none' : 'top-[44px] rounded-t-none'
+          )}>
           <ul className='flex flex-col gap-2 overflow-y-auto h-full scrollbar-thin scrollbar-thumb-gray-10 scrollbar-track-black-70'>
             {customOptions.map((option, index) => {
               const isSelected = value === option
@@ -48,12 +66,19 @@ function SelectBox({ label, options, value, onChange, className, prefix = '', ..
                 <li
                   key={index}
                   className={cn(
-                    `py-2 px-2 bg-gray-40 text-gray-10 focus:text-white-100 hover:bg-gray-30 cursor-pointer ${cn(
-                      isSelected ? 'bg-gray-70' : ''
+                    `py-2 px-2 bg-gray-40 text-gray-10 focus:text-white-10 hover:bg-gray-30 cursor-pointer ${cn(
+                      isSelected
+                        ? 'bg-gray-70 flex justify-between items-center text-white-100'
+                        : ''
                     )}`
                   )}
                   onClick={() => handleSelectOption(option)}>
                   {option as ReactNode}
+                  {isSelected && mark ? (
+                    <span className='rounded-full bg-brand w-5 h-5 flex items-center justify-center text-white-100'>
+                      <CheckIcon className='w-[14px] h-[14px]' />
+                    </span>
+                  ) : null}
                 </li>
               )
             })}
@@ -62,7 +87,7 @@ function SelectBox({ label, options, value, onChange, className, prefix = '', ..
       ) : null}
       <div className='py-2 px-2 flex justify-between'>
         <div className='text-gray-10 flex max-w-[calc(100%-8px)] items-center mx-1 h-7'>
-          {search ? '' : value ? (value as string) + prefix : label}
+          {search ? '' : value ? (value as string) : label}
         </div>
         <input
           type='text'
@@ -74,8 +99,14 @@ function SelectBox({ label, options, value, onChange, className, prefix = '', ..
         />
         <button
           type='button'
-          onClick={() => setIsOpen((prev) => !prev)}>
-          <ChevronDownIcon className='w-5 h-5 text-gray-10' />
+          onClick={() => setIsOpen((prev) => !prev)}
+          className={cn(
+            'absolute right-2 top-[50%] -translate-y-[50%] transition-transform duration-300',
+            isOpen ? 'rotate-180' : ''
+          )}>
+          <ChevronDownIcon
+            className={`w-5 h-5 text-gray-10 ${forward === 'top' ? 'rotate-180' : ''}`}
+          />
         </button>
       </div>
     </div>
