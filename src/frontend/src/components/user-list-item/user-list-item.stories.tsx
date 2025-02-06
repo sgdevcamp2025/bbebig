@@ -20,7 +20,6 @@ export const PrimaryUserListItem: Story = {
     name: '이지형',
     status: 'ONLINE',
     description: '오프라인',
-    size: 'sm',
     iconType: 'default'
   }
 }

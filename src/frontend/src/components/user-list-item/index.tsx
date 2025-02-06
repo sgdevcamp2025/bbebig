@@ -7,7 +7,6 @@ interface UserListItemProps {
   description: string
   status: CustomPresenceStatus
   statusColor?: string
-  size: 'sm'
   iconType: 'default' | 'pending'
   onClick?: () => void
 }
@@ -23,7 +22,6 @@ function UserListItem({
   description,
   status,
   statusColor,
-  size,
   iconType = 'default'
 }: UserListItemProps) {
   return (
@@ -33,7 +31,7 @@ function UserListItem({
           avatarUrl={avatarUrl}
           statusColor={statusColor}
           status={status}
-          size={size}
+          size='sm'
         />
 
         <div className='flex flex-col'>

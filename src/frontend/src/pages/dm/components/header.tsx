@@ -1,3 +1,5 @@
+import { cn } from '@/libs/cn'
+
 const navigation = [
   {
     name: '온라인',
@@ -46,12 +48,11 @@ function Header({ onTabChange, currentTab }: HeaderProps) {
             type='button'
             key={item.component}
             onClick={() => onTabChange(item.component)}
-            className={`px-2 py-1 rounded-md
-             hover:bg-discord-gray-600 hover:text-discord-font-color-normal 
-             text-discord-font-color-muted
-             text-base font-medium 
-             cursor-pointer
-             ${currentTab === item.component ? 'bg-discord-gray-600 text-discord-font-color-normal' : ''}`}>
+            className={cn(
+              'px-2 py-1 rounded-md text-base font-medium cursor-pointer',
+              'hover:bg-discord-gray-600 hover:text-discord-font-color-normal text-discord-font-color-muted',
+              currentTab === item.component && 'bg-discord-gray-600 text-discord-font-color-normal'
+            )}>
             {item.name}
           </button>
         ))}
