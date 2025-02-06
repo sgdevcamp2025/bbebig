@@ -23,9 +23,6 @@ public class KafkaNotificationEventConsumerConfig {
 	@Value("${spring.kafka.bootstrap-servers}")
 	private String bootstrapAddress;
 
-	@Value("${spring.application.name}")
-	private String applicationName;
-
 	@Value("${spring.kafka.consumer.group-id.notification-event}")
 	private String baseGroupId;
 
@@ -36,7 +33,7 @@ public class KafkaNotificationEventConsumerConfig {
 		String groupId = baseGroupId + "-" + instanceId;
 		Map<String, Object> configurations = new HashMap<>();
 		configurations.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-		configurations.put(ConsumerConfig.GROUP_ID_CONFIG, applicationName + groupId);
+		configurations.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
 		configurations.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 		configurations.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, NotificationEventDeserializer.class);
 		configurations.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
