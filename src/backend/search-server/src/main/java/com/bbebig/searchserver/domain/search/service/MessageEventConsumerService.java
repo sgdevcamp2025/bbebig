@@ -29,6 +29,9 @@ public class MessageEventConsumerService {
 			return;
 		}
 
+		// 개발용 로그
+		log.info("[Chat] MessageEventConsumerService에서 메시지 이벤트 수신: ChatMessageDto: {}", chatMessageDto);
+
 		switch (chatMessageDto.getType()) {
 			case "MESSAGE_CREATE":
 				chatMessageService.saveChannelMessage(chatMessageDto);
