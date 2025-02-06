@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import {
+  healthCheckSchema,
   logoutSchema,
   refreshTokenSchema,
   registerSchema,
@@ -46,6 +47,13 @@ const authRoute = async (app: FastifyInstance) => {
     url: '/verify-token',
     schema: tokenDecodeSchema,
     handler: authController.verifyToken,
+  });
+
+  app.withTypeProvider<ZodTypeProvider>().route({
+    method: 'GET',
+    url: '/health-check',
+    schema: healthCheckSchema,
+    handler: authController.healthCheck,
   });
 };
 

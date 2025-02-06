@@ -108,6 +108,10 @@ const SUCCESS_MESSAGE = {
     code: `${AUTH_PREFIX}107`,
     message: 'token decode success!',
   },
+  healthCheckOk: {
+    code: `${AUTH_PREFIX}108`,
+    message: 'health check success!',
+  },
 } as const;
 
 const REDIS_KEY = {

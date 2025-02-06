@@ -165,6 +165,17 @@ const tokenDecodeSchema = {
   },
 };
 
+const healthCheckSchema = {
+  tags: ['auth'],
+  description: '서버 상태를 확인 합니다.',
+  response: {
+    200: z.object({
+      code: z.string().default('AUTH108'),
+      message: z.string().default('health check success!'),
+    }),
+  },
+};
+
 export {
   logoutSchema,
   refreshTokenSchema,
@@ -173,4 +184,5 @@ export {
   signInSchema,
   verifyEmailSchema,
   tokenDecodeSchema,
+  healthCheckSchema,
 };

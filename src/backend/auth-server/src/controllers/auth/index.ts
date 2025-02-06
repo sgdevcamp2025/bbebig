@@ -162,12 +162,17 @@ function authController() {
     }
   };
 
+  const healthCheck = async (req: FastifyRequest, res: FastifyReply) => {
+    handleSuccess(res, SUCCESS_MESSAGE.healthCheckOk, 200);
+  };
+
   return {
     login,
     register,
     logout,
     refresh,
     verifyToken,
+    healthCheck,
   };
 }
 
