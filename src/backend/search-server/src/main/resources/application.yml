@@ -4,7 +4,12 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://${MONGODB_HOST:localhost}:${MONGODB_PORT:27017}/${MONGODB_DATABASE:bbebigdb}
+      host: ${MONGODB_HOST:localhost}
+      port: ${MONGODB_PORT:27017}
+      authentication-database: admin
+      username: ${MONGODB_USERNAME:root}
+      password: ${MONGODB_PASSWORD:root}
+      database: ${MONGODB_DATABASE:bbebigdb}
 
   kafka:
     bootstrap-servers: kafka:9092
