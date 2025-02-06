@@ -34,12 +34,10 @@ const eurekaConfig = {
       '@enabled': 'true',
     },
     vipAddress: 'auth-server',
-    homePageUrl: 'http://auth-server:9000/',
     statusPageUrl: 'http://auth-server:9000/',
-    healthCheckUrl: 'http://auth-server:9000/',
     dataCenterInfo: {
-      '@class': 'com.netflix.appinfo.InstanceInfo$AmazonInfo',
-      name: 'Amazon',
+      '@class': 'com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo',
+      name: 'MyOwn',
     },
   },
   eureka: {

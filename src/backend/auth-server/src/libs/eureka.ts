@@ -9,9 +9,7 @@ interface EurekaConfig {
       '@enabled': string;
     };
     vipAddress: string;
-    homePageUrl: string,
     statusPageUrl: string,
-    healthCheckUrl: string,
     dataCenterInfo: {
       name: string;
       '@class': string;
@@ -46,7 +44,6 @@ class EurekaClient {
           instance: this.config.instance,
         }),
       });
-      console.log(`response.body ${response.body}`);
 
       if (!response.ok) {
         const errorText = await response.text();
