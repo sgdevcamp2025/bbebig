@@ -5,10 +5,10 @@ import { cn } from '@/libs/cn'
 import useClickOutside from '@/hooks/use-click-outside'
 
 interface Props {
-  label: string
+  label?: string
   options: string[]
   value: string | null
-  onChange: Dispatch<SetStateAction<string | null>>
+  onChange: (value: string) => void
   mark?: boolean
   forward?: 'top' | 'bottom'
   className?: string
@@ -56,7 +56,7 @@ function SelectBox({
       {isOpen ? (
         <div
           className={cn(
-            'absolute rounded-[3px] border-[1px] bg-gray-40 border-black-80 left-0 w-full h-fit max-h-[217px]',
+            'z-10  absolute rounded-[3px] border-[1px] bg-gray-40 border-black-80 left-0 w-full h-fit max-h-[217px]',
             forward === 'top' ? 'bottom-[44px] rounded-b-none' : 'top-[44px] rounded-t-none'
           )}>
           <ul className='flex flex-col gap-2 overflow-y-auto h-full scrollbar-thin scrollbar-thumb-gray-10 scrollbar-track-black-70'>
