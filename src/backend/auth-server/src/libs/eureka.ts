@@ -25,6 +25,7 @@ class EurekaClient {
   constructor(config: EurekaConfig) {
     this.config = config;
     this.baseUrl = `http://${this.config.eureka.host}:${this.config.eureka.port}${this.config.eureka.servicePath}`;
+    console.log(`baseUrl: ${this.baseUrl}`);
   }
 
   async register(): Promise<void> {
