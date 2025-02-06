@@ -27,7 +27,7 @@ const eurekaConfig = {
   instance: {
     app: 'auth-server',
     hostName: 'auth-server',
-    ipAddr: SERVER_IP as string,
+    ipAddr: 'auth-server',
     port: 9000,
     vipAddress: 'auth-server',
     dataCenterInfo: {
@@ -36,7 +36,7 @@ const eurekaConfig = {
     },
   },
   eureka: {
-    host: SERVER_IP as string,
+    host: 'discovery-server',
     port: 8761,
     servicePath: '/eureka/apps',
   },
