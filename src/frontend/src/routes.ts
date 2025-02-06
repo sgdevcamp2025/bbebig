@@ -14,7 +14,7 @@ export default [
         layout('layouts/server-layout/index.tsx', [
           route(':serverId/:channelId', 'pages/channel/index.tsx')
         ]),
-        layout('layouts/dm-layout/index.tsx', [route('@me', 'pages/my/index.tsx')])
+        layout('layouts/dm-layout/index.tsx', [route('@me', 'pages/dm/index.tsx')])
       ])
     ])
   ])
