@@ -1,10 +1,10 @@
 package com.bbebig.searchserver.domain.search.dto;
 
+import com.bbebig.commonmodule.kafka.dto.ChatMessageDto;
 import com.bbebig.searchserver.domain.search.domain.ChannelChatMessage;
 import com.bbebig.searchserver.domain.search.domain.ChannelChatMessageElastic;
 import com.bbebig.searchserver.domain.search.domain.DmChatMessage;
 import com.bbebig.searchserver.domain.search.domain.DmChatMessageElastic;
-import com.bbebig.searchserver.global.kafka.dto.ChatMessageDto;
 
 public class ChatMessageDtoConverter {
 

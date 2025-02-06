@@ -6,6 +6,36 @@ spring:
     mongodb:
       uri: mongodb://${MONGODB_HOST:localhost}:${MONGODB_PORT:27017}/${MONGODB_DATABASE:bbebigdb}
 
+  kafka:
+    bootstrap-servers: kafka:9092
+
+    topic:
+      channel-chat-event: "channelChatEvent"
+      dm-chat-event: "dmChatEvent"
+      connection-event: "connectionEvent"
+      presence-event: "presenceEvent"
+      notification-event: "notificationEvent"
+      server-event: "serverEvent"
+      channel-event: "channelEvent"
+      member-event: "memberEvent"
+
+    producer:
+      bootstrap-servers: kafka:9092
+
+    consumer:
+      group-id:
+        channel-chat-event: "${spring.application.name}-channelChatEventGroup"
+        dm-chat-event: "${spring.application.name}-dmChatEventGroup"
+        notification-event: "${spring.application.name}-notificationEventGroup"
+        server-event: "${spring.application.name}-serverEventGroup"
+        channel-event: "${spring.application.name}-channelEventGroup"
+        connection-event: "${spring.application.name}-connectionEventGroup"
+        presence-event: "${spring.application.name}-presenceEventGroup"
+        member-event: "${spring.application.name}-memberEventGroup"
+
+      enable-auto-commit: true
+      auto-offset-reset: latest
+
 server:
   port: 9201
 

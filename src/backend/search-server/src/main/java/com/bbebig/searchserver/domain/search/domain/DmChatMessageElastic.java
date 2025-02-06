@@ -1,7 +1,6 @@
 package com.bbebig.searchserver.domain.search.domain;
 
 
-import com.bbebig.searchserver.global.kafka.dto.ChatFileDto;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.elasticsearch.annotations.Document;
