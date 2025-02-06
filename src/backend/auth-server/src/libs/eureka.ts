@@ -3,8 +3,15 @@ interface EurekaConfig {
     app: string;
     hostName: string;
     ipAddr: string;
-    port: number;
+    status: string;
+    port: {
+      $: number;
+      '@enabled': string;
+    };
     vipAddress: string;
+    homePageUrl: string,
+    statusPageUrl: string,
+    healthCheckUrl: string,
     dataCenterInfo: {
       name: string;
       '@class': string;

@@ -25,11 +25,18 @@ import EurekaClient from './src/libs/eureka';
 
 const eurekaConfig = {
   instance: {
-    app: 'auth-server',
+    app: 'AUTH-SERVER',
     hostName: 'auth-server',
     ipAddr: 'auth-server',
-    port: 9000,
+    status: 'UP',
+    port: {
+      $: 9000,
+      '@enabled': 'true',
+    },
     vipAddress: 'auth-server',
+    homePageUrl: 'http://auth-server:9000/',
+    statusPageUrl: 'http://auth-server:9000/',
+    healthCheckUrl: 'http://auth-server:9000/',
     dataCenterInfo: {
       '@class': 'com.netflix.appinfo.InstanceInfo$AmazonInfo',
       name: 'Amazon',
@@ -38,7 +45,7 @@ const eurekaConfig = {
   eureka: {
     host: 'discovery-server',
     port: 8761,
-    servicePath: '/eureka/apps',
+    servicePath: '/eureka/apps/',
   },
 };
 
