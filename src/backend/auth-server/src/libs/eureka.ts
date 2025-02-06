@@ -46,6 +46,7 @@ class EurekaClient {
           instance: this.config.instance,
         }),
       });
+      console.log(`response.body ${response.body}`);
 
       if (!response.ok) {
         const errorText = await response.text();
