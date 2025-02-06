@@ -44,13 +44,13 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://discovery-server:8761/eureka
   instance:
     instance-id: ${spring.cloud.client.ip-address}:${spring.application.instance_id:${random.value}}
 
 
 elasticsearch:
-  host: ${ELASTICSEARCH_HOST:localhost}
+  host: ${ELASTICSEARCH_HOST:elasticsearch}
   port: ${ELASTICSEARCH_PORT:9200}
 
 eas:
