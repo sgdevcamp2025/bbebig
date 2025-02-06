@@ -22,19 +22,21 @@ spring:
       notification-event: "notificationEvent"
       server-event: "serverEvent"
       channel-event: "channelEvent"
+      member-event: "memberEvent"
 
     producer:
       bootstrap-servers: kafka:9092
 
     consumer:
       group-id:
-        channel-chat-event: "channelChatEventGroup"
-        dm-chat-event: "dmChatEventGroup"
-        notification-event: "notificationEventGroup"
-        server-event: "serverEventGroup"
-        channel-event: "channelEventGroup"
-        connection-event: "connectionEventGroup"
-        presence-event: "presenceEventGroup"
+        channel-chat-event: "${spring.application.name}-channelChatEventGroup"
+        dm-chat-event: "${spring.application.name}-dmChatEventGroup"
+        notification-event: "${spring.application.name}-notificationEventGroup"
+        server-event: "${spring.application.name}-serverEventGroup"
+        channel-event: "${spring.application.name}-channelEventGroup"
+        connection-event: "${spring.application.name}-connectionEventGroup"
+        presence-event: "${spring.application.name}-presenceEventGroup"
+        member-event: "${spring.application.name}-memberEventGroup"
 
       enable-auto-commit: true
       auto-offset-reset: latest
