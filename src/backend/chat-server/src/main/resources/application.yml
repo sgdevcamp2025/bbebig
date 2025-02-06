@@ -64,3 +64,4 @@ eas:
 auth:
   server:
     url: ${AUTH_SERVER_URL}
+
