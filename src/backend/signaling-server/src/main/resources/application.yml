@@ -22,3 +22,7 @@ eas:
 auth:
   server:
     url: ${AUTH_SERVER_URL}
+
+kurento:
+  ws:
+    url: ${KURENTO_WS_URL}
