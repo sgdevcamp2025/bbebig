@@ -1,4 +1,5 @@
 import UserListItem from '@/components/user-list-item'
+import { statusKo } from '@/constants/status'
 import { Friend } from '@/types/friend'
 
 const DUMMY_FRIENDS: Friend[] = [
@@ -16,13 +17,6 @@ const DUMMY_FRIENDS: Friend[] = [
   }
 ]
 
-const STATUS_KOREAN: Record<string, string> = {
-  ONLINE: '온라인',
-  OFFLINE: '오프라인',
-  NOT_DISTURB: '방해금지',
-  INVISIBLE: '오프라인(숨김)'
-}
-
 function OnlineFriends() {
   return (
     <div className='flex flex-col gap-2 p-4'>
@@ -35,7 +29,7 @@ function OnlineFriends() {
           avatarUrl={friend.avatarUrl}
           name={friend.name}
           status={friend.status}
-          description={STATUS_KOREAN[friend.status]}
+          description={statusKo[friend.status]}
           statusColor='black'
           iconType='default'
         />
