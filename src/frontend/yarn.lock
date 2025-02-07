@@ -2082,6 +2082,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@stomp/stompjs@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "@stomp/stompjs@npm:7.0.0"
+  checksum: 10c0/b68d32625efa71d12c57eb5174a83625277da306f9adb044ebf91000c6dec1a433abfd11e44a74d21f7b6fc27490e12997468f0c4f276767ab25c59f7ae93bd4
+  languageName: node
+  linkType: hard
+
 "@storybook/addon-actions@npm:8.5.0":
   version: 8.5.0
   resolution: "@storybook/addon-actions@npm:8.5.0"
@@ -5076,6 +5083,7 @@ __metadata:
     "@react-router/dev": "npm:^7.1.3"
     "@react-router/node": "npm:^7.1.3"
     "@react-router/serve": "npm:^7.1.3"
+    "@stomp/stompjs": "npm:^7.0.0"
     "@storybook/addon-essentials": "npm:^8.5.0"
     "@storybook/addon-interactions": "npm:^8.5.0"
     "@storybook/addon-onboarding": "npm:^8.5.0"
