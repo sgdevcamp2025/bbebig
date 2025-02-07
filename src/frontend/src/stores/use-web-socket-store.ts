@@ -19,12 +19,12 @@ export const useWebSocketStore = create<WebSocketState>((set, get) => ({
   connect: () => {
     const stompClient = createStompClient()
     stompClient.onConnect = () => {
-      console.log('Connected to WebSocket')
+      console.log('[✅] 웹소켓 연결 성공')
       set({ isConnected: true, client: stompClient })
     }
 
     stompClient.onDisconnect = () => {
-      console.log('Disconnected from WebSocket')
+      console.log('[❌] 웹소켓 연결 실패')
       set({ isConnected: false, client: null })
     }
 
@@ -37,6 +37,7 @@ export const useWebSocketStore = create<WebSocketState>((set, get) => ({
     const client = get().client
     if (client) {
       client.deactivate()
+      console.log('[❌] 웹소켓 연결 종료')
       set({ client: null, isConnected: false })
     }
   },
@@ -46,6 +47,7 @@ export const useWebSocketStore = create<WebSocketState>((set, get) => ({
     const client = get().client
     if (client && get().isConnected) {
       client.subscribe(destination, (message: IMessage) => {
+        console.log('[✅] 웹소켓 메시지 구독 : ', message)
         callback(JSON.parse(message.body))
       })
     }
@@ -59,6 +61,7 @@ export const useWebSocketStore = create<WebSocketState>((set, get) => ({
         destination,
         body: JSON.stringify(body)
       })
+      console.log('[✅] 웹소켓 메시지 발행 : ', destination, body)
     }
   }
 }))
