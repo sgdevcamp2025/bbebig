@@ -14,16 +14,13 @@ public class KurentoManager {
 
     private final KurentoClient kurentoClient;
 
-    @Value("${kurento.ws.url}")
-    private String kurentoWsUrl;
-
     // channelId -> MediaPipeline
     private final Map<String, MediaPipeline> pipelines = new ConcurrentHashMap<>();
 
     // channelId -> (sessionId -> WebRtcEndpoint)
     private final Map<String, Map<String, WebRtcEndpoint>> endpoints = new ConcurrentHashMap<>();
 
-    public KurentoManager() {
+    public KurentoManager(@Value("${kurento.ws.url}") String kurentoWsUrl) {
         this.kurentoClient = KurentoClient.create(kurentoWsUrl);
     }
 
