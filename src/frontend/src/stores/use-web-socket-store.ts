@@ -17,19 +17,19 @@ export const useWebSocketStore = create<WebSocketState>((set, get) => ({
 
   // 연결
   connect: () => {
-    const stompClient = createStompClient()
-    stompClient.onConnect = () => {
+    const client = createStompClient()
+    client.onConnect = () => {
       console.log('[✅] 웹소켓 연결 성공')
-      set({ isConnected: true, client: stompClient })
+      set({ isConnected: true, client: client })
     }
 
-    stompClient.onDisconnect = () => {
+    client.onDisconnect = () => {
       console.log('[❌] 웹소켓 연결 실패')
       set({ isConnected: false, client: null })
     }
 
-    stompClient.activate()
-    set({ client: stompClient })
+    client.activate()
+    set({ client: client })
   },
 
   // 연결 종료
