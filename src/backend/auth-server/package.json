@@ -5,6 +5,7 @@
   "scripts": {
     "build": "tsc",
     "generate": "prisma generate",
+    "typecheck": "tsc --noEmit",
     "start": "yarn generate && node dist/main.js",
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'tsx' main.ts",
     "test": "jest --config jest.config.cjs",
