@@ -1,17 +1,16 @@
 package com.bbebig.searchserver.domain.search.controller;
 
+import com.bbebig.commonmodule.global.response.code.CommonResponse;
 import com.bbebig.searchserver.domain.search.domain.ChannelChatMessageElastic;
 import com.bbebig.searchserver.domain.search.domain.DmChatMessageElastic;
 import com.bbebig.searchserver.domain.search.service.SearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.bbebig.searchserver.domain.search.dto.SearchRequestDto.*;
+import static com.bbebig.searchserver.domain.search.dto.SearchResponseDto.*;
 
 @Slf4j
 @RestController("/search-server")
@@ -35,6 +34,14 @@ public class SearchController {
 			@RequestBody SearchMessageRequestDto requestDto, @PathVariable Long channelId) {
 		log.info("[Search] SearchController: 키워드 기반 DM 채팅 검색 요청. channelID: {}, keyword: {}", channelId, requestDto.getKeyword());
 		return searchService.searchDmMessagesByOptions(requestDto, channelId);
+	}
+
+	@GetMapping("/server/channel/{channelId}/messages")
+	public CommonResponse<GetChannelMessageResponseDto> getServerChannelMessageByChannelId(@PathVariable Long serverId, @PathVariable Long channelId,
+																						   @RequestParam(required = false) Long messageId,
+																						   @RequestParam(defaultValue = "300") int limit) {
+		log.info("[Search] SearchController: 채널 ID로 메시지 검색 요청. serverID: {}, channelID: {}", serverId, channelId);
+		return CommonResponse.onSuccess(searchService.getChannelMessages(serverId, channelId, messageId, limit));
 	}
 
 }
