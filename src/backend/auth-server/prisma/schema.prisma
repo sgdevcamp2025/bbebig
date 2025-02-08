@@ -7,45 +7,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model friend {
-  id                                   BigInt         @id @default(autoincrement())
-  from_member_id                       BigInt?
-  to_member_id                         BigInt?
-  status                               friend_status?
-  server_list                          Json?
-  created_at                           DateTime?      @db.Timestamp(0)
-  updated_at                           DateTime?      @db.Timestamp(0)
-  member_friend_from_member_idTomember member?        @relation("friend_from_member_idTomember", fields: [from_member_id], references: [id], onDelete: Cascade, map: "friend_ibfk_1")
-  member_friend_to_member_idTomember   member?        @relation("friend_to_member_idTomember", fields: [to_member_id], references: [id], onDelete: Cascade, map: "friend_ibfk_2")
-
-  @@index([from_member_id], map: "from_member_id")
-  @@index([to_member_id], map: "to_member_id")
-}
-
 model member {
-  id                                   BigInt                         @id @default(autoincrement())
-  name                                 String                         @db.VarChar(255)
-  email                                String                         @unique(map: "email") @db.VarChar(255)
-  password                             String                         @db.VarChar(255)
-  profile_img_url                      String?                        @db.VarChar(255)
-  nickname                             String?                        @db.VarChar(255)
-  custom_presence_status               member_custom_presence_status?
-  created_at                           DateTime?                      @default(now()) @db.DateTime(0)
-  updated_at                           DateTime?                      @default(now()) @db.DateTime(0)
-  birth_date                           DateTime?                      @default(now()) @db.DateTime(0)
-  last_access_at                       DateTime?                      @default(now()) @db.Timestamp(0)
-  friend_friend_from_member_idTomember friend[]                       @relation("friend_from_member_idTomember")
-  friend_friend_to_member_idTomember   friend[]                       @relation("friend_to_member_idTomember")
+  id             BigInt         @id @default(autoincrement())
+  name           String         @db.VarChar(255)
+  email          String         @unique(map: "email") @db.VarChar(255)
+  password       String         @db.VarChar(255)
+  avatar_url     String?        @db.VarChar(255)
+  banner_url     String?        @db.VarChar(255)
+  nickname       String?        @db.VarChar(255)
+  introduce      Json?
+  status         member_status?
+  created_at     DateTime?      @default(now()) @db.DateTime(0)
+  updated_at     DateTime?      @default(now()) @db.DateTime(0)
+  last_access_at DateTime?      @default(now()) @db.DateTime(0)
+  birthdate      String?        @db.VarChar(255)
 }
 
-enum friend_status {
-  ONLINE
-  OFFLINE
-  NOT_DISTURB
-  INVISIBLE
-}
-
-enum member_custom_presence_status {
+enum member_status {
   ONLINE
   OFFLINE
   NOT_DISTURB
