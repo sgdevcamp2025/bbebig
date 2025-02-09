@@ -12,7 +12,7 @@ import { FastifyCookieOptions } from '@fastify/cookie';
 import routes from './src/routes';
 import cors from '@fastify/cors';
 import fastifyCookie from '@fastify/cookie';
-import { ERROR_MESSAGE, SECRET_KEY, SERVER_PORT } from './src/libs/constants';
+import { ERROR_MESSAGE, SECRET_KEY, SERVER_PORT, SERVER_URL } from './src/libs/constants';
 import fastifyRedis from '@fastify/redis';
 import { currentAuthPlugin } from './src/plugin/authPlugin';
 import { fastifySwagger } from '@fastify/swagger';
@@ -105,6 +105,10 @@ app.register(fastifySwagger, {
       {
         url: 'http://localhost:9000',
         description: 'Local',
+      },
+      {
+        url: `http://${SERVER_URL}:${SERVER_PORT}`,
+        description: 'Auth Server',
       },
     ],
   },
