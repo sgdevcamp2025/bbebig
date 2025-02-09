@@ -78,7 +78,7 @@ function authController() {
     try {
       const hashedPassword = generateHash(password);
 
-      await authService.register(email, hashedPassword, name, nickname, new Date(birthdate));
+      await authService.register(email, hashedPassword, name, nickname, birthdate);
 
       handleSuccess(res, SUCCESS_MESSAGE.registerOk, 201);
     } catch (error) {

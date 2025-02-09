@@ -1,7 +1,5 @@
 import { z } from 'zod';
-import { commonHeaderSchema, commonResponseSchema } from './commonSchema';
-
-const headers = commonHeaderSchema;
+import { commonResponseSchema } from './commonSchema';
 
 const signInSchema = {
   tags: ['auth'],
@@ -51,11 +49,10 @@ const registerSchema = {
     birthdate: z
       .string()
       .regex(/^\d{4}-\d{2}-\d{2}$/, '생년월일은 YYYY-MM-DD 형식이어야 합니다.')
-      .transform((str) => new Date(str))
-      .refine((date) => date <= new Date(), {
+      .refine((date) => new Date(date) <= new Date(), {
         message: '생년월일은 현재 날짜 이전이어야 합니다.',
       })
-      .refine((date) => date.getFullYear() >= 1900, {
+      .refine((date) => new Date(date).getFullYear() >= 1900, {
         message: '생년월일은 1900년 이후여야 합니다.',
       }),
   }),
@@ -78,7 +75,7 @@ const registerSchema = {
 
 const refreshTokenSchema = {
   tags: ['auth'],
-  description: '리프레시 토큰을 발급 받습니다.',
+  security: [{ bearerAuth: [] }],
   response: {
     201: z.object({
       code: z.string().default('AUTH102'),
@@ -89,20 +86,33 @@ const refreshTokenSchema = {
     }),
     400: commonResponseSchema,
   },
+  description: `
+  리프레시 토큰은 쿠키('refresh_token')로 자동 처리됩니다.
+  Swagger UI에서 테스트하려면 브라우저 쿠키가 있어야 합니다.
+  1. 먼저 로그인하여 쿠키 설정
+  2. 이 엔드포인트 호출하여 새 액세스 토큰 발급
+`,
 };
 
 const logoutSchema = {
   tags: ['auth'],
   description: '로그아웃 합니다.',
-  headers,
+  security: [{ bearerAuth: [] }],
   response: {
     205: z.object({
       code: z.string().default('AUTH101'),
       message: z.string().default('Logout success!'),
     }),
     400: z.object({
-      code: z.enum(['AUTH001', 'AUTH004', 'AUTH012']),
-      message: z.enum(['Bad Request', 'Unauthorized', 'Server Error']),
+      code: z.enum(['AUTH001', 'AUTH004', 'AUTH012', 'AUTH014', 'AUTH015', 'AUTH016']),
+      message: z.enum([
+        'Bad Request',
+        'Unauthorized',
+        'Server Error',
+        'Authorization header is required',
+        'Token expired or invalid',
+        'Token verification failed',
+      ]),
     }),
   },
 };
@@ -110,15 +120,22 @@ const logoutSchema = {
 const verifyTokenSchema = {
   tags: ['auth'],
   description: '토큰을 검증 받습니다.',
-  headers,
+  security: [{ bearerAuth: [] }],
   response: {
     200: z.object({
       code: z.string().default('AUTH105'),
       message: z.string().default('token verify success!'),
     }),
     401: z.object({
-      code: z.enum(['AUTH004', 'AUTH011']),
-      message: z.enum(['Unauthorized', 'Verify Token Failed']),
+      code: z.enum(['AUTH004', 'AUTH011', 'AUTH014', 'AUTH015', 'AUTH016', 'AUTH017']),
+      message: z.enum([
+        'Unauthorized',
+        'Verify Token Failed',
+        'Authorization header is required',
+        'Token expired or invalid',
+        'Token verification failed',
+        'Access Token Decode Failed',
+      ]),
     }),
   },
 };
@@ -126,6 +143,7 @@ const verifyTokenSchema = {
 const verifyEmailSchema = {
   tags: ['auth'],
   description: '이메일 검증 합니다.',
+  security: [{ bearerAuth: [] }],
   body: z.object({
     email: z.string().email(),
   }),
@@ -135,8 +153,16 @@ const verifyEmailSchema = {
       message: z.enum(['email verify success!']),
     }),
     400: z.object({
-      code: z.enum(['AUTH001', 'AUTH002', 'AUTH012']),
-      message: z.enum(['Bad Request', 'Duplicate Email', 'Server Error']),
+      code: z.enum(['AUTH001', 'AUTH002', 'AUTH012', 'AUTH014', 'AUTH015', 'AUTH016', 'AUTH017']),
+      message: z.enum([
+        'Bad Request',
+        'Duplicate Email',
+        'Server Error',
+        'Authorization header is required',
+        'Token expired or invalid',
+        'Token verification failed',
+        'Access Token Decode Failed',
+      ]),
     }),
   },
 };
@@ -144,7 +170,7 @@ const verifyEmailSchema = {
 const tokenDecodeSchema = {
   tags: ['auth'],
   description: '토큰을 복호화 합니다.',
-  headers,
+  security: [{ bearerAuth: [] }],
   response: {
     200: z.object({
       code: z.string().default('AUTH107'),
@@ -155,8 +181,16 @@ const tokenDecodeSchema = {
       }),
     }),
     400: z.object({
-      code: z.enum(['AUTH001', 'AUTH004', 'AUTH012']),
-      message: z.enum(['Bad Request', 'Unauthorized', 'Server Error']),
+      code: z.enum(['AUTH001', 'AUTH004', 'AUTH012', 'AUTH014', 'AUTH015', 'AUTH016', 'AUTH017']),
+      message: z.enum([
+        'Bad Request',
+        'Unauthorized',
+        'Server Error',
+        'Authorization header is required',
+        'Token expired or invalid',
+        'Token verification failed',
+        'Access Token Decode Failed',
+      ]),
       result: z.object({
         memberId: z.number().default(-1),
         valid: z.boolean().default(false),

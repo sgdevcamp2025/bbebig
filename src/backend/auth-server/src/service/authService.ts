@@ -15,7 +15,7 @@ function authService() {
     password: string,
     name: string,
     nickname: string,
-    birth_date: Date,
+    birthdate: string,
   ) => {
     const result = await db.member.create({
       data: {
@@ -23,7 +23,7 @@ function authService() {
         password,
         name,
         nickname,
-        birth_date,
+        birthdate,
       },
     });
 
