@@ -47,9 +47,9 @@ const eurekaConfig = {
   },
 };
 
-const eurekaClient = new EurekaClient(eurekaConfig);
+// const eurekaClient = new EurekaClient(eurekaConfig);
 
-eurekaClient.register();
+// eurekaClient.register();
 
 const app = Fastify({
   logger: true,
@@ -70,6 +70,15 @@ app.register(fastifySwagger, {
       title: 'Bbebig Auth Service API',
       description: 'Bbebig auth service',
       version: '1.0.0',
+    },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'apiKey',
+          name: 'Authorization',
+          in: 'header',
+        },
+      },
     },
     servers: [],
   },
