@@ -1,9 +1,8 @@
 import { FastifyPluginAsync, FastifyReply } from 'fastify';
 import fp from 'fastify-plugin';
 import { FastifyRequest } from 'fastify';
-import { verifyAccessToken, shortVerifyRefreshToken } from 'src/libs/authHelper';
-import { ERROR_MESSAGE } from 'src/libs/constants';
-import { handleError } from 'src/libs/errorHelper';
+import { verifyAccessToken, shortVerifyRefreshToken } from '../libs/authHelper';
+import { ERROR_MESSAGE } from '../libs/constants';
 
 const currentAuth: FastifyPluginAsync = async (app) => {
   app.decorateRequest('user', null);
