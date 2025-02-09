@@ -12,8 +12,8 @@ type Option<T> = {
 type Props<T> = {
   label?: string
   options: Option<T>[]
-  value: string | null
-  onChange: (value: T) => void
+  value: Option<T> | null
+  onChange: (value: Option<T>) => void
   mark?: boolean
   forward?: 'top' | 'bottom'
   className?: string
@@ -39,7 +39,7 @@ const SelectBox = <T,>({
   }
 
   const handleSelectOption = (option: Option<T>) => {
-    onChange(option.value)
+    onChange(option)
     setSearch('')
     setIsOpen(false)
   }
@@ -66,7 +66,7 @@ const SelectBox = <T,>({
           )}>
           <ul className='flex flex-col gap-2 overflow-y-auto h-full scrollbar-thin scrollbar-thumb-gray-10 scrollbar-track-black-70'>
             {customOptions.map((option, index) => {
-              const isSelected = value === option.label
+              const isSelected = value?.value === option.value
               return (
                 <li
                   key={index}
@@ -92,7 +92,7 @@ const SelectBox = <T,>({
       ) : null}
       <div className='py-2 px-2 flex justify-between'>
         <div className='text-gray-10 flex max-w-[calc(100%-8px)] items-center mx-1 h-7'>
-          {search ? '' : value ? (value as string) : label}
+          {search ? '' : value ? (value as Option<T>).label : label}
         </div>
         <input
           type='text'

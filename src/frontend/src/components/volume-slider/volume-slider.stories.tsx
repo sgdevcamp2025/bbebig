@@ -2,17 +2,17 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
 import { useState } from 'react'
 
-import Slider from '.'
+import VolumeSlider from '.'
 
 const meta = {
-  title: 'Component/Slider',
-  component: Slider,
+  title: 'Component/VolumeSlider',
+  component: VolumeSlider,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs'],
   argTypes: {}
-} satisfies Meta<typeof Slider>
+} satisfies Meta<typeof VolumeSlider>
 
 export default meta
 type Story = StoryObj<typeof meta>
@@ -29,7 +29,7 @@ export const PrimarySlider: Story = {
     return (
       <div className='w-full p-5 h-[200px] flex items-center bg-discord-brand-hover'>
         <div className='w-[480px]'>
-          <Slider
+          <VolumeSlider
             {...args}
             value={value}
             onChange={(e) => setValue(Number(e.target.value))}
