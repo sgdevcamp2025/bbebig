@@ -83,13 +83,14 @@ public class RedisKeys {
 	 * Key pattern: "member:{memberId}:recentServerChannels"
 	 * Type: Hash
 	 * Field: channelId (Long)
-	 * Value: JSON (예: RecentChannelInfo)
+	 * Value: JSON (예: RecentServerChannelInfo)
 	 * TTL: 3일 (24시간)
 	 * Used by: State Server, Service Server 등
 	 *
 	 * 예시 Key: member:100:recentChannels
 	 * 해당 Hash는 "멤버가 최근에 접속한 채널 아이디와 그 정보를
-	 * (channelId -> RecentChannelInfo) 형태로 저장.
+	 * (channelId -> RecentServerChannelInfo) 형태로 저장.
+	 * ex) HSET member:100:recentChannels 1 {channelId : 1, lastAccessAt : 100, lastReadMessageId: 100}
 	 *
 	 * @param memberId 멤버 ID
 	 * @return "member:{memberId}:recentChannels"
@@ -109,7 +110,7 @@ public class RedisKeys {
 	 * 예시 Key: member:100:recentDmChannels
 	 * 해당 Hash는 "멤버가 최근에 접속한 DM 채널 아이디와 그 정보를
 	 * (channelId -> RecentChannelInfo) 형태로 저장.
-	 * ex) HSET member:100:recentDmChannels 1 {lastReadMessageId: 100}
+	 * ex) HSET member:100:recentDmChannels 1 {lastAccessAt : 100, lastReadMessageId: 100}
 	 *
 	 * @param memberId 멤버 ID
 	 * @return "member:{memberId}:recentDmChannels"

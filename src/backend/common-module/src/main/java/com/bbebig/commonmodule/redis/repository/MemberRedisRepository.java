@@ -1,6 +1,7 @@
 package com.bbebig.commonmodule.redis.repository;
 
 import com.bbebig.commonmodule.redis.domain.MemberPresenceStatus;
+import com.bbebig.commonmodule.redis.domain.RecentServerChannelInfo;
 
 import java.util.List;
 import java.util.Set;
@@ -69,6 +70,29 @@ public interface MemberRedisRepository {
 	 * 개별 유저 presence 상태 정보 조회
 	 */
 	MemberPresenceStatus getMemberPresenceStatus(Long memberId);
+
+	/**
+	 * 개별 유저의 서버 채널별 마지막 접속 시간 및 읽음 정보를 저장
+	 * ex) member:{memberId}:recentServerChannels => Hash<ChannelId, RecentServerChannelInfo>
+	 */
+	void saveMemberRecentServerChannels(Long memberId, Long channelId, RecentServerChannelInfo recentServerChannelInfo);
+
+
+	/**
+	 * 개별 유저의 서버 채널별 마지막 접속 시간 및 읽음 정보 조회
+	 */
+	RecentServerChannelInfo getMemberRecentServerChannel(Long memberId, Long channelId);
+
+	/**
+	 * 개별 유저의 서버 채널별 마지막 접속 시간 및 읽음 정보 삭제
+	 */
+	void deleteMemberRecentServerChannel(Long memberId, Long channelId);
+
+	/**
+	 * 개별 유저의 서버 채널별 마지막 접속 시간 및 읽음 정보 전체 삭제
+	 */
+	void deleteMemberAllRecentServerChannels(Long memberId);
+
 
 	Long convertToLong(Object obj);
 }
