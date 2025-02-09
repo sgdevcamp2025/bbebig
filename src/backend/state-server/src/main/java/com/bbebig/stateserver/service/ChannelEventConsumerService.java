@@ -27,7 +27,6 @@ public class ChannelEventConsumerService {
 			return;
 		}
 
-		// TODO : 추후 입장시 마지막으로 읽은 시간 정보 등을 저장하는 로직 추가
 		if (channelEventDto.getType().equals("JOIN")) {
 			MemberPresenceStatus memberPresenceStatus = handleJoinEvent(channelEventDto);
 

@@ -31,7 +31,7 @@ public class StateService {
 	public MemberStatusResponseDto checkMemberState(Long memberId) {
 		MemberPresenceStatus memberPresenceStatus = memberRedisRepositoryImpl.getMemberPresenceStatus(memberId);
 		if (memberPresenceStatus == null) {
-			// TODO : 추후 예외 처리 로직 추가
+			// TODO : 추후 유저 서버에서 조회해서 가져오고 예외처리 하는 로직 추가
 			log.error("[State] StateService: 사용자 상태 정보 없음. memberId: {}", memberId);
 			return null;
 		}

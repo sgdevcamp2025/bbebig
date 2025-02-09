@@ -1,8 +1,8 @@
 package com.bbebig.searchserver.domain.search.service;
 
-import com.bbebig.commonmodule.clientDto.state.CommonStateClientResponseDto;
+import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto;
 import com.bbebig.commonmodule.kafka.dto.ChatMessageDto;
-import com.bbebig.searchserver.domain.search.client.StateClient;
+import com.bbebig.searchserver.domain.search.client.ServiceClient;
 import com.bbebig.searchserver.domain.search.domain.ChannelChatMessage;
 import com.bbebig.searchserver.domain.search.domain.DmChatMessage;
 import com.bbebig.searchserver.domain.search.dto.ChatMessageDtoConverter;
@@ -30,7 +30,7 @@ public class ChatMessageService {
 	private final MemberRedisRepositoryImpl memberRedisRepository;
 	private final DmRedisRepositoryImpl dmRedisRepository;
 
-	private final StateClient stateClient;
+	private final ServiceClient serviceClient;
 
 
 	public void saveChannelMessage(ChatMessageDto messageDto) {
@@ -129,10 +129,10 @@ public class ChatMessageService {
 		if (memberServerList.isEmpty()) {
 			log.info("[Search] ChatMessageService : 캐싱된 멤버가 참여한 서버 정보가 없습니다. memberId: {}", memberId);
 			try {
-				CommonStateClientResponseDto.MemberServerListCacheResponseDto memberServerListCacheResponseDto = stateClient.cacheMemberServerList(memberId);
+				CommonServiceServerClientResponseDto.MemberServerListResponseDto memberServerListCacheResponseDto = serviceClient.getMemberServerList(memberId);
 				memberServerList.addAll(memberServerListCacheResponseDto.getServerIdList());
 			} catch (FeignException e) {
-				// 예외 처리 로직
+				// TODO: 예외 처리 로직 구현
 				if (e.status() == 400) {
 					// 400 처리
 				} else if (e.status() == 500) {

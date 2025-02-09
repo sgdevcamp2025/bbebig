@@ -1,7 +1,5 @@
 package com.bbebig.stateserver.controller;
 
-import com.bbebig.commonmodule.clientDto.state.CommonStateClientResponseDto;
-import com.bbebig.commonmodule.clientDto.stateServer.CommonStateServerClientResponseDto;
 import com.bbebig.commonmodule.global.response.code.CommonResponse;
 import com.bbebig.stateserver.dto.StateResponseDto.*;
 import com.bbebig.stateserver.service.StateService;

@@ -55,7 +55,6 @@ public class NotificationEventConsumerService {
 //			stateService.makeDmMemberList(channelId);
 //		}
 
-//		// TODO : DM방 Type에 따라 처리 추가
 //		if (dmMemberActionEventDto.getStatus().equals("JOIN")) {
 //			dmRedisRepositoryImpl.addDmMemberToSet(channelId, dmMemberActionEventDto.getMemberId());
 //		} else if (dmMemberActionEventDto.getStatus().equals("LEAVE")) {
