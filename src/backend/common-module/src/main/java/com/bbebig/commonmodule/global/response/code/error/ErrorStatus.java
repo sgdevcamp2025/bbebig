@@ -29,9 +29,9 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "M401", "유저가 존재하지 않습니다."),
 
     // Chat
-    CHAT_ROOM_NOT_FOUND(HttpStatus.BAD_REQUEST, "C401", "채팅방이 존재하지 않습니다."),
-    CHAT_ROOM_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "C402", "이미 존재하는 채팅방입니다."),
-    CHAT_ROOM_MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "C403", "채팅방에 참여한 멤버가 존재하지 않습니다."),
+    CHAT_ROOM_NOT_FOUND(HttpStatus.BAD_REQUEST, "CHAT401", "채팅방이 존재하지 않습니다."),
+    CHAT_ROOM_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "CHAT402", "이미 존재하는 채팅방입니다."),
+    CHAT_ROOM_MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "CHAT403", "채팅방에 참여한 멤버가 존재하지 않습니다."),
 
     // SERVICE
     SERVER_NOT_FOUND(HttpStatus.NOT_FOUND, "SERVICE401", "서버를 찾을 수 없습니다."),
@@ -40,6 +40,9 @@ public enum ErrorStatus implements BaseErrorCode {
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "SERVICE404", "카테고리를 찾을 수 없습니다."),
     CHANNEL_NOT_FOUND(HttpStatus.NOT_FOUND, "SERVICE405", "채널을 찾을 수 없습니다."),
     CHANNEL_MEMBER_FORBIDDEN(HttpStatus.FORBIDDEN, "SERVICE406", "채널에 속한 멤버가 아닙니다."),
+
+    //STATE
+    MEMBER_SERVER_LIST_CACHE_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "STATE01", "멤버가 참여중인 서버 목록 캐시에 실패했습니다."),
 
     // 카프카 이벤트 관련
     INVALID_SERVER_EVENT_TYPE(HttpStatus.SERVICE_UNAVAILABLE, "KAFKA01", "유효하지 않은 서버 이벤트 타입입니다."),

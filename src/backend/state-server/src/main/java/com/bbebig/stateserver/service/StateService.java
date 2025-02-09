@@ -1,5 +1,8 @@
 package com.bbebig.stateserver.service;
 
+import com.bbebig.commonmodule.clientDto.state.CommonStateClientResponseDto;
+import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
+import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.redis.domain.MemberPresenceStatus;
 import com.bbebig.commonmodule.redis.domain.ServerMemberStatus;
 import com.bbebig.stateserver.client.ServiceClient;
@@ -111,13 +114,17 @@ public class StateService {
 	}
 
 	// 멤버별로 참여한 서버 목록을 조회하여 캐싱
-	public void makeMemberServerList(Long memberId) {
+	public CommonStateClientResponseDto.MemberServerListCacheResponseDto makeMemberServerList(Long memberId) {
 		MemberServerListResponseDto memberServerList = serviceClient.getMemberServerList(memberId);
 		if (memberServerList == null) {
 			log.error("[State] ServerEventConsumerService: 서버 멤버 정보 불러오기 실패. memberId: {}", memberId);
-			return;
+			throw new ErrorHandler(ErrorStatus.MEMBER_SERVER_LIST_CACHE_FAILURE);
 		}
 		memberRedisRepositoryImpl.saveMemberServerSet(memberId, memberServerList.getServerIdList());
+		return CommonStateClientResponseDto.MemberServerListCacheResponseDto.builder()
+				.memberId(memberId)
+				.serverIdList(memberServerList.getServerIdList())
+				.build();
 	}
 
 	// 디엠 채널별로 참여한 유저 조회 후 캐싱

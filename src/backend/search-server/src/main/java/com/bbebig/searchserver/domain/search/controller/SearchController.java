@@ -14,7 +14,7 @@ import static com.bbebig.searchserver.domain.search.dto.SearchRequestDto.*;
 import static com.bbebig.searchserver.domain.search.dto.SearchResponseDto.*;
 
 @Slf4j
-@RestController("/search-server")
+@RestController("/search")
 @RequiredArgsConstructor
 public class SearchController {
 
@@ -25,7 +25,7 @@ public class SearchController {
 			@ApiResponse(responseCode = "200", description = "과거 메시지 조회 성공", useReturnTypeSchema = true),
 			@ApiResponse(responseCode = "400", description = "", content = @Content)
 	})
-	@PostMapping("/search/server/{serverId}")
+	@PostMapping("/server/{serverId}")
 	public CommonResponse<SearchChannelMessageResponseDto> searchChannelMessagesByContentAndDate(
 			@RequestBody SearchMessageRequestDto requestDto, @PathVariable Long serverId) {
 		log.info("[Search] SearchController: 키워드 기반 채널 채팅 검색 요청. serverID: {}, keyword: {}", serverId, requestDto.getKeyword());
@@ -38,37 +38,11 @@ public class SearchController {
 			@ApiResponse(responseCode = "200", description = "과거 메시지 조회 성공", useReturnTypeSchema = true),
 			@ApiResponse(responseCode = "400", description = "", content = @Content)
 	})
-	@PostMapping("/search/dm/{channelId}")
+	@PostMapping("/dm/{channelId}")
 	public CommonResponse<SearchDmMessageResponseDto> searchDmMessagesByContent(
 			@RequestBody SearchMessageRequestDto requestDto, @PathVariable Long channelId) {
 		log.info("[Search] SearchController: 키워드 기반 DM 채팅 검색 요청. channelID: {}, keyword: {}", channelId, requestDto.getKeyword());
 		return CommonResponse.onSuccess(searchService.searchDmMessagesByOptions(requestDto, channelId));
-	}
-
-	@Operation(summary = "서버 채팅 채널 과거 메시지 조회", description = "마지막 MessageId를 기반으로 원하는 수량만큼 과거 메시지를 조회합니다.")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "과거 메시지 조회 성공", useReturnTypeSchema = true),
-			@ApiResponse(responseCode = "400", description = "", content = @Content)
-	})
-	@GetMapping("/server/{serverId}/channel/{channelId}/messages")
-	public CommonResponse<GetChannelMessageResponseDto> getServerChannelMessageByChannelId(@PathVariable Long serverId, @PathVariable Long channelId,
-																						   @RequestParam(required = false) Long messageId,
-																						   @RequestParam(defaultValue = "300") int limit) {
-		log.info("[Search] SearchController: 채널 ID로 메시지 검색 요청. serverID: {}, channelID: {}", serverId, channelId);
-		return CommonResponse.onSuccess(searchService.getChannelMessages(serverId, channelId, messageId, limit));
-	}
-
-	@Operation(summary = "DM 채팅 과거 메시지 조회", description = "마지막 MessageId를 기반으로 원하는 수량만큼 과거 메시지를 조회합니다.")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "과거 메시지 조회 성공", useReturnTypeSchema = true),
-			@ApiResponse(responseCode = "400", description = "", content = @Content)
-	})
-	@GetMapping("/dm/{channelId}/messages")
-	public CommonResponse<GetDmMessageResponseDto> getDmChannelMessageByChannelId(@PathVariable Long channelId,
-																					  @RequestParam(required = false) Long messageId,
-																					  @RequestParam(defaultValue = "300") int limit) {
-		log.info("[Search] SearchController: DM 채널 ID로 메시지 검색 요청. channelID: {}", channelId);
-		return CommonResponse.onSuccess(searchService.getDmChannelMessages(channelId, messageId, limit));
 	}
 
 }
