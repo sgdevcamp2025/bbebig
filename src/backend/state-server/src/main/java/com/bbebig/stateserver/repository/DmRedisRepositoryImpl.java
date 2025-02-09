@@ -2,7 +2,7 @@ package com.bbebig.stateserver.repository;
 
 import com.bbebig.commonmodule.redis.repository.DmRedisRepository;
 import com.bbebig.commonmodule.redis.util.DmRedisKeys;
-import com.bbebig.commonmodule.redis.util.RedisTTL;
+import com.bbebig.commonmodule.redis.util.DmRedisTTL;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -30,7 +30,7 @@ public class DmRedisRepositoryImpl implements DmRedisRepository {
 		String key = DmRedisKeys.getDmMemberListKey(channelId);
 		redisTemplate.opsForSet().add(key, memberIdList.toArray());
 
-		redisTemplate.expire(key, RedisTTL.getPrivateDmMemberListTTLDate(), TimeUnit.SECONDS);
+		redisTemplate.expire(key, DmRedisTTL.getPrivateDmMemberListTTLDate(), TimeUnit.SECONDS);
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class DmRedisRepositoryImpl implements DmRedisRepository {
 		String key = DmRedisKeys.getDmMemberListKey(channelId);
 		redisTemplate.opsForSet().add(key, memberId);
 
-		redisTemplate.expire(key, RedisTTL.getPrivateDmMemberListTTLDate(), TimeUnit.SECONDS);
+		redisTemplate.expire(key, DmRedisTTL.getPrivateDmMemberListTTLDate(), TimeUnit.SECONDS);
 	}
 
 	@Override

@@ -4,7 +4,7 @@ import com.bbebig.commonmodule.redis.domain.MemberPresenceStatus;
 import com.bbebig.commonmodule.redis.domain.RecentServerChannelInfo;
 import com.bbebig.commonmodule.redis.repository.MemberRedisRepository;
 import com.bbebig.commonmodule.redis.util.MemberRedisKeys;
-import com.bbebig.commonmodule.redis.util.RedisTTL;
+import com.bbebig.commonmodule.redis.util.MemberRedisTTL;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -143,7 +143,7 @@ public class MemberRedisRepositoryImpl implements MemberRedisRepository {
 		String key = MemberRedisKeys.getMemberRecentServerChannelsKey(memberId);
 		redisTemplate.opsForHash().put(key, channelId, recentServerChannelInfo);
 
-		redisTemplate.expire(key, RedisTTL.getRecentChannelInfoTTLDate(), TimeUnit.DAYS);
+		redisTemplate.expire(key, MemberRedisTTL.getRecentChannelInfoTTLDate(), TimeUnit.DAYS);
 	}
 
 	// 개별 유저의 서버 채널별 마지막 접속 시간 및 읽음 정보 조회
