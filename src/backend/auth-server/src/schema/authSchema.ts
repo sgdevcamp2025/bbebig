@@ -104,12 +104,14 @@ const logoutSchema = {
       message: z.string().default('Logout success!'),
     }),
     400: z.object({
-      code: z.enum(['AUTH001', 'AUTH004', 'AUTH012', 'AUTH014']),
+      code: z.enum(['AUTH001', 'AUTH004', 'AUTH012', 'AUTH014', 'AUTH015', 'AUTH016']),
       message: z.enum([
         'Bad Request',
         'Unauthorized',
         'Server Error',
         'Authorization header is required',
+        'Token expired or invalid',
+        'Token verification failed',
       ]),
     }),
   },
@@ -125,8 +127,15 @@ const verifyTokenSchema = {
       message: z.string().default('token verify success!'),
     }),
     401: z.object({
-      code: z.enum(['AUTH004', 'AUTH011', 'AUTH014']),
-      message: z.enum(['Unauthorized', 'Verify Token Failed', 'Authorization header is required']),
+      code: z.enum(['AUTH004', 'AUTH011', 'AUTH014', 'AUTH015', 'AUTH016', 'AUTH017']),
+      message: z.enum([
+        'Unauthorized',
+        'Verify Token Failed',
+        'Authorization header is required',
+        'Token expired or invalid',
+        'Token verification failed',
+        'Access Token Decode Failed',
+      ]),
     }),
   },
 };
@@ -144,12 +153,15 @@ const verifyEmailSchema = {
       message: z.enum(['email verify success!']),
     }),
     400: z.object({
-      code: z.enum(['AUTH001', 'AUTH002', 'AUTH012', 'AUTH014']),
+      code: z.enum(['AUTH001', 'AUTH002', 'AUTH012', 'AUTH014', 'AUTH015', 'AUTH016', 'AUTH017']),
       message: z.enum([
         'Bad Request',
         'Duplicate Email',
         'Server Error',
         'Authorization header is required',
+        'Token expired or invalid',
+        'Token verification failed',
+        'Access Token Decode Failed',
       ]),
     }),
   },
@@ -169,12 +181,15 @@ const tokenDecodeSchema = {
       }),
     }),
     400: z.object({
-      code: z.enum(['AUTH001', 'AUTH004', 'AUTH012', 'AUTH014']),
+      code: z.enum(['AUTH001', 'AUTH004', 'AUTH012', 'AUTH014', 'AUTH015', 'AUTH016', 'AUTH017']),
       message: z.enum([
         'Bad Request',
         'Unauthorized',
         'Server Error',
         'Authorization header is required',
+        'Token expired or invalid',
+        'Token verification failed',
+        'Access Token Decode Failed',
       ]),
       result: z.object({
         memberId: z.number().default(-1),

@@ -77,6 +77,18 @@ const ERROR_MESSAGE = {
     code: `${AUTH_PREFIX}014`,
     message: 'Authorization header is required',
   },
+  verifyAccessTokenFailed: {
+    code: `${AUTH_PREFIX}015`,
+    message: 'Verify Access Token Failed',
+  },
+  verifyRefreshTokenFailed: {
+    code: `${AUTH_PREFIX}016`,
+    message: 'Verify Refresh Token Failed',
+  },
+  accessTokenDecodeFailed: {
+    code: `${AUTH_PREFIX}017`,
+    message: 'Access Token Decode Failed',
+  },
 } as const;
 
 const SUCCESS_MESSAGE = {

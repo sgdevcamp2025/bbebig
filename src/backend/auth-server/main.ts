@@ -52,7 +52,28 @@ const eurekaClient = new EurekaClient(eurekaConfig);
 eurekaClient.register();
 
 const app = Fastify({
-  logger: true,
+  logger: {
+    level: 'debug',
+    serializers: {
+      req(request) {
+        return {
+          method: request.method,
+          url: request.url,
+          headers: request.headers,
+          hostname: request.hostname,
+          remoteAddress: request.ip,
+          remotePort: request.socket.remotePort,
+        };
+      },
+      err(error) {
+        return {
+          type: error.name,
+          message: error.message,
+          stack: error.stack || '',
+        };
+      },
+    },
+  },
   pluginTimeout: 20000,
 }).withTypeProvider<ZodTypeProvider>();
 
@@ -141,6 +162,18 @@ app.setErrorHandler((err, req, reply) => {
   if (isResponseSerializationError(err)) {
     return handleError(reply, ERROR_MESSAGE.serverError, err);
   }
+
+  if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
+    return reply.status(401).send({
+      code: 'AUTH004',
+      message: 'Token expired or invalid',
+    });
+  }
+
+  return reply.status(401).send({
+    code: err.code || 'AUTH004',
+    message: err.message || 'Unauthorized',
+  });
 });
 
 // 데이터베이스 연결 테스트 함수
