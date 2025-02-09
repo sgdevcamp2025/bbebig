@@ -100,6 +100,16 @@ public class StateService {
 		serverRedisRepositoryImpl.saveServerMemberSet(serverId, responseDto.getMemberIdList());
 	}
 
+	// 서버에 속해있는 채널 목록을 조회하여 캐싱
+	public void makeServerChannelList(Long serverId) {
+		ServerChannelListResponseDto serverChannelList = serviceClient.getServerChannelList(serverId);
+		if (serverChannelList == null) {
+			log.error("[State] ServerEventConsumerService: 서버 채널 정보 불러오기 실패. serverId: {}", serverId);
+			return;
+		}
+		serverRedisRepositoryImpl.saveServerChannelSet(serverId, serverChannelList.getChannelIdList());
+	}
+
 	// 멤버별로 참여한 서버 목록을 조회하여 캐싱
 	public void makeMemberServerList(Long memberId) {
 		MemberServerListResponseDto memberServerList = serviceClient.getMemberServerList(memberId);

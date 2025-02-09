@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -63,9 +65,12 @@ public class ServerEventConsumerService {
 		} else if (serverEventDto.getType().equals(ServerEventType.SERVER_ACTION.toString())) {
 			ServerActionEventDto eventDto = (ServerActionEventDto) serverEventDto;
 			handleServerActionEvent(eventDto);
-		} else {
-			if (!(serverEventDto.getType().equals(ServerEventType.SERVER_CATEGORY.toString()) ||
-					serverEventDto.getType().equals(ServerEventType.SERVER_CHANNEL.toString()))) {
+		} else if (serverEventDto.getType().equals(ServerEventType.SERVER_CHANNEL.toString())) {
+			ServerChannelEventDto eventDto = (ServerChannelEventDto) serverEventDto;
+			handleServerChannelEvent(eventDto);
+		}
+		else {
+			if (!serverEventDto.getType().equals(ServerEventType.SERVER_CATEGORY.toString())) {
 				log.error("[State] ServerEventConsumerService: 서버 이벤트 타입이 잘못되었습니다. serverEventDto: {}", serverEventDto);
 			}
 		}
@@ -109,15 +114,40 @@ public class ServerEventConsumerService {
 		if (eventDto.getStatus().equals("CREATE")) {
 			stateService.makeServerMemberPresenceStatus(serverId);
 			stateService.makeServerMemberList(serverId);
+			stateService.makeServerChannelList(serverId);
 		} else if (eventDto.getStatus().equals("DELETE")) {
 			serverRedisRepositoryImpl.deleteServerMemberStatus(serverId);
 			serverRedisRepositoryImpl.deleteServerMemberList(serverId);
+			serverRedisRepositoryImpl.deleteServerChannelList(serverId);
 		} else {
 			if (!eventDto.getStatus().equals("UPDATE")) {
 				log.error("[State] ServerEventConsumerService: 서버 액션 이벤트 타입이 잘못되었습니다. eventDto: {}", eventDto);
 			}
 		}
 
+	}
+
+	private void handleServerChannelEvent(ServerChannelEventDto eventDto) {
+		Long serverId = eventDto.getServerId();
+
+		if (eventDto.getType().equals("CREATE")) {
+			if (!serverRedisRepositoryImpl.existsServerChannelList(serverId)) {
+				stateService.makeServerChannelList(serverId);
+			}
+			serverRedisRepositoryImpl.addServerChannelToSet(serverId, eventDto.getChannelId());
+		} else if (eventDto.getType().equals("DELETE")) {
+			// 서버에 참여중인 모든 유저에 대해 최근 채널 캐싱 정보를 삭제
+			serverRedisRepositoryImpl.getServerMemberList(serverId).forEach(memberId -> {
+				memberRedisRepositoryImpl.deleteMemberRecentServerChannel(memberId, eventDto.getChannelId());
+			});
+			// TODO : 멤버별 안읽은 메시지 카운트 캐싱에서 해당 채널을 지우는 로직 추가
+			serverRedisRepositoryImpl.removeServerChannelFromSet(serverId, eventDto.getChannelId());
+		} else {
+			if (!eventDto.getType().equals("UPDATE")) {
+				log.error("[State] ServerEventConsumerService: 서버 채널 이벤트 타입이 잘못되었습니다. eventDto: {}", eventDto);
+			}
+		}
+		serverRedisRepositoryImpl.saveServerChannelSet(serverId, eventDto.getChannelIdList());
 	}
 
 }

@@ -1,7 +1,5 @@
 package com.bbebig.commonmodule.redis.util;
 
-import lombok.Getter;
-
 public class RedisTTL {
 	// 개인 DM 멤버 리스트의 TTL
 	private static final int PRIVATE_DM_MEMBER_LIST_TTL_DATE = 1; // 1일

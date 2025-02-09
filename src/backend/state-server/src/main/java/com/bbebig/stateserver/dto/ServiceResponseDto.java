@@ -17,6 +17,13 @@ public class ServiceResponseDto {
 
 	@Data
 	@Builder
+	public static class ServerChannelListResponseDto {
+		private Long serverId;
+		private List<Long> channelIdList;
+	}
+
+	@Data
+	@Builder
 	public static class MemberServerListResponseDto {
 		private Long memberId;
 		private List<Long> serverIdList;
