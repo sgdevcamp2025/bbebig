@@ -47,9 +47,9 @@ const eurekaConfig = {
   },
 };
 
-// const eurekaClient = new EurekaClient(eurekaConfig);
+const eurekaClient = new EurekaClient(eurekaConfig);
 
-// eurekaClient.register();
+eurekaClient.register();
 
 const app = Fastify({
   logger: true,
@@ -80,7 +80,12 @@ app.register(fastifySwagger, {
         },
       },
     },
-    servers: [],
+    servers: [
+      {
+        url: 'http://localhost:9000',
+        description: 'Local',
+      },
+    ],
   },
   transform: jsonSchemaTransform,
   transformObject: createJsonSchemaTransformObject({

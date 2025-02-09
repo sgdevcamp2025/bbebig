@@ -73,6 +73,10 @@ const ERROR_MESSAGE = {
     code: `${AUTH_PREFIX}013`,
     message: 'Too Many Requests',
   },
+  authHeaderRequired: {
+    code: `${AUTH_PREFIX}014`,
+    message: 'Authorization header is required',
+  },
 } as const;
 
 const SUCCESS_MESSAGE = {

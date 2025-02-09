@@ -1,7 +1,5 @@
 import { z } from 'zod';
-import { commonHeaderSchema, commonResponseSchema } from './commonSchema';
-
-const headers = commonHeaderSchema;
+import { commonResponseSchema } from './commonSchema';
 
 const signInSchema = {
   tags: ['auth'],
@@ -78,6 +76,7 @@ const registerSchema = {
 const refreshTokenSchema = {
   tags: ['auth'],
   description: '리프레시 토큰을 발급 받습니다.',
+  security: [{ bearerAuth: [] }],
   response: {
     201: z.object({
       code: z.string().default('AUTH102'),
@@ -93,15 +92,20 @@ const refreshTokenSchema = {
 const logoutSchema = {
   tags: ['auth'],
   description: '로그아웃 합니다.',
-  headers,
+  security: [{ bearerAuth: [] }],
   response: {
     205: z.object({
       code: z.string().default('AUTH101'),
       message: z.string().default('Logout success!'),
     }),
     400: z.object({
-      code: z.enum(['AUTH001', 'AUTH004', 'AUTH012']),
-      message: z.enum(['Bad Request', 'Unauthorized', 'Server Error']),
+      code: z.enum(['AUTH001', 'AUTH004', 'AUTH012', 'AUTH014']),
+      message: z.enum([
+        'Bad Request',
+        'Unauthorized',
+        'Server Error',
+        'Authorization header is required',
+      ]),
     }),
   },
 };
@@ -109,15 +113,15 @@ const logoutSchema = {
 const verifyTokenSchema = {
   tags: ['auth'],
   description: '토큰을 검증 받습니다.',
-  headers,
+  security: [{ bearerAuth: [] }],
   response: {
     200: z.object({
       code: z.string().default('AUTH105'),
       message: z.string().default('token verify success!'),
     }),
     401: z.object({
-      code: z.enum(['AUTH004', 'AUTH011']),
-      message: z.enum(['Unauthorized', 'Verify Token Failed']),
+      code: z.enum(['AUTH004', 'AUTH011', 'AUTH014']),
+      message: z.enum(['Unauthorized', 'Verify Token Failed', 'Authorization header is required']),
     }),
   },
 };
@@ -125,6 +129,7 @@ const verifyTokenSchema = {
 const verifyEmailSchema = {
   tags: ['auth'],
   description: '이메일 검증 합니다.',
+  security: [{ bearerAuth: [] }],
   body: z.object({
     email: z.string().email(),
   }),
@@ -134,8 +139,13 @@ const verifyEmailSchema = {
       message: z.enum(['email verify success!']),
     }),
     400: z.object({
-      code: z.enum(['AUTH001', 'AUTH002', 'AUTH012']),
-      message: z.enum(['Bad Request', 'Duplicate Email', 'Server Error']),
+      code: z.enum(['AUTH001', 'AUTH002', 'AUTH012', 'AUTH014']),
+      message: z.enum([
+        'Bad Request',
+        'Duplicate Email',
+        'Server Error',
+        'Authorization header is required',
+      ]),
     }),
   },
 };
@@ -143,7 +153,7 @@ const verifyEmailSchema = {
 const tokenDecodeSchema = {
   tags: ['auth'],
   description: '토큰을 복호화 합니다.',
-  headers,
+  security: [{ bearerAuth: [] }],
   response: {
     200: z.object({
       code: z.string().default('AUTH107'),
@@ -154,8 +164,13 @@ const tokenDecodeSchema = {
       }),
     }),
     400: z.object({
-      code: z.enum(['AUTH001', 'AUTH004', 'AUTH012']),
-      message: z.enum(['Bad Request', 'Unauthorized', 'Server Error']),
+      code: z.enum(['AUTH001', 'AUTH004', 'AUTH012', 'AUTH014']),
+      message: z.enum([
+        'Bad Request',
+        'Unauthorized',
+        'Server Error',
+        'Authorization header is required',
+      ]),
       result: z.object({
         memberId: z.number().default(-1),
         valid: z.boolean().default(false),
