@@ -8,11 +8,15 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class SwaggerConfig {
+
+    @Value("${service.server.url}")
+    private String serviceServerUrl;
 
     @Bean
     public OpenAPI api() {
@@ -31,12 +35,12 @@ public class SwaggerConfig {
 
         // 배포 서버 URL
         Server productionServer = new Server()
-                .url("")
+                .url(serviceServerUrl)
                 .description("Production Server");
 
         // 로컬 서버 URL
         Server localServer = new Server()
-                .url("http://localhost:8080")
+                .url("http://localhost:9020")
                 .description("Local Development Server");
 
 

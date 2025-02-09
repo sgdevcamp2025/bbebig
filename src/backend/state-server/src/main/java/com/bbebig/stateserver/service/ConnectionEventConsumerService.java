@@ -33,6 +33,10 @@ public class ConnectionEventConsumerService {
 			log.error("[State] ConnectionEventConsumerService: 연결 이벤트 정보 없음");
 			return;
 		}
+
+		// 개발용 로그
+		log.info("[State] ConnectionEventConsumerService: 연결 이벤트 수신. memberId: {}, type: {}", connectionEventDto.getMemberId(), connectionEventDto.getType());
+
 		// 연결 이벤트인지, 연결 끊어짐 이벤트인지 확인
 		if (connectionEventDto.getType().equals("CONNECT")) {
 			MemberPresenceStatus memberPresenceStatus = handleConnectionEvent(connectionEventDto);
