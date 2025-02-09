@@ -23,19 +23,22 @@ function useMediaControl() {
 
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
-          deviceId: devices.video || undefined
+          deviceId: devices.video || undefined,
+          width: 1920,
+          height: 1080
         },
         audio: false
+      })
+
+      stream.getTracks().forEach((track) => {
+        track.enabled = true
       })
 
       if (videoRef.current) {
         videoRef.current.srcObject = stream
       }
-      streamRef.current = stream
 
-      stream.getVideoTracks().forEach((track) => {
-        track.enabled = !muted.video
-      })
+      streamRef.current = stream
     } catch (error) {
       console.error('비디오 스트림 시작 실패:', error)
       throw error
@@ -49,6 +52,7 @@ function useMediaControl() {
     }
     if (videoRef.current) {
       videoRef.current.srcObject = null
+      videoRef.current.pause()
     }
   }, [])
 
