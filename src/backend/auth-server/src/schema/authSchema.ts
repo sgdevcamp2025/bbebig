@@ -75,7 +75,6 @@ const registerSchema = {
 
 const refreshTokenSchema = {
   tags: ['auth'],
-  description: '리프레시 토큰을 발급 받습니다.',
   security: [{ bearerAuth: [] }],
   response: {
     201: z.object({
@@ -87,6 +86,12 @@ const refreshTokenSchema = {
     }),
     400: commonResponseSchema,
   },
+  description: `
+  리프레시 토큰은 쿠키('refresh_token')로 자동 처리됩니다.
+  Swagger UI에서 테스트하려면 브라우저 쿠키가 있어야 합니다.
+  1. 먼저 로그인하여 쿠키 설정
+  2. 이 엔드포인트 호출하여 새 액세스 토큰 발급
+`,
 };
 
 const logoutSchema = {
