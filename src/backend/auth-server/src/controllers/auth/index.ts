@@ -23,10 +23,18 @@ function authController() {
         return;
       }
 
+      // res.setCookie('refresh_token', values.refreshToken, {
+      //   sameSite: true,
+      //   httpOnly: true,
+      //   secure: true,
+      //   path: '/',
+      //   expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+      // });
+
       res.setCookie('refresh_token', values.refreshToken, {
-        sameSite: true,
+        sameSite: 'lax',
         httpOnly: true,
-        secure: true,
+        secure: false,
         path: '/',
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
       });
