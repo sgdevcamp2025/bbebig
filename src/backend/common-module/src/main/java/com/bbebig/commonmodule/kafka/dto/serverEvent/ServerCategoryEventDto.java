@@ -13,9 +13,7 @@ public class ServerCategoryEventDto extends ServerEventDto{
 
 	String categoryName;
 
-	String categoryType;
-
-	Long order; // Category 순서, DELETE 시에는 null
+	int order; // Category 순서, DELETE 시에는 null
 
 	String status; // CREATE, UPDATE, DELETE
 }

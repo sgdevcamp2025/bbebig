@@ -2,6 +2,7 @@ package com.bbebig.serviceserver.channel.service;
 
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
+import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerChannelEventDto;
 import com.bbebig.serviceserver.category.entity.Category;
 import com.bbebig.serviceserver.category.repository.CategoryRepository;
 import com.bbebig.serviceserver.channel.dto.request.ChannelCreateRequestDto;
@@ -14,10 +15,13 @@ import com.bbebig.serviceserver.channel.entity.Channel;
 import com.bbebig.serviceserver.channel.entity.ChannelMember;
 import com.bbebig.serviceserver.channel.repository.ChannelMemberRepository;
 import com.bbebig.serviceserver.channel.repository.ChannelRepository;
+import com.bbebig.serviceserver.global.kafka.KafkaProducerService;
 import com.bbebig.serviceserver.server.entity.Server;
 import com.bbebig.serviceserver.server.entity.ServerMember;
 import com.bbebig.serviceserver.server.repository.ServerMemberRepository;
+import com.bbebig.serviceserver.server.repository.ServerRedisRepositoryImpl;
 import com.bbebig.serviceserver.server.repository.ServerRepository;
+import com.bbebig.serviceserver.server.service.ServerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +38,10 @@ public class ChannelService {
     private final ServerRepository serverRepository;
     private final ServerMemberRepository serverMemberRepository;
     private final CategoryRepository categoryRepository;
+
+    private final ServerRedisRepositoryImpl serverRedisRepository;
+    private final ServerService serverService;
+    private final KafkaProducerService kafkaProducerService;
 
     /**
      * 채널 생성
@@ -74,6 +82,25 @@ public class ChannelService {
             addPublicChannelMembers(channel, server);
         }
 
+        // 채널 생성 시 Redis에 채널 정보 캐싱
+        if (serverRedisRepository.existsServerChannelList(server.getId())) {
+            serverService.makeServerChannelListCache(server.getId());
+        } else {
+            serverRedisRepository.addServerChannelToSet(server.getId(), channel.getId());
+        }
+
+        // Kafka로 데이터 발행
+        ServerChannelEventDto serverChannelEventDto = ServerChannelEventDto.builder()
+                .serverId(server.getId())
+                .categoryId(category != null ? category.getId() : null)
+                .channelId(channel.getId())
+                .channelName(channel.getName())
+                .channelType(channel.getChannelType().toString())
+                .order(channel.getPosition())
+                .status("CREATE")
+                .build();
+        kafkaProducerService.sendServerEvent(serverChannelEventDto);
+
         return ChannelCreateResponseDto.convertToChannelCreateResponseDto(channel);
     }
 
@@ -97,6 +124,20 @@ public class ChannelService {
             addPublicChannelMembers(channel, channel.getServer());
         }
 
+        // TODO: 채널 업데이트가 다 안끝난 것으로 보이니, 추후 로직 수정 필요
+        // Kafka로 데이터 발행
+        Server server = channel.getServer();
+        ServerChannelEventDto serverChannelEventDto = ServerChannelEventDto.builder()
+                .serverId(server.getId())
+                .categoryId(channel.getCategory() != null ? channel.getCategory().getId() : null)
+                .channelId(channel.getId())
+                .channelName(channel.getName())
+                .channelType(channel.getChannelType().toString())
+                .order(channel.getPosition())
+                .status("UPDATE")
+                .build();
+        kafkaProducerService.sendServerEvent(serverChannelEventDto);
+
         return ChannelUpdateResponseDto.convertToChannelUpdateResponseDto(channel);
     }
 
@@ -112,6 +153,20 @@ public class ChannelService {
 
         channelMemberRepository.deleteAllByChannel(channel);
         channelRepository.delete(channel);
+
+        // 채널 삭제 시 Redis에서 채널 정보 삭제
+        serverRedisRepository.removeServerChannelFromSet(channel.getServer().getId(), channel.getId());
+
+        // Kafka로 데이터 발행
+        Server server = channel.getServer();
+        ServerChannelEventDto serverChannelEventDto = ServerChannelEventDto.builder()
+                .serverId(server.getId())
+                .categoryId(channel.getCategory() != null ? channel.getCategory().getId() : null)
+                .channelId(channel.getId())
+                .channelType(channel.getChannelType().toString())
+                .status("DELETE")
+                .build();
+        kafkaProducerService.sendServerEvent(serverChannelEventDto);
 
         return ChannelDeleteResponseDto.convertToChannelDeleteResponseDto(channel);
     }

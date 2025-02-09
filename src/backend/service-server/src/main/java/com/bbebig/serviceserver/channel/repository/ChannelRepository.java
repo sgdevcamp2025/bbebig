@@ -20,4 +20,6 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
     Optional<Integer> findMaxPositionByServerAndCategoryIsNull(@Param("server") Server server);
 
     List<Channel> findAllByCategory(Category category);
+
+    List<Channel> findAllByServerId(Long serverId);
 }

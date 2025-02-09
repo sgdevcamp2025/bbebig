@@ -1,5 +1,6 @@
 package com.bbebig.serviceserver.server.controller;
 
+import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto;
 import com.bbebig.commonmodule.global.response.code.CommonResponse;
 import com.bbebig.commonmodule.passport.annotation.PassportUser;
 import com.bbebig.commonmodule.proto.PassportProto.Passport;
@@ -106,5 +107,31 @@ public class ServerController {
     ) {
         log.info("[Service] 서버 삭제 요청: memberId = {}, serverId = {}", passport.getMemberId(), serverId);
         return CommonResponse.onSuccess(serverService.deleteServer(passport.getMemberId(), serverId));
+    }
+
+    @Operation(summary = "서버에 속해있는 채널 목록 조회", description = "서버에 속해있는 채널 목록을 조회합니다. (For FeignClient)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "서버에 속해있는 채널 목록 조회 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "", content = @Content)
+    })
+    @GetMapping("/{serverId}/list/channel")
+    public CommonResponse<CommonServiceServerClientResponseDto.ServerChannelListResponseDto> getServerChannelList(
+            @PathVariable Long serverId
+    ) {
+        log.info("[Service] 서버에 속해있는 채널 목록 조회 요청: serverId = {}", serverId);
+        return CommonResponse.onSuccess(serverService.getServerChannelList(serverId));
+    }
+
+    @Operation(summary = "서버에 속해있는 멤버 목록 조회", description = "서버에 속해있는 멤버 목록을 조회합니다. (For FeignClient)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "서버에 속해있는 멤버 목록 조회 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "", content = @Content)
+    })
+    @GetMapping("/{serverId}/list/member")
+    public CommonResponse<CommonServiceServerClientResponseDto.ServerMemberListResponseDto> getServerMemberList(
+            @PathVariable Long serverId
+    ) {
+        log.info("[Service] 서버에 속해있는 멤버 목록 조회 요청: serverId = {}", serverId);
+        return CommonResponse.onSuccess(serverService.getServerMemberList(serverId));
     }
 }

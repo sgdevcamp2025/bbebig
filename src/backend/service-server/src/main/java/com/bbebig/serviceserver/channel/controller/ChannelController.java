@@ -29,7 +29,7 @@ public class ChannelController {
 
     private final ChannelService channelService;
 
-    @Operation(summary = "채널 생성 (서버장만 가능)", description = "채널를 생성합니다.")
+    @Operation(summary = "채널 생성 (서버장만 가능)", description = "채널을 생성합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "채널 생성 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "", content = @Content)

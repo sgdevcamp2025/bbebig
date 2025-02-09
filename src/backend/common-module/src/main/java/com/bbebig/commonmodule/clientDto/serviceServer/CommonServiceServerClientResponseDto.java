@@ -1,16 +1,16 @@
-package com.bbebig.stateserver.dto;
+package com.bbebig.commonmodule.clientDto.serviceServer;
 
 import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 
-public class ServiceResponseDto {
+public class CommonServiceServerClientResponseDto {
 
 	@Data
 	@Builder
 	public static class ServerMemberListResponseDto {
-		private Long memberId;
+		private Long serverId;
 		private Long ownerId;
 		private List<Long> memberIdList;
 	}

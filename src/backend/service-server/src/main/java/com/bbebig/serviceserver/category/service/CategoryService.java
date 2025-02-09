@@ -2,6 +2,8 @@ package com.bbebig.serviceserver.category.service;
 
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
+import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerCategoryEventDto;
+import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerEventType;
 import com.bbebig.serviceserver.category.dto.request.CategoryCreateRequestDto;
 import com.bbebig.serviceserver.category.dto.request.CategoryUpdateRequestDto;
 import com.bbebig.serviceserver.category.dto.response.CategoryCreateResponseDto;
@@ -12,6 +14,7 @@ import com.bbebig.serviceserver.category.entity.Category;
 import com.bbebig.serviceserver.category.repository.CategoryRepository;
 import com.bbebig.serviceserver.channel.entity.Channel;
 import com.bbebig.serviceserver.channel.repository.ChannelRepository;
+import com.bbebig.serviceserver.global.kafka.KafkaProducerService;
 import com.bbebig.serviceserver.server.entity.Server;
 import com.bbebig.serviceserver.server.repository.ServerRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +29,8 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final ServerRepository serverRepository;
     private final ChannelRepository channelRepository;
+
+    private final KafkaProducerService kafkaProducerService;
 
     /**
      * 카테고리 생성
@@ -50,6 +55,18 @@ public class CategoryService {
 
         categoryRepository.save(category);
 
+        // 카테고리 생성 이벤트 발행
+        ServerCategoryEventDto serverCategoryEventDto = ServerCategoryEventDto.builder()
+                .serverId(server.getId())
+                .type(ServerEventType.SERVER_CATEGORY)
+                .categoryId(category.getId())
+                .categoryName(category.getName())
+                .order(category.getPosition())
+                .status("CREATE")
+                .build();
+
+        kafkaProducerService.sendServerEvent(serverCategoryEventDto);
+
         return CategoryCreateResponseDto.convertToCategoryCreateResponseDto(category);
     }
 
@@ -64,6 +81,18 @@ public class CategoryService {
         checkServerOwner(memberId, category.getServer());
 
         category.update(categoryUpdateRequestDto);
+
+        // Kafka 이벤트 발행
+        Server server = category.getServer();
+        ServerCategoryEventDto serverCategoryEventDto = ServerCategoryEventDto.builder()
+                .serverId(server.getId())
+                .type(ServerEventType.SERVER_CATEGORY)
+                .categoryId(category.getId())
+                .categoryName(category.getName())
+                .order(category.getPosition())
+                .status("UPDATE")
+                .build();
+        kafkaProducerService.sendServerEvent(serverCategoryEventDto);
 
         return CategoryUpdateResponseDto.convertToCategoryUpdateResponseDto(category);
     }
@@ -86,6 +115,16 @@ public class CategoryService {
         });
 
         categoryRepository.delete(category);
+
+        // Kafka 이벤트 발행
+        Server server = category.getServer();
+        ServerCategoryEventDto serverCategoryEventDto = ServerCategoryEventDto.builder()
+                .serverId(server.getId())
+                .type(ServerEventType.SERVER_CATEGORY)
+                .categoryId(category.getId())
+                .status("DELETE")
+                .build();
+        kafkaProducerService.sendServerEvent(serverCategoryEventDto);
 
         return CategoryDeleteResponseDto.convertToCategoryDeleteResponseDto(category);
     }

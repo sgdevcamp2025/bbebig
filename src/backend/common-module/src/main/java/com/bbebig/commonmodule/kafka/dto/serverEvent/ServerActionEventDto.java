@@ -17,5 +17,4 @@ public class ServerActionEventDto extends ServerEventDto {
 
 	String status; // CREATE, UPDATE, DELETE
 
-//	private List<Long> channelIdList; // status가 CREATE일 경우에만 필요
 }

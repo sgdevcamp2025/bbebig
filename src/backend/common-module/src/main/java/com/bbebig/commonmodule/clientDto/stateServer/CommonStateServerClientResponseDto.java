@@ -1,11 +1,11 @@
-package com.bbebig.commonmodule.clientDto.state;
+package com.bbebig.commonmodule.clientDto.stateServer;
 
 import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 
-public class CommonStateClientResponseDto {
+public class CommonStateServerClientResponseDto {
 
 	@Data
 	@Builder

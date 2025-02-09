@@ -1,6 +1,7 @@
 package com.bbebig.stateserver.controller;
 
 import com.bbebig.commonmodule.clientDto.state.CommonStateClientResponseDto;
+import com.bbebig.commonmodule.clientDto.stateServer.CommonStateServerClientResponseDto;
 import com.bbebig.commonmodule.global.response.code.CommonResponse;
 import com.bbebig.stateserver.dto.StateResponseDto.*;
 import com.bbebig.stateserver.service.StateService;
@@ -47,30 +48,6 @@ public class StateController {
 		log.info("[State] Check server members state: {}", serverId);
 		return CommonResponse.onSuccess(stateService.checkServerMembersState(serverId));
 	}
-
-	@Operation(summary = "사용자가 참여중인 서버 목록 캐시 요청", description = "사용자가 참여중인 서버 목록을 캐싱해준다.")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "캐싱 성공", useReturnTypeSchema = true),
-			@ApiResponse(responseCode = "400", description = "", content = @Content)
-	})
-	@PostMapping("/cache/member/{memberId}/server")
-	public CommonResponse<CommonStateClientResponseDto.MemberServerListCacheResponseDto> cacheMemberServerList(@PathVariable @Parameter(description = "사용자 ID") Long memberId) {
-		log.info("[State] Cache member server list: {}", memberId);
-		return CommonResponse.onSuccess(stateService.makeMemberServerList(memberId));
-	}
-
-
-	// TODO: 추후 사용자 DM 에 대한 설계가 끝나면 구현
-//	@Operation(summary = "사용자가 참여중인 DM 목록 캐시 요청", description = "사용자가 참여중인 DM 목록을 캐싱해준다.")
-//	@ApiResponses(value = {
-//			@ApiResponse(responseCode = "200", description = "캐싱 성공", useReturnTypeSchema = true),
-//			@ApiResponse(responseCode = "400", description = "", content = @Content)
-//	})
-//	@GetMapping("/cache/member/{memberId}/dm")
-//	public CommonResponse<MemberDmListCacheResponseDto> cacheMemberDmList(@PathVariable @Parameter(description = "사용자 ID") Long memberId) {
-//		log.info("[State] Cache member dm list: {}", memberId);
-//		return CommonResponse.onSuccess(stateService.makeMemberDmList(memberId));
-//	}
 
 
 }

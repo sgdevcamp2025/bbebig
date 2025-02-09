@@ -40,6 +40,10 @@ public enum ErrorStatus implements BaseErrorCode {
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "SERVICE404", "카테고리를 찾을 수 없습니다."),
     CHANNEL_NOT_FOUND(HttpStatus.NOT_FOUND, "SERVICE405", "채널을 찾을 수 없습니다."),
     CHANNEL_MEMBER_FORBIDDEN(HttpStatus.FORBIDDEN, "SERVICE406", "채널에 속한 멤버가 아닙니다."),
+    SERVER_MEMBERS_NOT_FOUND(HttpStatus.NOT_FOUND, "SERVICE407", "서버에 속한 멤버를 찾을 수 없습니다."),
+    SERVER_CHANNELS_NOT_FOUND(HttpStatus.NOT_FOUND, "SERVICE408", "서버에 속한 채널을 찾을 수 없습니다."),
+    MEMBER_PARTICIPATE_SERVER_NOT_FOUND(HttpStatus.NOT_FOUND, "SERVICE409", "멤버가 참여중인 서버를 찾을 수 없습니다."),
+    MEMBER_PARTICIPATED_CHANNEL_NOT_FOUND(HttpStatus.NOT_FOUND, "SERVICE410", "멤버가 참여중인 채널을 찾을 수 없습니다."),
 
     //STATE
     MEMBER_SERVER_LIST_CACHE_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "STATE01", "멤버가 참여중인 서버 목록 캐시에 실패했습니다."),

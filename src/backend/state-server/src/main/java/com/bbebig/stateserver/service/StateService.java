@@ -1,12 +1,9 @@
 package com.bbebig.stateserver.service;
 
-import com.bbebig.commonmodule.clientDto.state.CommonStateClientResponseDto;
-import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
-import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
+import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto;
 import com.bbebig.commonmodule.redis.domain.MemberPresenceStatus;
 import com.bbebig.commonmodule.redis.domain.ServerMemberStatus;
 import com.bbebig.stateserver.client.ServiceClient;
-import com.bbebig.stateserver.dto.ServiceResponseDto.*;
 import com.bbebig.stateserver.dto.StateResponseDto.*;
 import com.bbebig.stateserver.repository.DmRedisRepositoryImpl;
 import com.bbebig.stateserver.repository.MemberRedisRepositoryImpl;
@@ -70,16 +67,14 @@ public class StateService {
 
 	// 서버 멤버 상태 정보를 조회하여 캐싱
 	public void makeServerMemberPresenceStatus(Long serverId) {
-
-		// 캐싱된 서버에 참여한 멤버 목록이 없으면 서버에 참여한 멤버 목록을 조회하여 저장
-		if (!serverRedisRepositoryImpl.existsServerMemberList(serverId)) {
-			makeServerMemberList(serverId);
-		}
-
 		Set<Long> serverMemberList = serverRedisRepositoryImpl.getServerMemberList(serverId);
-		if (serverMemberList == null || serverMemberList.isEmpty()) {
-			log.error("[State] ServerEventConsumerService: 서버 멤버 정보 생성 실패. serverId: {}", serverId);
-			return;
+		if (serverMemberList.isEmpty()) {
+			CommonServiceServerClientResponseDto.ServerMemberListResponseDto responseDto = serviceClient.getServerMemberList(serverId);
+			if (responseDto.getMemberIdList().isEmpty()) {
+				log.error("[State] StateService: 서버 멤버 정보 없음. serverId: {}", serverId);
+				return;
+			}
+			serverMemberList.addAll(responseDto.getMemberIdList());
 		}
 
 		for (Long memberId : serverMemberList) {
@@ -92,49 +87,4 @@ public class StateService {
 			serverRedisRepositoryImpl.saveServerMemberPresenceStatus(serverId, memberId, status);
 		}
 	}
-
-	// 서버에 참여한 멤버 목록을 조회하여 캐싱
-	public void makeServerMemberList(Long serverId) {
-		ServerMemberListResponseDto responseDto = serviceClient.getServerMemberList(serverId);
-		if (responseDto == null) {
-			log.error("[State] ServerEventConsumerService: 서버 멤버 정보 불러오기 실패. serverId: {}", serverId);
-			return;
-		}
-		serverRedisRepositoryImpl.saveServerMemberSet(serverId, responseDto.getMemberIdList());
-	}
-
-	// 서버에 속해있는 채널 목록을 조회하여 캐싱
-	public void makeServerChannelList(Long serverId) {
-		ServerChannelListResponseDto serverChannelList = serviceClient.getServerChannelList(serverId);
-		if (serverChannelList == null) {
-			log.error("[State] ServerEventConsumerService: 서버 채널 정보 불러오기 실패. serverId: {}", serverId);
-			return;
-		}
-		serverRedisRepositoryImpl.saveServerChannelSet(serverId, serverChannelList.getChannelIdList());
-	}
-
-	// 멤버별로 참여한 서버 목록을 조회하여 캐싱
-	public CommonStateClientResponseDto.MemberServerListCacheResponseDto makeMemberServerList(Long memberId) {
-		MemberServerListResponseDto memberServerList = serviceClient.getMemberServerList(memberId);
-		if (memberServerList == null) {
-			log.error("[State] ServerEventConsumerService: 서버 멤버 정보 불러오기 실패. memberId: {}", memberId);
-			throw new ErrorHandler(ErrorStatus.MEMBER_SERVER_LIST_CACHE_FAILURE);
-		}
-		memberRedisRepositoryImpl.saveMemberServerSet(memberId, memberServerList.getServerIdList());
-		return CommonStateClientResponseDto.MemberServerListCacheResponseDto.builder()
-				.memberId(memberId)
-				.serverIdList(memberServerList.getServerIdList())
-				.build();
-	}
-
-	// 디엠 채널별로 참여한 유저 조회 후 캐싱
-	public void makeDmMemberList(Long channelId) {
-		DmMemberListResponseDto dmMemberList = serviceClient.getDmMemberList(channelId);
-		if (dmMemberList == null) {
-			log.error("[State] ServerEventConsumerService: 디엠 멤버 정보 불러오기 실패. channelId: {}", channelId);
-			return;
-		}
-		dmRedisRepositoryImpl.saveDmMemberSet(channelId, dmMemberList.getDmMemberIdList());
-	}
-
 }

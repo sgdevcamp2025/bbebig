@@ -17,7 +17,7 @@ public class ServerChannelEventDto extends ServerEventDto {
 
 	String channelType; // CHAT, VOICE
 
-	Long order; // Channel 순서, DELETE 시에는 null
+	int order; // Channel 순서, DELETE 시에는 null
 
 	String status; // CREATE, UPDATE, DELETE
 
