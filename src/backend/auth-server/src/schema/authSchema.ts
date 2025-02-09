@@ -48,7 +48,7 @@ const registerSchema = {
       .string()
       .min(2, '닉네임은 2자 이상이어야 합니다.')
       .max(20, '닉네임은 20자 이하여야 합니다.'),
-    birthDate: z
+    birthdate: z
       .string()
       .regex(/^\d{4}-\d{2}-\d{2}$/, '생년월일은 YYYY-MM-DD 형식이어야 합니다.')
       .transform((str) => new Date(str))

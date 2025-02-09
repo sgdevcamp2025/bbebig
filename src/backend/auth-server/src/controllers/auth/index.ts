@@ -67,19 +67,18 @@ function authController() {
     }
   };
 
-  const register = async (req: FastifyRequest, res: FastifyReply) => {
-    const { email, password, name, nickname, birthDate } = req.body as {
-      email: string;
-      password: string;
-      name: string;
-      nickname: string;
-      birthDate: string;
-    };
+  const register = async (
+    req: FastifyRequest<{
+      Body: { email: string; password: string; name: string; nickname: string; birthdate: string };
+    }>,
+    res: FastifyReply,
+  ) => {
+    const { email, password, name, nickname, birthdate } = req.body;
 
     try {
       const hashedPassword = generateHash(password);
 
-      await authService.register(email, hashedPassword, name, nickname, new Date(birthDate));
+      await authService.register(email, hashedPassword, name, nickname, new Date(birthdate));
 
       handleSuccess(res, SUCCESS_MESSAGE.registerOk, 201);
     } catch (error) {

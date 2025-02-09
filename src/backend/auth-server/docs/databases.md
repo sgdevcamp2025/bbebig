@@ -9,11 +9,11 @@
 3. 스키마가 연결되면 데이터베이스에 접속하고 정보를 불러올 수 있습니다.
 
 ```bash
-npx prisma db pull
+yarn db:pull
 ```
 
 4. 스키마를 기반으로 Prisma Client를 생성합니다.
 
 ```bash
-npx prisma generate
+yarn db:generate
 ```
