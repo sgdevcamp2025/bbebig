@@ -147,7 +147,6 @@ public class ServerEventConsumerService {
 				log.error("[State] ServerEventConsumerService: 서버 채널 이벤트 타입이 잘못되었습니다. eventDto: {}", eventDto);
 			}
 		}
-		serverRedisRepositoryImpl.saveServerChannelSet(serverId, eventDto.getChannelIdList());
 	}
 
 }
