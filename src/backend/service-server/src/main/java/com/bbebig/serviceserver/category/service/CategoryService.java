@@ -3,6 +3,7 @@ package com.bbebig.serviceserver.category.service;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerCategoryEventDto;
+import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerChannelEventDto;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerEventType;
 import com.bbebig.serviceserver.category.dto.request.CategoryCreateRequestDto;
 import com.bbebig.serviceserver.category.dto.request.CategoryUpdateRequestDto;
@@ -125,6 +126,18 @@ public class CategoryService {
                 .status("DELETE")
                 .build();
         kafkaProducerService.sendServerEvent(serverCategoryEventDto);
+
+        for (Channel channel : channels) {
+            ServerChannelEventDto serverChannelEventDto = ServerChannelEventDto.builder()
+                    .serverId(server.getId())
+                    .type(ServerEventType.SERVER_CHANNEL)
+                    .categoryId(null)
+                    .channelId(channel.getId())
+                    .channelName(channel.getName())
+                    .channelType(channel.getChannelType().toString())
+                    .status("UPDATE")
+                    .build();
+        }
 
         return CategoryDeleteResponseDto.convertToCategoryDeleteResponseDto(category);
     }
