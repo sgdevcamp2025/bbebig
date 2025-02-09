@@ -51,11 +51,10 @@ const registerSchema = {
     birthdate: z
       .string()
       .regex(/^\d{4}-\d{2}-\d{2}$/, '생년월일은 YYYY-MM-DD 형식이어야 합니다.')
-      .transform((str) => new Date(str))
-      .refine((date) => date <= new Date(), {
+      .refine((date) => new Date(date) <= new Date(), {
         message: '생년월일은 현재 날짜 이전이어야 합니다.',
       })
-      .refine((date) => date.getFullYear() >= 1900, {
+      .refine((date) => new Date(date).getFullYear() >= 1900, {
         message: '생년월일은 1900년 이후여야 합니다.',
       }),
   }),
