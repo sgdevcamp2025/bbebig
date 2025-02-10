@@ -1,6 +1,6 @@
 package com.bbebig.chatserver.domain.chat.controller;
 
-import com.bbebig.chatserver.domain.chat.service.MessageProducerService;
+import com.bbebig.chatserver.domain.chat.service.KafkaProducerService;
 import com.bbebig.chatserver.global.util.SnowflakeGenerator;
 import com.bbebig.commonmodule.kafka.dto.ChatMessageDto;
 import jakarta.validation.Valid;
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class DmChatController {
 
-	private final MessageProducerService messageProducerService;
+	private final KafkaProducerService kafkaProducerService;
 
 	private final SnowflakeGenerator snowflakeGenerator;
 
@@ -32,7 +32,7 @@ public class DmChatController {
 		validateTimestamps(messageDto);
 		
 		log.info("[Chat] DmChatController: DM 채팅 메시지 전송. id = {}, senderId = {}, type = {}, messageType = {}", messageDto.getId(), messageDto.getSendMemberId(), messageDto.getType(), messageDto.getMessageType());
-		messageProducerService.sendMessageForDmChat(messageDto);
+		kafkaProducerService.sendMessageForDmChat(messageDto);
 	}
 
 	private void validateTimestamps(ChatMessageDto messageDto) {

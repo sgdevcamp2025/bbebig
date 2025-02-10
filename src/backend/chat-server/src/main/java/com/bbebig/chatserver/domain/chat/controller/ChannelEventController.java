@@ -1,6 +1,6 @@
 package com.bbebig.chatserver.domain.chat.controller;
 
-import com.bbebig.chatserver.domain.chat.service.MessageProducerService;
+import com.bbebig.chatserver.domain.chat.service.KafkaProducerService;
 import com.bbebig.commonmodule.kafka.dto.ChannelEventDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,20 +16,20 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class ChannelEventController {
 
-	private final MessageProducerService messageProducerService;
+	private final KafkaProducerService kafkaProducerService;
 
 	// 현재 보고있는 채널 변경 이벤트 처리
 	@MessageMapping("/channel/enter")
 	public void enterChannel(@Valid @Payload ChannelEventDto channelEventDto) {
 		validateTimestamps(channelEventDto);
-		messageProducerService.sendMessageForChannel(channelEventDto);
+		kafkaProducerService.sendMessageForChannel(channelEventDto);
 	}
 
 	// 현재 보고있는 채널 떠남 이벤트 처리
 	@MessageMapping("/channel/leave")
 	public void leaveChannel(@Valid @Payload ChannelEventDto channelEventDto) {
 		validateTimestamps(channelEventDto);
-		messageProducerService.sendMessageForChannel(channelEventDto);
+		kafkaProducerService.sendMessageForChannel(channelEventDto);
 	}
 
 	public void validateTimestamps(ChannelEventDto channelEventDto) {

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class MessageProducerService {
+public class KafkaProducerService {
 
 	@Value("${spring.kafka.topic.channel-chat-event}")
 	private String channelChatTopic;
@@ -24,32 +24,30 @@ public class MessageProducerService {
 	@Value("${spring.kafka.topic.channel-event}")
 	private String channelEventTopic;
 
-	private final KafkaTemplate<String, ChatMessageDto> kafkaTemplateForChannelChat;
+	private final KafkaTemplate<String, ChatMessageDto> kafkaTemplateForChannelMessageEvent;
 
-	private final KafkaTemplate<String, ChatMessageDto> kafkaTemplateForDmChat;
+	private final KafkaTemplate<String, ConnectionEventDto> kafkaTemplateForConnectionEvent;
 
-	private final KafkaTemplate<String, ConnectionEventDto> kafkaTemplateForConnection;
-
-	private final KafkaTemplate<String, ChannelEventDto> kafkaTemplateForChannel;
+	private final KafkaTemplate<String, ChannelEventDto> kafkaTemplateForChannelEvent;
 
 	// 채널 채팅 메시지 전송
 	public void sendMessageForChannelChat(ChatMessageDto messageDto) {
-		kafkaTemplateForChannelChat.send(channelChatTopic, messageDto);
+		kafkaTemplateForChannelMessageEvent.send(channelChatTopic, messageDto);
 	}
 
 	// DM 채팅 메시지 전송
 	public void sendMessageForDmChat(ChatMessageDto messageDto) {
-		kafkaTemplateForDmChat.send(dmChatTopic, messageDto);
+		kafkaTemplateForChannelMessageEvent.send(dmChatTopic, messageDto);
 	}
 
 	// 연결 이벤트 메시지 전송
 	public void sendMessageForSession(ConnectionEventDto sessionDto) {
-		kafkaTemplateForConnection.send(sessionEventTopic, sessionDto);
+		kafkaTemplateForConnectionEvent.send(sessionEventTopic, sessionDto);
 	}
 
 	// 채널 이벤트 메시지 전송
 	public void sendMessageForChannel(ChannelEventDto channelEventDto) {
-		kafkaTemplateForChannel.send(channelEventTopic, channelEventDto);
+		kafkaTemplateForChannelEvent.send(channelEventTopic, channelEventDto);
 	}
 
 }

@@ -11,6 +11,10 @@ spring:
       password: ${MONGODB_PASSWORD:root}
       database: ${MONGODB_DATABASE:bbebigdb}
 
+    redis:
+      port: 6379
+      host: redis
+
   kafka:
     bootstrap-servers: kafka:9092
 
