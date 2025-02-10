@@ -319,6 +319,10 @@ public class ServerService {
                 .toList();
         channelMemberRepository.saveAll(channelMembers);
 
+        // Redis 캐싱
+        memberRedisRepository.addMemberServerToSet(memberId, serverId);
+        serverRedisRepository.addServerMemberToSet(serverId, memberId);
+
         // 카프카 이벤트 발행
         ServerMemberActionEventDto serverMemberActionEventDto = ServerMemberActionEventDto.builder()
                 .memberId(memberId)
@@ -345,6 +349,10 @@ public class ServerService {
         // 서버 관련 삭제
         channelMemberRepository.deleteAllByServerMember(serverMember);
         serverMemberRepository.delete(serverMember);
+
+        // Redis 캐싱
+        memberRedisRepository.removeMemberServerFromSet(memberId, serverId);
+        serverRedisRepository.removeServerMemberFromSet(serverId, memberId);
 
         // 카프카 이벤트 발행
         ServerMemberActionEventDto serverMemberActionEventDto = ServerMemberActionEventDto.builder()
