@@ -50,8 +50,8 @@ function Header({ onTabChange, currentTab }: HeaderProps) {
             onClick={() => onTabChange(item.component)}
             className={cn(
               'px-2 py-1 rounded-md text-base font-medium cursor-pointer',
-              'hover:bg-discord-gray-600 hover:text-discord-font-color-normal text-discord-font-color-muted',
-              currentTab === item.component && 'bg-discord-gray-600 text-discord-font-color-normal'
+              'hover:bg-discord-gray-500 hover:text-discord-font-color-normal text-discord-font-color-muted',
+              currentTab === item.component && 'bg-discord-gray-500 text-discord-font-color-normal'
             )}>
             {item.name}
           </button>
