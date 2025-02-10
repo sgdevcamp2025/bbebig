@@ -36,7 +36,7 @@ const channelUsers: Record<number, User[]> = {
       id: '1',
       name: '김예지',
       avatarUrl: '/image/common/default-avatar.png',
-      bannerUrl: '/image/common/default-avatar.png',
+      bannerUrl: '/image/common/default-banner.png',
       customPresenceStatus: 'ONLINE',
       introduction: '안뇽',
       introductionEmoji: '👋',
@@ -46,7 +46,7 @@ const channelUsers: Record<number, User[]> = {
       id: '2',
       name: '이지형',
       avatarUrl: '/image/common/default-avatar.png',
-      bannerUrl: '/image/common/default-avatar.png',
+      bannerUrl: '/image/common/default-banner.png',
       customPresenceStatus: 'OFFLINE',
       introduction: '하이루',
       introductionEmoji: '👋',
@@ -58,7 +58,7 @@ const channelUsers: Record<number, User[]> = {
       id: '3',
       name: '이소은',
       avatarUrl: '/image/common/default-avatar.png',
-      bannerUrl: '/image/common/default-avatar.png',
+      bannerUrl: '/image/common/default-banner.png',
       customPresenceStatus: 'NOT_DISTURB',
       introduction: '뇽안',
       introductionEmoji: '👋',
@@ -68,13 +68,13 @@ const channelUsers: Record<number, User[]> = {
   3: [
     {
       id: '4',
-      name: '박지훈',
+      name: '비비빅',
       avatarUrl: '/image/common/default-avatar.png',
-      bannerUrl: '/image/common/default-avatar.png',
+      bannerUrl: '/image/common/default-banner.png',
       customPresenceStatus: 'ONLINE',
       introduction: '안녕하세요',
       introductionEmoji: '👋',
-      email: 'jihun@gmail.com'
+      email: 'bbebig@gmail.com'
     }
   ]
 }
@@ -91,7 +91,7 @@ function ServerLayout() {
   }
 
   return (
-    <div className='flex'>
+    <div className='flex h-screen w-full'>
       <ServerSidebar
         serverName={`서버 ${serverId}`}
         categories={categories}
@@ -99,7 +99,9 @@ function ServerLayout() {
         selectedChannelId={channelId}
       />
 
-      <Outlet />
+      <main className='flex-1 bg-discord-gray-600 overflow-hidden'>
+        <Outlet />
+      </main>
 
       {isStatusBarOpen && <StatusSideBar users={currentChannelUsers} />}
     </div>
