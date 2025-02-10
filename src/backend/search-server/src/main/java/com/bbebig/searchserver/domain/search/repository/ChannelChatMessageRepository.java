@@ -22,4 +22,6 @@ public interface ChannelChatMessageRepository extends MongoRepository<ChannelCha
 			Long messageId,
 			Pageable pageable
 	);
+
+	List<ChannelChatMessage> findByChannelId(Long channelId, Pageable pageable);
 }

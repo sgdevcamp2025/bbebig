@@ -71,28 +71,6 @@ public interface MemberRedisRepository {
 	 */
 	MemberPresenceStatus getMemberPresenceStatus(Long memberId);
 
-	/**
-	 * 개별 유저의 서버 채널별 마지막 접속 시간 및 읽음 정보를 저장
-	 * ex) member:{memberId}:recentServerChannels => Hash<ChannelId, RecentServerChannelInfo>
-	 */
-	void saveMemberRecentServerChannels(Long memberId, Long channelId, RecentServerChannelInfo recentServerChannelInfo);
-
-
-	/**
-	 * 개별 유저의 서버 채널별 마지막 접속 시간 및 읽음 정보 조회
-	 */
-	RecentServerChannelInfo getMemberRecentServerChannel(Long memberId, Long channelId);
-
-	/**
-	 * 개별 유저의 서버 채널별 마지막 접속 시간 및 읽음 정보 삭제
-	 */
-	void deleteMemberRecentServerChannel(Long memberId, Long channelId);
-
-	/**
-	 * 개별 유저의 서버 채널별 마지막 접속 시간 및 읽음 정보 전체 삭제
-	 */
-	void deleteMemberAllRecentServerChannels(Long memberId);
-
 
 	Long convertToLong(Object obj);
 }

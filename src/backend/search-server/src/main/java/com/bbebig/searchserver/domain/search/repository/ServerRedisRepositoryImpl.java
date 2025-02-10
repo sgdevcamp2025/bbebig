@@ -3,11 +3,13 @@ package com.bbebig.searchserver.domain.search.repository;
 import com.bbebig.commonmodule.redis.domain.ServerMemberStatus;
 import com.bbebig.commonmodule.redis.repository.ServerRedisRepository;
 import com.bbebig.commonmodule.redis.util.ServerRedisKeys;
+import com.bbebig.searchserver.domain.search.domain.ChannelChatMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -19,6 +21,8 @@ import java.util.stream.Collectors;
 public class ServerRedisRepositoryImpl implements ServerRedisRepository {
 
 	private final RedisTemplate<String, Object> redisTemplate;
+
+	private static final int MAX_CACHE_SIZE = 300;
 
 	// TODO : ConvertToLong 이 잘 작동하는지, 문제 생긴다면 이 부분일 가능성이 높으니 체크하기
 
@@ -172,6 +176,54 @@ public class ServerRedisRepositoryImpl implements ServerRedisRepository {
 	@Override
 	public void deleteServerChannelList(Long serverId) {
 		String key = ServerRedisKeys.getServerChannelListKey(serverId);
+		redisTemplate.delete(key);
+	}
+
+	/**
+	 * 채널 메시지를 List 구조로 저장 (최대 300)
+	 * ex) channelMessage:{channelId}:messageList => List<ChannelChatMessage>
+	 */
+	public void saveChannelMessage(Long serverId, ChannelChatMessage message) {
+		String key = ServerRedisKeys.getChannelMessageListKey(serverId);
+		redisTemplate.opsForList().leftPush(key, message);
+
+		Long size = redisTemplate.opsForList().size(key);
+		if (size != null && size > MAX_CACHE_SIZE) {
+			redisTemplate.opsForList().trim(key, 0, MAX_CACHE_SIZE - 1);
+		}
+	}
+
+	public void saveChannelMessages(Long channelId, List<ChannelChatMessage> messages) {
+		String key = ServerRedisKeys.getChannelMessageListKey(channelId);
+		redisTemplate.opsForList().leftPushAll(key, messages);
+	}
+
+	public List<ChannelChatMessage> getChannelMessages(Long channelId) {
+		String key = ServerRedisKeys.getChannelMessageListKey(channelId);
+		List<Object> objs = redisTemplate.opsForList().range(key, 0, -1);
+		if (objs == null || objs.isEmpty()) {
+			return new ArrayList<>();
+		}
+		return objs.stream()
+				.filter(Objects::nonNull)
+				.map(obj -> (ChannelChatMessage) obj)
+				.collect(Collectors.toList());
+	}
+
+	public boolean existsChannelMessageList(Long channelId) {
+		String key = ServerRedisKeys.getChannelMessageListKey(channelId);
+		return Boolean.TRUE.equals(redisTemplate.hasKey(key));
+	}
+
+	public long getUnreadCount(Long channelId, Long lastReadMessageId) {
+		List<ChannelChatMessage> cachedMessageList = getChannelMessages(channelId);
+		return cachedMessageList.stream()
+				.filter(msg -> msg.getId() != null && msg.getId() > lastReadMessageId)
+				.count();
+	}
+
+	public void deleteChannelMessageList(Long channelId) {
+		String key = ServerRedisKeys.getChannelMessageListKey(channelId);
 		redisTemplate.delete(key);
 	}
 
