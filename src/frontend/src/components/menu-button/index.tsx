@@ -1,4 +1,4 @@
-type Props = {
+interface Props {
   label: string
   isActive: boolean
   onClick: () => void

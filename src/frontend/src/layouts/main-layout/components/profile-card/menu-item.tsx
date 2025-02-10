@@ -1,6 +1,6 @@
 import { ChevronRightIcon } from 'lucide-react'
 
-type Props = {
+interface Props {
   onClick: () => void
   icon: React.ReactNode
   text: string

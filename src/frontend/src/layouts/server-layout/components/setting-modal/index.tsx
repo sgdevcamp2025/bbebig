@@ -1,9 +1,10 @@
+import { useState } from 'react'
+
 import CloseButton from '@/components/close-button'
 import Modal from '@/components/modal'
 import { cn } from '@/libs/cn'
-import { useState } from 'react'
 
-type Props = {
+interface Props {
   channelName: string
   isOpen: boolean
   onClose: () => void

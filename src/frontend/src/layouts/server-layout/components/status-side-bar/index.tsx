@@ -1,6 +1,8 @@
+import { useRef, useState } from 'react'
+
 import Avatar from '@/components/avatar'
 import { User } from '@/types/user'
-import { useRef, useState } from 'react'
+
 import UserProfileCard from '../user-profile-card'
 
 interface StatusSideBarProps {

@@ -1,6 +1,7 @@
-import { cn } from '@/libs/cn'
 import { X } from 'lucide-react'
 import { ComponentProps } from 'react'
+
+import { cn } from '@/libs/cn'
 
 type Props = ComponentProps<'button'> & {
   onClick?: () => void

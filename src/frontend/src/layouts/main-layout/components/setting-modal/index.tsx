@@ -1,13 +1,15 @@
+import { useEffect, useState } from 'react'
+
+import CloseButton from '@/components/close-button'
 import Modal from '@/components/modal'
 import { cn } from '@/libs/cn'
-import { useEffect, useState } from 'react'
-import MyProfile from './my-profile'
-import MyAccount from './my-account'
-import VoiceSetting from './voice-setting'
-import AlarmSetting from './alarm-setting'
-import CloseButton from '@/components/close-button'
 
-type Props = {
+import AlarmSetting from './alarm-setting'
+import MyAccount from './my-account'
+import MyProfile from './my-profile'
+import VoiceSetting from './voice-setting'
+
+interface Props {
   itemId: number
   isOpen: boolean
   onClose: () => void

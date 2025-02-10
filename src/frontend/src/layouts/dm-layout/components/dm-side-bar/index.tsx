@@ -1,5 +1,6 @@
-import MenuButton from '@/components/menu-button'
 import { useState } from 'react'
+
+import MenuButton from '@/components/menu-button'
 
 function DmSideBar() {
   const [selectedMenu, setSelectedMenu] = useState('친구')

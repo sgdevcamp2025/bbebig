@@ -1,5 +1,6 @@
-import { useWebSocketStore } from '@/stores/use-web-socket-store'
 import { useShallow } from 'zustand/shallow'
+
+import { useWebSocketStore } from '@/stores/use-web-socket-store'
 
 export const useWebSocket = () => {
   const { connect, disconnect, sendMessage, subscribe, isConnected } = useWebSocketStore(

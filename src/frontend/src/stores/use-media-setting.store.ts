@@ -1,6 +1,7 @@
+import { create } from 'zustand'
+
 import { LOCAL_STORAGE } from '@/constants/keys'
 import { VideoQuality } from '@/types/media'
-import { create } from 'zustand'
 
 interface MediaSettings {
   devices: {

@@ -1,11 +1,13 @@
 import { CSSProperties, useState } from 'react'
-import ChatArea from './chat-area'
-import { cn } from '@/libs/cn'
-import CustomButton from '@/components/custom-button'
+
 import AvatarCard from '@/components/avatar-card'
+import CustomButton from '@/components/custom-button'
+import { cn } from '@/libs/cn'
 import { User } from '@/types/user'
 
-type Props = {
+import ChatArea from './chat-area'
+
+interface Props {
   channelId: number
   channelName: string
 }
@@ -29,13 +31,11 @@ const userList = [
     micStatus: true,
     headphoneStatus: true
   }
-] as Array<
-  Pick<User, 'id' | 'name' | 'avatarUrl' | 'bannerUrl'> & {
-    micStatus: boolean
-    headphoneStatus: boolean
-    backgroundColor: CSSProperties['backgroundColor']
-  }
->
+] as (Pick<User, 'id' | 'name' | 'avatarUrl' | 'bannerUrl'> & {
+  micStatus: boolean
+  headphoneStatus: boolean
+  backgroundColor: CSSProperties['backgroundColor']
+})[]
 
 function VideoComponent({ channelId, channelName }: Props) {
   const [sideBar, setSideBar] = useState(true)

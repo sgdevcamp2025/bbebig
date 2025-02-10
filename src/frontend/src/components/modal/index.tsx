@@ -1,8 +1,10 @@
-import { useEffect, type PropsWithChildren, type CSSProperties } from 'react'
-import Portal from '../portal'
+import { type CSSProperties, type PropsWithChildren, useEffect } from 'react'
+
 import { cn } from '@/libs/cn'
 
-type Props = {
+import Portal from '../portal'
+
+interface Props {
   isOpen: boolean
   onClose?: () => void
   backgroundColor?: CSSProperties['backgroundColor']

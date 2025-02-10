@@ -1,15 +1,16 @@
-import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
-
-import ServerIcon from '@/components/server-icon'
-import { cn } from '@/libs/cn'
 import { useEffect, useState } from 'react'
-import Avatar from '@/components/avatar'
-import ProfileStatusButton from './components/profile-status-button'
-import { statusKo } from '@/constants/status'
-import ProfileCard from './components/profile-card'
-import SettingModal, { SettingModalTabsID } from './components/setting-modal'
+import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
 import { useShallow } from 'zustand/shallow'
+
+import Avatar from '@/components/avatar'
+import ServerIcon from '@/components/server-icon'
+import { statusKo } from '@/constants/status'
+import { cn } from '@/libs/cn'
 import useMediaSettingsStore from '@/stores/use-media-setting.store'
+
+import ProfileCard from './components/profile-card'
+import ProfileStatusButton from './components/profile-status-button'
+import SettingModal, { SettingModalTabsID } from './components/setting-modal'
 
 const myServerList = [
   {

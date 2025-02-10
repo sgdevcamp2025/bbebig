@@ -1,4 +1,5 @@
 import { CustomPresenceStatus } from '@/types/user'
+
 import Avatar from '../avatar'
 
 interface UserListItemProps {

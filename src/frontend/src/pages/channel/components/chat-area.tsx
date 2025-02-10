@@ -1,18 +1,19 @@
+import { X } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+
 import Avatar from '@/components/avatar'
 import { cn } from '@/libs/cn'
 import { Message } from '@/types/message'
 import timeHelper from '@/utils/format-time'
-import { X } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
 
-type Props = {
+interface Props {
   channelId: number
   onClose?: () => void
 }
 
 function ChatArea({ channelId, onClose }: Props) {
   const messagesRef = useRef<HTMLDivElement>(null)
-  const [messages, setMessages] = useState<{ [channelId: string]: Message[] }>({})
+  const [messages, setMessages] = useState<Record<string, Message[]>>({})
   const inputRef = useRef<HTMLInputElement>(null)
   const sendMessage = () => {
     if (!inputRef.current || !channelId) return

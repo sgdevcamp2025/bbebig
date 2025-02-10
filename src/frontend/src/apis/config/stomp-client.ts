@@ -1,7 +1,8 @@
 import { Client } from '@stomp/stompjs'
+
+import { SOCKET_URL } from '@/constants/env'
 import { COOKIE_KEYS } from '@/constants/keys'
 import cookie from '@/utils/cookie'
-import { SOCKET_URL } from '@/constants/env'
 
 export const createStompClient = () => {
   return new Client({

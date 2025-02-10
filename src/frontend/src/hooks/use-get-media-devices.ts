@@ -1,5 +1,6 @@
-import { AudioDevice } from '@/types/media'
 import { useEffect, useState } from 'react'
+
+import { AudioDevice } from '@/types/media'
 
 const DEFAULT_DEVICES: Record<MediaDeviceKind, AudioDevice> = {
   audioinput: {

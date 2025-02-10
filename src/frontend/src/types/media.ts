@@ -1,6 +1,6 @@
 export type VideoQuality = 'SD' | 'HD' | 'FHD'
 
-export type AudioDevice = {
+export interface AudioDevice {
   label: string
   value: string
 }

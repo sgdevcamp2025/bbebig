@@ -1,9 +1,11 @@
-import { ServerChannelList } from '@/types/channel'
 import { Outlet, useNavigate, useParams } from 'react-router'
-import ServerSidebar from './components/server-side-bar'
+
 import useStatusBarStore from '@/stores/use-status-bar-store'
-import StatusSideBar from './components/status-side-bar'
+import { ServerChannelList } from '@/types/channel'
 import { User } from '@/types/user'
+
+import ServerSidebar from './components/server-side-bar'
+import StatusSideBar from './components/status-side-bar'
 
 const myChannelList: ServerChannelList = {
   1: [
