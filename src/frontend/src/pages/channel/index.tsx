@@ -1,4 +1,5 @@
 import Avatar from '@/components/avatar'
+import useStatusBarStore from '@/stores/use-status-bar-store'
 import { Message } from '@/types/message'
 import timeHelper from '@/utils/format-time'
 import { useEffect, useRef, useState } from 'react'
@@ -9,7 +10,7 @@ function ChannelPage() {
   const messagesRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const [messages, setMessages] = useState<{ [channelId: string]: Message[] }>({})
-
+  const { isStatusBarOpen, toggleStatusBar } = useStatusBarStore()
   const sendMessage = () => {
     if (!inputRef.current || !channelId) return
     const text = inputRef.current.value.trim()
@@ -50,7 +51,7 @@ function ChannelPage() {
 
   return (
     <div className='flex-1 flex flex-col h-screen'>
-      <div className='h-12 border-b border-discord-gray-800 px-4 flex items-center'>
+      <div className='h-12 border-b border-discord-gray-800 px-4 flex items-center justify-between'>
         <span className='flex items-center gap-1.5 text-discord-font-color-normal font-medium'>
           <img
             className='w-[17px] h-[17px]'
@@ -58,6 +59,20 @@ function ChannelPage() {
           />
           채널 {channelId}
         </span>
+        <button
+          type='button'
+          className='group p-1 cursor-pointer hover:bg-discord-gray-800 rounded-xl'
+          onClick={toggleStatusBar}>
+          <img
+            className='w-[19px] h-[19px]'
+            src={
+              isStatusBarOpen
+                ? '/icon/channel/type-group-enable.svg'
+                : '/icon/channel/type-group.svg'
+            }
+            alt='유저 리스트'
+          />
+        </button>
       </div>
 
       {/* 메시지 영역 */}
