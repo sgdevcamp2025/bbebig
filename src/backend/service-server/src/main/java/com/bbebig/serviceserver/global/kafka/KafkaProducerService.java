@@ -1,6 +1,5 @@
 package com.bbebig.serviceserver.global.kafka;
 
-import com.bbebig.commonmodule.kafka.dto.PresenceEventDto;
 import com.bbebig.commonmodule.kafka.dto.notification.NotificationEventDto;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerEventDto;
 import lombok.RequiredArgsConstructor;

@@ -134,4 +134,33 @@ public class ServerController {
         log.info("[Service] 서버에 속해있는 멤버 목록 조회 요청: serverId = {}", serverId);
         return CommonResponse.onSuccess(serverService.getServerMemberList(serverId));
     }
+
+    @Operation(summary = "서버 참여", description = "서버를 참여합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "서버 참여 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "", content = @Content)
+    })
+    @PostMapping("/{serverId}/participate")
+    public CommonResponse<ServerParticipateResponseDto> participateServer(
+            @Parameter(hidden = true) @PassportUser Passport passport,
+            @PathVariable Long serverId,
+            @RequestBody ServerParticipateRequestDto serverParticipateRequestDto
+    ) {
+        log.info("[Service] 서버 참여 요청: serverId = {}, memberId = {}", serverId, passport.getMemberId());
+        return CommonResponse.onSuccess(serverService.participateServer(passport.getMemberId(), serverId, serverParticipateRequestDto));
+    }
+
+    @Operation(summary = "서버 탈퇴", description = "서버를 탈퇴합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "서버 탈퇴 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "", content = @Content)
+    })
+    @DeleteMapping("/{serverId}/withdraw")
+    public CommonResponse<ServerWithdrawResponseDto> withdrawServer(
+            @Parameter(hidden = true) @PassportUser Passport passport,
+            @PathVariable Long serverId
+    ) {
+        log.info("[Service] 서버 탈퇴 요청: serverId = {}, memberId = {}", serverId, passport.getMemberId());
+        return CommonResponse.onSuccess(serverService.withdrawServer(passport.getMemberId(), serverId));
+    }
 }

@@ -14,6 +14,7 @@ import com.bbebig.serviceserver.channel.repository.ChannelMemberRepository;
 import com.bbebig.serviceserver.channel.repository.ChannelRepository;
 import com.bbebig.serviceserver.global.kafka.KafkaProducerService;
 import com.bbebig.serviceserver.server.dto.request.ServerCreateRequestDto;
+import com.bbebig.serviceserver.server.dto.request.ServerParticipateRequestDto;
 import com.bbebig.serviceserver.server.dto.request.ServerUpdateRequestDto;
 import com.bbebig.serviceserver.server.dto.response.*;
 import com.bbebig.serviceserver.server.entity.RoleType;
@@ -27,8 +28,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -307,6 +308,50 @@ public class ServerService {
             memberRedisRepository.saveMemberServerSet(memberId, serverIdList);
         }
         return serverIdList;
+    }
+
+    /**
+     * 서버 참여하기
+     */
+    public ServerParticipateResponseDto participateServer(Long memberId, Long serverId, ServerParticipateRequestDto serverParticipateRequestDto) {
+        Server server = serverRepository.findById(serverId)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
+
+        // 이미 서버에 참여 중인 경우
+        if (serverMemberRepository.existsByServerIdAndMemberId(serverId, memberId)) {
+            throw new ErrorHandler(ErrorStatus.SERVER_MEMBER_ALREADY_EXIST);
+        }
+
+        ServerMember serverMember = ServerMember.builder()
+                .server(server)
+                .memberId(memberId)
+                .memberNickname(serverParticipateRequestDto.getMemberNickname())
+                .memberProfileImageUrl(serverParticipateRequestDto.getMemberProfileUrl())
+                .roleType(RoleType.MEMBER)
+                .build();
+
+        serverMemberRepository.save(serverMember);
+
+        return ServerParticipateResponseDto.convertToServerParticipateResponseDto(server);
+    }
+
+    /**
+     * 서버 탈퇴하기
+     */
+    public ServerWithdrawResponseDto withdrawServer(Long memberId, Long serverId) {
+        Server server = serverRepository.findById(serverId)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
+
+        Optional<ServerMember> serverMember = serverMemberRepository.findByMemberIdAndServer(memberId, server);
+
+        // 서버에 참여하고 있지 않은 경우
+        if (serverMember.isEmpty()) {
+            throw new ErrorHandler(ErrorStatus.SERVER_MEMBERS_NOT_FOUND);
+        }
+
+        serverMemberRepository.delete(serverMember.get());
+
+        return ServerWithdrawResponseDto.convertToServerWithdrawResponseDto(server);
     }
 
     // 서버 삭제 시 관련된 캐시 삭제
