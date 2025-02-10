@@ -1,6 +1,8 @@
 package com.bbebig.commonmodule.kafka.config;
 
 import com.bbebig.commonmodule.kafka.dto.*;
+import com.bbebig.commonmodule.kafka.dto.notification.NotificationEventDto;
+import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerEventDto;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,13 +37,13 @@ public class KafkaProducerConfig {
 
 	// 채팅 Producer 생성
 	@Bean
-	public ProducerFactory<String, ChatMessageDto> producerFactoryForChatEvent(){
+	public ProducerFactory<String, ChatMessageDto> producerFactoryForChatMessageEvent(){
 		return new DefaultKafkaProducerFactory<>(producerConfigurations());
 	}
 
 	@Bean
-	public KafkaTemplate<String, ChatMessageDto> kafkaTemplateForChat(){
-		return new KafkaTemplate<>(producerFactoryForChatEvent());
+	public KafkaTemplate<String, ChatMessageDto> kafkaTemplateForChatMessageEvent(){
+		return new KafkaTemplate<>(producerFactoryForChatMessageEvent());
 	}
 
 	// 세션 이벤트(웹소켓 연결) Producer
@@ -51,7 +53,7 @@ public class KafkaProducerConfig {
 	}
 
 	@Bean
-	public KafkaTemplate<String, ConnectionEventDto> kafkaTemplateForConnection(){
+	public KafkaTemplate<String, ConnectionEventDto> kafkaTemplateForConnectionEvent(){
 		return new KafkaTemplate<>(producerFactoryForConnectionEvent());
 	}
 
@@ -84,5 +86,25 @@ public class KafkaProducerConfig {
 	@Bean
 	public KafkaTemplate<String, MemberEventDto> kafkaTemplateForMemberEvent(){
 		return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(producerConfigurations()));
+	}
+
+	@Bean
+	public ProducerFactory<String, ServerEventDto> producerFactoryForServerEvent(){
+		return new DefaultKafkaProducerFactory<>(producerConfigurations());
+	}
+
+	@Bean
+	public KafkaTemplate<String, ServerEventDto> kafkaTemplateForServerEvent(){
+		return new KafkaTemplate<>(producerFactoryForServerEvent());
+	}
+
+	@Bean
+	public ProducerFactory<String, NotificationEventDto> producerFactoryForNotificationEvent(){
+		return new DefaultKafkaProducerFactory<>(producerConfigurations());
+	}
+
+	@Bean
+	public KafkaTemplate<String, NotificationEventDto> kafkaTemplateForNotificationEvent(){
+		return new KafkaTemplate<>(producerFactoryForNotificationEvent());
 	}
 }

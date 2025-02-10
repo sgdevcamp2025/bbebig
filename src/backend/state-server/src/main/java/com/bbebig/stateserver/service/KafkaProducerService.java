@@ -15,10 +15,10 @@ public class KafkaProducerService {
 	@Value("${spring.kafka.topic.presence-event}")
 	private String channelEventTopic;
 
-	private final KafkaTemplate<String, PresenceEventDto> kafkaTemplateForPresence;
+	private final KafkaTemplate<String, PresenceEventDto> kafkaTemplateForPresenceEvent;
 
 	// Presence 이벤트 메시지 전송
 	public void sendPresenceEvent(PresenceEventDto presenceEventDto) {
-		kafkaTemplateForPresence.send(channelEventTopic, presenceEventDto);
+		kafkaTemplateForPresenceEvent.send(channelEventTopic, presenceEventDto);
 	}
 }
