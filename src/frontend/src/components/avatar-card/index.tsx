@@ -1,10 +1,11 @@
 import { cva } from 'class-variance-authority'
+import { CSSProperties } from 'react'
 
 type Props = {
   name: string
   avatarUrl: string
-  backgroundUrl: string
-  backgroundColor: string
+  backgroundUrl?: string
+  backgroundColor: CSSProperties['backgroundColor']
   micStatus?: boolean
   headphoneStatus?: boolean
   size: 'sm' | 'md' | 'lg'

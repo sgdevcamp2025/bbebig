@@ -5122,7 +5122,7 @@ __metadata:
     storybook: "npm:^8.5.0"
     tailwind-merge: "npm:^2.6.0"
     tailwindcss: "npm:^3.4.17"
-    tailwindcss-motion: "npm:^1.0.1"
+    tailwindcss-motion: "npm:^1.1.0"
     typescript: "npm:~5.6.2"
     typescript-eslint: "npm:^8.18.2"
     vite: "npm:^6.0.11"
@@ -8481,12 +8481,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwindcss-motion@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "tailwindcss-motion@npm:1.0.1"
+"tailwindcss-motion@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "tailwindcss-motion@npm:1.1.0"
   peerDependencies:
     tailwindcss: "*"
-  checksum: 10c0/067a7c21b8baddb021b07fae1f87e6298e76c263f648141c9c3cda14e8e9bd6594e8ec083f623fa24ea57f34e1af7571c990cab02e8d00c78f9b4c349a4c0a79
+  checksum: 10c0/8d040e0433de3b2c06217eb82810e8417a427896d868c3a7d90c86d633936b8a57b5280fe611ee5f490c83ef50dbf970b4259a17f19b5e19c6c265b13bb366b5
   languageName: node
   linkType: hard
 
