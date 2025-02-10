@@ -36,8 +36,7 @@ const channelUsers: Record<number, User[]> = {
       id: '1',
       name: '김예지',
       avatarUrl: '/image/common/default-avatar.png',
-      bannerUrl:
-        'https://cdn.discordapp.com/banners/419411480677580820/a_b6a40ef738c6f8221793be39094cce00.png',
+      bannerUrl: '/image/common/default-banner.png',
       customPresenceStatus: 'ONLINE',
       introduction: '안뇽',
       introductionEmoji: '👋',
@@ -47,8 +46,7 @@ const channelUsers: Record<number, User[]> = {
       id: '2',
       name: '이지형',
       avatarUrl: '/image/common/default-avatar.png',
-      bannerUrl:
-        'https://cdn.discordapp.com/banners/419411480677580820/a_b6a40ef738c6f8221793be39094cce00.png',
+      bannerUrl: '/image/common/default-banner.png',
       customPresenceStatus: 'OFFLINE',
       introduction: '하이루',
       introductionEmoji: '👋',
@@ -60,8 +58,7 @@ const channelUsers: Record<number, User[]> = {
       id: '3',
       name: '이소은',
       avatarUrl: '/image/common/default-avatar.png',
-      bannerUrl:
-        'https://cdn.discordapp.com/banners/419411480677580820/a_b6a40ef738c6f8221793be39094cce00.png',
+      bannerUrl: '/image/common/default-banner.png',
       customPresenceStatus: 'NOT_DISTURB',
       introduction: '뇽안',
       introductionEmoji: '👋',
@@ -73,8 +70,7 @@ const channelUsers: Record<number, User[]> = {
       id: '4',
       name: '비비빅',
       avatarUrl: '/image/common/default-avatar.png',
-      bannerUrl:
-        'https://cdn.discordapp.com/banners/419411480677580820/a_b6a40ef738c6f8221793be39094cce00.png',
+      bannerUrl: '/image/common/default-banner.png',
       customPresenceStatus: 'ONLINE',
       introduction: '안녕하세요',
       introductionEmoji: '👋',

@@ -8,8 +8,7 @@ const user: User = {
   id: '1',
   name: '김예지',
   avatarUrl: '/image/common/default-avatar.png',
-  bannerUrl:
-    'https://cdn.discordapp.com/banners/419411480677580820/a_b6a40ef738c6f8221793be39094cce00.png',
+  bannerUrl: '/image/common/default-banner.png',
   customPresenceStatus: 'ONLINE',
   introduction: '안뇽',
   introductionEmoji: '👋',
