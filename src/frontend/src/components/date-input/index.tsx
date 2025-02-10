@@ -21,7 +21,7 @@ function DateInput({ label, required, setDate, error }: Props) {
   useEffect(
     function setBirthdateValue() {
       setDate(
-        `${selectedYear}-${String(selectedMonth).padStart(2, '0').replace('월', '')}-${String(selectedDay).padStart(2, '0').replace('일', '')}`
+        `${selectedYear}-${String(selectedMonth).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`
       )
     },
     [selectedYear, selectedMonth, selectedDay, setDate]
@@ -36,23 +36,23 @@ function DateInput({ label, required, setDate, error }: Props) {
       <div className='flex justify-between'>
         <SelectBox
           label='년'
-          options={year}
-          value={selectedYear}
-          onChange={setSelectedYear}
+          options={year.map((year) => ({ label: year, value: year + '년' }))}
+          value={selectedYear ? { label: selectedYear, value: selectedYear + '년' } : null}
+          onChange={(value) => setSelectedYear(value.value)}
           className='w-[30%]'
         />
         <SelectBox
           label='월'
-          options={month}
-          value={selectedMonth}
-          onChange={setSelectedMonth}
+          options={month.map((month) => ({ label: month, value: month + '월' }))}
+          value={selectedMonth ? { label: selectedMonth, value: selectedMonth + '월' } : null}
+          onChange={(value) => setSelectedMonth(value.value)}
           className='w-[35%]'
         />
         <SelectBox
           label='일'
-          options={day}
-          value={selectedDay}
-          onChange={setSelectedDay}
+          options={day.map((day) => ({ label: day, value: day + '일' }))}
+          value={selectedDay ? { label: selectedDay, value: selectedDay + '일' } : null}
+          onChange={(value) => setSelectedDay(value.value)}
           className='w-[30%]'
         />
       </div>

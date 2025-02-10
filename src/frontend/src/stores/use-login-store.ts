@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import cookie from '@/utils/cookie'
-import COOKIE_KEYS from '@/constants/keys'
+import { COOKIE_KEYS } from '@/constants/keys'
 
 interface LoginStore {
   isLogin: boolean

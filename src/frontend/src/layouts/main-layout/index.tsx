@@ -8,6 +8,8 @@ import ProfileStatusButton from './components/profile-status-button'
 import { statusKo } from '@/constants/status'
 import ProfileCard from './components/profile-card'
 import SettingModal, { SettingModalTabsID } from './components/setting-modal'
+import { useShallow } from 'zustand/shallow'
+import useMediaSettingsStore from '@/stores/use-media-setting.store'
 
 const myServerList = [
   {
@@ -48,6 +50,8 @@ const mockUser = {
 const MainRootLayout = () => {
   const location = useLocation()
   const navigate = useNavigate()
+  const { serverId } = useParams<{ serverId: string }>()
+
   const pathname =
     location.pathname.split('/')[1] === 'channels' ? location.pathname.split('/')[2] : null
 
@@ -56,9 +60,15 @@ const MainRootLayout = () => {
     isOpen: false
   })
 
-  const [isMicrophoneMuted, setIsMicrophoneMuted] = useState(false)
-  const [isSoundMuted, setIsSoundMuted] = useState(false)
   const [isProfileCardOpen, setIsProfileCardOpen] = useState(false)
+
+  const { muted, toggleAudioInputMute, toggleAudioOutputMute } = useMediaSettingsStore(
+    useShallow((state) => ({
+      muted: state.muted,
+      toggleAudioInputMute: state.toggleAudioInputMute,
+      toggleAudioOutputMute: state.toggleAudioOutputMute
+    }))
+  )
 
   const handleClickServer = (serverId: number, channelId: number) => {
     navigate(`/channels/${serverId}/${channelId}`)
@@ -66,14 +76,6 @@ const MainRootLayout = () => {
 
   const handleClickMyServer = () => {
     navigate('/channels/@me')
-  }
-
-  const handleClickMicrophone = () => {
-    setIsMicrophoneMuted(!isMicrophoneMuted)
-  }
-
-  const handleClickSound = () => {
-    setIsSoundMuted(!isSoundMuted)
   }
 
   const handleClickSetting = () => {
@@ -98,10 +100,8 @@ const MainRootLayout = () => {
   }
 
   const handleClickProfile = () => {
-    setIsProfileCardOpen(!isProfileCardOpen)
+    setIsProfileCardOpen((prev) => !prev)
   }
-
-  const { serverId } = useParams<{ serverId: string }>()
 
   useEffect(() => {
     if (!serverId) {
@@ -206,20 +206,20 @@ const MainRootLayout = () => {
             <div className='flex items-center justify-center'>
               <ProfileStatusButton
                 aria-label='마이크 버튼'
-                onClick={handleClickMicrophone}
-                icon='microphone'
-                isMuted={isMicrophoneMuted}
+                onClick={toggleAudioInputMute}
+                icon={'microphone'}
+                isMuted={muted.audioInput}
               />
               <ProfileStatusButton
                 aria-label='소리 버튼'
-                onClick={handleClickSound}
-                icon='sound'
-                isMuted={isSoundMuted}
+                onClick={toggleAudioOutputMute}
+                icon={'sound'}
+                isMuted={muted.audioOutput}
               />
               <ProfileStatusButton
                 aria-label='설정 버튼'
                 onClick={handleClickSetting}
-                icon='settings'
+                icon={'settings'}
                 isMuted={false}
               />
             </div>

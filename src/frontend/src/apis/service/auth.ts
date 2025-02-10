@@ -1,4 +1,4 @@
-import COOKIE_KEYS from '@/constants/keys'
+import { COOKIE_KEYS } from '@/constants/keys'
 import axiosInstance from '../config/axios-instance'
 import { LoginResponseSchema, LoginSchema, RegisterSchema } from '../schema/types/auth'
 import cookie from '@/utils/cookie'

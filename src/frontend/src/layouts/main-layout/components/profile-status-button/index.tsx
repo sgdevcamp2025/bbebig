@@ -1,21 +1,37 @@
-import { ComponentPropsWithoutRef } from 'react'
+import { useLayoutEffect, useState } from 'react'
 
-type Props = {
+interface ProfileStatusButtonProps {
+  'aria-label': string
   onClick: () => void
-  icon: string
   isMuted: boolean
-} & ComponentPropsWithoutRef<'button'>
+  icon: string
+}
 
-const ProfileStatusButton = ({ onClick, icon, isMuted, ...props }: Props) => {
+const ProfileStatusButton = ({
+  onClick,
+  'aria-label': ariaLabel,
+  isMuted,
+  icon
+}: ProfileStatusButtonProps) => {
+  const [isClient, setIsClient] = useState(false)
+
+  useLayoutEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  if (!isClient) return null
+
+  const iconSuffix = isMuted ? '-muted' : ''
+  const iconPath = `/icon/menu/${icon}${iconSuffix}.svg`
+
   return (
     <button
       type='button'
       onClick={onClick}
       className='w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-80'
-      {...props}>
+      aria-label={ariaLabel}>
       <img
-        src={`/icon/menu/${icon}${isMuted ? '-muted' : ''}.svg`}
-        alt={icon}
+        src={iconPath}
         className='w-5 h-5'
       />
     </button>
