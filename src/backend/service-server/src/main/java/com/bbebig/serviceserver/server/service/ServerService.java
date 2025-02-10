@@ -5,6 +5,7 @@ import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerActionEventDto;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerEventType;
+import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerMemberActionEventDto;
 import com.bbebig.serviceserver.category.entity.Category;
 import com.bbebig.serviceserver.category.repository.CategoryRepository;
 import com.bbebig.serviceserver.channel.entity.Channel;
@@ -26,6 +27,7 @@ import com.bbebig.serviceserver.server.repository.ServerRedisRepositoryImpl;
 import com.bbebig.serviceserver.server.repository.ServerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,6 +50,7 @@ public class ServerService {
     /**
      * 서버 생성
      */
+    @Transactional
     public ServerCreateResponseDto createServer(Long memberId, ServerCreateRequestDto serverCreateRequestDto) {
         Server server = Server.builder()
                 .name(serverCreateRequestDto.getServerName())
@@ -133,6 +136,7 @@ public class ServerService {
     /**
      * 서버 정보 조회
      */
+    @Transactional(readOnly = true)
     public ServerReadResponseDto readServer(Long serverId) {
         Server server = serverRepository.findById(serverId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
@@ -143,6 +147,7 @@ public class ServerService {
     /**
      * 멤버가 속한 서버 목록 조회
      */
+    @Transactional(readOnly = true)
     public ServerListReadResponseDto readServerList(Long memberId) {
         List<ServerMember> serverMembers = serverMemberRepository.findAllByMemberId(memberId);
 
@@ -156,6 +161,7 @@ public class ServerService {
     /**
      * 서버 업데이트
      */
+    @Transactional
     public ServerUpdateResponseDto updateServer(Long memberId, Long serverId, ServerUpdateRequestDto serverUpdateRequestDto) {
         Server server = serverRepository.findById(serverId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
@@ -181,6 +187,7 @@ public class ServerService {
     /**
      * 서버 삭제
      */
+    @Transactional
     public ServerDeleteResponseDto deleteServer(Long memberId, Long serverId) {
         Server server = serverRepository.findById(serverId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
@@ -188,10 +195,20 @@ public class ServerService {
         // 서버장 권한 체크
         checkServerOwner(memberId, server);
 
-        // TODO: ServerMember 삭제, Channel 삭제, ChannelMember 삭제, Category 삭제
-
+        // 서버 관련 삭제
+        serverMemberRepository.deleteAllByServerId(serverId);
+        channelRepository.findAllByServerId(serverId)
+                .stream()
+                .map(Channel::getId)
+                .toList()
+                .forEach(channelId -> {
+                    channelMemberRepository.deleteAllByChannelId(channelId);
+                    channelRepository.deleteById(channelId);
+                });
+        categoryRepository.deleteAllByServerId(serverId);
         serverRepository.delete(server);
 
+        // Redis 캐시 제거
         deleteAllServerRelatedCache(serverId);
 
         // Kafka로 데이터 발행
@@ -211,9 +228,10 @@ public class ServerService {
      * 서버에 속해있는 채널 목록 조회
      * FeignClient 를 통해 호출
      * 만약 Redis 에 캐싱된 데이터가 없다면 캐싱하는 로직을 포함
-    */
+     */
+    @Transactional
     public CommonServiceServerClientResponseDto.ServerChannelListResponseDto getServerChannelList(Long serverId) {
-        Server server = serverRepository.findById(serverId)
+        serverRepository.findById(serverId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
 
         Set<Long> serverChannelList = serverRedisRepository.getServerChannelList(serverId);
@@ -232,6 +250,7 @@ public class ServerService {
      * FeignClient 를 통해 호출
      * 만약 Redis 에 캐싱된 데이터가 없다면 캐싱하는 로직을 포함
      */
+    @Transactional
     public CommonServiceServerClientResponseDto.ServerMemberListResponseDto getServerMemberList(Long serverId) {
         Server server = serverRepository.findById(serverId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
@@ -253,6 +272,7 @@ public class ServerService {
      * FeignClient 를 통해 호출
      * 만약 Redis 에 캐싱된 데이터가 없다면 캐싱하는 로직을 포함
      */
+    @Transactional
     public CommonServiceServerClientResponseDto.MemberServerListResponseDto getMemberServerList(Long memberId) {
         Set<Long> memberServerList = memberRedisRepository.getMemberServerList(memberId);
         if (memberServerList.isEmpty()) {
@@ -266,8 +286,82 @@ public class ServerService {
     }
 
     /**
+     * 서버 참여하기
+     */
+    @Transactional
+    public ServerParticipateResponseDto participateServer(Long memberId, Long serverId, ServerParticipateRequestDto serverParticipateRequestDto) {
+        Server server = serverRepository.findById(serverId)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
+
+        // 이미 서버에 참여 중인 경우
+        if (serverMemberRepository.existsByServerIdAndMemberId(serverId, memberId)) {
+            throw new ErrorHandler(ErrorStatus.SERVER_MEMBER_ALREADY_EXIST);
+        }
+
+        // 서버의 멤버 저장
+        ServerMember serverMember = ServerMember.builder()
+                .server(server)
+                .memberId(memberId)
+                .memberNickname(serverParticipateRequestDto.getMemberNickname())
+                .memberProfileImageUrl(serverParticipateRequestDto.getMemberProfileUrl())
+                .roleType(RoleType.MEMBER)
+                .build();
+        serverMemberRepository.save(serverMember);
+
+        // 채널의 멤버 저장
+        List<ChannelMember> channelMembers = channelRepository.findAllByServerIdAndPrivateStatusFalse(serverId)
+                .stream()
+                .map(channel -> ChannelMember.builder()
+                        .channel(channel)
+                        .serverMember(serverMember)
+                        .build()
+                )
+                .toList();
+        channelMemberRepository.saveAll(channelMembers);
+
+        // 카프카 이벤트 발행
+        ServerMemberActionEventDto serverMemberActionEventDto = ServerMemberActionEventDto.builder()
+                .memberId(memberId)
+                .nickname(serverParticipateRequestDto.getMemberNickname())
+                .profileImageUrl(serverParticipateRequestDto.getMemberProfileUrl())
+                .status("JOIN")
+                .build();
+        kafkaProducerService.sendServerEvent(serverMemberActionEventDto);
+
+        return ServerParticipateResponseDto.convertToServerParticipateResponseDto(server);
+    }
+
+    /**
+     * 서버 탈퇴하기
+     */
+    @Transactional
+    public ServerWithdrawResponseDto withdrawServer(Long memberId, Long serverId) {
+        Server server = serverRepository.findById(serverId)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
+
+        ServerMember serverMember = serverMemberRepository.findByMemberIdAndServer(memberId, server)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_MEMBERS_NOT_FOUND));
+
+        // 서버 관련 삭제
+        channelMemberRepository.deleteAllByServerMember(serverMember);
+        serverMemberRepository.delete(serverMember);
+
+        // 카프카 이벤트 발행
+        ServerMemberActionEventDto serverMemberActionEventDto = ServerMemberActionEventDto.builder()
+                .memberId(memberId)
+                .nickname(serverMember.getMemberNickname())
+                .profileImageUrl(serverMember.getMemberProfileImageUrl())
+                .status("LEAVE")
+                .build();
+        kafkaProducerService.sendServerEvent(serverMemberActionEventDto);
+
+        return ServerWithdrawResponseDto.convertToServerWithdrawResponseDto(server);
+    }
+
+    /**
      * 서버에 속해있는 채널 목록을 조회하여 Redis 에 캐싱
-    */
+     */
+    @Transactional
     public List<Long> makeServerChannelListCache(Long serverId) {
         List<Channel> channels = channelRepository.findAllByServerId(serverId);
         if (channels.isEmpty()) {
@@ -282,7 +376,8 @@ public class ServerService {
 
     /**
      * 서버에 속해있는 멤버 목록을 조회하여 Redis 에 캐싱
-    */
+     */
+    @Transactional
     public List<Long> makeServerMemberListCache(Long serverId) {
         List<ServerMember> serverMembers = serverMemberRepository.findAllByServerId(serverId);
         if (serverMembers.isEmpty()) {
@@ -296,8 +391,9 @@ public class ServerService {
     }
 
     /**
-     *  멤버가 참여중인 서버 목록을 조회하여 Redis 에 캐싱
+     * 멤버가 참여중인 서버 목록을 조회하여 Redis 에 캐싱
      */
+    @Transactional
     public List<Long> makeMemberServerListCache(Long memberId) {
         List<ServerMember> serverMembers = serverMemberRepository.findAllByMemberId(memberId);
         if (serverMembers.isEmpty()) {
@@ -308,50 +404,6 @@ public class ServerService {
             memberRedisRepository.saveMemberServerSet(memberId, serverIdList);
         }
         return serverIdList;
-    }
-
-    /**
-     * 서버 참여하기
-     */
-    public ServerParticipateResponseDto participateServer(Long memberId, Long serverId, ServerParticipateRequestDto serverParticipateRequestDto) {
-        Server server = serverRepository.findById(serverId)
-                .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
-
-        // 이미 서버에 참여 중인 경우
-        if (serverMemberRepository.existsByServerIdAndMemberId(serverId, memberId)) {
-            throw new ErrorHandler(ErrorStatus.SERVER_MEMBER_ALREADY_EXIST);
-        }
-
-        ServerMember serverMember = ServerMember.builder()
-                .server(server)
-                .memberId(memberId)
-                .memberNickname(serverParticipateRequestDto.getMemberNickname())
-                .memberProfileImageUrl(serverParticipateRequestDto.getMemberProfileUrl())
-                .roleType(RoleType.MEMBER)
-                .build();
-
-        serverMemberRepository.save(serverMember);
-
-        return ServerParticipateResponseDto.convertToServerParticipateResponseDto(server);
-    }
-
-    /**
-     * 서버 탈퇴하기
-     */
-    public ServerWithdrawResponseDto withdrawServer(Long memberId, Long serverId) {
-        Server server = serverRepository.findById(serverId)
-                .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
-
-        Optional<ServerMember> serverMember = serverMemberRepository.findByMemberIdAndServer(memberId, server);
-
-        // 서버에 참여하고 있지 않은 경우
-        if (serverMember.isEmpty()) {
-            throw new ErrorHandler(ErrorStatus.SERVER_MEMBERS_NOT_FOUND);
-        }
-
-        serverMemberRepository.delete(serverMember.get());
-
-        return ServerWithdrawResponseDto.convertToServerWithdrawResponseDto(server);
     }
 
     // 서버 삭제 시 관련된 캐시 삭제
