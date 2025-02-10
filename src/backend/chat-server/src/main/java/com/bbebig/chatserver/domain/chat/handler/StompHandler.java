@@ -1,12 +1,8 @@
 package com.bbebig.chatserver.domain.chat.handler;
 
 import com.bbebig.chatserver.domain.chat.client.AuthClient;
-import com.bbebig.chatserver.domain.chat.client.MemberClient;
-import com.bbebig.chatserver.domain.chat.dto.response.AuthResponseDto;
-import com.bbebig.chatserver.domain.chat.dto.response.MemberResponseDto;
 import com.bbebig.chatserver.domain.chat.repository.SessionManager;
-import com.bbebig.chatserver.domain.chat.service.MessageProducerService;
-import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
+import com.bbebig.chatserver.domain.chat.service.KafkaProducerService;
 import com.bbebig.commonmodule.kafka.dto.ConnectionEventDto;
 import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
@@ -32,7 +27,7 @@ public class StompHandler implements ChannelInterceptor {
 	private final SessionManager sessionManager;
 	private final AuthClient authClient;
 //	private final MemberClient memberClient;
-	private final MessageProducerService messageProducerService;
+	private final KafkaProducerService kafkaProducerService;
 
 	@Value("${spring.cloud.client.ip-address}")
 	private String serverIp;
@@ -107,7 +102,7 @@ public class StompHandler implements ChannelInterceptor {
 					.currentServerId(currentServerId != null ? Long.parseLong(currentServerId): null)
 					.build();
 
-			messageProducerService.sendMessageForSession(connectionEventDto);
+			kafkaProducerService.sendMessageForSession(connectionEventDto);
 
 		}
 		// DISCONNECT 요청
@@ -128,7 +123,7 @@ public class StompHandler implements ChannelInterceptor {
 					.deviceType(deviceType)
 					.build();
 
-			messageProducerService.sendMessageForSession(connectionEventDto);
+			kafkaProducerService.sendMessageForSession(connectionEventDto);
 		}
 
 		return message;
