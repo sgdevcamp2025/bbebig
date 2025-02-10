@@ -9,5 +9,5 @@ public abstract class ServerEventDto {
 
 	Long serverId;
 
-	String type;  // ServerEventType Enum 참고
+	ServerEventType type;  // ServerEventType Enum 참고
 }

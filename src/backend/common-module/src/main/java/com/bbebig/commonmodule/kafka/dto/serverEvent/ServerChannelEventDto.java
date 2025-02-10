@@ -1,5 +1,6 @@
 package com.bbebig.commonmodule.kafka.dto.serverEvent;
 
+import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
@@ -17,7 +18,7 @@ public class ServerChannelEventDto extends ServerEventDto {
 
 	String channelType; // CHAT, VOICE
 
-	Long order; // Channel 순서, DELETE 시에는 null
+	int order; // Channel 순서, DELETE 시에는 null
 
 	String status; // CREATE, UPDATE, DELETE
 

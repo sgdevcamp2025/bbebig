@@ -1,4 +1,4 @@
-package com.bbebig.stateserver.repository;
+package com.bbebig.searchserver.domain.search.repository;
 
 import com.bbebig.commonmodule.redis.domain.ServerMemberStatus;
 import com.bbebig.commonmodule.redis.repository.ServerRedisRepository;

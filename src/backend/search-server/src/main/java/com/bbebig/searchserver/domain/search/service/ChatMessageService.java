@@ -1,18 +1,20 @@
 package com.bbebig.searchserver.domain.search.service;
 
+import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto;
 import com.bbebig.commonmodule.kafka.dto.ChatMessageDto;
+import com.bbebig.searchserver.domain.search.client.ServiceClient;
 import com.bbebig.searchserver.domain.search.domain.ChannelChatMessage;
 import com.bbebig.searchserver.domain.search.domain.DmChatMessage;
 import com.bbebig.searchserver.domain.search.dto.ChatMessageDtoConverter;
-import com.bbebig.searchserver.domain.search.repository.ChannelChatMessageElasticRepository;
-import com.bbebig.searchserver.domain.search.repository.ChannelChatMessageRepository;
-import com.bbebig.searchserver.domain.search.repository.DmChatMessageElasticRepository;
-import com.bbebig.searchserver.domain.search.repository.DmChatMessageRepository;
+import com.bbebig.searchserver.domain.search.repository.*;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -23,6 +25,12 @@ public class ChatMessageService {
 	private final DmChatMessageRepository dmChatMessageRepository;
 	private final ChannelChatMessageElasticRepository channelChatMessageElasticRepository;
 	private final DmChatMessageElasticRepository dmChatMessageElasticRepository;
+
+	private final ServerRedisRepositoryImpl serverRedisRepository;
+	private final MemberRedisRepositoryImpl memberRedisRepository;
+	private final DmRedisRepositoryImpl dmRedisRepository;
+
+	private final ServiceClient serviceClient;
 
 
 	public void saveChannelMessage(ChatMessageDto messageDto) {
@@ -112,5 +120,26 @@ public class ChatMessageService {
 			log.error("[Search]ChatMessageService : DM 채팅 메시지를 찾을 수 없습니다. messageId: {}", messageId);
 			throw new IllegalArgumentException("DM 채팅 메시지 정보 없음.");
 		});
+	}
+
+	// 멤버가 참여한 서버별 안읽은 메시지 수 조회
+	// GET /message/member/{memberId}/server/unread
+	public void getServerUnreadMessageCount(Long memberId) {
+		Set<Long> memberServerList = memberRedisRepository.getMemberServerList(memberId);
+		if (memberServerList.isEmpty()) {
+			log.info("[Search] ChatMessageService : 캐싱된 멤버가 참여한 서버 정보가 없습니다. memberId: {}", memberId);
+			try {
+				CommonServiceServerClientResponseDto.MemberServerListResponseDto memberServerListCacheResponseDto = serviceClient.getMemberServerList(memberId);
+				memberServerList.addAll(memberServerListCacheResponseDto.getServerIdList());
+			} catch (FeignException e) {
+				// TODO: 예외 처리 로직 구현
+				if (e.status() == 400) {
+					// 400 처리
+				} else if (e.status() == 500) {
+					// 500 처리
+				}
+			}
+		}
+
 	}
 }

@@ -1,6 +1,9 @@
-package com.bbebig.stateserver.client;
+package com.bbebig.searchserver.domain.search.client;
 
-import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto.*;
+import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto.DmMemberListResponseDto;
+import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto.MemberServerListResponseDto;
+import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto.ServerChannelListResponseDto;
+import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto.ServerMemberListResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
