@@ -1,6 +1,9 @@
 import { ServerChannelList } from '@/types/channel'
 import { Outlet, useNavigate, useParams } from 'react-router'
 import ServerSidebar from './components/server-side-bar'
+import useStatusBarStore from '@/stores/use-status-bar-store'
+import StatusSideBar from './components/status-side-bar'
+import { User } from '@/types/user'
 
 const myChannelList: ServerChannelList = {
   1: [
@@ -27,8 +30,59 @@ const myChannelList: ServerChannelList = {
   ]
 }
 
+const channelUsers: Record<number, User[]> = {
+  1: [
+    {
+      id: '1',
+      name: '김예지',
+      avatarUrl: '/image/common/default-avatar.png',
+      bannerUrl: '/image/common/default-avatar.png',
+      customPresenceStatus: 'ONLINE',
+      introduction: '안뇽',
+      introductionEmoji: '👋',
+      email: 'yeji@gmail.com'
+    },
+    {
+      id: '2',
+      name: '이지형',
+      avatarUrl: '/image/common/default-avatar.png',
+      bannerUrl: '/image/common/default-avatar.png',
+      customPresenceStatus: 'OFFLINE',
+      introduction: '하이루',
+      introductionEmoji: '👋',
+      email: 'jihyung@gmail.com'
+    }
+  ],
+  2: [
+    {
+      id: '3',
+      name: '이소은',
+      avatarUrl: '/image/common/default-avatar.png',
+      bannerUrl: '/image/common/default-avatar.png',
+      customPresenceStatus: 'NOT_DISTURB',
+      introduction: '뇽안',
+      introductionEmoji: '👋',
+      email: 'soeun@gmail.com'
+    }
+  ],
+  3: [
+    {
+      id: '4',
+      name: '박지훈',
+      avatarUrl: '/image/common/default-avatar.png',
+      bannerUrl: '/image/common/default-avatar.png',
+      customPresenceStatus: 'ONLINE',
+      introduction: '안녕하세요',
+      introductionEmoji: '👋',
+      email: 'jihun@gmail.com'
+    }
+  ]
+}
+
 function ServerLayout() {
   const { serverId, channelId } = useParams<{ serverId: string; channelId: string }>()
+  const { isStatusBarOpen } = useStatusBarStore()
+  const currentChannelUsers = channelId ? channelUsers[Number(channelId)] || [] : []
   const navigate = useNavigate()
   const categories =
     serverId && myChannelList[Number(serverId)] ? myChannelList[Number(serverId)] : []
@@ -44,7 +98,10 @@ function ServerLayout() {
         onChannelSelect={handleChannelSelect}
         selectedChannelId={channelId}
       />
+
       <Outlet />
+
+      {isStatusBarOpen && <StatusSideBar users={currentChannelUsers} />}
     </div>
   )
 }
