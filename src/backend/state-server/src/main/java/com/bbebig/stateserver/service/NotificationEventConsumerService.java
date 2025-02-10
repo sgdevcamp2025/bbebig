@@ -28,16 +28,16 @@ public class NotificationEventConsumerService {
 			return;
 		}
 
-		if (eventDto.getType().equals(NotificationEventType.DM_MEMBER_ACTION.toString())) {
+		if (eventDto.getType().equals(NotificationEventType.DM_MEMBER_ACTION)) {
 			DmMemberActionEventDto dmMemberActionEventDto = (DmMemberActionEventDto) eventDto;
 			handleDmMemberActionEvent(dmMemberActionEventDto);
-		} else if (eventDto.getType().equals(NotificationEventType.DM_ACTION.toString())) {
+		} else if (eventDto.getType().equals(NotificationEventType.DM_ACTION)) {
 			DmActionEventDto dmActionEventDto = (DmActionEventDto) eventDto;
 			handleDmActionEvent(dmActionEventDto);
 		} else {
-			if (!(eventDto.getType().equals(NotificationEventType.DM_MEMBER_PRESENCE.toString()) ||
-					eventDto.getType().equals(NotificationEventType.FRIEND_ACTION.toString()) ||
-					eventDto.getType().equals(NotificationEventType.FRIEND_PRESENCE.toString()))
+			if (!(eventDto.getType().equals(NotificationEventType.DM_MEMBER_PRESENCE) ||
+					eventDto.getType().equals(NotificationEventType.FRIEND_ACTION) ||
+					eventDto.getType().equals(NotificationEventType.FRIEND_PRESENCE))
 			) {
 				log.error("[State] NotificationEventConsumerService: 알림 이벤트 타입이 잘못되었습니다. eventDto: {}", eventDto);
 			}
@@ -49,37 +49,37 @@ public class NotificationEventConsumerService {
 	private void handleDmMemberActionEvent(DmMemberActionEventDto dmMemberActionEventDto) {
 		Long channelId = dmMemberActionEventDto.getChannelId();
 
-		// TODO : 추후 DM 멤버에 대한 캐싱을 어떻게 할지 고민해서 추가하기
-		// 예를 들면, 여러 명일 경우에만 캐싱을 한다던지 하는 로직을 고민
+		// TODO : 추후 DM이 개발 완료되면 이어서 개발
 
-		if (!dmRedisRepositoryImpl.existsDmMemberList(channelId)) {
-			stateService.makeDmMemberList(channelId);
-		}
+//		if (!dmRedisRepositoryImpl.existsDmMemberList(channelId)) {
+//			stateService.makeDmMemberList(channelId);
+//		}
 
-		// TODO : DM방 Type에 따라 처리 추가
-		if (dmMemberActionEventDto.getStatus().equals("JOIN")) {
-			dmRedisRepositoryImpl.addDmMemberToSet(channelId, dmMemberActionEventDto.getMemberId());
-		} else if (dmMemberActionEventDto.getStatus().equals("LEAVE")) {
-			dmRedisRepositoryImpl.removeDmMemberFromSet(channelId, dmMemberActionEventDto.getMemberId());
-		} else {
-			if (!dmMemberActionEventDto.getStatus().equals("UPDATE")) {
-				log.error("[State] NotificationEventConsumerService: DM 멤버 액션 이벤트 타입이 잘못되었습니다. dmMemberActionEventDto: {}", dmMemberActionEventDto);
-			}
-		}
+//		if (dmMemberActionEventDto.getStatus().equals("JOIN")) {
+//			dmRedisRepositoryImpl.addDmMemberToSet(channelId, dmMemberActionEventDto.getMemberId());
+//		} else if (dmMemberActionEventDto.getStatus().equals("LEAVE")) {
+//			dmRedisRepositoryImpl.removeDmMemberFromSet(channelId, dmMemberActionEventDto.getMemberId());
+//		} else {
+//			if (!dmMemberActionEventDto.getStatus().equals("UPDATE")) {
+//				log.error("[State] NotificationEventConsumerService: DM 멤버 액션 이벤트 타입이 잘못되었습니다. dmMemberActionEventDto: {}", dmMemberActionEventDto);
+//			}
+//		}
 	}
 
 	private void handleDmActionEvent(DmActionEventDto dmActionEventDto) {
 		Long channelId = dmActionEventDto.getChannelId();
 
-		if (dmActionEventDto.getStatus().equals("CREATE")) {
-			stateService.makeDmMemberList(channelId);
-		} else if (dmActionEventDto.getStatus().equals("DELETE")) {
-			dmRedisRepositoryImpl.deleteDmMemberList(channelId);
-		} else {
-			if (!dmActionEventDto.getStatus().equals("UPDATE")) {
-				log.error("[State] NotificationEventConsumerService: DM 액션 이벤트 타입이 잘못되었습니다. dmActionEventDto: {}", dmActionEventDto);
-			}
+		// TODO : 추후 DM이 개발 완료되면 이어서 개발
 
-		}
+//		if (dmActionEventDto.getStatus().equals("CREATE")) {
+//			stateService.makeDmMemberList(channelId);
+//		} else if (dmActionEventDto.getStatus().equals("DELETE")) {
+//			dmRedisRepositoryImpl.deleteDmMemberList(channelId);
+//		} else {
+//			if (!dmActionEventDto.getStatus().equals("UPDATE")) {
+//				log.error("[State] NotificationEventConsumerService: DM 액션 이벤트 타입이 잘못되었습니다. dmActionEventDto: {}", dmActionEventDto);
+//			}
+//
+//		}
 	}
 }

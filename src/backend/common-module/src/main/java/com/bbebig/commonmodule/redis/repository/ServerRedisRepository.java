@@ -69,5 +69,37 @@ public interface ServerRedisRepository {
 	 */
 	void deleteServerMemberStatus(Long serverId);
 
+	/**
+	 * 서버별 채널 목록을 Set 구조로 저장
+	 * ex) server:{serverId}:channelList => Set<ChannelId>
+	 */
+	void saveServerChannelSet(Long serverId, List<Long> channelIdList);
+
+	/**
+	 * 서버별 채널 추가
+	 */
+	void addServerChannelToSet(Long serverId, Long channelId);
+
+	/**
+	 * 서버별 채널 삭제
+	 */
+	void removeServerChannelFromSet(Long serverId, Long channelId);
+
+	/**
+	 * 서버별 채널 목록이 존재하는지 확인
+	 */
+	boolean existsServerChannelList(Long serverId);
+
+	/**
+	 * 서버별 채널 목록 반환
+	 */
+	Set<Long> getServerChannelList(Long serverId);
+
+	/**
+	 * 서버 삭제에 따른 서버별 채널 목록 삭제
+	 */
+	void deleteServerChannelList(Long serverId);
+
+
 	Long convertToLong(Object obj);
 }

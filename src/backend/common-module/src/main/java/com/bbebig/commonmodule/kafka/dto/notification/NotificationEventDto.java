@@ -9,5 +9,5 @@ public abstract class NotificationEventDto {
 
 	Long memberId;
 
-	String type; // NotificationEventType Enum 참고
+	NotificationEventType type; // NotificationEventType Enum 참고
 }
