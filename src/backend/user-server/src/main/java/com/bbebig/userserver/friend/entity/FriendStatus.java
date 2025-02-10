@@ -1,4 +1,4 @@
-package com.bbebig.user_server.domain;
+package com.bbebig.userserver.friend.entity;
 
 public enum FriendStatus {
     PENDING,DECLINED,ACCEPTED,DELETED

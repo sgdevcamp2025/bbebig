@@ -1,6 +1,6 @@
-package com.bbebig.user_server.domain;
+package com.bbebig.userserver.member.entity;
 
-import com.bbebig.user_server.presentation.dto.MemberModifyRequest;
+import com.bbebig.userserver.member.dto.request.MemberModifyRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

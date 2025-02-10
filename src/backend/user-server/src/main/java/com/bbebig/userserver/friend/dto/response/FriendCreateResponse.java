@@ -1,9 +1,7 @@
-package com.bbebig.user_server.presentation.dto;
+package com.bbebig.userserver.friend.dto.response;
 
-import com.bbebig.user_server.domain.Friend;
-import com.bbebig.user_server.domain.FriendStatus;
-import com.bbebig.user_server.domain.Member;
-import jakarta.persistence.*;
+import com.bbebig.userserver.friend.entity.Friend;
+import com.bbebig.userserver.member.entity.Member;
 
 import java.time.LocalDateTime;
 

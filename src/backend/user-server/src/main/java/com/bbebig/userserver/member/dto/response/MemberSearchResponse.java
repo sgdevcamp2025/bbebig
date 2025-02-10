@@ -1,6 +1,6 @@
-package com.bbebig.user_server.presentation.dto;
-import com.bbebig.user_server.domain.CustomPresenceStatus;
-import com.bbebig.user_server.domain.Member;
+package com.bbebig.userserver.member.dto.response;
+import com.bbebig.userserver.member.entity.CustomPresenceStatus;
+import com.bbebig.userserver.member.entity.Member;
 
 import java.time.LocalDateTime;
 

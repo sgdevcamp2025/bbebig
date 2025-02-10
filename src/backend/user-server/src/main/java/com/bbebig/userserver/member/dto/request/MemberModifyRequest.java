@@ -1,4 +1,4 @@
-package com.bbebig.user_server.presentation.dto;
+package com.bbebig.userserver.member.dto.request;
 
 public record MemberModifyRequest(
         String profileImgUrl,

@@ -1,8 +1,8 @@
-package com.bbebig.user_server.application;
+package com.bbebig.userserver.member.service;
 
-import com.bbebig.user_server.domain.Member;
-import com.bbebig.user_server.domain.MemberRepository;
-import com.bbebig.user_server.presentation.dto.MemberModifyRequest;
+import com.bbebig.userserver.member.entity.Member;
+import com.bbebig.userserver.member.repository.MemberRepository;
+import com.bbebig.userserver.member.dto.request.MemberModifyRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

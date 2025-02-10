@@ -1,4 +1,4 @@
-package com.bbebig.user_server;
+package com.bbebig.userserver;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

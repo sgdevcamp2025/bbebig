@@ -1,4 +1,4 @@
-package com.bbebig.user_server;
+package com.bbebig.userserver;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.boot.SpringApplication;

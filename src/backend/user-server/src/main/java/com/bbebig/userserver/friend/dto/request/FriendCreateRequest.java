@@ -1,4 +1,4 @@
-package com.bbebig.user_server.presentation.dto;
+package com.bbebig.userserver.friend.dto.request;
 
 
 public record FriendCreateRequest(

@@ -1,5 +1,6 @@
-package com.bbebig.user_server.domain;
+package com.bbebig.userserver.friend.entity;
 
+import com.bbebig.userserver.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 

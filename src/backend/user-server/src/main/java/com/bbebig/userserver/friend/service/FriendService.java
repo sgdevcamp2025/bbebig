@@ -1,9 +1,13 @@
-package com.bbebig.user_server.application;
+package com.bbebig.userserver.friend.service;
 
-import com.bbebig.user_server.domain.*;
-import com.bbebig.user_server.presentation.dto.FriendCreateRequest;
-import com.bbebig.user_server.presentation.dto.FriendCreateResponse;
-import com.bbebig.user_server.presentation.dto.FriendResponse;
+import com.bbebig.userserver.friend.entity.Friend;
+import com.bbebig.userserver.friend.entity.FriendStatus;
+import com.bbebig.userserver.friend.repository.FriendRepository;
+import com.bbebig.userserver.member.entity.Member;
+import com.bbebig.userserver.member.repository.MemberRepository;
+import com.bbebig.userserver.friend.dto.request.FriendCreateRequest;
+import com.bbebig.userserver.friend.dto.response.FriendCreateResponse;
+import com.bbebig.userserver.friend.dto.response.FriendResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

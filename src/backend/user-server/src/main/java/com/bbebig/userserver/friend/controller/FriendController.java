@@ -1,8 +1,11 @@
-package com.bbebig.user_server.presentation;
+package com.bbebig.userserver.friend.controller;
 
-import com.bbebig.user_server.application.FriendService;
-import com.bbebig.user_server.domain.FriendStatus;
-import com.bbebig.user_server.presentation.dto.*;
+import com.bbebig.userserver.friend.dto.request.FriendCreateRequest;
+import com.bbebig.userserver.friend.dto.request.PageRequestDto;
+import com.bbebig.userserver.friend.dto.response.FriendCreateResponse;
+import com.bbebig.userserver.friend.dto.response.FriendResponse;
+import com.bbebig.userserver.friend.service.FriendService;
+import com.bbebig.userserver.friend.entity.FriendStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;

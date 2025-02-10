@@ -1,9 +1,9 @@
-package com.bbebig.user_server.presentation;
+package com.bbebig.userserver.member.controller;
 
-import com.bbebig.user_server.application.MemberService;
-import com.bbebig.user_server.domain.Member;
-import com.bbebig.user_server.presentation.dto.MemberModifyRequest;
-import com.bbebig.user_server.presentation.dto.MemberSearchResponse;
+import com.bbebig.userserver.member.service.MemberService;
+import com.bbebig.userserver.member.entity.Member;
+import com.bbebig.userserver.member.dto.request.MemberModifyRequest;
+import com.bbebig.userserver.member.dto.response.MemberSearchResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

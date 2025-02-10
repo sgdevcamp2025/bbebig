@@ -1,4 +1,4 @@
-package com.bbebig.user_server.presentation.dto;
+package com.bbebig.userserver.friend.dto.request;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

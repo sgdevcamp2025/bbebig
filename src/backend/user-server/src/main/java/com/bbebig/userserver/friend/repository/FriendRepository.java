@@ -1,5 +1,8 @@
-package com.bbebig.user_server.domain;
+package com.bbebig.userserver.friend.repository;
 
+import com.bbebig.userserver.friend.entity.Friend;
+import com.bbebig.userserver.friend.entity.FriendStatus;
+import com.bbebig.userserver.member.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
