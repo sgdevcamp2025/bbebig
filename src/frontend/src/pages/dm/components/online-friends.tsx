@@ -1,6 +1,8 @@
+import SearchInput from '@/components/search-input'
 import UserListItem from '@/components/user-list-item'
 import { statusKo } from '@/constants/status'
 import { Friend } from '@/types/friend'
+import { useState } from 'react'
 
 const DUMMY_FRIENDS: Friend[] = [
   {
@@ -18,22 +20,44 @@ const DUMMY_FRIENDS: Friend[] = [
 ]
 
 function OnlineFriends() {
+  const [searchValue, setSearchValue] = useState('')
+  const filteredFriends = DUMMY_FRIENDS.filter((friend) =>
+    friend.name.toLowerCase().includes(searchValue.toLowerCase())
+  )
+
+  const handleSearch = (value: string) => {
+    setSearchValue(value)
+  }
+
   return (
-    <div className='flex flex-col gap-2 p-4'>
-      <div className='text-discord-font-color-muted text-xs font-semibold mb-2'>
-        온라인 — {DUMMY_FRIENDS.filter((friend) => friend.status === 'ONLINE').length}
-      </div>
-      {DUMMY_FRIENDS.map((friend) => (
-        <UserListItem
-          key={friend.id}
-          avatarUrl={friend.avatarUrl}
-          name={friend.name}
-          status={friend.status}
-          description={statusKo[friend.status]}
-          statusColor='black'
-          iconType='default'
+    <div className='flex flex-col gap-6 p-4'>
+      <div>
+        <SearchInput
+          onSearch={handleSearch}
+          placeholder='검색'
         />
-      ))}
+      </div>
+
+      <div className='flex flex-col gap-2'>
+        <div className='text-discord-font-color-muted text-xs font-semibold mb-2'>
+          온라인 — {filteredFriends.filter((friend) => friend.status === 'ONLINE').length}
+        </div>
+        {filteredFriends.map((friend) => (
+          <UserListItem
+            key={friend.id}
+            avatarUrl={friend.avatarUrl}
+            name={friend.name}
+            status={friend.status}
+            description={statusKo[friend.status]}
+            statusColor='black'
+            iconType='default'
+          />
+        ))}
+
+        {filteredFriends.length === 0 && (
+          <div className='text-discord-font-color-muted text-sm'>검색 결과가 없습니다.</div>
+        )}
+      </div>
     </div>
   )
 }
