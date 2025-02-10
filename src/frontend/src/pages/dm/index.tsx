@@ -1,9 +1,10 @@
-import { Outlet } from 'react-router'
-import Header from './components/header'
 import { useState } from 'react'
-import OnlineFriends from './components/online-friends'
+import { Outlet } from 'react-router'
+
 import AllFriends from './components/all-friends'
 import BlockedFriends from './components/blocked-friends'
+import Header from './components/header'
+import OnlineFriends from './components/online-friends'
 import PendingFriends from './components/pending-friends'
 
 type FriendTabType = 'ONLINE' | 'ALL' | 'BLOCK' | 'PENDING' | 'BLOCK_FRIENDS'

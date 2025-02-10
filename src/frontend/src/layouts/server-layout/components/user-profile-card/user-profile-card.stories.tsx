@@ -1,7 +1,8 @@
+import type { Meta, StoryObj } from '@storybook/react'
 import { MemoryRouter } from 'react-router-dom'
 
 import { User } from '@/types/user'
-import type { Meta, StoryObj } from '@storybook/react'
+
 import UserProfileCard from '.'
 
 const user: User = {

@@ -1,6 +1,6 @@
 import ChatArea from './chat-area'
 
-type Props = {
+interface Props {
   channelId: number
 }
 

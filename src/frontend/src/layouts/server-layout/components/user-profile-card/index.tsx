@@ -1,7 +1,8 @@
-import Avatar from '@/components/avatar'
-import { User } from '@/types/user'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
+
+import Avatar from '@/components/avatar'
+import { User } from '@/types/user'
 
 interface UserProfileCardProps {
   user: User | null

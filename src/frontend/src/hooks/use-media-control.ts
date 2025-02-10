@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react'
-import useMediaSettingsStore from '@/stores/use-media-setting.store'
 import { useShallow } from 'zustand/react/shallow'
+
+import useMediaSettingsStore from '@/stores/use-media-setting.store'
 
 function useMediaControl() {
   const videoRef = useRef<HTMLVideoElement>(null)

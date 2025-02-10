@@ -1,5 +1,7 @@
-import { Links, Meta, Outlet, Scripts, ScrollRestoration, isRouteErrorResponse } from 'react-router'
 import '@/styles/globals.css'
+
+import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
+
 import type { Route } from '@/types/route'
 
 export function Layout({ children }: { children: React.ReactNode }) {

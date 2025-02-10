@@ -1,9 +1,10 @@
-import { cn } from '@/libs/cn'
-import { CustomPresenceStatus } from '@/types/user'
 import { cva } from 'class-variance-authority'
 import { CSSProperties, memo } from 'react'
 
-type Props = {
+import { cn } from '@/libs/cn'
+import { CustomPresenceStatus } from '@/types/user'
+
+interface Props {
   status: CustomPresenceStatus
   size: 'sm' | 'lg'
   defaultBackgroundColor?: CSSProperties['color']

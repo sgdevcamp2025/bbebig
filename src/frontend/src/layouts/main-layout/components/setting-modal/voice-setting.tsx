@@ -1,14 +1,15 @@
-import SelectBox from '@/components/select-box'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import CustomButton from '@/components/custom-button'
-import VolumeSlider from '@/components/volume-slider'
-import useMediaSettingsStore from '@/stores/use-media-setting.store'
 import { useShallow } from 'zustand/shallow'
-import useMediaControl from '@/hooks/use-media-control'
-import { AudioDevice } from '@/types/media'
-import useGetMediaDevices from '@/hooks/use-get-media-devices'
 
-type VoiceSetting = {
+import CustomButton from '@/components/custom-button'
+import SelectBox from '@/components/select-box'
+import VolumeSlider from '@/components/volume-slider'
+import useGetMediaDevices from '@/hooks/use-get-media-devices'
+import useMediaControl from '@/hooks/use-media-control'
+import useMediaSettingsStore from '@/stores/use-media-setting.store'
+import { AudioDevice } from '@/types/media'
+
+interface VoiceSetting {
   VOICE_OPTION: string
   OUTPUT_OPTION: string
   VOICE_PERCENTAGE: number

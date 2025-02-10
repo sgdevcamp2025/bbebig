@@ -1,9 +1,11 @@
 import { useState } from 'react'
+
 import { cn } from '@/libs/cn'
 import { Category } from '@/types/channel'
+
 import SettingModal from '../setting-modal'
 
-type ServerSideBarProps = {
+interface ServerSideBarProps {
   serverName?: string
   categories?: Category[]
   selectedChannelId?: string

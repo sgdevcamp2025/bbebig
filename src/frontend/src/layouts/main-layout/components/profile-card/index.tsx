@@ -3,9 +3,10 @@ import LoadingIcon from '@/components/loading-icon'
 import StatusIcon from '@/components/status-icon'
 import { statusKo } from '@/constants/status'
 import { CustomPresenceStatus } from '@/types/user'
+
 import MenuItem from './menu-item'
 
-type Props = {
+interface Props {
   name: string
   email: string
   status: CustomPresenceStatus
@@ -115,7 +116,7 @@ const profileCard = {
     'https://cdn.discordapp.com/banners/419411480677580820/a_b6a40ef738c6f8221793be39094cce00.png'
 } as const
 
-type ProfileCardProps = {
+interface ProfileCardProps {
   onEditProfile: () => void
 }
 

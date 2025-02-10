@@ -1,7 +1,7 @@
 import { cva } from 'class-variance-authority'
 import { CSSProperties } from 'react'
 
-type Props = {
+interface Props {
   name: string
   avatarUrl: string
   backgroundUrl?: string

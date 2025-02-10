@@ -1,15 +1,15 @@
 import { CheckIcon, ChevronDownIcon } from 'lucide-react'
 import { useRef, useState } from 'react'
 
-import { cn } from '@/libs/cn'
 import useClickOutside from '@/hooks/use-click-outside'
+import { cn } from '@/libs/cn'
 
-type Option<T> = {
+interface Option<T> {
   label: string
   value: T
 }
 
-type Props<T> = {
+interface Props<T> {
   label?: string
   options: Option<T>[]
   value: Option<T> | null

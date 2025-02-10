@@ -1,4 +1,4 @@
-type Message = {
+interface Message {
   id: string
   memberId: string
   type: MessageType

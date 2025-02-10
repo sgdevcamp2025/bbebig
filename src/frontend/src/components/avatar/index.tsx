@@ -1,9 +1,10 @@
-import { cn } from '@/libs/cn'
 import { cva } from 'class-variance-authority'
-import { CSSProperties, ComponentProps } from 'react'
+import { ComponentProps, CSSProperties } from 'react'
+
+import { cn } from '@/libs/cn'
+import { CustomPresenceStatus } from '@/types/user'
 
 import StatusIcon from '../status-icon'
-import { CustomPresenceStatus } from '@/types/user'
 
 type Props = {
   avatarUrl: string

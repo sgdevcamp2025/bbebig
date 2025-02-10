@@ -1,4 +1,4 @@
-type User = {
+interface User {
   id: string
   name: string
   email: string
@@ -11,4 +11,4 @@ type User = {
 
 type CustomPresenceStatus = 'ONLINE' | 'OFFLINE' | 'NOT_DISTURB' | 'INVISIBLE'
 
-export { type User, type CustomPresenceStatus }
+export { type CustomPresenceStatus, type User }

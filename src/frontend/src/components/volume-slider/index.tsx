@@ -1,6 +1,8 @@
-import { ComponentPropsWithoutRef } from 'react'
-import { cn } from '@/libs/cn'
 import './style.module.css'
+
+import { ComponentPropsWithoutRef } from 'react'
+
+import { cn } from '@/libs/cn'
 type Props = ComponentPropsWithoutRef<'input'> & {
   label?: string
 }
