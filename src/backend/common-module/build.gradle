@@ -21,7 +21,6 @@ repositories {
 dependencies {
     // Spring
     implementation platform("org.springframework.boot:spring-boot-dependencies:3.4.1")
-    implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
     // Validation
