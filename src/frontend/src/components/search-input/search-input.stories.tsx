@@ -16,6 +16,6 @@ type Story = StoryObj<typeof meta>
 export const PrimarySearchInput: Story = {
   args: {
     placeholder: '검색',
-    onSearch: (value) => alert(`검색: ${value}`)
+    onSearch: (value) => console.log(`검색: ${value}`)
   }
 }
