@@ -14,7 +14,7 @@ interface UserListItemProps {
 
 const ICON_PATH = {
   default: ['/icon/friend/dm.svg', '/icon/friend/more.svg'],
-  response: ['/icon/friend/accept.svg', '/icon/friend/accept.svg'],
+  response: ['/icon/friend/accept.svg', '/icon/friend/reject.svg'],
   request: ['/icon/friend/reject.svg']
 } as const
 
@@ -48,7 +48,7 @@ function UserListItem({
             key={iconPath}
             type='button'
             aria-label={'icon'}
-            className='p-2 hover:bg-discord-gray-700 rounded-3xl group-hover:bg-discord-gray-700'>
+            className='p-2 bg-discord-gray-700 hover:bg-discord-gray-800 rounded-3xl group-hover:bg-discord-gray-800'>
             <img
               src={iconPath}
               alt={'icon'}

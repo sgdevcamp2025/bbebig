@@ -5,4 +5,7 @@ export interface Friend {
   avatarUrl: string
   name: string
   status: CustomPresenceStatus
+  friendStatus?: FriendStatus
 }
+
+type FriendStatus = 'RESPONSE_PENDING' | 'REQUEST_PENDING' | 'DECLINED' | 'ACCEPTED' | 'DELETED'
