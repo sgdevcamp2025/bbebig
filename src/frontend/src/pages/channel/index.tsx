@@ -4,7 +4,7 @@ import TextComponent from './components/text'
 import VideoComponent from './components/voice'
 
 const CHANNEL_INFO = {
-  type: 'VOICE',
+  type: 'TEXT',
   channelName: '음성 테스트 채널'
 }
 

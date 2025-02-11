@@ -3,17 +3,20 @@ import { useEffect, useRef, useState } from 'react'
 
 import Avatar from '@/components/avatar'
 import { cn } from '@/libs/cn'
+import useStatusBarStore from '@/stores/use-status-bar-store'
 import { Message } from '@/types/message'
 import timeHelper from '@/utils/format-time'
 
 interface Props {
   channelId: number
+  isVoice: boolean
   onClose?: () => void
 }
 
-function ChatArea({ channelId, onClose }: Props) {
+function ChatArea({ channelId, isVoice, onClose }: Props) {
   const messagesRef = useRef<HTMLDivElement>(null)
   const [messages, setMessages] = useState<Record<string, Message[]>>({})
+  const { isStatusBarOpen, toggleStatusBar } = useStatusBarStore()
   const inputRef = useRef<HTMLInputElement>(null)
   const sendMessage = () => {
     if (!inputRef.current || !channelId) return
@@ -53,14 +56,12 @@ function ChatArea({ channelId, onClose }: Props) {
     }
   }
 
-  const isVoice = Boolean(onClose)
-
   return (
     <>
       <div
-        className={cn('h-12 border-b border-discord-gray-800 px-4 flex items-center', {
-          'justify-between': isVoice
-        })}>
+        className={cn(
+          'h-12 border-b border-discord-gray-800 px-4 flex items-center justify-between'
+        )}>
         <span className='flex items-center gap-1.5 text-discord-font-color-normal font-medium'>
           {isVoice ? (
             <img
@@ -75,11 +76,26 @@ function ChatArea({ channelId, onClose }: Props) {
           )}
           채널 {channelId}
         </span>
-        {isVoice && (
+        {isVoice ? (
           <button
             type='button'
             onClick={onClose}>
             <X className='text-white-20' />
+          </button>
+        ) : (
+          <button
+            type='button'
+            className='group p-1 cursor-pointer hover:bg-discord-gray-800 rounded-xl'
+            onClick={toggleStatusBar}>
+            <img
+              className='w-[19px] h-[19px]'
+              src={
+                isStatusBarOpen
+                  ? '/icon/channel/type-group-enable.svg'
+                  : '/icon/channel/type-group.svg'
+              }
+              alt='유저 리스트'
+            />
           </button>
         )}
       </div>

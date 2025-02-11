@@ -101,6 +101,7 @@ function VideoComponent({ channelId, channelName }: Props) {
       {sideBar && (
         <div className='flex flex-col min-w-[480px] h-screen bg-brand-10 rounded-l-lg'>
           <ChatArea
+            isVoice={true}
             channelId={channelId}
             onClose={() => setSideBar(false)}
           />
