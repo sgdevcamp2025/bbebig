@@ -1,8 +1,9 @@
+import { useState } from 'react'
+
 import SearchInput from '@/components/search-input'
 import UserListItem from '@/components/user-list-item'
 import { statusKo } from '@/constants/status'
 import { Friend } from '@/types/friend'
-import { useState } from 'react'
 
 const DUMMY_FRIENDS: Friend[] = [
   {
