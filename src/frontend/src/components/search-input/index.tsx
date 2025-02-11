@@ -20,7 +20,7 @@ function SearchInput({ placeholder = '검색하기', onSearch }: Props) {
   }
 
   return (
-    <div className='w-full flex items-center bg-discord-gray-800 rounded-md px-3 py-1.5 justify-between'>
+    <div className='w-full flex items-center bg-discord-gray-800 rounded-md px-3 py-1.5 justify-between gap-2'>
       <input
         type='text'
         placeholder={placeholder}
