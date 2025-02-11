@@ -1,10 +1,8 @@
-package com.bbebig.searchserver.domain.search.repository;
+package com.bbebig.searchserver.global.repository;
 
 import com.bbebig.commonmodule.redis.domain.MemberPresenceStatus;
-import com.bbebig.commonmodule.redis.domain.RecentServerChannelInfo;
 import com.bbebig.commonmodule.redis.repository.MemberRedisRepository;
 import com.bbebig.commonmodule.redis.util.MemberRedisKeys;
-import com.bbebig.commonmodule.redis.util.MemberRedisTTL;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -13,7 +11,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j

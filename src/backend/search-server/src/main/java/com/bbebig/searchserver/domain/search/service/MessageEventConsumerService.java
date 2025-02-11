@@ -2,6 +2,7 @@ package com.bbebig.searchserver.domain.search.service;
 
 import com.bbebig.commonmodule.kafka.dto.ChatMessageDto;
 import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
+import com.bbebig.searchserver.domain.history.service.HistoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;

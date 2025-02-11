@@ -1,4 +1,4 @@
-package com.bbebig.searchserver.domain.search.client;
+package com.bbebig.searchserver.global.client;
 
 import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto;
 import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto.*;

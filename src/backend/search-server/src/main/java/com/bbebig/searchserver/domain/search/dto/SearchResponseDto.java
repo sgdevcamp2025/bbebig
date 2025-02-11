@@ -1,8 +1,6 @@
 package com.bbebig.searchserver.domain.search.dto;
 
-import com.bbebig.searchserver.domain.search.domain.ChannelChatMessage;
 import com.bbebig.searchserver.domain.search.domain.ChannelChatMessageElastic;
-import com.bbebig.searchserver.domain.search.domain.DmChatMessage;
 import com.bbebig.searchserver.domain.search.domain.DmChatMessageElastic;
 import lombok.Builder;
 import lombok.Data;

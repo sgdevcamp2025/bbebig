@@ -1,8 +1,8 @@
-package com.bbebig.searchserver.domain.search.controller;
+package com.bbebig.searchserver.domain.history.controller;
 
 import com.bbebig.commonmodule.global.response.code.CommonResponse;
-import com.bbebig.searchserver.domain.search.dto.HistoryResponseDto.*;
-import com.bbebig.searchserver.domain.search.service.HistoryService;
+import com.bbebig.searchserver.domain.history.dto.HistoryResponseDto.*;
+import com.bbebig.searchserver.domain.history.service.HistoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

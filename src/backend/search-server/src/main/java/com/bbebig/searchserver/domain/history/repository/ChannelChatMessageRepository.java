@@ -1,6 +1,6 @@
-package com.bbebig.searchserver.domain.search.repository;
+package com.bbebig.searchserver.domain.history.repository;
 
-import com.bbebig.searchserver.domain.search.domain.ChannelChatMessage;
+import com.bbebig.searchserver.domain.history.domain.ChannelChatMessage;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;

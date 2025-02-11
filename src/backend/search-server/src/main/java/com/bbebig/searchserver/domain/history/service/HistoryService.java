@@ -1,16 +1,20 @@
-package com.bbebig.searchserver.domain.search.service;
+package com.bbebig.searchserver.domain.history.service;
 
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.kafka.dto.ChatMessageDto;
 import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
-import com.bbebig.searchserver.domain.search.client.ServiceClient;
-import com.bbebig.searchserver.domain.search.domain.ChannelChatMessage;
-import com.bbebig.searchserver.domain.search.domain.DmChatMessage;
-import com.bbebig.searchserver.domain.search.dto.HistoryDtoConverter;
-import com.bbebig.searchserver.domain.search.dto.HistoryResponseDto.ChannelUnreadCountDto;
-import com.bbebig.searchserver.domain.search.dto.HistoryResponseDto.ServerUnreadCountDto;
+import com.bbebig.searchserver.domain.history.repository.ChannelChatMessageRepository;
+import com.bbebig.searchserver.domain.history.repository.DmChatMessageRepository;
+import com.bbebig.searchserver.global.client.ServiceClient;
+import com.bbebig.searchserver.domain.history.domain.ChannelChatMessage;
+import com.bbebig.searchserver.domain.history.domain.DmChatMessage;
+import com.bbebig.searchserver.domain.history.dto.HistoryDtoConverter;
+import com.bbebig.searchserver.domain.history.dto.HistoryResponseDto.ChannelUnreadCountDto;
+import com.bbebig.searchserver.domain.history.dto.HistoryResponseDto.ServerUnreadCountDto;
 import com.bbebig.searchserver.domain.search.repository.*;
+import com.bbebig.searchserver.global.repository.MemberRedisRepositoryImpl;
+import com.bbebig.searchserver.global.repository.ServerRedisRepositoryImpl;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +29,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto.*;
-import static com.bbebig.searchserver.domain.search.dto.HistoryResponseDto.*;
+import static com.bbebig.searchserver.domain.history.dto.HistoryResponseDto.*;
 
 @Slf4j
 @Service
@@ -128,7 +132,7 @@ public class HistoryService {
 			if (serverRedisRepository.existsChannelMessageList(channelId)) {
 				serverRedisRepository.deleteChannelMessageList(channelId);
 			}
-			cacheChannelMessage(channelId);
+
 			log.info("[Search] ChatMessageService : 채널 메시지 삭제 완료. messageId: {}", messageId);
 		}, () -> {
 			log.error("[Search] ChatMessageService : 채널 채팅 메시지를 찾을 수 없습니다. messageId: {}", messageId);

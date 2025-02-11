@@ -1,9 +1,9 @@
-package com.bbebig.searchserver.domain.search.repository;
+package com.bbebig.searchserver.global.repository;
 
 import com.bbebig.commonmodule.redis.domain.ServerMemberStatus;
 import com.bbebig.commonmodule.redis.repository.ServerRedisRepository;
 import com.bbebig.commonmodule.redis.util.ServerRedisKeys;
-import com.bbebig.searchserver.domain.search.domain.ChannelChatMessage;
+import com.bbebig.searchserver.domain.history.domain.ChannelChatMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;

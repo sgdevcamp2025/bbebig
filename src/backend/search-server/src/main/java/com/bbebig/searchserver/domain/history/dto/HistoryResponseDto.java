@@ -1,7 +1,7 @@
-package com.bbebig.searchserver.domain.search.dto;
+package com.bbebig.searchserver.domain.history.dto;
 
-import com.bbebig.searchserver.domain.search.domain.ChannelChatMessage;
-import com.bbebig.searchserver.domain.search.domain.DmChatMessage;
+import com.bbebig.searchserver.domain.history.domain.ChannelChatMessage;
+import com.bbebig.searchserver.domain.history.domain.DmChatMessage;
 import lombok.Builder;
 import lombok.Data;
 
