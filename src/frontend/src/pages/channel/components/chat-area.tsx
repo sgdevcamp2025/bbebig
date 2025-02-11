@@ -63,7 +63,7 @@ function ChatArea({ channelId, isVoice, onClose }: Props) {
           'h-12 border-b border-discord-gray-800 px-4 flex items-center justify-between'
         )}>
         <span className='flex items-center gap-1.5 text-discord-font-color-normal font-medium'>
-          {isVoice ? (
+          {!isVoice ? (
             <img
               className='w-[17px] h-[17px]'
               src='/icon/channel/type-text.svg'
@@ -137,7 +137,7 @@ function ChatArea({ channelId, isVoice, onClose }: Props) {
 
       {/* 입력창 */}
       <div className='px-4 pb-4'>
-        <div className='h-12 flex items-center bg-discord-gray-600 rounded-md'>
+        <div className='h-12 flex items-center bg-discord-gray-500 rounded-md'>
           <img
             className='ml-3 w-[25px] h-[25px]'
             src='/icon/chat/plus.svg'
