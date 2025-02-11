@@ -9,7 +9,7 @@ const user: User = {
   id: '1',
   name: '김예지',
   avatarUrl: '/image/common/default-avatar.png',
-  bannerUrl: '/image/common/default-banner.png',
+  bannerUrl: '/image/common/default-background.png',
   customPresenceStatus: 'ONLINE',
   introduction: '안뇽',
   introductionEmoji: '👋',
