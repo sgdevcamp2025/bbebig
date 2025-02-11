@@ -8,13 +8,14 @@ interface UserListItemProps {
   description: string
   status: CustomPresenceStatus
   statusColor?: string
-  iconType: 'default' | 'pending'
+  iconType: 'default' | 'request' | 'response'
   onClick?: () => void
 }
 
 const ICON_PATH = {
   default: ['/icon/friend/dm.svg', '/icon/friend/more.svg'],
-  pending: ['/icon/friend/pending.svg', '/icon/friend/reject.svg']
+  response: ['/icon/friend/accept.svg', '/icon/friend/accept.svg'],
+  request: ['/icon/friend/reject.svg']
 } as const
 
 function UserListItem({
@@ -46,10 +47,11 @@ function UserListItem({
           <button
             key={iconPath}
             type='button'
+            aria-label={'icon'}
             className='p-2 hover:bg-discord-gray-700 rounded-3xl group-hover:bg-discord-gray-700'>
             <img
               src={iconPath}
-              alt={`icon-${iconPath}`}
+              alt={'icon'}
               className='w-5 h-5'
             />
           </button>
