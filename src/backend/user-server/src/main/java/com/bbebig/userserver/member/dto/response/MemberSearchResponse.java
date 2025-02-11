@@ -19,7 +19,7 @@ public record MemberSearchResponse(
                         member.getId(),
                         member.getName(),
                         member.getEmail(),
-                        member.getProfileImgUrl(),
+                        member.getProfileImageUrl(),
                         member.getNickname(),
                         member.getCustomPresenceStatus(),
                         member.getCreatedAt(),
