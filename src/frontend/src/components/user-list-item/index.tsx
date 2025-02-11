@@ -26,7 +26,7 @@ function UserListItem({
   iconType = 'default'
 }: UserListItemProps) {
   return (
-    <div className='flex items-center justify-between p-2 hover:bg-discord-gray-600 rounded cursor-pointer'>
+    <div className='group flex items-center justify-between p-2 hover:bg-discord-gray-500 rounded cursor-pointer'>
       <div className='flex items-center gap-3'>
         <Avatar
           avatarUrl={avatarUrl}
@@ -46,7 +46,7 @@ function UserListItem({
           <button
             key={iconPath}
             type='button'
-            className='p-2 hover:bg-discord-gray-700 rounded'>
+            className='p-2 hover:bg-discord-gray-700 rounded-3xl group-hover:bg-discord-gray-700'>
             <img
               src={iconPath}
               alt={`icon-${iconPath}`}
