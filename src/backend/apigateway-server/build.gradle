@@ -32,8 +32,12 @@ dependencies {
     // 공통 모듈 추가
     implementation project(":common-module")
 
-    // Spring
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation("org.springframework.boot:spring-boot-starter-web") {
+        exclude("org.springframework.boot", "spring-boot-starter-tomcat")
+    }
+
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+
 
     // Spring Cloud
     implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
