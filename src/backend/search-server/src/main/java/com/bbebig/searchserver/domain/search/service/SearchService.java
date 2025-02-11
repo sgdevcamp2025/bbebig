@@ -12,8 +12,6 @@ import com.bbebig.searchserver.domain.search.dto.SearchMessageDtoConverter;
 import com.bbebig.searchserver.domain.search.dto.SearchOption;
 import com.bbebig.searchserver.domain.search.dto.SearchRequestDto.*;
 import com.bbebig.searchserver.domain.search.dto.SearchResponseDto.*;
-import com.bbebig.searchserver.domain.history.repository.ChannelChatMessageRepository;
-import com.bbebig.searchserver.domain.history.repository.DmChatMessageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -33,9 +31,6 @@ import java.util.Optional;
 public class SearchService {
 
 	private final ElasticsearchClient elasticsearchClient;
-
-	private final ChannelChatMessageRepository channelChatMessageRepository;
-	private final DmChatMessageRepository dmChatMessageRepository;
 
 	private static final String CHANNEL_CHAT_INDEX = "channel_chat_messages";
 	private static final String DM_CHAT_INDEX = "dm_chat_messages";
