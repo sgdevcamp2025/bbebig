@@ -7,6 +7,7 @@ import ServerIcon from '@/components/server-icon'
 import { statusKo } from '@/constants/status'
 import { cn } from '@/libs/cn'
 import useMediaSettingsStore from '@/stores/use-media-setting.store'
+import { useSignalingStompStore } from '@/stores/use-signaling-stomp-store'
 
 import ProfileCard from './components/profile-card'
 import ProfileStatusButton from './components/profile-status-button'
@@ -52,6 +53,14 @@ const MainRootLayout = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const { serverId } = useParams<{ serverId: string }>()
+  const { disconnect, connect } = useSignalingStompStore()
+
+  useEffect(() => {
+    connect()
+    return () => {
+      disconnect()
+    }
+  }, [connect, disconnect])
 
   const pathname =
     location.pathname.split('/')[1] === 'channels' ? location.pathname.split('/')[2] : null

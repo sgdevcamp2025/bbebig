@@ -3,6 +3,7 @@ import { CSSProperties, useState } from 'react'
 import AvatarCard from '@/components/avatar-card'
 import CustomButton from '@/components/custom-button'
 import { cn } from '@/libs/cn'
+import { useSignalingStompStore } from '@/stores/use-signaling-stomp-store'
 import { User } from '@/types/user'
 
 import ChatArea from './chat-area'
@@ -40,7 +41,15 @@ const userList = [
 function VideoComponent({ channelId, channelName }: Props) {
   const [sideBar, setSideBar] = useState(true)
 
+  const { send } = useSignalingStompStore()
+
   const isEmptyText = userList.length === 0
+
+  send(`/topic/${channelId}`, {
+    type: 'JOIN'
+  })
+
+  console.log('[✅] 시그널링 스톰프 메시지 발행 : ', channelId)
 
   return (
     <div className='flex flex-1 h-screen'>

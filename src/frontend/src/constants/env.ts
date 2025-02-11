@@ -1,4 +1,6 @@
-const PRIVATE_ROUTE_ENABLE = import.meta.env.PRIVATE_ROUTE_ENABLE === 'true'
+const SIGNALING_SERVER_URL = import.meta.env.SIGNALING_SERVER_URL
+
+const CHAT_SERVER_URL = import.meta.env.CHAT_SERVER_URL
 const SOCKET_URL = import.meta.env.SOCKET_URL
 
-export { PRIVATE_ROUTE_ENABLE, SOCKET_URL }
+export { CHAT_SERVER_URL, SIGNALING_SERVER_URL, SOCKET_URL }
