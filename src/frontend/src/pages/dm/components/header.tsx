@@ -10,16 +10,8 @@ const navigation = [
     component: 'ALL'
   },
   {
-    name: '차단',
-    component: 'BLOCK'
-  },
-  {
     name: '대기 중',
     component: 'PENDING'
-  },
-  {
-    name: '차단 목록',
-    component: 'BLOCK_FRIENDS'
   }
 ] as const
 
@@ -49,7 +41,7 @@ function Header({ onTabChange, currentTab }: HeaderProps) {
             key={item.component}
             onClick={() => onTabChange(item.component)}
             className={cn(
-              'px-2 py-1 rounded-md text-base font-medium cursor-pointer',
+              'px-1 py-0.5 rounded-md text-base font-medium cursor-pointer',
               'hover:bg-discord-gray-500 hover:text-discord-font-color-normal text-discord-font-color-muted',
               currentTab === item.component && 'bg-discord-gray-500 text-discord-font-color-normal'
             )}>
@@ -59,7 +51,7 @@ function Header({ onTabChange, currentTab }: HeaderProps) {
       </div>
       <button
         type='button'
-        className='ml-3 px-1 py-0.5 rounded-md bg-[#3BA55D] text-sm text-white font-medium'>
+        className='ml-5 px-1 py-0.5 rounded-md bg-[#248045] text-base text-white font-medium'>
         친구 추가하기
       </button>
     </div>
