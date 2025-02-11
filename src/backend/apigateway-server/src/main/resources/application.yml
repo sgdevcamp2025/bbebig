@@ -63,7 +63,7 @@ spring:
 
         # 채팅 서버 소켓(Chat Server Socket)
         - id: chat-server-socket
-          uri: lb://chat-server-socket
+          uri: lb://chat-server
           predicates:
             - Path=/ws-chat/**
 
