@@ -61,6 +61,12 @@ spring:
           filters:
             - name: PassportFilter
 
+        # 채팅 서버 소켓(Chat Server Socket)
+        - id: chat-server-socket
+          uri: lb://chat-server-socket
+          predicates:
+            - Path=/ws-chat/**
+
         # 푸시 서버(Push Server)
         - id: push-server
           uri: lb://push-server
