@@ -12,6 +12,7 @@ public enum NotificationEventType {
 	DM_MEMBER_PRESENCE("DM_MEMBER_PRESENCE"),
 	FRIEND_ACTION("FRIEND_UPDATE"),
 	DM_MEMBER_ACTION("DM_MEMBER_UPDATE"),
+	SERVER_UNREAD("SERVER_UNREAD"),
 	;
 
 	private final String type;
