@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 
 import SearchInput from '@/components/search-input'
 import UserListItem from '@/components/user-list-item'
@@ -32,12 +32,21 @@ function AllFriends() {
     friend.name.toLowerCase().includes(searchValue.toLowerCase())
   )
 
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value)
+  }
+
+  const handleClear = () => {
+    setSearchValue('')
+  }
+
   return (
     <div className='flex flex-col gap-6 p-4'>
       <div>
         <SearchInput
           value={searchValue}
-          handleClear={() => setSearchValue('')}
+          onChange={handleSearch}
+          handleClear={handleClear}
           placeholder='검색하기'
         />
       </div>

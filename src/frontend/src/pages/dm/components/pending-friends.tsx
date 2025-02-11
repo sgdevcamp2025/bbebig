@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 
 import SearchInput from '@/components/search-input'
 import UserListItem from '@/components/user-list-item'
@@ -24,6 +24,7 @@ const DUMMY_FRIENDS: Friend[] = [
 
 function PendingFriends() {
   const [searchValue, setSearchValue] = useState('')
+
   const filteredFriends = DUMMY_FRIENDS.filter((friend) =>
     friend.name.toLowerCase().includes(searchValue.toLowerCase())
   )
@@ -35,11 +36,20 @@ function PendingFriends() {
     (friend) => friend.friendStatus === 'REQUEST_PENDING'
   )
 
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value)
+  }
+
+  const handleClear = () => {
+    setSearchValue('')
+  }
+
   return (
     <div className='flex flex-col gap-6 p-4'>
       <SearchInput
         value={searchValue}
-        handleClear={() => setSearchValue('')}
+        onChange={handleSearch}
+        handleClear={handleClear}
         placeholder='검색하기'
       />
 
