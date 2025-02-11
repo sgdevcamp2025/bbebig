@@ -4,7 +4,7 @@
 
 비비빅팀(BBeBig)은 '크게 성장하는 B팀'을 의미합니다. 의사소통과 피드백에 열정적인 5명의 팀원이 모여있습니다.
 
-|AOS|BE|BE|FE|FE|
+|Android|BE|BE|FE|FE|
 | :-: | :-: | :-: | :-: | :-: |
 | <img src="https://avatars.githubusercontent.com/u/59912150?v=4" width="150"> |<img src="https://avatars.githubusercontent.com/u/51228946?v=4" width="150"> |<img src="https://avatars.githubusercontent.com/u/83596813?v=4" width="150"> |<img src="https://avatars.githubusercontent.com/u/101444425?v=4" width="150">|<img src="https://avatars.githubusercontent.com/u/115636461?v=4" width="150">|
 | [서정우](https://github.com/SEO-J17)|[백도현](https://github.com/dh1010a)|[이소은](https://github.com/soeun2537)|[김예지](https://github.com/mnbvcxzyj)| [이지형](https://github.com/Zero-1016)|
