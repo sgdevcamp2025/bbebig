@@ -6,7 +6,9 @@ import com.bbebig.searchserver.domain.search.domain.ChannelChatMessageElastic;
 import com.bbebig.searchserver.domain.search.domain.DmChatMessage;
 import com.bbebig.searchserver.domain.search.domain.DmChatMessageElastic;
 
-public class ChatMessageDtoConverter {
+import java.util.List;
+
+public class HistoryDtoConverter {
 
 	public static ChannelChatMessage convertDtoToChannelChatMessage(ChatMessageDto messageDto) {
 		return ChannelChatMessage.builder()
@@ -54,6 +56,25 @@ public class ChatMessageDtoConverter {
 				.sendMemberId(messageDto.getSendMemberId())
 				.content(messageDto.getContent())
 				.createdAt(messageDto.getCreatedAt() != null ? messageDto.getCreatedAt() : null)
+				.build();
+	}
+
+	public static HistoryResponseDto.GetChannelMessageResponseDto convertToGetChannelMessageResponseDto(Long serverId, Long channelId, List<ChannelChatMessage> messages) {
+		return HistoryResponseDto.GetChannelMessageResponseDto.builder()
+				.serverId(serverId)
+				.channelId(channelId)
+				.lastMessageId(messages.get(messages.size() - 1).getId())
+				.totalCount(messages.size())
+				.messages(messages)
+				.build();
+	}
+
+	public static HistoryResponseDto.GetDmMessageResponseDto convertToGetDmMessageResponseDto(Long channelId, List<DmChatMessage> messages) {
+		return HistoryResponseDto.GetDmMessageResponseDto.builder()
+				.channelId(channelId)
+				.lastMessageId(messages.get(messages.size() - 1).getId())
+				.totalCount(messages.size())
+				.messages(messages)
 				.build();
 	}
 

@@ -83,48 +83,6 @@ public class SearchService {
 		}
 	}
 
-	// Id 기반 채널 과거 메시지 조회
-	// GET /server/{serverId}/channel/{channelId}/messages
-	public GetChannelMessageResponseDto getChannelMessages(Long serverId, Long channelId, Long messageId, int limit) {
-		if (messageId == null) {
-			messageId = Long.MAX_VALUE;
-		}
-		// TODO: 채널 아이디가 서버에 존재하는지 확인하는 로직 추가
-
-		PageRequest pageReq = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC));
-		List<ChannelChatMessage> messages = channelChatMessageRepository.findByChannelIdAndIdLessThan(channelId, messageId, pageReq);
-		if (!messages.isEmpty()) {
-			return SearchMessageDtoConverter.convertToGetChannelMessageResponseDto(serverId, channelId, messages);
-		}
-		else {
-			return GetChannelMessageResponseDto.builder()
-					.serverId(serverId)
-					.channelId(channelId)
-					.totalCount(0)
-					.build();
-		}
-	}
-
-	// ID 기반 DM 과거 메시지 조회
-	// GET /dm/{channelId}/messages
-	public GetDmMessageResponseDto getDmChannelMessages(Long channelId, Long messageId, int limit) {
-		if (messageId == null) {
-			messageId = Long.MAX_VALUE;
-		}
-
-		PageRequest pageReq = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC));
-		List<DmChatMessage> messages = dmChatMessageRepository.findByChannelIdAndIdLessThan(channelId, messageId, pageReq);
-		if (!messages.isEmpty()) {
-			return SearchMessageDtoConverter.convertToGetDmMessageResponseDto(channelId, messages);
-		}
-		else {
-			return GetDmMessageResponseDto.builder()
-					.channelId(channelId)
-					.totalCount(0)
-					.build();
-		}
-	}
-
 	/**
 	 * 검색 옵션들을 분석하여 필터용 Query 리스트 생성
 	 */

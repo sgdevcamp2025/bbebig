@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MessageEventConsumerService {
 
-	private final ChatMessageService chatMessageService;
+	private final HistoryService historyService;
 
 	/**
 	 * 채널 채팅 메시지 이벤트 처리 (CREATE, UPDATE, DELETE)
@@ -34,13 +34,13 @@ public class MessageEventConsumerService {
 
 		switch (chatMessageDto.getType()) {
 			case "MESSAGE_CREATE":
-				chatMessageService.saveChannelMessage(chatMessageDto);
+				historyService.saveChannelMessage(chatMessageDto);
 				break;
 			case "MESSAGE_UPDATE":
-				chatMessageService.updateChannelMessage(chatMessageDto);
+				historyService.updateChannelMessage(chatMessageDto);
 				break;
 			case "MESSAGE_DELETED":
-				chatMessageService.deleteChannelMessage(chatMessageDto.getId());
+				historyService.deleteChannelMessage(chatMessageDto.getId());
 				break;
 			default:
 				log.warn("[Chat] MessageEventConsumerService: 처리할 수 없는 메시지 타입. ChatMessageDto: {}", chatMessageDto);
@@ -64,13 +64,13 @@ public class MessageEventConsumerService {
 
 		switch (chatMessageDto.getType()) {
 			case "MESSAGE_CREATE":
-				chatMessageService.saveDmMessage(chatMessageDto);
+				historyService.saveDmMessage(chatMessageDto);
 				break;
 			case "MESSAGE_UPDATE":
-				chatMessageService.updateDmMessage(chatMessageDto);
+				historyService.updateDmMessage(chatMessageDto);
 				break;
 			case "MESSAGE_DELETED":
-				chatMessageService.deleteDmMessage(chatMessageDto.getId());
+				historyService.deleteDmMessage(chatMessageDto.getId());
 				break;
 			default:
 				log.warn("[Chat] MessageEventConsumerService: 처리할 수 없는 메시지 타입. ChatMessageDto: {}", chatMessageDto);

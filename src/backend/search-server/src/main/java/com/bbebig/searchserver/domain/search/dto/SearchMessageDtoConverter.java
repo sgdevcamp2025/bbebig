@@ -4,6 +4,8 @@ import com.bbebig.searchserver.domain.search.domain.ChannelChatMessage;
 import com.bbebig.searchserver.domain.search.domain.ChannelChatMessageElastic;
 import com.bbebig.searchserver.domain.search.domain.DmChatMessage;
 import com.bbebig.searchserver.domain.search.domain.DmChatMessageElastic;
+import com.bbebig.searchserver.domain.search.dto.HistoryResponseDto.GetChannelMessageResponseDto;
+import com.bbebig.searchserver.domain.search.dto.HistoryResponseDto.GetDmMessageResponseDto;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -25,25 +27,6 @@ public class SearchMessageDtoConverter {
 				.channelId(channelId)
 				.totalCount((int) page.getTotalElements())
 				.messages(page.getContent())
-				.build();
-	}
-
-	public static GetChannelMessageResponseDto convertToGetChannelMessageResponseDto(Long serverId, Long channelId, List<ChannelChatMessage> messages) {
-		return GetChannelMessageResponseDto.builder()
-				.serverId(serverId)
-				.channelId(channelId)
-				.lastMessageId(messages.get(messages.size() - 1).getId())
-				.totalCount(messages.size())
-				.messages(messages)
-				.build();
-	}
-
-	public static GetDmMessageResponseDto convertToGetDmMessageResponseDto(Long channelId, List<DmChatMessage> messages) {
-		return GetDmMessageResponseDto.builder()
-				.channelId(channelId)
-				.lastMessageId(messages.get(messages.size() - 1).getId())
-				.totalCount(messages.size())
-				.messages(messages)
 				.build();
 	}
 }
