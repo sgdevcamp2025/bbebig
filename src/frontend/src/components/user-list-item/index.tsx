@@ -51,7 +51,6 @@ function UserListItem({
             className='p-2 bg-discord-gray-700 hover:bg-discord-gray-800 rounded-3xl group-hover:bg-discord-gray-800'>
             <img
               src={iconPath}
-              alt={'icon'}
               className='w-5 h-5'
             />
           </button>
