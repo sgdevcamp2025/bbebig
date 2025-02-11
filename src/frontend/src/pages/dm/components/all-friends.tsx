@@ -32,15 +32,13 @@ function AllFriends() {
     friend.name.toLowerCase().includes(searchValue.toLowerCase())
   )
 
-  const handleSearch = (value: string) => {
-    setSearchValue(value)
-  }
   return (
     <div className='flex flex-col gap-6 p-4'>
       <div>
         <SearchInput
-          onSearch={handleSearch}
-          placeholder='검색'
+          value={searchValue}
+          handleClear={() => setSearchValue('')}
+          placeholder='검색하기'
         />
       </div>
 

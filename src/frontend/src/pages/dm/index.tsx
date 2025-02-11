@@ -2,12 +2,11 @@ import { useState } from 'react'
 import { Outlet } from 'react-router'
 
 import AllFriends from './components/all-friends'
-import BlockedFriends from './components/blocked-friends'
 import Header from './components/header'
 import OnlineFriends from './components/online-friends'
 import PendingFriends from './components/pending-friends'
 
-type FriendTabType = 'ONLINE' | 'ALL' | 'BLOCK' | 'PENDING' | 'BLOCK_FRIENDS'
+type FriendTabType = 'ONLINE' | 'ALL' | 'PENDING'
 
 function Dm() {
   const [currentTab, setCurrentTab] = useState<FriendTabType>('ONLINE')
@@ -18,12 +17,8 @@ function Dm() {
         return <OnlineFriends />
       case 'ALL':
         return <AllFriends />
-      case 'BLOCK':
-        return <BlockedFriends />
       case 'PENDING':
         return <PendingFriends />
-      case 'BLOCK_FRIENDS':
-        return <BlockedFriends />
     }
   }
 

@@ -1,34 +1,19 @@
-import { ChangeEvent, useState } from 'react'
+import { ComponentPropsWithoutRef } from 'react'
 
-interface Props {
-  placeholder?: string
-  onSearch: (value: string) => void
-}
+import { cn } from '@/libs/cn'
 
-function SearchInput({ placeholder = '검색하기', onSearch }: Props) {
-  const [value, setValue] = useState('')
+type Props = {
+  handleClear: () => void
+} & ComponentPropsWithoutRef<'input'>
 
-  const onChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value
-    setValue(inputValue)
-    onSearch(inputValue)
-  }
-
-  const handleClear = () => {
-    setValue('')
-    onSearch('')
-  }
-
+function SearchInput({ handleClear, ...props }: Props) {
   return (
     <div className='w-full flex items-center bg-discord-gray-800 rounded-md px-3 py-1.5 justify-between gap-2'>
       <input
-        type='text'
-        placeholder={placeholder}
-        value={value}
-        onChange={onChangeInput}
-        className='w-full bg-transparent outline-none text-white-10'
+        className={cn('w-full bg-transparent outline-none text-white-10', props.className)}
+        {...props}
       />
-      {value ? (
+      {props.value ? (
         <button onClick={handleClear}>
           <img
             src='/icon/friend/close.svg'
