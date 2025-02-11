@@ -2,7 +2,7 @@ import { useShallow } from 'zustand/shallow'
 
 import { useChatStompStore } from '@/stores/use-chatting-stomp-store'
 
-export const useChattingStomp = () => {
+function useChattingStomp() {
   return useChatStompStore(
     useShallow((state) => ({
       connect: state.connect,
@@ -13,3 +13,5 @@ export const useChattingStomp = () => {
     }))
   )
 }
+
+export default useChattingStomp

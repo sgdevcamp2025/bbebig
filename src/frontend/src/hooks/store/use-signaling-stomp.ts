@@ -2,7 +2,7 @@ import { useShallow } from 'zustand/shallow'
 
 import { useSignalingStompStore } from '@/stores/use-signaling-stomp-store'
 
-export const useSignalingStomp = () => {
+function useSignalingStomp() {
   return useSignalingStompStore(
     useShallow((state) => ({
       connect: state.connect,
@@ -13,3 +13,5 @@ export const useSignalingStomp = () => {
     }))
   )
 }
+
+export default useSignalingStomp
