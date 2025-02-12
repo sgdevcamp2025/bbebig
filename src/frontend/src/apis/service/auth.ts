@@ -1,15 +1,18 @@
 import { COOKIE_KEYS } from '@/constants/keys'
 import cookie from '@/utils/cookie'
 
-import axiosInstance from '../config/axios-instance'
+import SERVER_PORT from '../../constants/base-port'
+import getAxiosInstance from '../config/axios-instance'
 import { LoginResponseSchema, LoginSchema, RegisterSchema } from '../schema/types/auth'
 
-const AUTH_BASE_PATH = '/auth-server'
+const BASE_PATH = `/auth-server`
+
+const axiosInstance = getAxiosInstance(SERVER_PORT.AUTH)
 
 const authService = () => {
   const login = async (data: LoginSchema) => {
     try {
-      const res = await axiosInstance.post<LoginResponseSchema>(`${AUTH_BASE_PATH}/login`, data)
+      const res = await axiosInstance.post<LoginResponseSchema>(`${BASE_PATH}/login`, data)
       cookie.setCookie(COOKIE_KEYS.ACCESS_TOKEN, res.data.result.accessToken)
     } catch (error) {
       console.error(error)
@@ -19,8 +22,18 @@ const authService = () => {
 
   const register = async (data: RegisterSchema) => {
     try {
-      const response = await axiosInstance.post(`${AUTH_BASE_PATH}/register`, data)
+      const response = await axiosInstance.post(`${BASE_PATH}/register`, data)
       return response.data
+    } catch (error) {
+      console.error(error)
+      throw error
+    }
+  }
+
+  const logout = async () => {
+    try {
+      await axiosInstance.post(`${BASE_PATH}/logout`)
+      cookie.deleteCookie(COOKIE_KEYS.ACCESS_TOKEN)
     } catch (error) {
       console.error(error)
       throw error
@@ -29,7 +42,8 @@ const authService = () => {
 
   return {
     login,
-    register
+    register,
+    logout
   }
 }
 

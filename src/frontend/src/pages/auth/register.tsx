@@ -28,7 +28,7 @@ function RegisterPage() {
       password: '',
       name: '',
       nickname: '',
-      birthDate: ''
+      birthdate: ''
     }
   })
 
@@ -42,7 +42,7 @@ function RegisterPage() {
 
   const setBirthdate = useCallback(
     (value: string) => {
-      setValue('birthDate', value)
+      setValue('birthdate', value)
     },
     [setValue]
   )
@@ -92,7 +92,7 @@ function RegisterPage() {
           <DateInput
             label='생년월일'
             required
-            error={errors.birthDate?.message}
+            error={errors.birthdate?.message}
             setDate={setBirthdate}
           />
           <div>

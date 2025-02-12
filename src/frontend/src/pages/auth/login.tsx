@@ -38,7 +38,7 @@ function LoginPage() {
         navigate('/channels/@me', { replace: true })
       }, 500)
     },
-    [navigate]
+    [navigate, login]
   )
 
   return (

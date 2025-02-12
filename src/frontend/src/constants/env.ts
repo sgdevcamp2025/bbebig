@@ -1,4 +1,4 @@
-const PRIVATE_ROUTE_ENABLE = import.meta.env.PRIVATE_ROUTE_ENABLE === 'true'
-const SOCKET_URL = import.meta.env.SOCKET_URL
+const SERVER_URL = import.meta.env.VITE_SERVER_URL
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL
 
-export { PRIVATE_ROUTE_ENABLE, SOCKET_URL }
+export { SERVER_URL, SOCKET_URL }
