@@ -1,6 +1,6 @@
-package com.bbebig.searchserver.domain.search.domain;
+package com.bbebig.searchserver.domain.history.domain;
 
-import com.bbebig.commonmodule.kafka.dto.ChatFileDto;
+import com.bbebig.commonmodule.kafka.dto.*;
 import jakarta.persistence.Id;
 import lombok.Builder;
 import lombok.Data;
@@ -12,12 +12,14 @@ import java.util.List;
 import static com.bbebig.commonmodule.kafka.dto.ChatMessageDto.*;
 
 @Data
-@Document(collection = "dm_chat_messages")
+@Document(collection = "channel_chat_messages")
 @Builder
-public class DmChatMessage {
+public class ChannelChatMessage {
 
 	@Id
 	private Long id;
+
+	private Long serverId;
 
 	private Long channelId;
 
@@ -26,8 +28,6 @@ public class DmChatMessage {
 	private String content;
 
 	private List<ChatFileDto> attachedFiles;
-
-	private List<Long> targetMemberIds;
 
 	private LocalDateTime createdAt;
 
@@ -51,3 +51,5 @@ public class DmChatMessage {
 		return this.isDeleted;
 	}
 }
+
+
