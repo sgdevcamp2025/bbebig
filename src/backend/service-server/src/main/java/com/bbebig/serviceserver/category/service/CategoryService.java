@@ -20,6 +20,7 @@ import com.bbebig.serviceserver.server.entity.Server;
 import com.bbebig.serviceserver.server.repository.ServerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -36,6 +37,7 @@ public class CategoryService {
     /**
      * 카테고리 생성
      */
+    @Transactional
     public CategoryCreateResponseDto createCategory(Long memberId, CategoryCreateRequestDto categoryCreateRequestDto) {
         // 서버 조회
         Server server = serverRepository.findById(categoryCreateRequestDto.getServerId())
@@ -74,6 +76,7 @@ public class CategoryService {
     /**
      * 카테고리 정보 업데이트
      */
+    @Transactional
     public CategoryUpdateResponseDto updateCategory(Long memberId, Long categoryId, CategoryUpdateRequestDto categoryUpdateRequestDto) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.CATEGORY_NOT_FOUND));
@@ -101,6 +104,7 @@ public class CategoryService {
     /**
      * 카테고리 삭제
      */
+    @Transactional
     public CategoryDeleteResponseDto deleteCategory(Long memberId, Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.CATEGORY_NOT_FOUND));
@@ -145,6 +149,7 @@ public class CategoryService {
     /**
      * 카테고리 정보 조회
      */
+    @Transactional(readOnly = true)
     public CategoryReadResponseDto readCategory(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.CATEGORY_NOT_FOUND));
