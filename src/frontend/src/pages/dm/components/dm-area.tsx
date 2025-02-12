@@ -6,6 +6,8 @@ import { Message } from '@/types/message'
 import { User } from '@/types/user'
 import timeHelper from '@/utils/format-time'
 
+import DmAreaHeader from './dm-area-header'
+
 interface DmPageProps {
   friend: Friend
 }
@@ -22,9 +24,23 @@ const DUMMY_USER: User = {
 }
 
 function DmArea({ friend }: DmPageProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
   const messagesRef = useRef<HTMLDivElement>(null)
-  const [messages, setMessages] = useState<Record<string, Message[]>>({})
   const inputRef = useRef<HTMLInputElement>(null)
+  const [messages, setMessages] = useState<Record<string, Message[]>>({})
+  const [showTopHeader, setShowTopHeader] = useState(false)
+
+  const handleScroll = () => {
+    if (!containerRef.current) return
+
+    if (!messages[friend.id]?.length) {
+      setShowTopHeader(true)
+      return
+    }
+
+    const scrollTop = containerRef.current.scrollTop
+    setShowTopHeader(scrollTop < 100)
+  }
 
   const sendMessage = () => {
     if (!inputRef.current || !friend.id) return
@@ -67,7 +83,19 @@ function DmArea({ friend }: DmPageProps) {
   return (
     <div className='flex flex-col h-full relative'>
       <div className='absolute inset-0 flex flex-col'>
-        <div className='flex-1 overflow-y-auto'>
+        <div
+          ref={containerRef}
+          onScroll={handleScroll}
+          className='flex-1 overflow-y-auto'>
+          <div
+            className={`transition-opacity duration-200 ${
+              showTopHeader || !messages[friend.id]?.length
+                ? 'opacity-100'
+                : 'opacity-0 h-0 overflow-hidden'
+            }`}>
+            <DmAreaHeader friend={friend} />
+          </div>
+
           <div className='flex flex-col justify-end min-h-full p-4'>
             {friend.id &&
               messages[friend.id]?.map((msg) => {
@@ -76,7 +104,6 @@ function DmArea({ friend }: DmPageProps) {
                 )
 
                 const isMyMessage = msg.memberId === DUMMY_USER.id
-                console.log(msg, DUMMY_USER)
 
                 return (
                   <div
