@@ -9,7 +9,7 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper=false)
 public class FriendActionEventDto extends NotificationEventDto {
 
-	private Long friendId;
+	private Long friendMemberId;
 
 	private String status; // ADD, DELETE, UPDATE
 
