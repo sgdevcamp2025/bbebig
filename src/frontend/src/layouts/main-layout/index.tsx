@@ -1,3 +1,4 @@
+import { PlusIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
 import { useShallow } from 'zustand/shallow'
@@ -161,6 +162,18 @@ const MainRootLayout = () => {
                 />
               </li>
             ))}
+            <li>
+              <button
+                type='button'
+                className='flex items-center justify-center w-full'>
+                <div
+                  className={cn(
+                    'w-[48px] h-[48px] flex items-center justify-center rounded-[48px] bg-brand-10 overflow-hidden transition-all duration-300 hover:rounded-[14px] hover:bg-brand'
+                  )}>
+                  <PlusIcon className='w-5 h-5 text-white' />
+                </div>
+              </button>
+            </li>
           </ul>
         </nav>
         <div className='flex-1 bg-gray-20 relative'>
