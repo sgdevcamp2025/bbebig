@@ -49,6 +49,9 @@ public enum ErrorStatus implements BaseErrorCode {
     //STATE
     MEMBER_SERVER_LIST_CACHE_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "STATE01", "멤버가 참여중인 서버 목록 캐시에 실패했습니다."),
 
+    // SEARCH
+    SERVER_LAST_INFO_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH401", "서버별 마지막 방문 정보를 받아오는데에 실패했습니다."),
+
     // 카프카 이벤트 관련
     INVALID_SERVER_EVENT_TYPE(HttpStatus.SERVICE_UNAVAILABLE, "KAFKA01", "유효하지 않은 서버 이벤트 타입입니다."),
     INVALID_NOTIFICATION_EVENT_TYPE(HttpStatus.SERVICE_UNAVAILABLE, "KAFKA02", "유효하지 않은 알림 이벤트 타입입니다."),

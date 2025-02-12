@@ -14,8 +14,6 @@ public class MemberRedisKeys {
 	private static final String MEMBER_DM_LIST_KEY_SUFFIX = ":dmList";
 	private static final String MEMBER_SERVER_LIST_KEY_SUFFIX = ":serverList";
 
-	private static final String MEMBER_RECENT_SERVER_CHANNELS_KEY_SUFFIX = ":recentServerChannels";
-	private static final String MEMBER_RECENT_DM_CHANNELS_KEY_SUFFIX = ":recentDmChannels";
 	private static final String MEMBER_DM_CHANNELS_UNREAD_COUNT_KEY_SUFFIX = ":dmChannelsUnreadCount";
 	private static final String MEMBER_SERVER_UNREAD_COUNT_KEY_SUFFIX = ":serverUnreadCount";
 
@@ -71,46 +69,6 @@ public class MemberRedisKeys {
 	 */
 	public static String getMemberDmListKey(Long memberId) {
 		return MEMBER_KEY_PREFIX + memberId + MEMBER_DM_LIST_KEY_SUFFIX;
-	}
-
-	/**
-	 * Key pattern: "member:{memberId}:recentServerChannels"
-	 * Type: Hash
-	 * Field: channelId (Long)
-	 * Value: JSON (예: RecentServerChannelInfo)
-	 * TTL: 3일 (24시간)
-	 * Used by: State Server, Service Server 등
-	 *
-	 * 예시 Key: member:100:recentChannels
-	 * 해당 Hash는 "멤버가 최근에 접속한 채널 아이디와 그 정보를
-	 * (channelId -> RecentServerChannelInfo) 형태로 저장.
-	 * ex) HSET member:100:recentChannels 1 {channelId : 1, lastAccessAt : 100, lastReadMessageId: 100}
-	 *
-	 * @param memberId 멤버 ID
-	 * @return "member:{memberId}:recentChannels"
-	 */
-	public static String getMemberRecentServerChannelsKey(Long memberId) {
-		return MEMBER_KEY_PREFIX + memberId + MEMBER_RECENT_SERVER_CHANNELS_KEY_SUFFIX;
-	}
-
-	/**
-	 * Key pattern: "member:{memberId}:recentDmChannels"
-	 * Type: Hash
-	 * Field: dmChannelId (Long)
-	 * Value: JSON (예: RecentChannelInfo)
-	 * TTL: 3일 (24시간)
-	 * Used by: State Server, Service Server 등
-	 *
-	 * 예시 Key: member:100:recentDmChannels
-	 * 해당 Hash는 "멤버가 최근에 접속한 DM 채널 아이디와 그 정보를
-	 * (channelId -> RecentChannelInfo) 형태로 저장.
-	 * ex) HSET member:100:recentDmChannels 1 {lastAccessAt : 100, lastReadMessageId: 100}
-	 *
-	 * @param memberId 멤버 ID
-	 * @return "member:{memberId}:recentDmChannels"
-	 */
-	public static String getMemberRecentDmChannelsKey(Long memberId) {
-		return MEMBER_KEY_PREFIX + memberId + MEMBER_RECENT_DM_CHANNELS_KEY_SUFFIX;
 	}
 
 	/**

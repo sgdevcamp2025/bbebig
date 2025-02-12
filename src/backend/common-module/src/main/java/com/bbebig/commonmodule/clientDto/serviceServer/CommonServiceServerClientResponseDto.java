@@ -35,4 +35,20 @@ public class CommonServiceServerClientResponseDto {
 		private Long memberId;
 		private List<Long> dmMemberIdList;
 	}
+
+	@Data
+	@Builder
+	public static class ServerLastInfoResponseDto {
+		private Long serverId;
+		private List<ChannelLastInfoResponseDto> channelInfoList;
+	}
+
+	@Data
+	@Builder
+	public static class ChannelLastInfoResponseDto {
+		private Long channelId;
+		private Long lastReadMessageId;
+		private Long lastAccessAt;
+	}
+
 }

@@ -61,7 +61,6 @@ public class ChannelEventConsumerService {
 		});
 
 		memberRedisRepositoryImpl.saveMemberPresenceStatus(channelEventDto.getMemberId(), memberPresenceStatus);
-		cacheRecentServerChannel(channelEventDto);
 		return memberPresenceStatus;
 	}
 
@@ -92,19 +91,6 @@ public class ChannelEventConsumerService {
 
 		// TODO : 채널 퇴장하지 않고 종료되었을때 이벤트 처리 (DISCONNECT) 등 고려하기
 
-		cacheRecentServerChannel(channelEventDto);
 		return memberPresenceStatus;
-	}
-
-	private void cacheRecentServerChannel(ChannelEventDto eventDto) {
-		if (eventDto.getChannelType() != ChannelType.CHANNEL) {
-			log.error("[State] ChannelEventConsumerService: 채널 타입이 서버 채널이여야 합니다. channelType: {}, memberId: {}", eventDto.getChannelType(), eventDto.getMemberId());
-			return;
-		}
-		RecentServerChannelInfo recentServerChannelInfo = RecentServerChannelInfo.builder()
-				.lastAccessTime(eventDto.getEventTime())
-				.lastReadMessageId(eventDto.getLastReadMessageId())
-				.build();
-		memberRedisRepositoryImpl.saveMemberRecentServerChannels(eventDto.getMemberId(), eventDto.getChannelId(), recentServerChannelInfo);
 	}
 }

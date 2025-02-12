@@ -7,13 +7,13 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder
 @EqualsAndHashCode(callSuper=false)
-public class FriendActionEventDto extends NotificationEventDto {
+public class FriendRequestEventDto extends NotificationEventDto {
 
 	private Long friendMemberId;
-
-	private String status; // ADD, DELETE, UPDATE
 
 	private String friendNickName;
 
 	private String friendProfileImageUrl;
+
+	private String status; // SEND, RECEIVE, ACCEPT, REJECT
 }
