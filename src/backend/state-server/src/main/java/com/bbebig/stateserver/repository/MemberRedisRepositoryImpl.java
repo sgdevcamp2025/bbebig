@@ -134,43 +134,6 @@ public class MemberRedisRepositoryImpl implements MemberRedisRepository {
 		return null;
 	}
 
-	/**
-	 * 개별 유저의 서버 채널별 마지막 접속 시간 및 읽음 정보를 Hash 구조로 저장
-	 * ex) member:{memberId}:recentServerChannels => Hash<ChannelId, RecentServerChannelInfo>
-	 */
-	@Override
-	public void saveMemberRecentServerChannels(Long memberId, Long channelId, RecentServerChannelInfo recentServerChannelInfo) {
-		String key = MemberRedisKeys.getMemberRecentServerChannelsKey(memberId);
-		redisTemplate.opsForHash().put(key, channelId, recentServerChannelInfo);
-
-		redisTemplate.expire(key, MemberRedisTTL.getRecentChannelInfoTTLDate(), TimeUnit.DAYS);
-	}
-
-	// 개별 유저의 서버 채널별 마지막 접속 시간 및 읽음 정보 조회
-	@Override
-	public RecentServerChannelInfo getMemberRecentServerChannel(Long memberId, Long channelId) {
-		String key = MemberRedisKeys.getMemberRecentServerChannelsKey(memberId);
-		Object obj = redisTemplate.opsForHash().get(key, channelId);
-		if (obj instanceof RecentServerChannelInfo) {
-			return (RecentServerChannelInfo) obj;
-		}
-		return null;
-	}
-
-	// 개별 유저의 서버 채널별 마지막 접속 시간 및 읽음 정보 삭제
-	@Override
-	public void deleteMemberRecentServerChannel(Long memberId, Long channelId) {
-		String key = MemberRedisKeys.getMemberRecentServerChannelsKey(memberId);
-		redisTemplate.opsForHash().delete(key, channelId);
-	}
-
-	// 개별 유저의 서버 채널별 마지막 접속 시간 및 읽음 정보 전체 삭제
-	@Override
-	public void deleteMemberAllRecentServerChannels(Long memberId) {
-		String key = MemberRedisKeys.getMemberRecentServerChannelsKey(memberId);
-		redisTemplate.delete(key);
-	}
-
 	// 객체를 Long으로 변환 (내부 메서드)
 	public Long convertToLong(Object obj) {
 		try {

@@ -103,12 +103,6 @@ public class ServerEventConsumerService {
 		Long serverId = eventDto.getServerId();
 
 		if (eventDto.getStatus().equals("DELETE")) {
-			// 서버에 참여중인 모든 유저에 대해 최근 채널 캐싱 정보를 삭제
-			// TODO : ServerMemberList 캐싱 정보 없을 때 처리
-			serverRedisRepositoryImpl.getServerMemberList(serverId).forEach(memberId -> {
-				memberRedisRepositoryImpl.deleteMemberRecentServerChannel(memberId, eventDto.getChannelId());
-			});
-			// TODO : 멤버별 안읽은 메시지 카운트 캐싱에서 해당 채널을 지우는 로직 추가
 			serverRedisRepositoryImpl.removeServerChannelFromSet(serverId, eventDto.getChannelId());
 		} else {
 			if (!(eventDto.getStatus().equals("UPDATE") || eventDto.getStatus().equals("CREATE"))) {

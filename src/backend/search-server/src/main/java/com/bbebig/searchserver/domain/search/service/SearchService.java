@@ -6,22 +6,17 @@ import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.json.JsonData;
-import com.bbebig.searchserver.domain.search.domain.ChannelChatMessage;
 import com.bbebig.searchserver.domain.search.domain.ChannelChatMessageElastic;
-import com.bbebig.searchserver.domain.search.domain.DmChatMessage;
 import com.bbebig.searchserver.domain.search.domain.DmChatMessageElastic;
 import com.bbebig.searchserver.domain.search.dto.SearchMessageDtoConverter;
 import com.bbebig.searchserver.domain.search.dto.SearchOption;
 import com.bbebig.searchserver.domain.search.dto.SearchRequestDto.*;
 import com.bbebig.searchserver.domain.search.dto.SearchResponseDto.*;
-import com.bbebig.searchserver.domain.search.repository.ChannelChatMessageRepository;
-import com.bbebig.searchserver.domain.search.repository.DmChatMessageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -36,9 +31,6 @@ import java.util.Optional;
 public class SearchService {
 
 	private final ElasticsearchClient elasticsearchClient;
-
-	private final ChannelChatMessageRepository channelChatMessageRepository;
-	private final DmChatMessageRepository dmChatMessageRepository;
 
 	private static final String CHANNEL_CHAT_INDEX = "channel_chat_messages";
 	private static final String DM_CHAT_INDEX = "dm_chat_messages";
@@ -80,48 +72,6 @@ public class SearchService {
 		} catch (IOException e) {
 			log.error("Elasticsearch 검색 중 오류 발생 (DM)", e);
 			return SearchMessageDtoConverter.convertToSearchDmMessageResponseDto(Page.empty(), channelId);
-		}
-	}
-
-	// Id 기반 채널 과거 메시지 조회
-	// GET /server/{serverId}/channel/{channelId}/messages
-	public GetChannelMessageResponseDto getChannelMessages(Long serverId, Long channelId, Long messageId, int limit) {
-		if (messageId == null) {
-			messageId = Long.MAX_VALUE;
-		}
-		// TODO: 채널 아이디가 서버에 존재하는지 확인하는 로직 추가
-
-		PageRequest pageReq = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC));
-		List<ChannelChatMessage> messages = channelChatMessageRepository.findByChannelIdAndIdLessThan(channelId, messageId, pageReq);
-		if (!messages.isEmpty()) {
-			return SearchMessageDtoConverter.convertToGetChannelMessageResponseDto(serverId, channelId, messages);
-		}
-		else {
-			return GetChannelMessageResponseDto.builder()
-					.serverId(serverId)
-					.channelId(channelId)
-					.totalCount(0)
-					.build();
-		}
-	}
-
-	// ID 기반 DM 과거 메시지 조회
-	// GET /dm/{channelId}/messages
-	public GetDmMessageResponseDto getDmChannelMessages(Long channelId, Long messageId, int limit) {
-		if (messageId == null) {
-			messageId = Long.MAX_VALUE;
-		}
-
-		PageRequest pageReq = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC));
-		List<DmChatMessage> messages = dmChatMessageRepository.findByChannelIdAndIdLessThan(channelId, messageId, pageReq);
-		if (!messages.isEmpty()) {
-			return SearchMessageDtoConverter.convertToGetDmMessageResponseDto(channelId, messages);
-		}
-		else {
-			return GetDmMessageResponseDto.builder()
-					.channelId(channelId)
-					.totalCount(0)
-					.build();
 		}
 	}
 
