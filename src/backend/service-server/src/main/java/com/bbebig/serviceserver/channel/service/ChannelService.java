@@ -2,8 +2,8 @@ package com.bbebig.serviceserver.channel.service;
 
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
-import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerChannelEventDto;
+import com.bbebig.commonmodule.redis.domain.ChannelLastInfo;
 import com.bbebig.serviceserver.category.entity.Category;
 import com.bbebig.serviceserver.category.repository.CategoryRepository;
 import com.bbebig.serviceserver.channel.dto.request.ChannelCreateRequestDto;
@@ -19,6 +19,7 @@ import com.bbebig.serviceserver.channel.repository.ChannelRepository;
 import com.bbebig.serviceserver.global.kafka.KafkaProducerService;
 import com.bbebig.serviceserver.server.entity.Server;
 import com.bbebig.serviceserver.server.entity.ServerMember;
+import com.bbebig.serviceserver.server.repository.MemberRedisRepositoryImpl;
 import com.bbebig.serviceserver.server.repository.ServerMemberRepository;
 import com.bbebig.serviceserver.server.repository.ServerRedisRepositoryImpl;
 import com.bbebig.serviceserver.server.repository.ServerRepository;
@@ -27,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -42,6 +44,7 @@ public class ChannelService {
     private final CategoryRepository categoryRepository;
 
     private final ServerRedisRepositoryImpl serverRedisRepository;
+    private final MemberRedisRepositoryImpl memberRedisRepository;
     private final ServerService serverService;
     private final KafkaProducerService kafkaProducerService;
 
@@ -184,6 +187,17 @@ public class ChannelService {
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.CHANNEL_NOT_FOUND));
 
         return ChannelReadResponseDto.convertToChannelReadResponseDto(channel);
+    }
+
+    public ChannelLastInfo getChannelLastInfo(Long channelId, Long memberId) {
+        ChannelMember channelMember = channelMemberRepository.findByServerMemberIdAndChannelId(memberId, channelId)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.CHANNEL_MEMBER_NOT_FOUND));
+
+        return ChannelLastInfo.builder()
+                .channelId(channelId)
+                .lastReadMessageId(channelMember.getLastReadMessageId())
+                .lastAccessAt(channelMember.getLastAccessAt())
+                .build();
     }
 
     /**
