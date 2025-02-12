@@ -9,11 +9,11 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper=false)
 public class FriendRequestEventDto extends NotificationEventDto {
 
-	private Long friendId;
+	private Long friendMemberId;
 
 	private String friendNickName;
 
 	private String friendProfileImageUrl;
 
-	private String status; // REQUEST, REJECT, ACCEPT
+	private String status; // SEND, RECEIVE, ACCEPT, REJECT
 }
