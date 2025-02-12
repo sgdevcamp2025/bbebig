@@ -11,11 +11,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FriendRepository extends JpaRepository<Friend, Long> {
-    @Query("SELECT CASE WHEN f.fromMember.id = :memberId THEN f.toMember ELSE f.fromMember END " +
-            "FROM Friend f WHERE (f.fromMember.id = :memberId OR f.toMember.id = :memberId) " +
+    @Query("SELECT f FROM Friend f WHERE (f.fromMember.id = :memberId OR f.toMember.id = :memberId) " +
             "AND f.friendStatus = :status")
-    List<Member> findFriendMembersByMemberIdAndStatus(@Param("memberId") Long memberId,
-                                                      @Param("status") FriendStatus status);
+    List<Friend> findFriendsByMemberIdAndStatus(@Param("memberId") Long memberId,
+                                                @Param("status") FriendStatus status);
 
     @Query("SELECT f FROM Friend f WHERE (f.fromMember = :member1 AND f.toMember = :member2) " +
             "OR (f.fromMember = :member2 AND f.toMember = :member1)")

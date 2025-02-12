@@ -72,8 +72,14 @@ public class FriendService {
         memberRepository.findById(memberId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        return friendRepository.findFriendMembersByMemberIdAndStatus(memberId, FriendStatus.PENDING).stream()
-                .map(FriendListResponseDto::convertToFriendListResponseDto)
+        List<Friend> friendList = friendRepository.findFriendsByMemberIdAndStatus(memberId, FriendStatus.PENDING);
+
+        return friendList.stream()
+                .map(friend -> {
+                    Member friendMember = friend.getFromMember().getId().equals(memberId)
+                            ? friend.getToMember() : friend.getFromMember();
+                    return FriendListResponseDto.convertToFriendListResponseDto(friend, friendMember);
+                })
                 .toList();
     }
 
@@ -85,8 +91,14 @@ public class FriendService {
         memberRepository.findById(memberId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        return friendRepository.findFriendMembersByMemberIdAndStatus(memberId, FriendStatus.ACCEPTED).stream()
-                .map(FriendListResponseDto::convertToFriendListResponseDto)
+        List<Friend> friendList = friendRepository.findFriendsByMemberIdAndStatus(memberId, FriendStatus.ACCEPTED);
+
+        return friendList.stream()
+                .map(friend -> {
+                    Member friendMember = friend.getFromMember().getId().equals(memberId)
+                            ? friend.getToMember() : friend.getFromMember();
+                    return FriendListResponseDto.convertToFriendListResponseDto(friend, friendMember);
+                })
                 .toList();
     }
 
