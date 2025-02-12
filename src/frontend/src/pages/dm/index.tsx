@@ -1,39 +1,45 @@
-import { useState } from 'react'
-import { Outlet } from 'react-router'
+import { useParams } from 'react-router'
 
-import AllFriends from './components/all-friends'
-import Header from './components/header'
-import OnlineFriends from './components/online-friends'
-import PendingFriends from './components/pending-friends'
+import { Friend } from '@/types/friend'
 
-type FriendTabType = 'ONLINE' | 'ALL' | 'PENDING'
+import DmArea from './components/dm-area'
+import DmHeader from './components/dm-header'
+const DUMMY_FRIENDS: Friend[] = [
+  {
+    id: 1,
+    avatarUrl: '/image/common/default-avatar.png',
+    name: '이지형',
+    status: 'ONLINE'
+  },
+  {
+    id: 2,
+    avatarUrl: '/image/common/default-avatar.png',
+    name: '김예지',
+    status: 'OFFLINE'
+  },
+  {
+    id: 3,
+    avatarUrl: '/image/common/default-avatar.png',
+    name: '서정우',
+    status: 'OFFLINE'
+  }
+]
 
-function Dm() {
-  const [currentTab, setCurrentTab] = useState<FriendTabType>('ONLINE')
+function DmPage() {
+  const { friendId } = useParams()
 
-  const renderPage = () => {
-    switch (currentTab) {
-      case 'ONLINE':
-        return <OnlineFriends />
-      case 'ALL':
-        return <AllFriends />
-      case 'PENDING':
-        return <PendingFriends />
-    }
+  const selectedFriend = DUMMY_FRIENDS.find((friend) => friend.id === Number(friendId))
+
+  if (!selectedFriend) {
+    return <div>친구를 찾을 수 없습니다.</div>
   }
 
   return (
-    <div className='flex-1 flex flex-col h-screen'>
-      <Header
-        onTabChange={setCurrentTab}
-        currentTab={currentTab}
-      />
-      <div className='flex-1'>
-        <Outlet />
-        {renderPage()}
-      </div>
+    <div className='flex flex-col h-screen'>
+      <DmHeader friend={selectedFriend} />
+      <DmArea friend={selectedFriend} />
     </div>
   )
 }
 
-export default Dm
+export default DmPage

@@ -1,8 +1,11 @@
+import { useNavigate } from 'react-router'
+
 import { CustomPresenceStatus } from '@/types/user'
 
 import Avatar from '../avatar'
 
 interface UserListItemProps {
+  id: number
   avatarUrl: string
   name: string
   description: string
@@ -19,6 +22,7 @@ const ICON_PATH = {
 } as const
 
 function UserListItem({
+  id,
   avatarUrl,
   name,
   description,
@@ -26,8 +30,24 @@ function UserListItem({
   statusColor,
   iconType = 'default'
 }: UserListItemProps) {
+  const navigate = useNavigate()
+
+  const handleNavigateToDM = () => {
+    navigate(`/channels/@me/${id}`)
+  }
+
+  const handleDMIconClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
+    handleNavigateToDM()
+  }
+
   return (
-    <div className='group flex items-center justify-between p-2 hover:bg-discord-gray-500 rounded cursor-pointer'>
+    <div
+      className='group flex items-center justify-between p-2 hover:bg-discord-gray-500 rounded cursor-pointer'
+      role='button'
+      tabIndex={0}
+      onKeyDown={(e) => e.key === 'Enter' && handleNavigateToDM()}
+      onClick={handleNavigateToDM}>
       <div className='flex items-center gap-3'>
         <Avatar
           avatarUrl={avatarUrl}
@@ -47,6 +67,7 @@ function UserListItem({
           <button
             key={iconPath}
             type='button'
+            onClick={iconPath === '/icon/friend/dm.svg' ? handleDMIconClick : undefined}
             aria-label={'icon'}
             className='p-2 bg-discord-gray-700 hover:bg-discord-gray-800 rounded-3xl group-hover:bg-discord-gray-800'>
             <img
