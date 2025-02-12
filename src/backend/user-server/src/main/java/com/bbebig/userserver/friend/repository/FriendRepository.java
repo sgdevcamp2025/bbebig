@@ -21,4 +21,6 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
             "OR (f.fromMember = :member2 AND f.toMember = :member1)")
     Optional<Friend> findFriendMember1AndMember2(@Param("member1") Member member1,
                                         @Param("member2") Member member2);
+
+    void deleteAllByFromMemberOrToMember(Member fromMember, Member toMember);
 }

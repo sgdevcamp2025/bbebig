@@ -1,10 +1,11 @@
 package com.bbebig.userserver.member.entity;
 
 import com.bbebig.commonmodule.global.common.BaseTimeEntity;
-import com.bbebig.userserver.member.dto.request.MemberModifyRequest;
+import com.bbebig.userserver.member.dto.request.MemberUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,28 +21,29 @@ public class Member extends BaseTimeEntity {
 
     private String name;
 
+    private String nickname;
+
     private String email;
 
     private String password;
 
-    private String birthdate;
+    private LocalDate birthdate;
 
     private String profileImageUrl;
-
-    private String nickname;
 
     @Enumerated(EnumType.STRING)
     private CustomPresenceStatus customPresenceStatus;
 
     private LocalDateTime lastAccessAt;
 
-    public void modify(MemberModifyRequest request) {
-        if (request.profileImgUrl() != null) {
-            this.profileImageUrl = request.profileImgUrl();
-        }
+    public void updateInfo(MemberUpdateRequestDto memberUpdateRequestDto) {
+        this.name = memberUpdateRequestDto.getName();
+        this.nickname = memberUpdateRequestDto.getNickname();
+        this.birthdate = memberUpdateRequestDto.getBirthdate();
+        this.profileImageUrl = memberUpdateRequestDto.getProfileImageUrl();
+    }
 
-        if (request.nickname() != null) {
-            this.nickname = request.nickname();
-        }
+    public void updateCustomPresenceStatus(CustomPresenceStatus customPresenceStatus) {
+        this.customPresenceStatus = customPresenceStatus;
     }
 }
