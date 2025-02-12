@@ -24,7 +24,7 @@ interface HeaderProps {
 
 function Header({ onTabChange, currentTab }: HeaderProps) {
   return (
-    <div className='flex items-center px-3 py-3 border-b border-discord-gray-800'>
+    <div className='flex items-center px-3 py-3.5 border-b border-discord-gray-800'>
       <div className='flex items-center gap-2'>
         <img
           src='/icon/dm/friend.svg'
