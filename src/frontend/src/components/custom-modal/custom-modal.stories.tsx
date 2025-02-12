@@ -13,15 +13,18 @@ const meta = {
     layout: 'centered'
   },
   tags: ['autodocs'],
-  argTypes: {}
+  argTypes: {
+    isOpen: { control: 'boolean' },
+    onClose: { action: 'close' }
+  }
 } satisfies Meta<typeof CustomModal>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const PrimaryButton: Story = {
+export const Primary: Story = {
   args: {
-    isOpen: true,
+    isOpen: false,
     onClose: () => fn()
   },
   render: (args) => {
