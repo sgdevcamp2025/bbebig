@@ -1,3 +1,6 @@
+import { useNavigate } from 'react-router'
+
+import authService from '@/apis/service/auth'
 import Avatar from '@/components/avatar'
 import LoadingIcon from '@/components/loading-icon'
 import StatusIcon from '@/components/status-icon'
@@ -5,7 +8,6 @@ import { statusKo } from '@/constants/status'
 import { CustomPresenceStatus } from '@/types/user'
 
 import MenuItem from './menu-item'
-
 interface Props {
   name: string
   email: string
@@ -16,6 +18,8 @@ interface Props {
 }
 
 export function Content({ name, email, status, avatarUrl, backgroundUrl, onEditProfile }: Props) {
+  const navigate = useNavigate()
+
   const handleClickEditProfile = () => {
     onEditProfile()
   }
@@ -25,7 +29,8 @@ export function Content({ name, email, status, avatarUrl, backgroundUrl, onEditP
   }
 
   const handleClickLogout = () => {
-    console.log('logout')
+    authService.logout()
+    navigate('/', { replace: true })
   }
 
   const menuItems = [
