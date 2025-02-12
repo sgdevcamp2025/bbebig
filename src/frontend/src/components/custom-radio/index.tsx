@@ -1,6 +1,6 @@
 import { cn } from '@/libs/cn'
 
-interface RadioItem {
+export interface RadioItem {
   id: string
   label: string
   description?: string

@@ -23,7 +23,11 @@ type Story = StoryObj<typeof meta>
 export const Primary: Story = {
   args: {
     isOpen: false,
-    onClose: () => fn()
+    onClose: () => fn(),
+    categoryInfo: {
+      id: '1',
+      name: '테스트 카테고리 이름'
+    }
   },
   render: (args) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -32,6 +36,7 @@ export const Primary: Story = {
       <div className='w-[480px]'>
         <button onClick={() => setIsOpen(true)}>Open Modal</button>
         <ChannelCreateModal
+          {...args}
           isOpen={isOpen}
           onClose={() => setIsOpen(false)}
         />

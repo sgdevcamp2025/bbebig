@@ -1,18 +1,115 @@
+import { useState } from 'react'
+
+import CustomButton from '@/components/custom-button'
 import CustomModal from '@/components/custom-modal'
+import CustomRadio, { RadioItem } from '@/components/custom-radio'
+import { cn } from '@/libs/cn'
 
 interface Props {
+  categoryInfo?: {
+    id: string
+    name: string
+  }
   isOpen: boolean
   onClose: () => void
 }
 
-function ChannelCreateModal({ isOpen, onClose }: Props) {
+const CHANNEL_TYPE_ITEMS = [
+  {
+    id: '1',
+    label: '텍스트',
+    description: '메시지, 이미지, GIF, 이모지, 의견, 농담을 전송하세요',
+    value: 'TEXT',
+    icon: (
+      <img
+        src='/icon/channel/type-text.svg'
+        alt='텍스트'
+        width={20}
+        height={20}
+      />
+    )
+  },
+  {
+    id: '2',
+    label: '음성',
+    description: '음성, 영상, 화면 공유로 함꼐 어울리세요',
+    value: 'VOICE',
+    icon: (
+      <img
+        src='/icon/channel/type-voice.svg'
+        alt='음성'
+        width={20}
+        height={20}
+      />
+    )
+  }
+]
+
+function ChannelCreateModal({ isOpen, onClose, categoryInfo }: Props) {
+  const [selectedChannelType, setSelectedChannelType] = useState<RadioItem>(CHANNEL_TYPE_ITEMS[0])
+
+  const handleCreateChannel = () => {
+    console.log('create channel')
+  }
+
   return (
     <CustomModal
       isOpen={isOpen}
       onClose={onClose}>
       <CustomModal.Header onClose={onClose}>
-        <h1>채널 생성</h1>
+        <h1 className='text-text-normal text-[20px] leading-[24px] font-bold'>채널 만들기</h1>
+        {categoryInfo?.name && (
+          <div className='text-gray-10 text-[12px] leading-[16px]'>
+            :{categoryInfo.name}에 속해 있음
+          </div>
+        )}
       </CustomModal.Header>
+      <CustomModal.Content>
+        <CustomRadio
+          label='채널 유형'
+          items={CHANNEL_TYPE_ITEMS}
+          selectedItem={selectedChannelType}
+          onChange={setSelectedChannelType}
+        />
+        <div className='flex flex-col gap-2 mt-6'>
+          <label className='text-white-100 text-[12px] leading-[16px] font-bold'>채널 이름</label>
+          <div className='relative'>
+            <div className='absolute left-[16px] top-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center'>
+              <img
+                src='/icon/channel/type-text.svg'
+                alt='텍스트'
+                width={14}
+                height={14}
+              />
+            </div>
+            <input
+              type='text'
+              placeholder='새로운 채널'
+              className={cn(
+                'w-full outline-none h-[40px] bg-black-80 rounded-[3px] p-[10px] pl-[28px] text-text-normal text-[16px] leading-[24px]'
+              )}
+            />
+          </div>
+        </div>
+      </CustomModal.Content>
+      <CustomModal.Bottom>
+        <div className='flex justify-end gap-2'>
+          <button
+            aria-label='취소'
+            type='button'
+            onClick={onClose}
+            className='text-white-10 leading-[20px] py-[2px] px-4 w-[96px] text-[14px] h-[38px]'>
+            취소
+          </button>
+          <CustomButton
+            aria-label='채널 만들기'
+            type='button'
+            onClick={handleCreateChannel}
+            className='py-[2px] px-4 w-[96px] text-[14px] h-[38px]'>
+            만들기
+          </CustomButton>
+        </div>
+      </CustomModal.Bottom>
     </CustomModal>
   )
 }

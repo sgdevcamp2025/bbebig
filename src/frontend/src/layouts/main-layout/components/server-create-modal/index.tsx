@@ -37,7 +37,7 @@ function ServerCreateModal({ isOpen, onClose, ...args }: ServerCreateModalProps)
         <label className='text-[12px] text-gray-10 mb-2 leading-[24px] font-bold'>서버 이름</label>
         <input
           type='text'
-          className='w-full h-[40px] bg-black-80 rounded-[3px] p-[10px] text-text-normal text-[16px] leading-[24px] font-medium'
+          className='outline-none w-full h-[40px] bg-black-80 rounded-[3px] p-[10px] text-text-normal text-[16px] leading-[24px] font-medium'
         />
         <div className='text-[12px] mt-2 text-gray-10 leading-[20px]'>
           서버를 만들면 Discord의{' '}
