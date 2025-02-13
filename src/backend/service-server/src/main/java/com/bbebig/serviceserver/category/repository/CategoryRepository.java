@@ -6,6 +6,7 @@ import feign.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
@@ -13,4 +14,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     Optional<Integer> findMaxPositionByServerId(@Param("serverId") Long serverId);
 
     void deleteAllByServerId(Long serverId);
+
+    List<Category> findAllByServerId(Long serverId);
 }

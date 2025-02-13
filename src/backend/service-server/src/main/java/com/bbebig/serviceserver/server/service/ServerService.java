@@ -15,13 +15,11 @@ import com.bbebig.serviceserver.channel.entity.ChannelMember;
 import com.bbebig.serviceserver.channel.entity.ChannelType;
 import com.bbebig.serviceserver.channel.repository.ChannelMemberRepository;
 import com.bbebig.serviceserver.channel.repository.ChannelRepository;
-import com.bbebig.serviceserver.channel.service.ChannelService;
 import com.bbebig.serviceserver.global.kafka.KafkaProducerService;
 import com.bbebig.serviceserver.server.dto.request.ServerCreateRequestDto;
 import com.bbebig.serviceserver.server.dto.request.ServerParticipateRequestDto;
 import com.bbebig.serviceserver.server.dto.request.ServerUpdateRequestDto;
 import com.bbebig.serviceserver.server.dto.response.*;
-import com.bbebig.serviceserver.server.dto.response.ServerReadResponseDto.ChannelInfo;
 import com.bbebig.serviceserver.server.entity.RoleType;
 import com.bbebig.serviceserver.server.entity.Server;
 import com.bbebig.serviceserver.server.entity.ServerMember;
@@ -52,7 +50,6 @@ public class ServerService {
     private final MemberRedisRepositoryImpl memberRedisRepository;
     private final KafkaProducerService kafkaProducerService;
 
-    private final ChannelService channelService;
 
     /**
      * 서버 생성
@@ -149,7 +146,8 @@ public class ServerService {
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
 
         List<Channel> channels = channelRepository.findAllByServerId(serverId);
-        return ServerReadResponseDto.convertToServerReadResponseDto(server, channels);
+        List<Category> categories = categoryRepository.findAllByServerId(serverId);
+        return ServerReadResponseDto.convertToServerReadResponseDto(server, channels, categories);
     }
 
     /**
@@ -329,7 +327,7 @@ public class ServerService {
         List<ChannelLastInfo> result = new ArrayList<>();
 
         for (Long channelId : channelIdList) {
-            result.add(channelService.getChannelLastInfo(channelId, memberId));
+            result.add(getChannelLastInfo(channelId, memberId));
         }
         ServerLastInfo lastInfo = ServerLastInfo.builder()
                 .serverId(serverId)
@@ -340,6 +338,17 @@ public class ServerService {
         memberRedisRepository.saveServerChannelLastInfo(memberId, serverId, lastInfo);
 
         return lastInfo;
+    }
+
+    private ChannelLastInfo getChannelLastInfo(Long channelId, Long memberId) {
+        ChannelMember channelMember = channelMemberRepository.findByServerMemberIdAndChannelId(memberId, channelId)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.CHANNEL_MEMBER_NOT_FOUND));
+
+        return ChannelLastInfo.builder()
+                .channelId(channelId)
+                .lastReadMessageId(channelMember.getLastReadMessageId())
+                .lastAccessAt(channelMember.getLastAccessAt())
+                .build();
     }
 
     /**

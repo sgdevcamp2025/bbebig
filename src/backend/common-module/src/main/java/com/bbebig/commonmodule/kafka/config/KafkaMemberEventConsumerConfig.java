@@ -43,7 +43,8 @@ public class KafkaMemberEventConsumerConfig {
 
 	@Bean
 	public ConsumerFactory<String, MemberEventDto> consumerFactoryForMemberEvent() {
-		return new DefaultKafkaConsumerFactory<>(consumerConfigurations());
+		return new DefaultKafkaConsumerFactory<>(consumerConfigurations(), new StringDeserializer(),
+				new JsonDeserializer<>(MemberEventDto.class));
 	}
 
 	@Bean
