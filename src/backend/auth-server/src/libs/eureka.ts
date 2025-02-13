@@ -1,3 +1,5 @@
+import { EUREKA_DISABLED } from './constants';
+
 interface EurekaConfig {
   instance: {
     app: string;
@@ -9,7 +11,7 @@ interface EurekaConfig {
       '@enabled': string;
     };
     vipAddress: string;
-    statusPageUrl: string,
+    statusPageUrl: string;
     dataCenterInfo: {
       name: string;
       '@class': string;
@@ -35,6 +37,11 @@ class EurekaClient {
 
   async register(): Promise<void> {
     try {
+      if (EUREKA_DISABLED) {
+        console.log('Eureka 등록 비활성화');
+        return;
+      }
+
       const response = await fetch(`${this.baseUrl}/${this.config.instance.app}`, {
         method: 'POST',
         headers: {
