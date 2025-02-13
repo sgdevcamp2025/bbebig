@@ -1,5 +1,7 @@
+import { ChangeEvent, useState } from 'react'
 import { useParams } from 'react-router'
 
+import CommonHeader from '@/components/common-header'
 import { Friend } from '@/types/friend'
 
 import DmArea from './components/dm-area'
@@ -27,16 +29,31 @@ const DUMMY_FRIENDS: Friend[] = [
 
 function DmPage() {
   const { friendId } = useParams()
-
+  const [searchValue, setSearchValue] = useState('')
   const selectedFriend = DUMMY_FRIENDS.find((friend) => friend.id === Number(friendId))
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value)
+  }
 
+  const handleClear = () => {
+    setSearchValue('')
+  }
   if (!selectedFriend) {
     return <div>친구를 찾을 수 없습니다.</div>
   }
 
   return (
     <div className='flex flex-col h-screen'>
-      <DmHeader friend={selectedFriend} />
+      <CommonHeader
+        type='DM'
+        searchProps={{
+          value: searchValue,
+          onChange: handleSearch,
+          handleClear: handleClear,
+          placeholder: '채팅 검색하기'
+        }}>
+        <DmHeader friend={selectedFriend} />
+      </CommonHeader>
       <DmArea friend={selectedFriend} />
     </div>
   )

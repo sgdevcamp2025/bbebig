@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Outlet } from 'react-router'
 
 import AllFriends from './components/all-friends'
-import Header from './components/header'
+import FriendHeader from './components/friend-header'
 import OnlineFriends from './components/online-friends'
 import PendingFriends from './components/pending-friends'
 
@@ -24,7 +24,7 @@ function Dm() {
 
   return (
     <div className='flex-1 flex flex-col h-screen'>
-      <Header
+      <FriendHeader
         onTabChange={setCurrentTab}
         currentTab={currentTab}
       />
