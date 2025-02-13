@@ -8,19 +8,19 @@ datasource db {
 }
 
 model member {
-  id             BigInt         @id @default(autoincrement())
-  name           String         @db.VarChar(255)
-  email          String         @unique(map: "email") @db.VarChar(255)
-  password       String         @db.VarChar(255)
-  avatar_url     String?        @db.VarChar(255)
-  banner_url     String?        @db.VarChar(255)
-  nickname       String?        @db.VarChar(255)
-  introduce      Json?
-  status         member_status?
-  created_at     DateTime?      @default(now()) @db.DateTime(0)
-  updated_at     DateTime?      @default(now()) @db.DateTime(0)
-  last_access_at DateTime?      @default(now()) @db.DateTime(0)
-  birthdate      String?        @db.VarChar(255)
+  id               BigInt         @id @default(autoincrement())
+  name             String         @db.VarChar(255)
+  email            String         @unique(map: "email") @db.VarChar(255)
+  password         String         @db.VarChar(255)
+  avatar_url       String?        @db.VarChar(255)
+  banner_url       String?        @db.VarChar(255)
+  nickname         String         @db.VarChar(255)
+  introduce        Json?
+  status           member_status?
+  created_at       DateTime?      @default(now()) @db.DateTime(0)
+  last_modified_at DateTime?      @default(now()) @db.DateTime(0)
+  last_access_at   DateTime?      @default(now()) @db.DateTime(0)
+  birthdate        DateTime       @db.DateTime(0)
 }
 
 enum member_status {
