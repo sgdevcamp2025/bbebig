@@ -21,6 +21,7 @@ import com.bbebig.serviceserver.server.dto.request.ServerCreateRequestDto;
 import com.bbebig.serviceserver.server.dto.request.ServerParticipateRequestDto;
 import com.bbebig.serviceserver.server.dto.request.ServerUpdateRequestDto;
 import com.bbebig.serviceserver.server.dto.response.*;
+import com.bbebig.serviceserver.server.dto.response.ServerReadResponseDto.ChannelInfo;
 import com.bbebig.serviceserver.server.entity.RoleType;
 import com.bbebig.serviceserver.server.entity.Server;
 import com.bbebig.serviceserver.server.entity.ServerMember;
@@ -147,7 +148,8 @@ public class ServerService {
         Server server = serverRepository.findById(serverId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
 
-        return ServerReadResponseDto.convertToServerReadResponseDto(server);
+        List<Channel> channels = channelRepository.findAllByServerId(serverId);
+        return ServerReadResponseDto.convertToServerReadResponseDto(server, channels);
     }
 
     /**
