@@ -10,10 +10,14 @@ import lombok.Getter;
  * 기본 예외 처리를 위한 클래스
  */
 @Getter
-@AllArgsConstructor
 public class GeneralException extends RuntimeException {
 
     private final BaseErrorCode code;
+
+    public GeneralException(BaseErrorCode code) {
+        super(code.getReasonHttpStatus().getMessage());
+        this.code = code;
+    }
 
     public ErrorReasonDTO getErrorReason() {
         return this.code.getReason();

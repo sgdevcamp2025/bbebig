@@ -51,6 +51,16 @@ public enum ErrorStatus implements BaseErrorCode {
     // 카프카 이벤트 관련
     INVALID_SERVER_EVENT_TYPE(HttpStatus.SERVICE_UNAVAILABLE, "KAFKA01", "유효하지 않은 서버 이벤트 타입입니다."),
     INVALID_NOTIFICATION_EVENT_TYPE(HttpStatus.SERVICE_UNAVAILABLE, "KAFKA02", "유효하지 않은 알림 이벤트 타입입니다."),
+
+    // MEMBER
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER401", "멤버를 찾을 수 없습니다."),
+    FRIEND_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER402", "친구를 찾을 수 없습니다."),
+    FRIEND_RELATION_EXIST(HttpStatus.BAD_REQUEST, "MEMBER403", "이미 친구 관계이거나 요청 중인 상태입니다."),
+    FRIEND_RELATION_NOT_EXIST(HttpStatus.BAD_REQUEST, "MEMBER404", "해당 멤버와 친구 관계가 아닙니다."),
+    FRIEND_REQUEST_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER405", "친구 요청 상태가 아닙니다."),
+    FRIEND_REQUEST_NOT_PENDING(HttpStatus.BAD_REQUEST, "MEMBER406", "친구 요청 상태가 아닙니다."),
+    UNAUTHORIZED_FRIEND_ACTION(HttpStatus.FORBIDDEN, "MEMBER407", "본인의 친구 관계가 아닙니다."),
+    FRIEND_REQUEST_SELF(HttpStatus.BAD_REQUEST, "MEMBER408", "자기 자신에게 친구 요청을 보낼 수 없습니다."),
     ;
 
     private final HttpStatus httpStatus;
