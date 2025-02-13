@@ -25,9 +25,6 @@ public enum ErrorStatus implements BaseErrorCode {
     PASSPORT_EXPIRED(HttpStatus.UNAUTHORIZED, "PASSPORT06", "Passport 토큰이 만료되었습니다."),
     PASSPORT_HEADER_MISSING(HttpStatus.UNAUTHORIZED, "PASSPORT07", "Passport 헤더가 누락되었습니다."),
 
-    // Member
-    MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "M401", "유저가 존재하지 않습니다."),
-
     // Chat
     CHAT_ROOM_NOT_FOUND(HttpStatus.BAD_REQUEST, "CHAT401", "채팅방이 존재하지 않습니다."),
     CHAT_ROOM_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "CHAT402", "이미 존재하는 채팅방입니다."),
