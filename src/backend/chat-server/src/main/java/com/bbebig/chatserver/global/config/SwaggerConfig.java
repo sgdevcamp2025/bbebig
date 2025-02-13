@@ -14,9 +14,9 @@ public class SwaggerConfig {
 	@Bean
 	public OpenAPI api() {
 		Info info = new Info()
-				.title("BBeBig Service Server API")
+				.title("BBeBig Chat Server API")
 				.version("1.0")
-				.description("BBeBig Service Server API documentation");
+				.description("BBeBig Chat Server API documentation");
 
 		// 배포 서버 URL
 		Server productionServer = new Server()
