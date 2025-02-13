@@ -83,14 +83,20 @@ function authController() {
   ) => {
     const { email, password, name, nickname, birthdate } = req.body;
 
-    try {
-      const hashedPassword = generateHash(password);
+    const hashedPassword = generateHash(password);
 
+    const isEmailExists = await authService.findUserByEmail(email);
+
+    if (isEmailExists) {
+      handleError(res, ERROR_MESSAGE.duplicateEmail);
+      return;
+    }
+    try {
       await authService.register(email, hashedPassword, name, nickname, birthdate);
 
       handleSuccess(res, SUCCESS_MESSAGE.registerOk, 201);
     } catch (error) {
-      handleError(res, ERROR_MESSAGE.duplicateEmail, error);
+      handleError(res, ERROR_MESSAGE.serverError, error);
     }
   };
 

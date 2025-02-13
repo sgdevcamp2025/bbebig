@@ -10,6 +10,15 @@ import { ERROR_MESSAGE } from '../libs/constants';
 import db from '../libs/db';
 
 function authService() {
+  const findUserByEmail = async (email: string) => {
+    const user = await db.member.findFirst({
+      where: {
+        email,
+      },
+    });
+    return user;
+  };
+
   const register = async (
     email: string,
     password: string,
@@ -23,7 +32,7 @@ function authService() {
         password,
         name,
         nickname,
-        birthdate,
+        birthdate: new Date(birthdate),
       },
     });
 
@@ -114,6 +123,7 @@ function authService() {
   };
 
   return {
+    findUserByEmail,
     register,
     loginWithPassword,
     refresh,

@@ -16,16 +16,7 @@ const signInSchema = {
         accessToken: z.string(),
       }),
     }),
-    400: z.object({
-      code: z.enum(['AUTH001', 'AUTH003', 'AUTH009', 'AUTH012', 'AUTH013']),
-      message: z.enum([
-        'Bad Request',
-        'Password Not Match',
-        'Not Found',
-        'Server Error',
-        'Too Many Requests',
-      ]),
-    }),
+    400: commonResponseSchema,
   },
 };
 
@@ -49,27 +40,22 @@ const registerSchema = {
     birthdate: z
       .string()
       .regex(/^\d{4}-\d{2}-\d{2}$/, '생년월일은 YYYY-MM-DD 형식이어야 합니다.')
-      .refine((date) => new Date(date) <= new Date(), {
-        message: '생년월일은 현재 날짜 이전이어야 합니다.',
-      })
-      .refine((date) => new Date(date).getFullYear() >= 1900, {
-        message: '생년월일은 1900년 이후여야 합니다.',
-      }),
+      .refine(
+        (val) => {
+          const date = new Date(val);
+          return !isNaN(date.getTime());
+        },
+        {
+          message: '유효하지 않은 날짜 형식입니다.',
+        },
+      ),
   }),
   response: {
     201: z.object({
       code: z.string().default('AUTH104'),
       message: z.string().default('register success!'),
     }),
-    400: z.object({
-      code: z.enum(['AUTH002', 'AUTH008', 'AUTH010', 'AUTH012']),
-      message: z.enum([
-        'Duplicate Email',
-        'Already Sign Up',
-        'Precondition Failed',
-        'Server Error',
-      ]),
-    }),
+    400: commonResponseSchema,
   },
 };
 
@@ -103,17 +89,7 @@ const logoutSchema = {
       code: z.string().default('AUTH101'),
       message: z.string().default('Logout success!'),
     }),
-    400: z.object({
-      code: z.enum(['AUTH001', 'AUTH004', 'AUTH012', 'AUTH014', 'AUTH015', 'AUTH016']),
-      message: z.enum([
-        'Bad Request',
-        'Unauthorized',
-        'Server Error',
-        'Authorization header is required',
-        'Token expired or invalid',
-        'Token verification failed',
-      ]),
-    }),
+    400: commonResponseSchema,
   },
 };
 
@@ -126,17 +102,7 @@ const verifyTokenSchema = {
       code: z.string().default('AUTH105'),
       message: z.string().default('token verify success!'),
     }),
-    401: z.object({
-      code: z.enum(['AUTH004', 'AUTH011', 'AUTH014', 'AUTH015', 'AUTH016', 'AUTH017']),
-      message: z.enum([
-        'Unauthorized',
-        'Verify Token Failed',
-        'Authorization header is required',
-        'Token expired or invalid',
-        'Token verification failed',
-        'Access Token Decode Failed',
-      ]),
-    }),
+    401: commonResponseSchema,
   },
 };
 
@@ -152,18 +118,7 @@ const verifyEmailSchema = {
       code: z.enum(['AUTH106']),
       message: z.enum(['email verify success!']),
     }),
-    400: z.object({
-      code: z.enum(['AUTH001', 'AUTH002', 'AUTH012', 'AUTH014', 'AUTH015', 'AUTH016', 'AUTH017']),
-      message: z.enum([
-        'Bad Request',
-        'Duplicate Email',
-        'Server Error',
-        'Authorization header is required',
-        'Token expired or invalid',
-        'Token verification failed',
-        'Access Token Decode Failed',
-      ]),
-    }),
+    400: commonResponseSchema,
   },
 };
 
@@ -180,22 +135,7 @@ const tokenDecodeSchema = {
         valid: z.boolean(),
       }),
     }),
-    400: z.object({
-      code: z.enum(['AUTH001', 'AUTH004', 'AUTH012', 'AUTH014', 'AUTH015', 'AUTH016', 'AUTH017']),
-      message: z.enum([
-        'Bad Request',
-        'Unauthorized',
-        'Server Error',
-        'Authorization header is required',
-        'Token expired or invalid',
-        'Token verification failed',
-        'Access Token Decode Failed',
-      ]),
-      result: z.object({
-        memberId: z.number().default(-1),
-        valid: z.boolean().default(false),
-      }),
-    }),
+    400: commonResponseSchema,
   },
 };
 
