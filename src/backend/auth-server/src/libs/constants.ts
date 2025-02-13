@@ -3,6 +3,7 @@ import { Secret } from 'jsonwebtoken';
 const isDevelopment = process.env.NODE_ENV === 'development';
 const isProduction = process.env.NODE_ENV === 'production';
 
+const EUREKA_DISABLED = process.env.EUREKA_DISABLED === 'true' || false;
 const SERVER_IP = process.env.SERVER_IP;
 const SERVER_PORT = Number(process.env.SERVER_PORT);
 const SERVER_URL = process.env.SERVER_URL;
@@ -156,4 +157,5 @@ export {
   REDIS_CONTAINER_NAME,
   REDIS_IMAGE,
   REDIS_VOLUME,
+  EUREKA_DISABLED,
 };
