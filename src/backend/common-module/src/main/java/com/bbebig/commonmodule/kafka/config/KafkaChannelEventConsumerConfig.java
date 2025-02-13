@@ -42,7 +42,8 @@ public class KafkaChannelEventConsumerConfig {
 
 	@Bean
 	public ConsumerFactory<String, ChannelEventDto> consumerFactoryForChannelEvent() {
-		return new DefaultKafkaConsumerFactory<>(consumerConfigurations());
+		return new DefaultKafkaConsumerFactory<>(consumerConfigurations(), new StringDeserializer(),
+				new JsonDeserializer<>(ChannelEventDto.class));
 	}
 
 	@Bean

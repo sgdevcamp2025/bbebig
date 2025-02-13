@@ -43,7 +43,8 @@ public class KafkaPresenceEventConsumerConfig {
 
 	@Bean
 	public ConsumerFactory<String, PresenceEventDto> consumerFactoryForPresenceEvent() {
-		return new DefaultKafkaConsumerFactory<>(consumerConfigurations());
+		return new DefaultKafkaConsumerFactory<>(consumerConfigurations(), new StringDeserializer(),
+				new JsonDeserializer<>(PresenceEventDto.class));
 	}
 
 	@Bean
