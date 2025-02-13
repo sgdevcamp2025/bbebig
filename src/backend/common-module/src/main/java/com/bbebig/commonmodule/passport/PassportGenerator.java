@@ -1,6 +1,7 @@
 package com.bbebig.commonmodule.passport;
 
 import com.bbebig.commonmodule.proto.PassportProto.Passport;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +12,10 @@ import java.util.UUID;
  * Passport를 발급하는 서비스 클래스
  */
 @Component
+@RequiredArgsConstructor
 public class PassportGenerator {
+
+    private final HmacUtil hmacUtil;
 
     @Value("${eas.passport.expiration}")
     private long EXPIRE_SECONDS;
@@ -36,6 +40,6 @@ public class PassportGenerator {
         byte[] rawBytes = passport.toByteArray();
 
         // HMAC 서명 + Base64
-        return HmacUtil.signPassport(rawBytes);
+        return hmacUtil.signPassport(rawBytes);
     }
 }
