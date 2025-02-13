@@ -52,6 +52,7 @@ function OnlineFriends() {
         {filteredFriends.map((friend) => (
           <UserListItem
             key={friend.id}
+            id={friend.id}
             avatarUrl={friend.avatarUrl}
             name={friend.name}
             status={friend.status}
