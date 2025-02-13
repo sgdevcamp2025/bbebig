@@ -84,6 +84,11 @@ const channelUsers: Record<number, User[]> = {
 function ServerLayout() {
   const { serverId, channelId } = useParams<{ serverId: string; channelId: string }>()
   const { isStatusBarOpen } = useStatusBarStore()
+
+  if (!serverId) {
+    throw new Error('serverId is required')
+  }
+
   const currentChannelUsers = channelId ? channelUsers[Number(channelId)] || [] : []
   const navigate = useNavigate()
   const categories =
@@ -95,6 +100,7 @@ function ServerLayout() {
   return (
     <div className='flex h-screen w-full'>
       <ServerSidebar
+        serverId={serverId}
         serverName={`서버 ${serverId}`}
         categories={categories}
         onChannelSelect={handleChannelSelect}
