@@ -44,9 +44,6 @@ function UserListItem({
   return (
     <div
       className='group flex items-center justify-between p-2 hover:bg-discord-gray-500 rounded cursor-pointer'
-      role='button'
-      tabIndex={0}
-      onKeyDown={(e) => e.key === 'Enter' && handleNavigateToDM()}
       onClick={handleNavigateToDM}>
       <div className='flex items-center gap-3'>
         <Avatar
