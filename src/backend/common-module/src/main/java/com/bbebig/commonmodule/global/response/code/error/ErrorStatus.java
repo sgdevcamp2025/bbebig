@@ -25,9 +25,6 @@ public enum ErrorStatus implements BaseErrorCode {
     PASSPORT_EXPIRED(HttpStatus.UNAUTHORIZED, "PASSPORT06", "Passport 토큰이 만료되었습니다."),
     PASSPORT_HEADER_MISSING(HttpStatus.UNAUTHORIZED, "PASSPORT07", "Passport 헤더가 누락되었습니다."),
 
-    // Member
-    MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "M401", "유저가 존재하지 않습니다."),
-
     // Chat
     CHAT_ROOM_NOT_FOUND(HttpStatus.BAD_REQUEST, "CHAT401", "채팅방이 존재하지 않습니다."),
     CHAT_ROOM_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "CHAT402", "이미 존재하는 채팅방입니다."),
@@ -56,6 +53,16 @@ public enum ErrorStatus implements BaseErrorCode {
     // 카프카 이벤트 관련
     INVALID_SERVER_EVENT_TYPE(HttpStatus.SERVICE_UNAVAILABLE, "KAFKA01", "유효하지 않은 서버 이벤트 타입입니다."),
     INVALID_NOTIFICATION_EVENT_TYPE(HttpStatus.SERVICE_UNAVAILABLE, "KAFKA02", "유효하지 않은 알림 이벤트 타입입니다."),
+
+    // MEMBER
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER401", "멤버를 찾을 수 없습니다."),
+    FRIEND_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER402", "친구를 찾을 수 없습니다."),
+    FRIEND_RELATION_EXIST(HttpStatus.BAD_REQUEST, "MEMBER403", "이미 친구 관계이거나 요청 중인 상태입니다."),
+    FRIEND_RELATION_NOT_EXIST(HttpStatus.BAD_REQUEST, "MEMBER404", "해당 멤버와 친구 관계가 아닙니다."),
+    FRIEND_REQUEST_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER405", "친구 요청 상태가 아닙니다."),
+    FRIEND_REQUEST_NOT_PENDING(HttpStatus.BAD_REQUEST, "MEMBER406", "친구 요청 상태가 아닙니다."),
+    UNAUTHORIZED_FRIEND_ACTION(HttpStatus.FORBIDDEN, "MEMBER407", "본인의 친구 관계가 아닙니다."),
+    FRIEND_REQUEST_SELF(HttpStatus.BAD_REQUEST, "MEMBER408", "자기 자신에게 친구 요청을 보낼 수 없습니다."),
     ;
 
     private final HttpStatus httpStatus;
