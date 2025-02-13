@@ -14,6 +14,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
  * 채널에 속한 멤버의 테이블을 관리하는 엔티티 클래스입니다.
  */
@@ -35,4 +37,13 @@ public class ChannelMember extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "server_member_id")
     private ServerMember serverMember;
+
+    private Long lastReadMessageId;
+
+    private LocalDateTime lastAccessAt;
+
+    public void updateLastInfo(Long lastReadMessageId, LocalDateTime eventTime) {
+        this.lastReadMessageId = lastReadMessageId;
+        this.lastAccessAt = eventTime;
+    }
 }

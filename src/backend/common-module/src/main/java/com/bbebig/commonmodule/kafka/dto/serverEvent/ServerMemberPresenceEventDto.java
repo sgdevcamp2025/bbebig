@@ -1,5 +1,6 @@
 package com.bbebig.commonmodule.kafka.dto.serverEvent;
 
+import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
@@ -11,7 +12,7 @@ public class ServerMemberPresenceEventDto extends ServerEventDto {
 
 	private Long memberId;
 
-	private String actualStatus; // ONLINE, OFFLINE, AWAY, BUSY, INVISIBLE
+	private PresenceType actualStatus; // ONLINE, OFFLINE, AWAY, BUSY, INVISIBLE
 
-	private String globalStatus; // ONLINE, OFFLINE, AWAY, BUSY, INVISIBLE
+	private PresenceType globalStatus; // ONLINE, OFFLINE, AWAY, BUSY, INVISIBLE
 }

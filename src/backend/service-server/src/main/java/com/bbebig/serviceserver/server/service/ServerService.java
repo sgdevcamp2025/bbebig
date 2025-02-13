@@ -6,6 +6,8 @@ import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerActionEventDto;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerEventType;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerMemberActionEventDto;
+import com.bbebig.commonmodule.redis.domain.ChannelLastInfo;
+import com.bbebig.commonmodule.redis.domain.ServerLastInfo;
 import com.bbebig.serviceserver.category.entity.Category;
 import com.bbebig.serviceserver.category.repository.CategoryRepository;
 import com.bbebig.serviceserver.channel.entity.Channel;
@@ -13,11 +15,13 @@ import com.bbebig.serviceserver.channel.entity.ChannelMember;
 import com.bbebig.serviceserver.channel.entity.ChannelType;
 import com.bbebig.serviceserver.channel.repository.ChannelMemberRepository;
 import com.bbebig.serviceserver.channel.repository.ChannelRepository;
+import com.bbebig.serviceserver.channel.service.ChannelService;
 import com.bbebig.serviceserver.global.kafka.KafkaProducerService;
 import com.bbebig.serviceserver.server.dto.request.ServerCreateRequestDto;
 import com.bbebig.serviceserver.server.dto.request.ServerParticipateRequestDto;
 import com.bbebig.serviceserver.server.dto.request.ServerUpdateRequestDto;
 import com.bbebig.serviceserver.server.dto.response.*;
+import com.bbebig.serviceserver.server.dto.response.ServerReadResponseDto.ChannelInfo;
 import com.bbebig.serviceserver.server.entity.RoleType;
 import com.bbebig.serviceserver.server.entity.Server;
 import com.bbebig.serviceserver.server.entity.ServerMember;
@@ -29,8 +33,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +51,8 @@ public class ServerService {
     private final ServerRedisRepositoryImpl serverRedisRepository;
     private final MemberRedisRepositoryImpl memberRedisRepository;
     private final KafkaProducerService kafkaProducerService;
+
+    private final ChannelService channelService;
 
     /**
      * 서버 생성
@@ -140,7 +148,8 @@ public class ServerService {
         Server server = serverRepository.findById(serverId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
 
-        return ServerReadResponseDto.convertToServerReadResponseDto(server);
+        List<Channel> channels = channelRepository.findAllByServerId(serverId);
+        return ServerReadResponseDto.convertToServerReadResponseDto(server, channels);
     }
 
     /**
@@ -282,6 +291,55 @@ public class ServerService {
                 .memberId(memberId)
                 .serverIdList(memberServerList.stream().toList())
                 .build();
+    }
+
+    // 서버 별 채널 마지막 방문 정보 조회
+    // GET /servers/{serverId}/channels/info/member/{memberId}
+    public CommonServiceServerClientResponseDto.ServerLastInfoResponseDto getServerChannelLastInfoForApi(Long memberId, Long serverId) {
+        ServerLastInfo lastInfo = getServerLastInfo(memberId, serverId);
+        List<ChannelLastInfo> channelLastInfoList = lastInfo.getChannelLastInfoList();
+        return CommonServiceServerClientResponseDto.ServerLastInfoResponseDto.builder()
+                .serverId(serverId)
+                .channelInfoList(
+                        channelLastInfoList.stream()
+                                .map(channelLastInfo -> CommonServiceServerClientResponseDto.ChannelLastInfoResponseDto.builder()
+                                        .channelId(channelLastInfo.getChannelId())
+                                        .lastReadMessageId(channelLastInfo.getLastReadMessageId())
+                                        .lastAccessAt(channelLastInfo.getLastAccessAt())
+                                        .build())
+                                .collect(Collectors.toList())
+                )
+                .build();
+    }
+
+    public ServerLastInfo getServerLastInfo(Long memberId, Long serverId) {
+        Server server = serverRepository.findById(serverId)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
+
+        ServerMember serverMember = serverMemberRepository.findByMemberIdAndServer(memberId, server)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_MEMBERS_NOT_FOUND));
+
+        if (memberRedisRepository.existServerChannelLastInfo(memberId, serverId)) {
+            return memberRedisRepository.getServerChannelLastInfo(memberId, serverId);
+        }
+
+        CommonServiceServerClientResponseDto.ServerChannelListResponseDto serverChannelList = getServerChannelList(serverId);
+        List<Long> channelIdList = serverChannelList.getChannelIdList();
+
+        List<ChannelLastInfo> result = new ArrayList<>();
+
+        for (Long channelId : channelIdList) {
+            result.add(channelService.getChannelLastInfo(channelId, memberId));
+        }
+        ServerLastInfo lastInfo = ServerLastInfo.builder()
+                .serverId(serverId)
+                .channelLastInfoList(result)
+                .build();
+
+        // 레디스에 캐싱
+        memberRedisRepository.saveServerChannelLastInfo(memberId, serverId, lastInfo);
+
+        return lastInfo;
     }
 
     /**

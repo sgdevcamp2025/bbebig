@@ -1,6 +1,7 @@
 package com.bbebig.serviceserver.server.controller;
 
 import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto;
+import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto.ServerLastInfoResponseDto;
 import com.bbebig.commonmodule.global.response.code.CommonResponse;
 import com.bbebig.commonmodule.passport.annotation.PassportUser;
 import com.bbebig.commonmodule.proto.PassportProto.Passport;
@@ -133,6 +134,20 @@ public class ServerController {
     ) {
         log.info("[Service] 멤버별로 속해있는 서버 목록 조회 요청 (For FeignClient): memberId = {}", memberId);
         return CommonResponse.onSuccess(serverService.getMemberServerList(memberId));
+    }
+
+    @Operation(summary = "서버별 채널 마지막 방문 정보 조회", description = "서버별 채널 마지막 방문 정보를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "채널 마지막 방문 정보 조회 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "", content = @Content)
+    })
+    @GetMapping("/{serverId}/channels/info/member/{memberId}")
+    public CommonResponse<ServerLastInfoResponseDto> getServerLastInfo(
+            @PathVariable Long serverId,
+            @PathVariable Long memberId
+    ) {
+        log.info("[Service] 서버별 채널 마지막 방문 정보 조회 요청: serverId = {}, memberId = {}", serverId, memberId);
+        return CommonResponse.onSuccess(serverService.getServerChannelLastInfoForApi(memberId, serverId));
     }
 
     @Operation(summary = "서버 참여", description = "서버를 참여합니다.")

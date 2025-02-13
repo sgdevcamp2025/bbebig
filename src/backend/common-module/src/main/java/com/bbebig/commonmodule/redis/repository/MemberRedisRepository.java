@@ -1,7 +1,6 @@
 package com.bbebig.commonmodule.redis.repository;
 
 import com.bbebig.commonmodule.redis.domain.MemberPresenceStatus;
-import com.bbebig.commonmodule.redis.domain.RecentServerChannelInfo;
 
 import java.util.List;
 import java.util.Set;
