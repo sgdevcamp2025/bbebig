@@ -35,7 +35,7 @@ const meta: Meta<typeof UserProfileCard> = {
 export default meta
 type Story = StoryObj<typeof UserProfileCard>
 
-export const Default: Story = {
+export const PrimaryUserProfileCard: Story = {
   args: {
     user: user,
     onSendFriendRequest: () => console.log('친구 요청'),

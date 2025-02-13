@@ -11,7 +11,7 @@ export default meta
 
 type Story = StoryObj<typeof meta>
 
-export const StatusSidebar: Story = {
+export const PrimaryStatusSidebar: Story = {
   args: {
     users: [
       {
