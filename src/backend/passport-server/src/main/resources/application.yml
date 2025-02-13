@@ -19,6 +19,9 @@ eas:
     header: ${PASSPORT_HEADER}
     algorithm: ${PASSPORT_ALGORITHM}
 
-auth:
+jwt:
+  secret: ${JWT_SECRET_KEY}
+
+passport:
   server:
-    url: ${AUTH_SERVER_URL}
+    url: ${PASSPORT_SERVER_URL}
