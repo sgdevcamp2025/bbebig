@@ -3,7 +3,7 @@ import { useRef, useState } from 'react'
 
 import useClickOutside from '@/hooks/use-click-outside'
 import { cn } from '@/libs/cn'
-import { Category } from '@/types/channel'
+import { Category } from '@/types/server'
 
 import CategoryCreateModal from '../cateogry-create-modal'
 import ChannelCreateModal from '../channel-create-modal'

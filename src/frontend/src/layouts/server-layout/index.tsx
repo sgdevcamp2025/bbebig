@@ -1,7 +1,7 @@
 import { Outlet, useNavigate, useParams } from 'react-router'
 
 import useStatusBarStore from '@/stores/use-status-bar-store'
-import { ServerChannelList } from '@/types/channel'
+import { ServerChannelList } from '@/types/server'
 import { User } from '@/types/user'
 
 import ServerSidebar from './components/server-side-bar'
