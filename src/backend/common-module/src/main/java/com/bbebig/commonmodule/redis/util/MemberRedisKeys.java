@@ -14,8 +14,7 @@ public class MemberRedisKeys {
 	private static final String MEMBER_DM_LIST_KEY_SUFFIX = ":dmList";
 	private static final String MEMBER_SERVER_LIST_KEY_SUFFIX = ":serverList";
 
-	private static final String MEMBER_DM_CHANNELS_UNREAD_COUNT_KEY_SUFFIX = ":dmChannelsUnreadCount";
-	private static final String MEMBER_SERVER_UNREAD_COUNT_KEY_SUFFIX = ":serverUnreadCount";
+	private static final String CHANNEL_LAST_INFO_KEY_SUFFIX = ":channelLastInfo";
 
 
 	/**
@@ -72,44 +71,21 @@ public class MemberRedisKeys {
 	}
 
 	/**
-	 * Key pattern: "member:{memberId}:serverUnreadCount"
+	 * Key pattern: "member:{memberId}:channelLastInfo"
 	 * Type: Hash
 	 * Field: serverId (Long)
-	 * Value: Json (ServerUnreadCount)
-	 * TTL: 3일 (24시간)
-	 * Used by: State Server, Service Server 등
-	 * TODO : 나중에 참여중인 서버 리스트와 통합 고려
+	 * Value: JSON (ServerChannelLastInfo)
+	 * TTL: 3일 (72시간)
+	 * Used by: State Server, Service Server, Push Server
 	 *
-	 * 예시 Key: member:100:serverUnreadCount
-	 * 해당 Hash는 "멤버가 읽지 않은 서버(길드) 메시지 개수"를
-	 * (serverId -> ServerUnreadCount) 형태로 저장.
-	 * ex) HSET member:100:serverUnreadCount 1 {totalUnreadCount: 3, "channelUnreadCount": {1: 2, 2: 1}}
+	 * 예시 Key: member:100:channelLastInfo
+	 * 해당 Hash는 멤버가 참여한 채널의 마지막 정보를 저장.
 	 *
 	 * @param memberId 멤버 ID
-	 * @return "member:{memberId}:serverUnreadCount"
+	 * @return "member:{memberId}:channelLastInfo"
 	 */
-	public static String getMemberServerUnreadCountKey(Long memberId) {
-		return MEMBER_KEY_PREFIX + memberId + MEMBER_SERVER_UNREAD_COUNT_KEY_SUFFIX;
-	}
-
-	/**
-	 * Key pattern: "member:{memberId}:dmChannelsUnreadCount"
-	 * Type: Hash
-	 * Field: channelId (Long)
-	 * Value: int (UnreadCount)
-	 * TTL: 3일 (24시간)
-	 * Used by: State Server, Service Server 등
-	 *
-	 * 예시 Key: member:100:dmChannelsUnreadCount
-	 * 해당 Hash는 "멤버가 읽지 않은 DM 채널 메시지 개수"를
-	 * (channelId -> UnreadCount) 형태로 저장.
-	 * ex) HSET member:100:dmChannelsUnreadCount 1 3
-	 *
-	 * @param memberId 멤버 ID
-	 * @return "member:{memberId}:dmChannelsUnreadCount"
-	 */
-	public static String getMemberDmChannelsUnreadCountKey(Long memberId) {
-		return MEMBER_KEY_PREFIX + memberId + MEMBER_DM_CHANNELS_UNREAD_COUNT_KEY_SUFFIX;
+	public static String getChannelLastInfoKey(Long memberId) {
+		return MEMBER_KEY_PREFIX + memberId + CHANNEL_LAST_INFO_KEY_SUFFIX;
 	}
 
 }

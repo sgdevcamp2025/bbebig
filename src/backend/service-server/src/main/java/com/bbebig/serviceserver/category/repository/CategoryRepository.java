@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Query("SELECT MAX(c.position) FROM Category c WHERE c.server.id = :serverId")
     Optional<Integer> findMaxPositionByServerId(@Param("serverId") Long serverId);
+
+    void deleteAllByServerId(Long serverId);
 }

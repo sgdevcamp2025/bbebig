@@ -2,8 +2,8 @@ package com.bbebig.serviceserver.channel.service;
 
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
-import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerChannelEventDto;
+import com.bbebig.commonmodule.redis.domain.ChannelLastInfo;
 import com.bbebig.serviceserver.category.entity.Category;
 import com.bbebig.serviceserver.category.repository.CategoryRepository;
 import com.bbebig.serviceserver.channel.dto.request.ChannelCreateRequestDto;
@@ -19,13 +19,16 @@ import com.bbebig.serviceserver.channel.repository.ChannelRepository;
 import com.bbebig.serviceserver.global.kafka.KafkaProducerService;
 import com.bbebig.serviceserver.server.entity.Server;
 import com.bbebig.serviceserver.server.entity.ServerMember;
+import com.bbebig.serviceserver.server.repository.MemberRedisRepositoryImpl;
 import com.bbebig.serviceserver.server.repository.ServerMemberRepository;
 import com.bbebig.serviceserver.server.repository.ServerRedisRepositoryImpl;
 import com.bbebig.serviceserver.server.repository.ServerRepository;
 import com.bbebig.serviceserver.server.service.ServerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,12 +44,14 @@ public class ChannelService {
     private final CategoryRepository categoryRepository;
 
     private final ServerRedisRepositoryImpl serverRedisRepository;
+    private final MemberRedisRepositoryImpl memberRedisRepository;
     private final ServerService serverService;
     private final KafkaProducerService kafkaProducerService;
 
     /**
      * 채널 생성
      */
+    @Transactional
     public ChannelCreateResponseDto createChannel(Long memberId, ChannelCreateRequestDto channelCreateRequestDto) {
         // 서버 조회
         Server server = serverRepository.findById(channelCreateRequestDto.getServerId())
@@ -108,6 +113,7 @@ public class ChannelService {
     /**
      * 채널 정보 업데이트
      */
+    @Transactional
     public ChannelUpdateResponseDto updateChannel(Long memberId, Long channelId, ChannelUpdateRequestDto channelUpdateRequestDto) {
         Channel channel = channelRepository.findById(channelId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.CHANNEL_NOT_FOUND));
@@ -125,7 +131,6 @@ public class ChannelService {
             addPublicChannelMembers(channel, channel.getServer());
         }
 
-        // TODO: 채널 업데이트가 다 안끝난 것으로 보이니, 추후 로직 수정 필요
         // Kafka로 데이터 발행
         Server server = channel.getServer();
         ServerChannelEventDto serverChannelEventDto = ServerChannelEventDto.builder()
@@ -145,6 +150,7 @@ public class ChannelService {
     /**
      * 채널 삭제
      */
+    @Transactional
     public ChannelDeleteResponseDto deleteChannel(Long memberId, Long channelId) {
         Channel channel = channelRepository.findById(channelId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.CHANNEL_NOT_FOUND));
@@ -175,11 +181,23 @@ public class ChannelService {
     /**
      * 채널 정보 조회
      */
+    @Transactional(readOnly = true)
     public ChannelReadResponseDto readChannel(Long channelId) {
         Channel channel = channelRepository.findById(channelId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.CHANNEL_NOT_FOUND));
 
         return ChannelReadResponseDto.convertToChannelReadResponseDto(channel);
+    }
+
+    public ChannelLastInfo getChannelLastInfo(Long channelId, Long memberId) {
+        ChannelMember channelMember = channelMemberRepository.findByServerMemberIdAndChannelId(memberId, channelId)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.CHANNEL_MEMBER_NOT_FOUND));
+
+        return ChannelLastInfo.builder()
+                .channelId(channelId)
+                .lastReadMessageId(channelMember.getLastReadMessageId())
+                .lastAccessAt(channelMember.getLastAccessAt())
+                .build();
     }
 
     /**

@@ -3,6 +3,7 @@ package com.bbebig.serviceserver.channel.repository;
 import com.bbebig.serviceserver.category.entity.Category;
 import com.bbebig.serviceserver.channel.entity.Channel;
 import com.bbebig.serviceserver.server.entity.Server;
+import com.bbebig.serviceserver.server.entity.ServerMember;
 import feign.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,4 +23,6 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
     List<Channel> findAllByCategory(Category category);
 
     List<Channel> findAllByServerId(Long serverId);
+
+    List<Channel> findAllByServerIdAndPrivateStatusFalse(Long serverId);
 }

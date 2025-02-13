@@ -1,6 +1,7 @@
 package com.bbebig.serviceserver.server.controller;
 
 import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto;
+import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto.ServerLastInfoResponseDto;
 import com.bbebig.commonmodule.global.response.code.CommonResponse;
 import com.bbebig.commonmodule.passport.annotation.PassportUser;
 import com.bbebig.commonmodule.proto.PassportProto.Passport;
@@ -54,29 +55,16 @@ public class ServerController {
         return CommonResponse.onSuccess(serverService.readServer(serverId));
     }
 
-    @Operation(summary = "내가 속한 서버 목록 조회 (PathVariable)", description = "내가 속한 서버 목록을 조회합니다. (PathVariable)")
+    @Operation(summary = "멤버별로 속해있는 서버 목록 조회 (For Client)", description = "멤버별로 속해있는 서버 목록 조회합니다. (For Client)")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "서버 목록 조회 성공", useReturnTypeSchema = true),
-            @ApiResponse(responseCode = "400", description = "", content = @Content)
-    })
-    @GetMapping("/{memberId}")
-    public CommonResponse<ServerListReadResponseDto> readServerListByPathVariable(
-            @PathVariable("memberId") Long memberId
-    ) {
-        log.info("[Service] 서버 목록 조회 요청(PathVariable): memberId = {}", memberId);
-        return CommonResponse.onSuccess(serverService.readServerList(memberId));
-    }
-
-    @Operation(summary = "내가 속한 서버 목록 조회 (Passport)", description = "내가 속한 서버 목록을 조회합니다. (Passport)")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "서버 목록 조회 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "200", description = "멤버별로 속해있는 서버 목록 조회 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "", content = @Content)
     })
     @GetMapping()
     public CommonResponse<ServerListReadResponseDto> readServerListByPathVariable(
             @Parameter(hidden = true) @PassportUser Passport passport
     ) {
-        log.info("[Service] 서버 목록 조회 요청(Passport): memberId = {}", passport.getMemberId());
+        log.info("[Service] 멤버별로 속해있는 서버 목록 조회 요청 (For Client): memberId = {}", passport.getMemberId());
         return CommonResponse.onSuccess(serverService.readServerList(passport.getMemberId()));
     }
 
@@ -109,7 +97,7 @@ public class ServerController {
         return CommonResponse.onSuccess(serverService.deleteServer(passport.getMemberId(), serverId));
     }
 
-    @Operation(summary = "서버에 속해있는 채널 목록 조회", description = "서버에 속해있는 채널 목록을 조회합니다. (For FeignClient)")
+    @Operation(summary = "서버에 속해있는 채널 목록 조회 (For FeignClient)", description = "서버에 속해있는 채널 목록을 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "서버에 속해있는 채널 목록 조회 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "", content = @Content)
@@ -122,7 +110,7 @@ public class ServerController {
         return CommonResponse.onSuccess(serverService.getServerChannelList(serverId));
     }
 
-    @Operation(summary = "서버에 속해있는 멤버 목록 조회", description = "서버에 속해있는 멤버 목록을 조회합니다. (For FeignClient)")
+    @Operation(summary = "서버에 속해있는 멤버 목록 조회 (For FeignClient)", description = "서버에 속해있는 멤버 목록을 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "서버에 속해있는 멤버 목록 조회 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "", content = @Content)
@@ -133,5 +121,61 @@ public class ServerController {
     ) {
         log.info("[Service] 서버에 속해있는 멤버 목록 조회 요청: serverId = {}", serverId);
         return CommonResponse.onSuccess(serverService.getServerMemberList(serverId));
+    }
+
+    @Operation(summary = "멤버별로 속해있는 서버 목록 조회 (For FeignClient)", description = "멤버별로 속해있는 서버 목록 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "멤버별로 속해있는 서버 목록 조회 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "", content = @Content)
+    })
+    @GetMapping("/members/{memberId}/list")
+    public CommonResponse<CommonServiceServerClientResponseDto.MemberServerListResponseDto> getMemberServerList(
+            @PathVariable Long memberId
+    ) {
+        log.info("[Service] 멤버별로 속해있는 서버 목록 조회 요청 (For FeignClient): memberId = {}", memberId);
+        return CommonResponse.onSuccess(serverService.getMemberServerList(memberId));
+    }
+
+    @Operation(summary = "서버별 채널 마지막 방문 정보 조회", description = "서버별 채널 마지막 방문 정보를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "채널 마지막 방문 정보 조회 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "", content = @Content)
+    })
+    @GetMapping("/{serverId}/channels/info/member/{memberId}")
+    public CommonResponse<ServerLastInfoResponseDto> getServerLastInfo(
+            @PathVariable Long serverId,
+            @PathVariable Long memberId
+    ) {
+        log.info("[Service] 서버별 채널 마지막 방문 정보 조회 요청: serverId = {}, memberId = {}", serverId, memberId);
+        return CommonResponse.onSuccess(serverService.getServerChannelLastInfoForApi(memberId, serverId));
+    }
+
+    @Operation(summary = "서버 참여", description = "서버를 참여합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "서버 참여 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "", content = @Content)
+    })
+    @PostMapping("/{serverId}/participate")
+    public CommonResponse<ServerParticipateResponseDto> participateServer(
+            @Parameter(hidden = true) @PassportUser Passport passport,
+            @PathVariable Long serverId,
+            @RequestBody ServerParticipateRequestDto serverParticipateRequestDto
+    ) {
+        log.info("[Service] 서버 참여 요청: serverId = {}, memberId = {}", serverId, passport.getMemberId());
+        return CommonResponse.onSuccess(serverService.participateServer(passport.getMemberId(), serverId, serverParticipateRequestDto));
+    }
+
+    @Operation(summary = "서버 탈퇴", description = "서버를 탈퇴합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "서버 탈퇴 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "", content = @Content)
+    })
+    @DeleteMapping("/{serverId}/withdraw")
+    public CommonResponse<ServerWithdrawResponseDto> withdrawServer(
+            @Parameter(hidden = true) @PassportUser Passport passport,
+            @PathVariable Long serverId
+    ) {
+        log.info("[Service] 서버 탈퇴 요청: serverId = {}, memberId = {}", serverId, passport.getMemberId());
+        return CommonResponse.onSuccess(serverService.withdrawServer(passport.getMemberId(), serverId));
     }
 }
