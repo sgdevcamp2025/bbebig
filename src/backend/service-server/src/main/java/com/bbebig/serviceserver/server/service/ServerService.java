@@ -146,7 +146,8 @@ public class ServerService {
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
 
         List<Channel> channels = channelRepository.findAllByServerId(serverId);
-        return ServerReadResponseDto.convertToServerReadResponseDto(server, channels);
+        List<Category> categories = categoryRepository.findAllByServerId(serverId);
+        return ServerReadResponseDto.convertToServerReadResponseDto(server, channels, categories);
     }
 
     /**
