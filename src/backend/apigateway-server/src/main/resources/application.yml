@@ -16,16 +16,46 @@ spring:
 
   cloud:
     gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]': # 모든 요청에 대해 CORS 적용, TODO: 이후 변경
+            allowedOrigins:
+              - "http://localhost:5173"
+              - "https://dev-fe.d2q3qyb0bos3b9.amplifyapp.com"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            exposedHeaders: "*"
+            allowCredentials: true
+
       discovery:
         locator:
           enabled: true
           lower-case-service-id: true # serviceId를 소문자로 관리
+
       routes:
-        # Member Server 라우팅
-        - id: member-server
-          uri: lb://member-server
+        # Auth Server 라우팅
+        - id: auth-server
+          uri: lb://auth-server
           predicates:
-            - Path=/member/**
+            - Path=/auth-server/**
+          filters:
+            - name: PassportFilter
+
+        - id: auth-server-public
+          uri: lb://auth-server
+          predicates:
+            - Path=/auth-server/login,/auth-server/register,/auth-server/health-check
+
+        # User Server 라우팅
+        - id: user-server
+          uri: lb://user-server
+          predicates:
+            - Path=/user-server/**
           filters:
             - name: PassportFilter
 
@@ -33,7 +63,7 @@ spring:
         - id: service-server
           uri: lb://service-server
           predicates:
-            - Path=/service/**
+            - Path=/service-server/**
           filters:
             - name: PassportFilter
 
@@ -41,7 +71,7 @@ spring:
         - id: search-server
           uri: lb://search-server
           predicates:
-            - Path=/search/**
+            - Path=/search-server/**
           filters:
             - name: PassportFilter
 
@@ -49,7 +79,7 @@ spring:
         - id: state-server
           uri: lb://state-server
           predicates:
-            - Path=/state/**
+            - Path=/state-server/**
           filters:
             - name: PassportFilter
 
@@ -57,7 +87,7 @@ spring:
         - id: chat-server
           uri: lb://chat-server
           predicates:
-            - Path=/chat/**
+            - Path=/chat-server/**
           filters:
             - name: PassportFilter
 
@@ -71,7 +101,7 @@ spring:
         - id: push-server
           uri: lb://push-server
           predicates:
-            - Path=/push/**
+            - Path=/push-server/**
           filters:
             - name: PassportFilter
 
@@ -79,13 +109,13 @@ spring:
         - id: signaling-server
           uri: lb://signaling-server
           predicates:
-            - Path=/signal/**
+            - Path=/signal-server/**
 
-        # 미디어 서버(Media Server)
-        - id: media-server
-          uri: lb://media-server
+        # 미디어 서버(Kurento Server)
+        - id: kurento-server
+          uri: lb://kurento-server
           predicates:
-            - Path=/media/**
+            - Path=/kurento-server/**
 
 eas:
   passport:
@@ -94,6 +124,6 @@ eas:
     header: ${PASSPORT_HEADER}
     algorithm: ${PASSPORT_ALGORITHM}
 
-auth:
+passport:
   server:
-    url: ${AUTH_SERVER_URL}
+    url: ${PASSPORT_SERVER_URL}
