@@ -1,14 +1,17 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
+import { useShallow } from 'zustand/shallow'
 
 import { loginRequestSchema } from '@/apis/schema/auth'
 import { LoginSchema } from '@/apis/schema/types/auth'
 import authService from '@/apis/service/auth'
 import AuthInput from '@/components/auth-input'
 import CustomButton from '@/components/custom-button'
+import { COOKIE_KEYS } from '@/constants/keys'
 import useLoginStore from '@/stores/use-login-store'
+import cookie from '@/utils/cookie'
 
 function LoginPage() {
   const navigate = useNavigate()
@@ -17,7 +20,12 @@ function LoginPage() {
     resolver: zodResolver(loginRequestSchema)
   })
 
-  const login = useLoginStore((state) => state.login)
+  const { login, isLogin } = useLoginStore(
+    useShallow((state) => ({
+      login: state.login,
+      isLogin: state.isLogin
+    }))
+  )
 
   const handleMoveSignUpPage = useCallback(() => {
     setMovePage(true)
@@ -27,19 +35,28 @@ function LoginPage() {
     }, 500)
   }, [navigate])
 
-  const signIn = useCallback(
-    async (data: LoginSchema) => {
-      await authService.login(data)
+  const signIn = async (data: LoginSchema) => {
+    await authService.login(data)
+    login()
+  }
 
-      login()
-      setMovePage(true)
+  useEffect(() => {
+    if (isLogin) {
+      let accessToken = cookie.getCookie(COOKIE_KEYS.ACCESS_TOKEN)
 
-      setTimeout(() => {
-        navigate('/channels/@me', { replace: true })
-      }, 500)
-    },
-    [navigate, login]
-  )
+      if (!accessToken) {
+        accessToken = localStorage.getItem(COOKIE_KEYS.ACCESS_TOKEN)
+      }
+
+      if (accessToken) {
+        setMovePage(true)
+
+        setTimeout(() => {
+          navigate('/channels/@me', { replace: true })
+        }, 500)
+      }
+    }
+  }, [isLogin, navigate])
 
   return (
     <form

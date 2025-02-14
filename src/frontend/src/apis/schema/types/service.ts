@@ -1,4 +1,4 @@
-import { ChannelType, ServerCategoryList } from '@/types/server'
+import { ChannelType, ChannelUser } from '@/types/server'
 
 export interface DeleteServerRequestSchema {
   serverId: number
@@ -17,7 +17,7 @@ export interface WithdrawServerResponseSchema {
 }
 
 export interface GetServerListRequestSchema {
-  serverId: number
+  serverId: string
 }
 
 export interface GetServerListResponseSchema {
@@ -41,7 +41,11 @@ export interface GetServerListResponseSchema {
 }
 
 export interface GetServersResponseSchema {
-  servers: ServerCategoryList[]
+  servers: {
+    serverId: number
+    serverName: string
+    serverImageUrl: string | null
+  }[]
 }
 
 export interface GetMemberIdListInServerRequestSchema {
@@ -279,4 +283,12 @@ export interface UpdateCategoryRequestSchema {
 export interface UpdateCategoryResponseSchema {
   categoryId: number
   categoryName: string
+}
+
+export interface GetChannelUserListRequestSchema {
+  channelId: number
+}
+
+export interface GetChannelUserListResponseSchema {
+  channelUserList: ChannelUser[]
 }

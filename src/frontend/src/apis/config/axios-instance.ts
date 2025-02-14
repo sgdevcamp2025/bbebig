@@ -2,24 +2,19 @@ import axios from 'axios'
 
 import SERVER_PORT from '@/constants/base-port'
 import { SERVER_URL } from '@/constants/env'
-import { COOKIE_KEYS } from '@/constants/keys'
-import cookie from '@/utils/cookie'
+
+import { axiosInterceptorHelper } from './axios-helper'
 
 const getAxiosInstance = (port: (typeof SERVER_PORT)[keyof typeof SERVER_PORT]) => {
   const axiosInstance = axios.create({
+    headers: {
+      'Content-Type': 'application/json'
+    },
     baseURL: `${SERVER_URL}:${port}`,
     withCredentials: true
   })
 
-  axiosInstance.interceptors.request.use((config) => {
-    const accessToken = cookie.getCookie(COOKIE_KEYS.ACCESS_TOKEN)
-
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`
-    }
-
-    return config
-  })
+  axiosInstance.interceptors.request.use(axiosInterceptorHelper)
 
   axiosInstance.interceptors.response.use(
     (response) => {

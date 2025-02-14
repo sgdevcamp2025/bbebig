@@ -1,45 +1,22 @@
-import { QueryClientProvider } from '@tanstack/react-query'
+import { QueryClientProvider, useSuspenseQuery } from '@tanstack/react-query'
 import { PlusIcon } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
 import { useShallow } from 'zustand/shallow'
 
+import serviceService from '@/apis/service/service'
 import Avatar from '@/components/avatar'
+import LoadingModal from '@/components/loading-modal'
 import ServerIcon from '@/components/server-icon'
 import { statusKo } from '@/constants/status'
 import { cn } from '@/libs/cn'
 import queryClient from '@/libs/query-client'
 import useMediaSettingsStore from '@/stores/use-media-setting.store'
-import { useSignalingStompStore } from '@/stores/use-signaling-stomp-store'
 
 import ProfileCard from './components/profile-card'
 import ProfileStatusButton from './components/profile-status-button'
 import ServerCreateModal from './components/server-create-modal'
 import SettingModal, { SettingModalTabsID } from './components/setting-modal'
-
-const myServerList = [
-  {
-    serverId: 1,
-    name: '서버 이름1',
-    image: 'https://placehold.co/75',
-    alarm: true,
-    channelId: 1
-  },
-  {
-    serverId: 2,
-    name: '서버 이름2',
-    image: 'https://placehold.co/75',
-    alarm: false,
-    channelId: 2
-  },
-  {
-    serverId: 3,
-    name: '서버 이름3',
-    image: 'https://placehold.co/75',
-    alarm: false,
-    channelId: 3
-  }
-] as const
 
 const mockUser = {
   id: 1,
@@ -53,29 +30,22 @@ const mockUser = {
   statusColor: 'black'
 } as const
 
-const MainRootLayout = () => {
+const Inner = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const { serverId } = useParams<{ serverId: string }>()
-  const { disconnect, connect } = useSignalingStompStore()
 
   useEffect(() => {
-    connect()
-    return () => {
-      disconnect()
+    if (!serverId) {
+      navigate('/channels/@me', { replace: true })
     }
-  }, [connect, disconnect])
+  }, [serverId, navigate])
 
-  const pathname =
-    location.pathname.split('/')[1] === 'channels' ? location.pathname.split('/')[2] : null
-
-  const [settingModalState, setSettingModalState] = useState({
-    itemId: SettingModalTabsID.none,
-    isOpen: false
+  const { data: myChannelList } = useSuspenseQuery({
+    queryKey: ['myChannelList'],
+    queryFn: serviceService.getServers
   })
 
-  const [isProfileCardOpen, setIsProfileCardOpen] = useState(false)
-  const [isServerCreateModalOpen, setIsServerCreateModalOpen] = useState(false)
   const { muted, toggleAudioInputMute, toggleAudioOutputMute } = useMediaSettingsStore(
     useShallow((state) => ({
       muted: state.muted,
@@ -84,13 +54,24 @@ const MainRootLayout = () => {
     }))
   )
 
-  const handleClickServer = (serverId: number, channelId: number) => {
-    navigate(`/channels/${serverId}/${channelId}`)
+  const [isProfileCardOpen, setIsProfileCardOpen] = useState(false)
+  const [isServerCreateModalOpen, setIsServerCreateModalOpen] = useState(false)
+
+  const handleClickServer = async (serverId: number) => {
+    const {
+      result: { channelIdList }
+    } = await serviceService.getChannelIdListInServer({ serverId })
+    navigate(`/channels/${serverId}/${channelIdList[0]}`)
   }
 
   const handleClickMyServer = () => {
     navigate('/channels/@me')
   }
+
+  const [settingModalState, setSettingModalState] = useState({
+    itemId: SettingModalTabsID.none,
+    isOpen: false
+  })
 
   const handleClickSetting = () => {
     setSettingModalState({
@@ -125,11 +106,8 @@ const MainRootLayout = () => {
     setIsServerCreateModalOpen(false)
   }
 
-  useEffect(() => {
-    if (!serverId) {
-      navigate('/channels/@me', { replace: true })
-    }
-  }, [serverId, navigate])
+  const pathname =
+    location.pathname.split('/')[1] === 'channels' ? location.pathname.split('/')[2] : null
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -169,15 +147,15 @@ const MainRootLayout = () => {
             <div className='w-full flex justify-center'>
               <div className='h-[2px] w-8 rounded-[1px] bg-gray-80' />
             </div>
-            {myServerList.map((server) => (
+            {myChannelList.result.servers.map((server) => (
               <li key={server.serverId}>
                 <ServerIcon
-                  imageUrl={server.image}
-                  label={server.name}
+                  imageUrl={server.serverImageUrl}
+                  label={server.serverName}
                   isActive={pathname === server.serverId.toString()}
-                  hasAlarm={server.alarm}
+                  hasAlarm={false}
                   onClick={() => {
-                    handleClickServer(server.serverId, server.channelId)
+                    handleClickServer(server.serverId)
                   }}
                 />
               </li>
@@ -276,4 +254,10 @@ const MainRootLayout = () => {
   )
 }
 
-export default MainRootLayout
+export default function MainRootLayout() {
+  return (
+    <Suspense fallback={<LoadingModal isOpen={true} />}>
+      <Inner />
+    </Suspense>
+  )
+}

@@ -23,6 +23,8 @@ import type {
   GetChannelLastVisitInfoWithMemberIdResponseSchema,
   GetChannelListRequestSchema,
   GetChannelListResponseSchema,
+  GetChannelUserListRequestSchema,
+  GetChannelUserListResponseSchema,
   GetMemberIdListInServerRequestSchema,
   GetMemberIdListInServerResponseSchema,
   GetMemberInfoLastVisitChannelRequestSchema,
@@ -118,9 +120,9 @@ const serviceService = () => {
 
   const getChannelIdListInServer = async (data: GetChannelIdListInServerRequestSchema) => {
     try {
-      const response = await axiosInstance.get<GetChannelIdListInServerResponseSchema>(
-        `${SERVER_PATH}/${data.serverId}/list/channels`
-      )
+      const response = await axiosInstance.get<
+        CommonResponseType<GetChannelIdListInServerResponseSchema>
+      >(`${SERVER_PATH}/${data.serverId}/list/channels`)
       return response.data
     } catch (error) {
       console.error(error)
@@ -132,9 +134,9 @@ const serviceService = () => {
     data: GetMemberInfoLastVisitChannelRequestSchema
   ) => {
     try {
-      const response = await axiosInstance.get<GetMemberInfoLastVisitChannelResponseSchema>(
-        `${SERVER_PATH}/${data.serverId}/channels/info/member/${data.memberId}`
-      )
+      const response = await axiosInstance.get<
+        CommonResponseType<GetMemberInfoLastVisitChannelResponseSchema>
+      >(`${SERVER_PATH}/${data.serverId}/channels/info/member/${data.memberId}`)
       return response.data
     } catch (error) {
       console.error(error)
@@ -144,9 +146,9 @@ const serviceService = () => {
 
   const getServerIdListWithMemberId = async (data: GetServerIdListWithMemberIdRequestSchema) => {
     try {
-      const response = await axiosInstance.get<GetServerIdListWithMemberIdResponseSchema>(
-        `${SERVER_PATH}/${data.memberId}/list/servers`
-      )
+      const response = await axiosInstance.get<
+        CommonResponseType<GetServerIdListWithMemberIdResponseSchema>
+      >(`${SERVER_PATH}/${data.memberId}/list/servers`)
       return response.data
     } catch (error) {
       console.error(error)
@@ -195,7 +197,9 @@ const serviceService = () => {
   // Util API
   const healthCheck = async () => {
     try {
-      const response = await axiosInstance.get<HealthCheckResponseSchema>(`${UTIL_PATH}/health`)
+      const response = await axiosInstance.get<CommonResponseType<HealthCheckResponseSchema>>(
+        `${UTIL_PATH}/health`
+      )
       return response.data
     } catch (error) {
       console.error(error)
@@ -221,7 +225,7 @@ const serviceService = () => {
   // Channel API
   const deleteChannel = async (data: DeleteChannelRequestSchema) => {
     try {
-      const response = await axiosInstance.delete<DeleteChannelResponseSchema>(
+      const response = await axiosInstance.delete<CommonResponseType<DeleteChannelResponseSchema>>(
         `${CHANNEL_PATH}/${data.channelId}`
       )
       return response.data
@@ -233,7 +237,7 @@ const serviceService = () => {
 
   const getChannelList = async (data: GetChannelListRequestSchema) => {
     try {
-      const response = await axiosInstance.get<GetChannelListResponseSchema>(
+      const response = await axiosInstance.get<CommonResponseType<GetChannelListResponseSchema>>(
         `${CHANNEL_PATH}/${data.channelId}`
       )
       return response.data
@@ -247,9 +251,9 @@ const serviceService = () => {
     data: GetChannelLastVisitInfoWithMemberIdRequestSchema
   ) => {
     try {
-      const response = await axiosInstance.get<GetChannelLastVisitInfoWithMemberIdResponseSchema>(
-        `${CHANNEL_PATH}/${data.channelId}/lastInfo/member/${data.memberId}`
-      )
+      const response = await axiosInstance.get<
+        CommonResponseType<GetChannelLastVisitInfoWithMemberIdResponseSchema>
+      >(`${CHANNEL_PATH}/${data.channelId}/lastInfo/member/${data.memberId}`)
       return response.data
     } catch (error) {
       console.error(error)
@@ -259,7 +263,7 @@ const serviceService = () => {
 
   const createChannel = async (data: CreateChannelRequestSchema) => {
     try {
-      const response = await axiosInstance.post<CreateChannelResponseSchema>(
+      const response = await axiosInstance.post<CommonResponseType<CreateChannelResponseSchema>>(
         `${CHANNEL_PATH}`,
         data
       )
@@ -272,7 +276,7 @@ const serviceService = () => {
 
   const updateChannel = async (data: UpdateChannelRequestSchema) => {
     try {
-      const response = await axiosInstance.put<UpdateChannelResponseSchema>(
+      const response = await axiosInstance.put<CommonResponseType<UpdateChannelResponseSchema>>(
         `${CHANNEL_PATH}/${data.channelId}`,
         data
       )
@@ -286,7 +290,7 @@ const serviceService = () => {
   // Category API
   const deleteCategory = async (data: DeleteCategoryRequestSchema) => {
     try {
-      const response = await axiosInstance.delete<DeleteCategoryResponseSchema>(
+      const response = await axiosInstance.delete<CommonResponseType<DeleteCategoryResponseSchema>>(
         `${CATEGORY_PATH}/${data.categoryId}`
       )
       return response.data
@@ -298,7 +302,7 @@ const serviceService = () => {
 
   const getCategories = async (data: GetCategoriesRequestSchema) => {
     try {
-      const response = await axiosInstance.get<GetCategoriesResponseSchema>(
+      const response = await axiosInstance.get<CommonResponseType<GetCategoriesResponseSchema>>(
         `${CATEGORY_PATH}/${data.categoryId}`
       )
       return response.data
@@ -310,7 +314,7 @@ const serviceService = () => {
 
   const createCategory = async (data: CreateCategoryRequestSchema) => {
     try {
-      const response = await axiosInstance.post<CreateCategoryResponseSchema>(
+      const response = await axiosInstance.post<CommonResponseType<CreateCategoryResponseSchema>>(
         `${CATEGORY_PATH}`,
         data
       )
@@ -323,10 +327,22 @@ const serviceService = () => {
 
   const updateCategory = async (data: UpdateCategoryRequestSchema) => {
     try {
-      const response = await axiosInstance.put<UpdateCategoryResponseSchema>(
+      const response = await axiosInstance.put<CommonResponseType<UpdateCategoryResponseSchema>>(
         `${CATEGORY_PATH}/${data.categoryId}`,
         data
       )
+      return response.data
+    } catch (error) {
+      console.error(error)
+      throw error
+    }
+  }
+
+  const getChannelUserList = async (data: GetChannelUserListRequestSchema) => {
+    try {
+      const response = await axiosInstance.get<
+        CommonResponseType<GetChannelUserListResponseSchema>
+      >(`${CHANNEL_PATH}/${data.channelId}/list/users`)
       return response.data
     } catch (error) {
       console.error(error)
@@ -356,7 +372,8 @@ const serviceService = () => {
     createCategory,
     updateCategory,
     healthCheck,
-    lookUp
+    lookUp,
+    getChannelUserList
   }
 }
 

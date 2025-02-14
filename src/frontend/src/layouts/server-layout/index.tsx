@@ -1,84 +1,98 @@
 import { Outlet, useNavigate, useParams } from 'react-router'
 
+import { GetServerListResponseSchema } from '@/apis/schema/types/service'
 import useStatusBarStore from '@/stores/use-status-bar-store'
-import { User } from '@/types/user'
+import { ChannelUser } from '@/types/server'
 
 import ServerSidebar from './components/server-side-bar'
 import StatusSideBar from './components/status-side-bar'
 
-const myChannelList: ServerChannelList = {
-  1: [
+const mockServerData: GetServerListResponseSchema = {
+  serverId: 1,
+  serverName: '서버 이름',
+  ownerId: 1,
+  serverImageUrl: '/image/common/default-avatar.png',
+  categoryInfoList: [
     {
-      id: 1,
-      name: '채팅 채널',
-      position: 0,
-      channels: [
-        { id: 1, name: '일반', type: 'VOICE', position: 0, privateStatus: false },
-        { id: 2, name: '공지사항', type: 'TEXT', position: 1, privateStatus: false }
+      categoryId: 1,
+      categoryName: 'test-category',
+      position: 1,
+      channelInfoList: [
+        {
+          channelId: 1,
+          categoryId: 1,
+          position: 1,
+          channelName: 'test-channel',
+          channelType: 'TEXT',
+          privateStatus: false
+        }
       ]
-    }
-  ],
-  2: [
+    },
     {
-      id: 2,
-      name: '개발 채널',
-      position: 0,
-      channels: [
-        { id: 3, name: '프론트엔드', type: 'TEXT', position: 0, privateStatus: false },
-        { id: 4, name: '백엔드', type: 'TEXT', position: 1, privateStatus: false }
+      categoryId: 2,
+      categoryName: 'test-category2',
+      position: 2,
+      channelInfoList: [
+        {
+          channelId: 2,
+          categoryId: 2,
+          position: 2,
+          channelName: 'test-channel2',
+          channelType: 'TEXT',
+          privateStatus: false
+        }
+      ]
+    },
+    {
+      categoryId: 3,
+      categoryName: 'test-category3',
+      position: 3,
+      channelInfoList: [
+        {
+          channelId: 3,
+          categoryId: 3,
+          position: 3,
+          channelName: 'test-channel3',
+          channelType: 'TEXT',
+          privateStatus: false
+        },
+        {
+          channelId: 4,
+          categoryId: 3,
+          position: 4,
+          channelName: 'test-channel4',
+          channelType: 'TEXT',
+          privateStatus: false
+        }
       ]
     }
   ]
 }
 
-const channelUsers: Record<number, User[]> = {
-  1: [
-    {
-      id: '1',
-      name: '김예지',
-      avatarUrl: '/image/common/default-avatar.png',
-      bannerUrl: '/image/common/default-background.png',
-      customPresenceStatus: 'ONLINE',
-      introduction: '안뇽',
-      introductionEmoji: '👋',
-      email: 'yeji@gmail.com'
-    },
-    {
-      id: '2',
-      name: '이지형',
-      avatarUrl: '/image/common/default-avatar.png',
-      bannerUrl: '/image/common/default-background.png',
-      customPresenceStatus: 'OFFLINE',
-      introduction: '하이루',
-      introductionEmoji: '👋',
-      email: 'jihyung@gmail.com'
-    }
-  ],
-  2: [
-    {
-      id: '3',
-      name: '이소은',
-      avatarUrl: '/image/common/default-avatar.png',
-      bannerUrl: '/image/common/default-background.png',
-      customPresenceStatus: 'NOT_DISTURB',
-      introduction: '뇽안',
-      introductionEmoji: '👋',
-      email: 'soeun@gmail.com'
-    }
-  ],
-  3: [
-    {
-      id: '4',
-      name: '비비빅',
-      avatarUrl: '/image/common/default-avatar.png',
-      bannerUrl: '/image/common/default-background.png',
-      customPresenceStatus: 'ONLINE',
-      introduction: '안녕하세요',
-      introductionEmoji: '👋',
-      email: 'bbebig@gmail.com'
-    }
-  ]
-}
+const channelUsers = [
+  {
+    id: '1',
+    name: '김예지',
+    avatarUrl: '/image/common/default-avatar.png',
+    bannerUrl: '/image/common/default-background.png',
+    customPresenceStatus: 'ONLINE',
+    introduction: '안뇽',
+    introductionEmoji: '👋',
+    email: 'yeji@gmail.com',
+    includeChannelId: [1, 3, 4]
+  },
+  {
+    id: '2',
+    name: '이지형',
+    avatarUrl: '/image/common/default-avatar.png',
+    bannerUrl: '/image/common/default-background.png',
+    customPresenceStatus: 'OFFLINE',
+    introduction: '하이루',
+    introductionEmoji: '👋',
+    email: 'jihyung@gmail.com',
+    includeChannelId: [1, 2, 3, 4]
+  }
+] as ChannelUser[]
 
 function ServerLayout() {
   const { serverId, channelId } = useParams<{ serverId: string; channelId: string }>()
@@ -88,20 +102,29 @@ function ServerLayout() {
     throw new Error('serverId is required')
   }
 
-  const currentChannelUsers = channelId ? channelUsers[Number(channelId)] || [] : []
+  // const { data: serverData } = useSuspenseQuery({
+  //   queryKey: ['serverData', serverId],
+  //   queryFn: () => serviceService.getServersList({ serverId })
+  // })
+
   const navigate = useNavigate()
-  const categories =
-    serverId && myChannelList[Number(serverId)] ? myChannelList[Number(serverId)] : []
+
+  const currentChannelUsers = channelUsers.filter((user) =>
+    user.includeChannelId.includes(Number(channelId))
+  )
+
   const handleChannelSelect = (selectedChannelId: number) => {
     navigate(`/channels/${serverId}/${selectedChannelId}`)
   }
 
+  const { serverId: responseServerId, serverName, categoryInfoList } = mockServerData
+
   return (
     <div className='flex h-screen w-full'>
       <ServerSidebar
-        serverId={serverId}
-        serverName={`서버 ${serverId}`}
-        categories={categories}
+        serverId={responseServerId}
+        serverName={serverName}
+        categories={categoryInfoList}
         onChannelSelect={handleChannelSelect}
         selectedChannelId={channelId}
       />
@@ -110,7 +133,7 @@ function ServerLayout() {
         <Outlet />
       </main>
 
-      {isStatusBarOpen && <StatusSideBar users={currentChannelUsers} />}
+      {isStatusBarOpen && <StatusSideBar channelUserList={currentChannelUsers} />}
     </div>
   )
 }

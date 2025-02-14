@@ -3,16 +3,16 @@ import { useRef, useState } from 'react'
 
 import useClickOutside from '@/hooks/use-click-outside'
 import { cn } from '@/libs/cn'
-import { Category } from '@/types/server'
+import { CategoryInfo } from '@/types/server'
 
 import CategoryCreateModal from '../cateogry-create-modal'
 import ChannelCreateModal from '../channel-create-modal'
 import SettingModal from '../setting-modal'
 
 interface ServerSideBarProps {
-  serverId: string
+  serverId: number
   serverName?: string
-  categories?: Category[]
+  categories?: CategoryInfo[]
   selectedChannelId?: string
   onChannelSelect?: (channelId: number) => void
 }
@@ -142,16 +142,16 @@ function ServerSideBar({
       <div className='flex-1 overflow-y-auto'>
         {categories?.map((category) => (
           <div
-            key={category.id}
+            key={category.categoryId}
             className='mt-4'>
             <button
-              onClick={() => toggleCategory(category.id)}
+              onClick={() => toggleCategory(category.categoryId)}
               className='w-full px-2 flex items-center justify-between group'>
               <div className='flex items-center'>
                 <span
                   className={cn(
                     'mr-1.5 transition-transform text-discord-font-color-muted',
-                    expandedCategories.includes(category.id) ? 'rotate-0' : '-rotate-90'
+                    expandedCategories.includes(category.categoryId) ? 'rotate-0' : '-rotate-90'
                   )}>
                   <svg
                     width='9'
@@ -167,49 +167,49 @@ function ServerSideBar({
                   </svg>
                 </span>
                 <span className='text-xs font-semibold text-discord-font-color-muted uppercase'>
-                  {category.name}
+                  {category.categoryName}
                 </span>
               </div>
               <button
                 type='button'
                 onClick={(e) => {
                   e.stopPropagation()
-                  selectCategoryId.current = category.id
+                  selectCategoryId.current = category.categoryId
                   setCategoryCreateModalOpen(true)
                 }}>
                 <Plus className='w-4 h-4 text-discord-font-color-muted' />
               </button>
             </button>
 
-            {expandedCategories.includes(category.id) && (
+            {expandedCategories.includes(category.categoryId) && (
               <div className='px-2 mt-1'>
-                {category.channels.map((channel) => (
+                {category.channelInfoList.map((channel) => (
                   <button
-                    key={channel.id}
+                    key={channel.channelId}
                     type='button'
-                    onClick={() => onChannelSelect?.(channel.id)}
+                    onClick={() => onChannelSelect?.(channel.channelId)}
                     className={cn(
                       'w-full flex items-center px-2 py-1 rounded transition-colors',
-                      selectedChannelId && Number(selectedChannelId) === channel.id
+                      selectedChannelId && Number(selectedChannelId) === channel.channelId
                         ? 'bg-discord-gray-500 text-white'
                         : 'text-discord-font-color-muted hover:bg-discord-gray-600'
                     )}>
                     <span className='mr-1'>
                       <img
-                        src={`/icon/channel/type-${channel.type.toLocaleLowerCase()}.svg`}
+                        src={`/icon/channel/type-${channel.channelType.toLocaleLowerCase()}.svg`}
                         className='w-[15px] h-[15px]'
                       />
                     </span>
-                    <span className='flex-1 ml-1 text-left'>{channel.name}</span>
+                    <span className='flex-1 ml-1 text-left'>{channel.channelName}</span>
 
                     <div
                       className={cn(
                         'flex items-center gap-2 transition-opacity',
-                        selectedChannelId && Number(selectedChannelId) === channel.id
+                        selectedChannelId && Number(selectedChannelId) === channel.channelId
                           ? 'opacity-100'
                           : 'opacity-0 group-hover:opacity-100'
                       )}>
-                      {channel.type === 'VOICE' && (
+                      {channel.channelType === 'VOICE' && (
                         <img
                           src='/icon/channel/threads.svg'
                           className='w-[15px] h-[15px]'
@@ -225,7 +225,7 @@ function ServerSideBar({
 
                       <button
                         type='button'
-                        onClick={() => handleOpenSettings(channel.id, channel.name)}>
+                        onClick={() => handleOpenSettings(channel.channelId, channel.channelName)}>
                         <img
                           src='/icon/channel/setting.svg'
                           className='w-[15px] h-[15px]'

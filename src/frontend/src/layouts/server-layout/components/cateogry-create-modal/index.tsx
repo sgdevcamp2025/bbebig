@@ -3,7 +3,7 @@ import CustomModal from '@/components/custom-modal'
 import { cn } from '@/libs/cn'
 
 interface Props {
-  serverId: string
+  serverId: number
   isOpen: boolean
   onClose: () => void
 }

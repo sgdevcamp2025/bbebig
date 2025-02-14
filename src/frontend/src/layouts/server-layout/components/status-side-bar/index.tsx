@@ -1,17 +1,20 @@
 import { useRef, useState } from 'react'
 
 import Avatar from '@/components/avatar'
+import { ChannelUser } from '@/types/server'
 import { User } from '@/types/user'
 
 import UserProfileCard from '../user-profile-card'
 
 interface StatusSideBarProps {
-  users: User[]
+  channelUserList: ChannelUser[]
 }
 
-function StatusSideBar({ users }: StatusSideBarProps) {
-  const onlineUsers = users?.filter((user) => user.customPresenceStatus === 'ONLINE') ?? []
-  const offlineUsers = users?.filter((user) => user.customPresenceStatus !== 'ONLINE') ?? []
+function StatusSideBar({ channelUserList }: StatusSideBarProps) {
+  const onlineUsers =
+    channelUserList?.filter((user) => user.customPresenceStatus === 'ONLINE') ?? []
+  const offlineUsers =
+    channelUserList?.filter((user) => user.customPresenceStatus !== 'ONLINE') ?? []
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [selectedUserPosition, setSelectedUserPosition] = useState<{ top: number; left: number }>({
     top: 0,

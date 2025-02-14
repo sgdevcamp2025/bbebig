@@ -1,12 +1,6 @@
-export type ChannelType = 'TEXT' | 'VOICE'
+import { User } from './user'
 
-export interface Category {
-  serverId: number
-  serverName: string
-  ownerId: number
-  serverImageUrl: string | null
-  categoryInfoList: CategoryInfo[]
-}
+export type ChannelType = 'TEXT' | 'VOICE'
 
 export interface CategoryInfo {
   categoryId: number
@@ -19,8 +13,11 @@ export interface ChannelInfo {
   channelId: number
   categoryId: number
   position: number
+  channelName: string
   channelType: ChannelType
   privateStatus: boolean
 }
 
-export type ServerCategoryList = Pick<Category, 'serverId' | 'serverName' | 'serverImageUrl'>[]
+export interface ChannelUser extends User {
+  includeChannelId: number[]
+}
