@@ -7,7 +7,6 @@ import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -18,7 +17,6 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class PassportArgumentResolver implements HandlerMethodArgumentResolver {
 
     private final PassportValidator passportValidator;
@@ -39,7 +37,6 @@ public class PassportArgumentResolver implements HandlerMethodArgumentResolver {
                                   WebDataBinderFactory binderFactory) {
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         String base64Passport = request.getHeader(passportHeader);
-        log.info("[PassportArgumentResolver] base64Passport header: {} (URI={})", base64Passport, request.getRequestURI());
         if (base64Passport == null) {
             throw new ErrorHandler(ErrorStatus.PASSPORT_HEADER_MISSING);
         }
