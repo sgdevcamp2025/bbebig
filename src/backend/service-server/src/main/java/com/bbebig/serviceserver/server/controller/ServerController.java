@@ -3,14 +3,12 @@ package com.bbebig.serviceserver.server.controller;
 import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto;
 import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto.ServerLastInfoResponseDto;
 import com.bbebig.commonmodule.global.response.code.CommonResponse;
-import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerActionEventDto;
-import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerEventType;
-import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerMemberPresenceEventDto;
 import com.bbebig.commonmodule.passport.annotation.PassportUser;
 import com.bbebig.commonmodule.proto.PassportProto.Passport;
 import com.bbebig.serviceserver.global.kafka.KafkaProducerService;
 import com.bbebig.serviceserver.server.dto.request.*;
 import com.bbebig.serviceserver.server.dto.response.*;
+import com.bbebig.serviceserver.server.dto.response.ServerReadResponseDto.ServerMemberInfoResponseDto;
 import com.bbebig.serviceserver.server.service.ServerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -59,6 +57,22 @@ public class ServerController {
         log.info("[Service] 서버 정보 조회 요청: memberId = {}, serverId = {}", passport.getMemberId(), serverId);
         return CommonResponse.onSuccess(serverService.readServer(serverId));
     }
+
+    @Operation(summary = "서버 정보 조회", description = "서버 정보를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "서버 정보 조회 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "", content = @Content)
+    })
+    @GetMapping("/{serverId}/members/info")
+    public CommonResponse<ServerMemberInfoResponseDto> getServerMemberInfo(
+            @Parameter(hidden = true) @PassportUser Passport passport,
+            @PathVariable Long serverId
+    ) {
+        log.info("[Service] 서버 멤버 정보 조회 요청: memberId = {}, serverId = {}", passport.getMemberId(), serverId);
+        return CommonResponse.onSuccess(serverService.getMemberInfoList(serverId));
+    }
+
+
 
     @Operation(summary = "멤버별로 속해있는 서버 목록 조회 (For Client)", description = "멤버별로 속해있는 서버 목록 조회합니다. (For Client)")
     @ApiResponses(value = {

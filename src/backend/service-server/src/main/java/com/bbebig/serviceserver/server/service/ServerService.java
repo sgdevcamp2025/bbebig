@@ -20,6 +20,7 @@ import com.bbebig.serviceserver.server.dto.request.ServerCreateRequestDto;
 import com.bbebig.serviceserver.server.dto.request.ServerParticipateRequestDto;
 import com.bbebig.serviceserver.server.dto.request.ServerUpdateRequestDto;
 import com.bbebig.serviceserver.server.dto.response.*;
+import com.bbebig.serviceserver.server.dto.response.ServerReadResponseDto.ServerMemberInfoResponseDto;
 import com.bbebig.serviceserver.server.entity.RoleType;
 import com.bbebig.serviceserver.server.entity.Server;
 import com.bbebig.serviceserver.server.entity.ServerMember;
@@ -145,13 +146,27 @@ public class ServerService {
 
         List<Channel> channels = channelRepository.findAllByServerId(serverId);
         List<Category> categories = categoryRepository.findAllByServerId(serverId);
-        List<ServerMember> serverMembers = serverMemberRepository.findAllByServerId(serverId);
         Map<Long, List<ChannelMember>> channelMembers = new HashMap<>();
         for (Channel channel : channels) {
             List<ChannelMember> channelMemberList = channelMemberRepository.findAllByChannelId(channel.getId());
             channelMembers.put(channel.getId(), channelMemberList);
         }
-        return ServerReadResponseDto.convertToServerReadResponseDto(server, channels, categories, serverMembers, channelMembers);
+        return ServerReadResponseDto.convertToServerReadResponseDto(server, channels, categories, channelMembers);
+    }
+
+    /**
+     * 서버 멤버 목록 조회
+     */
+    public ServerMemberInfoResponseDto getMemberInfoList(Long serverId) {
+        List<ServerMember> serverMembers = serverMemberRepository.findAllByServerId(serverId);
+        return ServerMemberInfoResponseDto.builder()
+                .serverId(serverId)
+                .serverMemberInfoList(
+                        serverMembers.stream()
+                                .map(ServerReadResponseDto::convertToServerMemberInfo)
+                                .collect(Collectors.toList())
+                )
+                .build();
     }
 
     /**
