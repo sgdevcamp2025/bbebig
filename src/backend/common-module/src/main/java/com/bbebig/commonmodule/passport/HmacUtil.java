@@ -16,18 +16,18 @@ import java.util.Base64;
 @Component
 public class HmacUtil {
 
-    @Value("${eas.passport.secret}")
-    private static String SECRET_KEY;
+    @Value("${eas.passport.secretKey}")
+    private String secretKey;
 
     @Value("${eas.passport.algorithm}")
-    private static String HMAC_ALGORITHM;
+    private String hmacAlgorithm;
 
     private static final int HMAC_LENGTH = 32;
 
     /**
      * 원본(직렬화된 Passport) -> HMAC 계산 -> [원본 + HMAC] -> Base64 인코딩
      */
-    public static String signPassport(byte[] rawData) {
+    public String signPassport(byte[] rawData) {
         try {
             byte[] hmac = computeHmacAlgorithm(rawData);
             byte[] combined = new byte[rawData.length + hmac.length];
@@ -45,7 +45,7 @@ public class HmacUtil {
     /**
      * Base64 -> [원본 + HMAC] 분리 -> 재계산 -> 검증 -> 원본 바이트 반환
      */
-    public static byte[] validatePassport(String base64Passport) {
+    public byte[] validatePassport(String base64Passport) {
         try {
             byte[] combined = Base64.getDecoder().decode(base64Passport);
 
@@ -76,9 +76,9 @@ public class HmacUtil {
     /**
      * HMAC-SHA256 계산 (32byte)
      */
-    private static byte[] computeHmacAlgorithm(byte[] data) throws Exception {
-        Mac mac = Mac.getInstance(HMAC_ALGORITHM);
-        mac.init(new SecretKeySpec(SECRET_KEY.getBytes(), HMAC_ALGORITHM));
+    private byte[] computeHmacAlgorithm(byte[] data) throws Exception {
+        Mac mac = Mac.getInstance(hmacAlgorithm);
+        mac.init(new SecretKeySpec(secretKey.getBytes(), hmacAlgorithm));
         return mac.doFinal(data);
     }
 }
