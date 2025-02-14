@@ -1,3 +1,4 @@
+import { QueryClientProvider } from '@tanstack/react-query'
 import { PlusIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
@@ -7,6 +8,7 @@ import Avatar from '@/components/avatar'
 import ServerIcon from '@/components/server-icon'
 import { statusKo } from '@/constants/status'
 import { cn } from '@/libs/cn'
+import queryClient from '@/libs/query-client'
 import useMediaSettingsStore from '@/stores/use-media-setting.store'
 
 import ProfileCard from './components/profile-card'
@@ -121,7 +123,7 @@ const MainRootLayout = () => {
   }, [serverId, navigate])
 
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <div className='flex'>
         <nav className='bg-black-80 h-full min-h-screen w-[72px] pt-[12px]'>
           <ul className='w-[72px] flex flex-col gap-2'>
@@ -261,7 +263,7 @@ const MainRootLayout = () => {
         isOpen={isServerCreateModalOpen}
         onClose={handleClickServerCreateModalClose}
       />
-    </>
+    </QueryClientProvider>
   )
 }
 
