@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.smilegate.bbebig.presentation.navigation.UserNavHost
+import com.smilegate.bbebig.presentation.navigation.DiscordNavHost
 import com.smilegate.bbebig.presentation.theme.BbebigTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             BbebigTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    UserNavHost(
+                    DiscordNavHost(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(innerPadding),
