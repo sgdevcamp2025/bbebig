@@ -34,9 +34,6 @@ import type {
   GetServerListRequestSchema,
   GetServerListResponseSchema,
   GetServersResponseSchema,
-  HealthCheckResponseSchema,
-  LookUpErrorResponseSchema,
-  LookUpRequestSchema,
   ParticipateServerRequestSchema,
   ParticipateServerResponseSchema,
   UpdateCategoryRequestSchema,
@@ -50,7 +47,6 @@ import type {
 } from '../schema/types/service'
 
 const SERVER_PATH = `/servers`
-const UTIL_PATH = `/utils`
 const CHANNEL_PATH = `/channels`
 const CATEGORY_PATH = `/categories`
 
@@ -186,34 +182,6 @@ const serviceService = () => {
       const response = await axiosInstance.put<CommonResponseType<UpdateServerResponseSchema>>(
         `${SERVER_PATH}/${data.serverId}`,
         data
-      )
-      return response.data
-    } catch (error) {
-      console.error(error)
-      throw error
-    }
-  }
-
-  // Util API
-  const healthCheck = async () => {
-    try {
-      const response = await axiosInstance.get<CommonResponseType<HealthCheckResponseSchema>>(
-        `${UTIL_PATH}/health`
-      )
-      return response.data
-    } catch (error) {
-      console.error(error)
-      throw error
-    }
-  }
-
-  const lookUp = async (data: LookUpRequestSchema) => {
-    try {
-      const response = await axiosInstance.get<LookUpErrorResponseSchema>(
-        `${UTIL_PATH}/error-code`,
-        {
-          params: data
-        }
       )
       return response.data
     } catch (error) {
@@ -371,8 +339,6 @@ const serviceService = () => {
     getCategories,
     createCategory,
     updateCategory,
-    healthCheck,
-    lookUp,
     getChannelUserList
   }
 }

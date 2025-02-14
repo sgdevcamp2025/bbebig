@@ -178,18 +178,6 @@ export interface UpdateChannelResponseSchema {
   privateStatus: boolean
 }
 
-export interface HealthCheckResponseSchema {
-  status: string
-}
-
-export interface LookUpRequestSchema {
-  lookupKey: string
-}
-
-export interface LookUpErrorResponseSchema {
-  error: string
-}
-
 export interface DeleteChannelRequestSchema {
   channelId: number
 }
