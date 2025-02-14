@@ -69,7 +69,7 @@ public class PassportFilter extends AbstractGatewayFilterFactory<Object> {
                 .doOnNext(response -> log.info("PassportServer response: {}", response))
                 .flatMap(response -> {
                     // Passport 발급 실패
-                    if (response.getPassport() == null) {
+                    if (response.getResult() == null || response.getResult().getPassport() == null) {
                         log.warn("PassportFilter - Passport is null in response, responding 401");
                         return respondWithUnauthorized(exchange);
                     }
@@ -77,7 +77,7 @@ public class PassportFilter extends AbstractGatewayFilterFactory<Object> {
                     // 발급된 Passport를 X-Passport 헤더로 설정
                     log.info("PassportFilter - Received new Passport, setting header: {}", passportHeader);
                     ServerWebExchange mutated = exchange.mutate()
-                            .request(r -> r.headers(h -> h.set(passportHeader, response.getPassport())))
+                            .request(r -> r.headers(h -> h.set(passportHeader, response.getResult().getPassport())))
                             .build();
 
                     // 다음 필터로 진행

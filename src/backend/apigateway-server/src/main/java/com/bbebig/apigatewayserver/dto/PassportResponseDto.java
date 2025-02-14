@@ -9,16 +9,12 @@ import lombok.Getter;
 @Builder
 public class PassportResponseDto {
 
-    private final String passport;
+    private String code;
+    private String message;
+    private Result result;
 
-    @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-    public PassportResponseDto(@JsonProperty("passport") String passport) {
-        this.passport = passport;
-    }
-
-    public static PassportResponseDto convertToIssuePassportResponse(String passport) {
-        return PassportResponseDto.builder()
-                .passport(passport)
-                .build();
+    @Getter
+    public static class Result {
+        private String passport;
     }
 }
