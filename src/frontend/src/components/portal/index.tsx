@@ -6,6 +6,7 @@ function Portal({ children }: PropsWithChildren) {
     const dom = document.getElementById('portal') || document.body
     return createPortal(children, dom)
   } catch (error) {
+    console.error(error)
     return null
   }
 }

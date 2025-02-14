@@ -44,7 +44,7 @@ function useMediaControl() {
       console.error('비디오 스트림 시작 실패:', error)
       throw error
     }
-  }, [devices.video, muted.video])
+  }, [devices.video])
 
   const stopStream = useCallback(() => {
     if (streamRef.current) {

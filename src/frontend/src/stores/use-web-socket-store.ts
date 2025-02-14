@@ -1,4 +1,4 @@
-import { Client, IMessage } from '@stomp/stompjs'
+import type { Client, IMessage } from '@stomp/stompjs'
 import { create } from 'zustand'
 
 import { createStompClient } from '@/apis/config/stomp-client'

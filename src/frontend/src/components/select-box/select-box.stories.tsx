@@ -54,7 +54,7 @@ export const PrimarySelectBox: Story = {
     return (
       <div className='w-full h-[500px] flex items-center'>
         <div className='w-[480px]'>
-          {/** @ts-ignore */}
+          {/* @ts-expect-error Storybook args와 컴포넌트 props 타입이 일치하지 않는 문제 */}
           <SelectBox {...newArgs} />
         </div>
       </div>
