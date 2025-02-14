@@ -6,9 +6,11 @@ import androidx.navigation.compose.composable
 import com.smilegate.bbebig.presentation.navigation.user.Intro
 
 fun NavController.navigateToIntro() {
-    navigate(
-        route = Intro,
-    )
+    navigate(route = Intro) {
+        popUpTo<Intro> {
+            inclusive = true
+        }
+    }
 }
 
 fun NavGraphBuilder.introNavigation(
