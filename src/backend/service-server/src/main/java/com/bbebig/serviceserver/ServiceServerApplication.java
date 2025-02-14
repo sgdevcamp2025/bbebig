@@ -12,26 +12,29 @@ import org.springframework.context.annotation.Import;
 @EnableFeignClients
 @EnableDiscoveryClient
 @SpringBootApplication
-@ComponentScan(basePackages = "com.bbebig.commonmodule")
+@ComponentScan(basePackages = {
+        "com.bbebig.serviceserver",
+        "com.bbebig.commonmodule"
+})
 @Import(WebMvcConfig.class)
 public class ServiceServerApplication {
 
-	public static void main(String[] args) {
-		initEnv();
-		SpringApplication.run(ServiceServerApplication.class, args);
-	}
+    public static void main(String[] args) {
+        initEnv();
+        SpringApplication.run(ServiceServerApplication.class, args);
+    }
 
-	/**
-	 * 스트링부트 실행 전 시스템 property를 설정한다.
-	 */
-	static void initEnv() {
-		Dotenv.configure()
-				.directory("./src/main/resources/")
-				.filename(".env")
-				.load()
-				.entries()
-				.forEach(e -> {
-					System.setProperty(e.getKey(), e.getValue());
-				});
-	}
+    /**
+     * 스트링부트 실행 전 시스템 property를 설정한다.
+     */
+    static void initEnv() {
+        Dotenv.configure()
+                .directory("./src/main/resources/")
+                .filename(".env")
+                .load()
+                .entries()
+                .forEach(e -> {
+                    System.setProperty(e.getKey(), e.getValue());
+                });
+    }
 }
