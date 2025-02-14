@@ -29,19 +29,9 @@ ext {
 }
 
 dependencies {
-    // 공통 모듈 추가
-    implementation project(":common-module")
-
-    implementation("org.springframework.boot:spring-boot-starter-webflux")
-
-
     // Spring Cloud
     implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
-
-    implementation("org.springframework.boot:spring-boot-starter-web") {
-        exclude group: "org.springframework.boot", module: "spring-boot-starter-tomcat"
-    }
 
     // Lombok
     compileOnly 'org.projectlombok:lombok'
