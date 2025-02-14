@@ -45,16 +45,7 @@ public class ServerReadResponseDto {
         private int position;
         private String channelType;
         private boolean privateStatus;
-        private final List<ChannelMemberInfo> channelMemberInfoList;
-    }
-
-    @Data
-    @Builder
-    public static class ChannelMemberInfo {
-        private Long memberId;
-        private String memberName;
-        private String profileImageUrl;
-        private LocalDateTime joinAt;
+        private final List<Long> channelMemberIdList;
     }
 
     @Data
@@ -74,15 +65,7 @@ public class ServerReadResponseDto {
             List<ChannelInfo> channelInfoList = new ArrayList<>();
             for (Channel channel : channelList) {
                 if (channel.getCategory().getId().equals(category.getId())) {
-                    List<ChannelMemberInfo> channelMemberInfoList = new ArrayList<>();
-                    List<ChannelMember> channelMembers = channelMemberMap.get(channel.getId());
-                    if (channelMembers != null) {
-                        for (ChannelMember channelMember : channelMembers) {
-                            ChannelMemberInfo channelMemberInfo = convertToChannelMemberInfo(channelMember);
-                            channelMemberInfoList.add(channelMemberInfo);
-                        }
-                    }
-                    ChannelInfo channelInfo = convertToChannelInfo(channel, channelMemberInfoList);
+                    ChannelInfo channelInfo = convertToChannelInfo(channel, channelMemberMap.get(channel.getId()).stream().map(channelMember -> channelMember.getServerMember().getMemberId()).toList());
                     channelInfoList.add(channelInfo);
                 }
             }
@@ -100,14 +83,14 @@ public class ServerReadResponseDto {
                 .build();
     }
 
-    public static ChannelInfo convertToChannelInfo(Channel channel, List<ChannelMemberInfo> channelMemberInfoList) {
+    public static ChannelInfo convertToChannelInfo(Channel channel, List<Long> channelMemberIdList) {
         return ChannelInfo.builder()
                 .channelId(channel.getId())
                 .categoryId(channel.getCategory() == null ? null : channel.getCategory().getId())
                 .channelName(channel.getName())
                 .position(channel.getPosition())
                 .channelType(channel.getChannelType().name())
-                .channelMemberInfoList(channelMemberInfoList)
+                .channelMemberIdList(channelMemberIdList)
                 .privateStatus(channel.isPrivateStatus())
                 .build();
     }
@@ -121,14 +104,6 @@ public class ServerReadResponseDto {
                 .build();
     }
 
-    public static ChannelMemberInfo convertToChannelMemberInfo(ChannelMember channelMember) {
-        return ChannelMemberInfo.builder()
-                .memberId(channelMember.getServerMember().getMemberId())
-                .memberName(channelMember.getServerMember().getMemberNickname())
-                .profileImageUrl(channelMember.getServerMember().getMemberProfileImageUrl())
-                .joinAt(channelMember.getCreatedAt())
-                .build();
-    }
 
     public static ServerMemberInfo convertToServerMemberInfo(ServerMember serverMember) {
         return ServerMemberInfo.builder()
