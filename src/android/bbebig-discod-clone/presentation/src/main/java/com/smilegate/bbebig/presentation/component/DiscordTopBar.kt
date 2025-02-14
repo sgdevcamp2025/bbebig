@@ -41,6 +41,7 @@ fun DiscordTopBar(
         modifier = modifier
             .background(color = Color.Transparent)
             .drawBehind {
+                if (title.isEmpty()) return@drawBehind
                 val strokeWidth = 1.dp.toPx()
                 val y = size.height - strokeWidth / 2
                 drawLine(
@@ -80,17 +81,20 @@ fun DiscordTopBar(
                 )
             }
         }
-        StableImage(
-            modifier = Modifier
-                .padding(end = 10.dp)
-                .clip(CircleShape)
-                .background(color = Gray50)
-                .size(30.dp)
-                .rippleSingleClick { onClickSearch() }
-                .padding(7.dp)
-                .align(Alignment.CenterEnd),
-            drawableResId = R.drawable.ic_search,
-        )
+
+        if (title.isNotEmpty()) {
+            StableImage(
+                modifier = Modifier
+                    .padding(end = 10.dp)
+                    .clip(CircleShape)
+                    .background(color = Gray50)
+                    .size(30.dp)
+                    .rippleSingleClick { onClickSearch() }
+                    .padding(7.dp)
+                    .align(Alignment.CenterEnd),
+                drawableResId = R.drawable.ic_search,
+            )
+        }
     }
 }
 
