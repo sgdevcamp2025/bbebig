@@ -13,7 +13,9 @@ const authService = () => {
   const login = async (data: LoginSchema) => {
     try {
       const res = await axiosInstance.post<LoginResponseSchema>(`${BASE_PATH}/login`, data)
-      cookie.setCookie(COOKIE_KEYS.ACCESS_TOKEN, res.data.result.accessToken)
+      const accessToken = res.data.result.accessToken
+      cookie.setCookie(COOKIE_KEYS.ACCESS_TOKEN, accessToken)
+      return true
     } catch (error) {
       console.error(error)
       throw error

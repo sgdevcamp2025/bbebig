@@ -1,4 +1,4 @@
-import { type CSSProperties, type PropsWithChildren, useEffect } from 'react'
+import { type CSSProperties, type PropsWithChildren, useCallback, useEffect } from 'react'
 
 import { cn } from '@/libs/cn'
 
@@ -23,22 +23,25 @@ function Modal({ children, isOpen, onClose, className }: PropsWithChildren<Props
     [isOpen]
   )
 
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        e.stopPropagation()
+        onClose?.()
+      }
+    },
+    [onClose]
+  )
+
   useEffect(
     function CloseModal() {
       if (isOpen) {
         document.addEventListener('keydown', handleKeyDown)
       }
     },
-    [isOpen]
+    [isOpen, onClose, handleKeyDown]
   )
-
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      e.preventDefault()
-      e.stopPropagation()
-      onClose?.()
-    }
-  }
 
   return (
     <Portal>

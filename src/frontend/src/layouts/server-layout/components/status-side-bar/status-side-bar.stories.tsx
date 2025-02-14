@@ -13,7 +13,7 @@ type Story = StoryObj<typeof meta>
 
 export const PrimaryStatusSidebar: Story = {
   args: {
-    users: [
+    channelUserList: [
       {
         id: '1',
         name: '김예지',
@@ -22,7 +22,8 @@ export const PrimaryStatusSidebar: Story = {
         customPresenceStatus: 'ONLINE',
         introduction: '안뇽',
         introductionEmoji: '👋',
-        email: 'yeji@gmail.com'
+        email: 'yeji@gmail.com',
+        includeChannelId: [1, 2, 3]
       },
       {
         id: '2',
@@ -32,7 +33,8 @@ export const PrimaryStatusSidebar: Story = {
         customPresenceStatus: 'NOT_DISTURB',
         introduction: '하이루',
         introductionEmoji: '👋',
-        email: 'jihyung@gmail.com'
+        email: 'jihyung@gmail.com',
+        includeChannelId: [1, 2, 3]
       },
       {
         id: '2',
@@ -42,7 +44,8 @@ export const PrimaryStatusSidebar: Story = {
         customPresenceStatus: 'OFFLINE',
         introduction: '뇽안',
         introductionEmoji: '👋',
-        email: 'soeun@gmail.com'
+        email: 'soeun@gmail.com',
+        includeChannelId: [1, 2, 3]
       }
     ]
   }
