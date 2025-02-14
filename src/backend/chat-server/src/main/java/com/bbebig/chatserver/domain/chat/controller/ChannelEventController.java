@@ -1,12 +1,14 @@
 package com.bbebig.chatserver.domain.chat.controller;
 
-import com.bbebig.chatserver.domain.chat.service.MessageProducerService;
-import com.bbebig.chatserver.domain.kafka.dto.ChannelEventDto;
+import com.bbebig.chatserver.domain.chat.service.KafkaProducerService;
+import com.bbebig.commonmodule.kafka.dto.ChannelEventDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -16,20 +18,22 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class ChannelEventController {
 
-	private final MessageProducerService messageProducerService;
+	private final KafkaProducerService kafkaProducerService;
 
 	// 현재 보고있는 채널 변경 이벤트 처리
 	@MessageMapping("/channel/enter")
-	public void enterChannel(@Valid @Payload ChannelEventDto channelEventDto) {
+	public void enterChannel(@Valid @Payload ChannelEventDto channelEventDto, @Header("sessionId") String sessionId) {
 		validateTimestamps(channelEventDto);
-		messageProducerService.sendMessageForChannel(channelEventDto);
+		log.info("[Chat] ChannelEventController: 채널 입장 이벤트. memberId = {}, channelId = {}, sessionId = {]", channelEventDto.getMemberId(), channelEventDto.getChannelId(), sessionId);
+		kafkaProducerService.sendMessageForChannel(channelEventDto);
 	}
 
 	// 현재 보고있는 채널 떠남 이벤트 처리
 	@MessageMapping("/channel/leave")
-	public void leaveChannel(@Valid @Payload ChannelEventDto channelEventDto) {
+	public void leaveChannel(@Valid @Payload ChannelEventDto channelEventDto, @Header("simpSessionId") String sessionId) {
 		validateTimestamps(channelEventDto);
-		messageProducerService.sendMessageForChannel(channelEventDto);
+		log.info("[Chat] ChannelEventController: 채널 떠남 이벤트. memberId = {}, channelId = {}, sessionId = {]", channelEventDto.getMemberId(), channelEventDto.getChannelId(), sessionId);
+		kafkaProducerService.sendMessageForChannel(channelEventDto);
 	}
 
 	public void validateTimestamps(ChannelEventDto channelEventDto) {

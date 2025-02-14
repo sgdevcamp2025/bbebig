@@ -4,6 +4,7 @@ plugins {
     id 'com.google.protobuf' version '0.9.4'
 }
 
+
 group = 'com.bbebig'
 version = '0.0.1-SNAPSHOT'
 
@@ -20,9 +21,9 @@ repositories {
 dependencies {
     // Spring
     implementation platform("org.springframework.boot:spring-boot-dependencies:3.4.1")
-    implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
+    implementation("org.springframework.boot:spring-boot-starter-web")
     // Validation
     implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
 
@@ -32,6 +33,13 @@ dependencies {
 
     // Protobuf
     implementation 'com.google.protobuf:protobuf-java:3.21.12'
+
+    // Kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
 }
 
 protobuf {

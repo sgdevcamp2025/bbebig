@@ -1,30 +1,21 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import {
   logoutSchema,
   refreshTokenSchema,
   registerSchema,
   signInSchema,
-  verifyEmailSchema,
-  verifyTokenSchema,
+  tokenDecodeSchema,
 } from '../../schema/authSchema';
 import { verifySignIn } from '../../libs/authHelper';
-import { authController } from 'src/controllers';
+import { authController } from '../../controllers';
 
 const authRoute = async (app: FastifyInstance) => {
-  const instanceWrapper = (
-    controller: (req: FastifyRequest, res: FastifyReply, app: FastifyInstance) => any,
-  ) => {
-    return async (req: FastifyRequest, res: FastifyReply) => {
-      await controller(req, res, app);
-    };
-  };
-
   app.withTypeProvider<ZodTypeProvider>().route({
     method: 'POST',
     url: '/login',
     schema: signInSchema,
-    handler: instanceWrapper(authController.login),
+    handler: authController.login,
   });
 
   app.withTypeProvider<ZodTypeProvider>().route({
@@ -39,7 +30,7 @@ const authRoute = async (app: FastifyInstance) => {
     url: '/logout',
     schema: logoutSchema,
     preHandler: [verifySignIn],
-    handler: instanceWrapper(authController.logout),
+    handler: authController.logout,
   });
 
   app.withTypeProvider<ZodTypeProvider>().route({
@@ -47,13 +38,13 @@ const authRoute = async (app: FastifyInstance) => {
     url: '/refresh',
     schema: refreshTokenSchema,
     preHandler: [verifySignIn],
-    handler: instanceWrapper(authController.refresh),
+    handler: authController.refresh,
   });
 
   app.withTypeProvider<ZodTypeProvider>().route({
-    method: 'POST',
+    method: 'GET',
     url: '/verify-token',
-    schema: verifyTokenSchema,
+    schema: tokenDecodeSchema,
     handler: authController.verifyToken,
   });
 };

@@ -1,7 +1,7 @@
 package com.bbebig.chatserver.domain.chat.service;
 
-import com.bbebig.chatserver.domain.kafka.dto.notification.*;
 import com.bbebig.chatserver.domain.chat.repository.SessionManager;
+import com.bbebig.commonmodule.kafka.dto.notification.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -27,7 +27,8 @@ public class NotificationEventConsumerService {
 		if (notificationEventDto instanceof FriendActionEventDto
 				|| notificationEventDto instanceof DmMemberActionEventDto
 				|| notificationEventDto instanceof FriendPresenceEventDto
-				|| notificationEventDto instanceof DmMemberPresenceEventDto) {
+				|| notificationEventDto instanceof DmMemberPresenceEventDto
+				|| notificationEventDto instanceof DmActionEventDto) {
 			if (sessionManager.isExistMemberId(notificationEventDto.getMemberId())) {
 				messagingTemplate.convertAndSend("/queue/" + notificationEventDto.getMemberId() + "/notification", notificationEventDto);
 			}

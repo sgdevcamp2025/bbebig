@@ -3,6 +3,7 @@ package com.bbebig.commonmodule.passport;
 import com.bbebig.commonmodule.proto.PassportProto.Passport;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -11,7 +12,10 @@ import java.time.Instant;
  * Passport를 검증하는 서비스 클래스
  */
 @Component
+@RequiredArgsConstructor
 public class PassportValidator {
+
+    private final HmacUtil hmacUtil;
 
     /**
      * Base64로 인코딩된 Passport + HMAC -> decode -> verify -> parse
@@ -19,13 +23,14 @@ public class PassportValidator {
     public Passport validatePassport(String base64Passport) {
         try {
             // HMAC 검증 및 원본 데이터 추출
-            byte[] rawBytes = HmacUtil.validatePassport(base64Passport);
+            byte[] rawBytes = hmacUtil.validatePassport(base64Passport);
 
             // Protobuf 파싱
             Passport passport = Passport.parseFrom(rawBytes);
 
             // 만료 시간 검증
             long now = Instant.now().getEpochSecond();
+
             if (passport.getExpiresAt() < now) {
                 throw new ErrorHandler(ErrorStatus.PASSPORT_EXPIRED);
             }

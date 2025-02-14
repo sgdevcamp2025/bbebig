@@ -1,36 +1,70 @@
-import { FastifyInstance, FastifyReply } from 'fastify';
-import { FastifyRequest } from 'fastify';
-import { generateHash, verifyAccessToken } from 'src/libs/authHelper';
-import { ERROR_MESSAGE, REDIS_KEY } from 'src/libs/constants';
-import { SUCCESS_MESSAGE } from 'src/libs/constants';
-import { handleError } from 'src/libs/errorHelper';
-import authService from 'src/service/authService';
-
+import { FastifyRequest, FastifyReply } from 'fastify';
+import { generateHash } from '../../libs/authHelper';
+import { ERROR_MESSAGE, REDIS_KEY } from '../../libs/constants';
+import { SUCCESS_MESSAGE } from '../../libs/constants';
+import { handleError } from '../../libs/errorHelper';
+import authService from '../../service/authService';
+import handleSuccess from '../../libs/responseHelper';
+import redis from '../../libs/redis';
 function authController() {
-  const login = async (req: FastifyRequest, res: FastifyReply, app: FastifyInstance) => {
-    const { email, password } = req.body as { email: string; password: string };
+  const login = async (req: FastifyRequest, res: FastifyReply) => {
+    try {
+      const { email, password } = req.body as { email: string; password: string };
 
-    const values = await authService.loginWithPassword(email, password);
+      if (!email || !password) {
+        handleError(res, ERROR_MESSAGE.badRequest);
+        return;
+      }
 
-    res.setCookie('refresh_token', values.refreshToken, {
-      sameSite: true,
-      httpOnly: true,
-      secure: true,
-      path: '/',
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-    });
+      const values = await authService.loginWithPassword(email, password);
 
-    const result = {
-      email: values.email,
-      accessToken: values.accessToken,
-    };
+      if (!values) {
+        handleError(res, ERROR_MESSAGE.notFound);
+        return;
+      }
 
-    app.redis.set(REDIS_KEY.refreshToken(values.id), values.refreshToken);
+      res.setCookie('refresh_token', values.refreshToken, {
+        sameSite: true,
+        httpOnly: true,
+        secure: true,
+        path: '/',
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+      });
 
-    return {
-      ...SUCCESS_MESSAGE.loginOk,
-      result,
-    };
+      const result = {
+        accessToken: values.accessToken,
+      };
+
+      await redis.set(REDIS_KEY.refreshToken(values.id), values.refreshToken);
+
+      handleSuccess(
+        res,
+        {
+          ...SUCCESS_MESSAGE.loginOk,
+          result,
+        },
+        200,
+      );
+    } catch (error) {
+      console.error(error);
+      if (error.code === ERROR_MESSAGE.notFound.code) {
+        handleError(res, ERROR_MESSAGE.notFound, error);
+      }
+
+      if (error.code === ERROR_MESSAGE.passwordNotMatch.code) {
+        handleError(res, ERROR_MESSAGE.passwordNotMatch, error);
+      }
+
+      if (error.code === ERROR_MESSAGE.badRequest.code) {
+        handleError(res, ERROR_MESSAGE.badRequest, error);
+      }
+
+      if (error.code === ERROR_MESSAGE.tooManyRequests.code) {
+        handleError(res, ERROR_MESSAGE.tooManyRequests, error);
+      }
+
+      handleError(res, ERROR_MESSAGE.serverError, error);
+    }
   };
 
   const register = async (req: FastifyRequest, res: FastifyReply) => {
@@ -47,13 +81,13 @@ function authController() {
 
       await authService.register(email, hashedPassword, name, nickname, new Date(birthDate));
 
-      return SUCCESS_MESSAGE.registerOk;
+      handleSuccess(res, SUCCESS_MESSAGE.registerOk, 201);
     } catch (error) {
       handleError(res, ERROR_MESSAGE.duplicateEmail, error);
     }
   };
 
-  const logout = async (req: FastifyRequest, res: FastifyReply, app: FastifyInstance) => {
+  const logout = async (req: FastifyRequest, res: FastifyReply) => {
     const id = req.user?.id;
     const refreshToken = req.cookies.refresh_token;
 
@@ -63,19 +97,19 @@ function authController() {
     }
 
     try {
-      await app.redis.del(REDIS_KEY.refreshToken(id));
+      await redis.del(REDIS_KEY.refreshToken(id));
 
       res.clearCookie('refresh_token', {
         path: '/',
       });
 
-      return SUCCESS_MESSAGE.logoutOk;
+      handleSuccess(res, SUCCESS_MESSAGE.logoutOk, 205);
     } catch (error) {
       handleError(res, ERROR_MESSAGE.badRequest, error);
     }
   };
 
-  const refresh = async (req: FastifyRequest, res: FastifyReply, app: FastifyInstance) => {
+  const refresh = async (req: FastifyRequest, res: FastifyReply) => {
     const id = req.user?.id;
     const refreshToken = req.cookies.refresh_token;
 
@@ -85,7 +119,7 @@ function authController() {
     }
 
     try {
-      const redisRefreshToken = await app.redis.get(REDIS_KEY.refreshToken(id));
+      const redisRefreshToken = await redis.get(REDIS_KEY.refreshToken(id));
 
       if (!redisRefreshToken) {
         handleError(res, ERROR_MESSAGE.unauthorized);
@@ -94,36 +128,38 @@ function authController() {
 
       const result = await authService.refresh(refreshToken, redisRefreshToken);
 
-      return {
+      await redis.set(REDIS_KEY.refreshToken(id), result.refreshToken);
+
+      handleSuccess(res, {
         ...SUCCESS_MESSAGE.refreshToken,
         result,
-      };
+      });
     } catch (error) {
       handleError(res, ERROR_MESSAGE.unauthorized, error);
     }
   };
 
   const verifyToken = async (req: FastifyRequest, res: FastifyReply) => {
-    const authorization = req.headers.authorization;
-    if (!authorization) {
+    const accessToken = req.headers.authorization;
+    if (!accessToken) {
       handleError(res, ERROR_MESSAGE.unauthorized);
       return;
     }
 
-    const decode = await verifyAccessToken(authorization);
+    try {
+      const result = await authService.verifyToken(accessToken);
 
-    if (!decode) {
-      handleError(res, ERROR_MESSAGE.unauthorized);
-      return;
+      handleSuccess(
+        res,
+        {
+          ...SUCCESS_MESSAGE.verifyTokenOk,
+          result,
+        },
+        200,
+      );
+    } catch (error) {
+      handleError(res, ERROR_MESSAGE.verifyTokenFailed, error);
     }
-
-    return {
-      ...SUCCESS_MESSAGE.accessTokenOk,
-      result: {
-        id: decode.id,
-        email: decode.email,
-      },
-    };
   };
 
   return {

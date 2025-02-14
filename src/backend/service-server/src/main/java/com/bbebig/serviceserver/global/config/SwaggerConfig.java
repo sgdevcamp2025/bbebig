@@ -7,11 +7,16 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class SwaggerConfig {
+
+    @Value("${service.server.url}")
+    private String serviceServerUrl;
 
     @Bean
     public OpenAPI api() {
@@ -20,30 +25,28 @@ public class SwaggerConfig {
                 .version("1.0")
                 .description("BBeBig Service Server API documentation");
 
-        SecurityScheme accessTokenScheme = new SecurityScheme()
-                .type(SecurityScheme.Type.HTTP)
-                .scheme("bearer")
-                .bearerFormat("JWT")
+        SecurityScheme passportScheme = new SecurityScheme()
+                .type(SecurityScheme.Type.APIKEY)
                 .in(SecurityScheme.In.HEADER)
-                .name("Authorization");
+                .name("X-Passport");
 
         SecurityRequirement securityRequirement = new SecurityRequirement()
-                .addList("Access Token");
+                .addList("X-Passport");
 
         // 배포 서버 URL
         Server productionServer = new Server()
-                .url("")
+                .url(serviceServerUrl)
                 .description("Production Server");
 
         // 로컬 서버 URL
         Server localServer = new Server()
-                .url("http://localhost:8080")
+                .url("http://localhost:9020")
                 .description("Local Development Server");
 
 
         return new OpenAPI()
                 .info(info)
-                .components(new Components().addSecuritySchemes("Access Token", accessTokenScheme))
+                .components(new Components().addSecuritySchemes("X-Passport", passportScheme))
                 .addSecurityItem(securityRequirement)
                 .servers(List.of(productionServer, localServer));
     }

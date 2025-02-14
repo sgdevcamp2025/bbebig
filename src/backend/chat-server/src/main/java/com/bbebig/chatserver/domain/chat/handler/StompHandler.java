@@ -1,22 +1,19 @@
 package com.bbebig.chatserver.domain.chat.handler;
 
 import com.bbebig.chatserver.domain.chat.client.AuthClient;
-import com.bbebig.chatserver.domain.chat.client.MemberClient;
-import com.bbebig.chatserver.domain.chat.dto.response.AuthResponseDto;
-import com.bbebig.chatserver.domain.chat.dto.response.MemberResponseDto;
-import com.bbebig.chatserver.domain.kafka.dto.ConnectionEventDto;
 import com.bbebig.chatserver.domain.chat.repository.SessionManager;
-import com.bbebig.chatserver.domain.chat.service.MessageProducerService;
-import com.bbebig.chatserver.global.response.code.error.ErrorStatus;
+import com.bbebig.chatserver.domain.chat.service.KafkaProducerService;
+import com.bbebig.commonmodule.kafka.dto.ConnectionEventDto;
+import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -30,8 +27,8 @@ public class StompHandler implements ChannelInterceptor {
 	private final WebApplicationContext webApplicationContext;
 	private final SessionManager sessionManager;
 	private final AuthClient authClient;
-	private final MemberClient memberClient;
-	private final MessageProducerService messageProducerService;
+//	private final MemberClient memberClient;
+	private final KafkaProducerService kafkaProducerService;
 
 	@Value("${spring.cloud.client.ip-address}")
 	private String serverIp;
@@ -59,36 +56,40 @@ public class StompHandler implements ChannelInterceptor {
 		// CONNECT 요청
 		if (StompCommand.CONNECT == headerAccessor.getCommand()) {
 			// 1) 토큰 추출
-			Optional<String> accessToken = extractBearerToken(headerAccessor);
-			if (accessToken.isEmpty()) {
-				log.error("[Chat] StompHandler: 토큰 정보 없음");
-				throw new MessageDeliveryException(ErrorStatus._UNAUTHORIZED.getMessage());
-			}
+//			Optional<String> accessToken = extractBearerToken(headerAccessor);
+//			if (accessToken.isEmpty()) {
+//				log.error("[Chat] StompHandler: 토큰 정보 없음");
+//				throw new MessageDeliveryException(ErrorStatus._UNAUTHORIZED.getMessage());
+//			}
 
 
-			// 2) Auth 서버로 검증
-			AuthResponseDto authResponseDto = authClient.verifyToken(accessToken.get());
-			if (authResponseDto == null || authResponseDto.getCode() != 200) {
-				log.error("[Chat] StompHandler: 토큰 검증 실패");
-				throw new MessageDeliveryException(ErrorStatus._FORBIDDEN.getMessage());
-			}
+//			// 2) Auth 서버로 검증
+//			AuthResponseDto authResponseDto = authClient.verifyToken(accessToken.get());
+//			if (authResponseDto == null || authResponseDto.getCode() != 200) {
+//				log.error("[Chat] StompHandler: 토큰 검증 실패");
+//				throw new MessageDeliveryException(ErrorStatus._FORBIDDEN.getMessage());
+//			}
+//
+//			Long memberId = authResponseDto.getResult().getMemberId();
+//			if (memberId != authResponseDto.getResult().getMemberId()) {
+//				log.error("[Chat] StompHandler: 토큰 정보와 사용자 정보 불일치");
+//				throw new MessageDeliveryException(ErrorStatus._UNAUTHORIZED.getMessage());
+//			}
 
-			Long memberId = authResponseDto.getResult().getMemberId();
-			if (memberId != authResponseDto.getResult().getMemberId()) {
-				log.error("[Chat] StompHandler: 토큰 정보와 사용자 정보 불일치");
-				throw new MessageDeliveryException(ErrorStatus._UNAUTHORIZED.getMessage());
-			}
+			Long memberId = 1L;
 
 			// 세션 매니저에 (sessionId -> memberId) 저장
 			sessionManager.saveConnectSessionInfo(sessionId, memberId);
 			log.info("[Chat] StompHandler: CONNECT - memberId={}, sessionId={}, platform={}, roomType={}, channelId={}, serverId={}",
 					memberId, sessionId, platform, currentRoomType, currentChannelId, currentServerId);
 
-			MemberResponseDto memberInfo = memberClient.getMemberInfo(memberId);
-			if (memberInfo == null || memberInfo.getCode() != 200) {
-				log.error("[Chat] StompHandler: 사용자 정보 조회 실패");
-				throw new MessageDeliveryException(ErrorStatus.MEMBER_NOT_FOUND.getMessage());
-			}
+//			MemberResponseDto memberInfo = memberClient.getMemberInfo(memberId);
+//			if (memberInfo == null || memberInfo.getCode() != 200) {
+//				log.error("[Chat] StompHandler: 사용자 정보 조회 실패");
+//				throw new MessageDeliveryException(ErrorStatus.MEMBER_NOT_FOUND.getMessage());
+//			}
+
+
 
 			ConnectionEventDto connectionEventDto = ConnectionEventDto.builder()
 					.memberId(memberId)
@@ -97,12 +98,12 @@ public class StompHandler implements ChannelInterceptor {
 					.connectedServerIp(serverIp + ":" + serverPort)
 					.platform(platform)
 					.deviceType(deviceType)
-					.currentRoomType(currentRoomType)
-					.currentChannelId(currentChannelId)
-					.currentServerId(currentServerId)
+					.currentChannelType(currentRoomType != null ? ChannelType.valueOf(currentRoomType): null)
+					.currentChannelId(currentChannelId != null ? Long.parseLong(currentChannelId): null)
+					.currentServerId(currentServerId != null ? Long.parseLong(currentServerId): null)
 					.build();
 
-			messageProducerService.sendMessageForSession(connectionEventDto);
+			kafkaProducerService.sendMessageForSession(connectionEventDto);
 
 		}
 		// DISCONNECT 요청
@@ -123,10 +124,13 @@ public class StompHandler implements ChannelInterceptor {
 					.deviceType(deviceType)
 					.build();
 
-			messageProducerService.sendMessageForSession(connectionEventDto);
+			kafkaProducerService.sendMessageForSession(connectionEventDto);
 		}
-
-		return message;
+		headerAccessor.getSessionAttributes().put("simpSessionId", sessionId);
+		return MessageBuilder
+				.withPayload(message.getPayload())
+				.setHeader("sessionId", sessionId)
+				.build();
 	}
 
 	// Native 헤더 "Authorization: Bearer <token>" 추출

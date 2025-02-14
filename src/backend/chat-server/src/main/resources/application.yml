@@ -1,3 +1,6 @@
+server:
+  port: 9050
+
 spring:
   application:
     name: chat-server
@@ -5,10 +8,10 @@ spring:
   data:
     redis:
       port: 6379
-      host: localhost
+      host: redis
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: kafka:9092
 
     topic:
       channel-chat-event: "channelChatEvent"
@@ -18,17 +21,21 @@ spring:
       notification-event: "notificationEvent"
       server-event: "serverEvent"
       channel-event: "channelEvent"
+      member-event: "memberEvent"
 
     producer:
-      bootstrap-servers: localhost:9092
+      bootstrap-servers: kafka:9092
 
     consumer:
       group-id:
-        channel-chat-event: "channelChatEventGroup"
-        dm-chat-event: "dmChatEventGroup"
-        notification-event: "notificationEventGroup"
-        server-event: "serverEventGroup"
-        channel-event: "channelEventGroup"
+        channel-chat-event: "${spring.application.name}-channelChatEventGroup"
+        dm-chat-event: "${spring.application.name}-dmChatEventGroup"
+        notification-event: "${spring.application.name}-notificationEventGroup"
+        server-event: "${spring.application.name}-serverEventGroup"
+        channel-event: "${spring.application.name}-channelEventGroup"
+        connection-event: "${spring.application.name}-connectionEventGroup"
+        presence-event: "${spring.application.name}-presenceEventGroup"
+        member-event: "${spring.application.name}-memberEventGroup"
 
       enable-auto-commit: true
       auto-offset-reset: latest
@@ -38,10 +45,23 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://discovery-server:8761/eureka
   instance:
     instance-id: ${spring.cloud.client.ip-address}:${spring.application.instance_id:${random.value}}
 
 
 snowflake:
-  worker-id: ${snowflake.worker-id:${random.value}}
+#  worker-id: ${snowflake.worker-id:${random.value}}
+    worker-id: 1
+
+eas:
+  passport:
+    secretKey: ${PASSPORT_SECRET_KEY}
+    expiration: ${PASSPORT_EXPIRATION}
+    header: ${PASSPORT_HEADER}
+    algorithm: ${PASSPORT_ALGORITHM}
+
+auth:
+  server:
+    url: ${AUTH_SERVER_URL}
+

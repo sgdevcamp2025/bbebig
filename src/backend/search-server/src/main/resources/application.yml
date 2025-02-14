@@ -4,7 +4,46 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://${MONGODB_HOST:localhost}:${MONGODB_PORT:27017}/${MONGODB_DATABASE:bbebigdb}
+      host: ${MONGODB_HOST:localhost}
+      port: ${MONGODB_PORT:27017}
+      authentication-database: admin
+      username: ${MONGODB_USERNAME:root}
+      password: ${MONGODB_PASSWORD:root}
+      database: ${MONGODB_DATABASE:bbebigdb}
+
+    redis:
+      port: 6379
+      host: redis
+
+  kafka:
+    bootstrap-servers: kafka:9092
+
+    topic:
+      channel-chat-event: "channelChatEvent"
+      dm-chat-event: "dmChatEvent"
+      connection-event: "connectionEvent"
+      presence-event: "presenceEvent"
+      notification-event: "notificationEvent"
+      server-event: "serverEvent"
+      channel-event: "channelEvent"
+      member-event: "memberEvent"
+
+    producer:
+      bootstrap-servers: kafka:9092
+
+    consumer:
+      group-id:
+        channel-chat-event: "${spring.application.name}-channelChatEventGroup"
+        dm-chat-event: "${spring.application.name}-dmChatEventGroup"
+        notification-event: "${spring.application.name}-notificationEventGroup"
+        server-event: "${spring.application.name}-serverEventGroup"
+        channel-event: "${spring.application.name}-channelEventGroup"
+        connection-event: "${spring.application.name}-connectionEventGroup"
+        presence-event: "${spring.application.name}-presenceEventGroup"
+        member-event: "${spring.application.name}-memberEventGroup"
+
+      enable-auto-commit: true
+      auto-offset-reset: latest
 
 server:
   port: 9201
@@ -14,13 +53,22 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://discovery-server:8761/eureka
   instance:
     instance-id: ${spring.cloud.client.ip-address}:${spring.application.instance_id:${random.value}}
 
 
 elasticsearch:
-  host: ${ELASTICSEARCH_HOST:localhost}
+  host: ${ELASTICSEARCH_HOST:elasticsearch}
   port: ${ELASTICSEARCH_PORT:9200}
 
+eas:
+  passport:
+    secretKey: ${PASSPORT_SECRET_KEY}
+    expiration: ${PASSPORT_EXPIRATION}
+    header: ${PASSPORT_HEADER}
+    algorithm: ${PASSPORT_ALGORITHM}
 
+auth:
+  server:
+    url: ${AUTH_SERVER_URL}

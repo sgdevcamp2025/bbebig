@@ -3,13 +3,16 @@
   "version": "1.0.0",
   "description": "인증관련 기능을 처리합니다.",
   "scripts": {
-    "build": "tsc && tsc-alias",
+    "build": "tsc",
     "generate": "prisma generate",
     "start": "yarn generate && node dist/main.js",
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'tsx' main.ts",
     "test": "jest --config jest.config.cjs",
     "test:watch": "jest --config jest.config.cjs --watch",
-    "lint": "lint-staged"
+    "lint": "lint-staged",
+    "docker:clean": "docker-compose down --rmi all --volumes --remove-orphans",
+    "docker:start": "yarn docker:clean && docker-compose up --build",
+    "docker:start:detach": "yarn docker:clean && docker-compose up --build -d"
   },
   "author": "Jihyeong LEE",
   "license": "ISC",

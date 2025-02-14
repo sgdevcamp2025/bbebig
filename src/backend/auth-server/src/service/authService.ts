@@ -1,6 +1,8 @@
 import {
+  accessTokenDecode,
   generateAccessToken,
   generateRefreshToken,
+  shortAccessTokenDecode,
   verifyPassword,
   verifyRefreshToken,
 } from '../libs/authHelper';
@@ -41,18 +43,17 @@ function authService() {
         },
       });
 
-      if (!authenticationUser) throw ERROR_MESSAGE.notFound;
+      if (!authenticationUser) return false;
 
       const isPasswordCorrect = await verifyPassword(email, password);
-      if (!isPasswordCorrect) throw ERROR_MESSAGE.passwordNotMatch;
+
+      if (!isPasswordCorrect) return false;
 
       const accessToken = generateAccessToken({
         id: Number(authenticationUser.id),
-        email: authenticationUser.email,
       });
       const refreshToken = generateRefreshToken({
         id: Number(authenticationUser.id),
-        email: authenticationUser.email,
       });
 
       const returnValue = {
@@ -78,14 +79,34 @@ function authService() {
 
       const userInfo = {
         id: authenticationUser.id,
-        email: authenticationUser.email,
       };
 
-      const accessToken = generateAccessToken(userInfo);
+      const newAccessToken = generateAccessToken(userInfo);
+      const newRefreshToken = generateRefreshToken(userInfo);
 
       return {
-        accessToken,
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
       };
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
+  const verifyToken = async (accessToken: string) => {
+    try {
+      const isTokenValid = await shortAccessTokenDecode(accessToken);
+      if (!isTokenValid) throw ERROR_MESSAGE.verifyTokenFailed;
+
+      const authenticationUser = await accessTokenDecode(accessToken);
+
+      const userInfo = {
+        memberId: authenticationUser.id,
+        valid: true,
+      };
+
+      return userInfo;
     } catch (error) {
       console.error(error);
       throw error;
@@ -96,6 +117,7 @@ function authService() {
     register,
     loginWithPassword,
     refresh,
+    verifyToken,
   };
 }
 

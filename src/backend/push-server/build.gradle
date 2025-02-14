@@ -39,10 +39,17 @@ dependencies {
 
 	// Spring Cloud
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
 	// Lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	// Validation
+	implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
+
+	// Dotenv
+	implementation 'io.github.cdimascio:java-dotenv:5.2.2'
 
 	// Protobuf
 	implementation 'com.google.protobuf:protobuf-java:3.21.12'
