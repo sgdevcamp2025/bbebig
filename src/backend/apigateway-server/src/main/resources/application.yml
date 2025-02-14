@@ -34,7 +34,7 @@ spring:
 
       discovery:
         locator:
-          enabled: true
+          enabled: false
           lower-case-service-id: true # serviceId를 소문자로 관리
 
       routes:
