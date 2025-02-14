@@ -2,7 +2,9 @@ package com.bbebig.serviceserver.server.dto.response;
 
 import com.bbebig.serviceserver.category.entity.Category;
 import com.bbebig.serviceserver.channel.entity.Channel;
+import com.bbebig.serviceserver.channel.entity.ChannelMember;
 import com.bbebig.serviceserver.server.entity.Server;
+import com.bbebig.serviceserver.server.entity.ServerMember;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -10,6 +12,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Builder
@@ -20,6 +23,9 @@ public class ServerReadResponseDto {
     private final Long ownerId;
     private final String serverImageUrl;
     private final List<CategoryInfo> categoryInfoList;
+    private final List<ServerMemberInfo> serverMemberInfoList;
+
+
 
     @Data
     @Builder
@@ -39,16 +45,48 @@ public class ServerReadResponseDto {
         private int position;
         private String channelType;
         private boolean privateStatus;
+        private final List<ChannelMemberInfo> channelMemberInfoList;
     }
 
-    public static ServerReadResponseDto convertToServerReadResponseDto(Server server, List<Channel> channelList, List<Category> categoryList) {
+    @Data
+    @Builder
+    public static class ChannelMemberInfo {
+        private Long memberId;
+        private String memberName;
+        private String profileImageUrl;
+        private LocalDateTime joinAt;
+    }
+
+    @Data
+    @Builder
+    public static class ServerMemberInfo {
+        private Long memberId;
+        private String nickName;
+        private String profileImageUrl;
+        private LocalDateTime joinAt;
+    }
+
+    public static ServerReadResponseDto convertToServerReadResponseDto(Server server, List<Channel> channelList, List<Category> categoryList,
+                                                                       List<ServerMember> serverMemberList, Map<Long, List<ChannelMember>> channelMemberMap) {
         List<CategoryInfo> categoryInfoList = new ArrayList<>();
 
         for (Category category : categoryList) {
-            CategoryInfo categoryInfo = convertToCategoryInfo(category, channelList.stream()
-                    .filter(channel -> channel.getCategory() != null && channel.getCategory().getId().equals(category.getId()))
-                    .map(ServerReadResponseDto::convertToChannelInfo)
-                    .toList());
+            List<ChannelInfo> channelInfoList = new ArrayList<>();
+            for (Channel channel : channelList) {
+                if (channel.getCategory().getId().equals(category.getId())) {
+                    List<ChannelMemberInfo> channelMemberInfoList = new ArrayList<>();
+                    List<ChannelMember> channelMembers = channelMemberMap.get(channel.getId());
+                    if (channelMembers != null) {
+                        for (ChannelMember channelMember : channelMembers) {
+                            ChannelMemberInfo channelMemberInfo = convertToChannelMemberInfo(channelMember);
+                            channelMemberInfoList.add(channelMemberInfo);
+                        }
+                    }
+                    ChannelInfo channelInfo = convertToChannelInfo(channel, channelMemberInfoList);
+                    channelInfoList.add(channelInfo);
+                }
+            }
+            CategoryInfo categoryInfo = convertToCategoryInfo(category, channelInfoList);
             categoryInfoList.add(categoryInfo);
         }
 
@@ -58,16 +96,18 @@ public class ServerReadResponseDto {
                 .ownerId(server.getOwnerId())
                 .serverImageUrl(server.getServerImageUrl())
                 .categoryInfoList(categoryInfoList)
+                .serverMemberInfoList(serverMemberList.stream().map(ServerReadResponseDto::convertToServerMemberInfo).toList())
                 .build();
     }
 
-    public static ChannelInfo convertToChannelInfo(Channel channel) {
+    public static ChannelInfo convertToChannelInfo(Channel channel, List<ChannelMemberInfo> channelMemberInfoList) {
         return ChannelInfo.builder()
                 .channelId(channel.getId())
                 .categoryId(channel.getCategory() == null ? null : channel.getCategory().getId())
                 .channelName(channel.getName())
                 .position(channel.getPosition())
                 .channelType(channel.getChannelType().name())
+                .channelMemberInfoList(channelMemberInfoList)
                 .privateStatus(channel.isPrivateStatus())
                 .build();
     }
@@ -78,6 +118,24 @@ public class ServerReadResponseDto {
                 .categoryName(category.getName())
                 .position(category.getPosition())
                 .channelInfoList(channelInfoList)
+                .build();
+    }
+
+    public static ChannelMemberInfo convertToChannelMemberInfo(ChannelMember channelMember) {
+        return ChannelMemberInfo.builder()
+                .memberId(channelMember.getServerMember().getMemberId())
+                .memberName(channelMember.getServerMember().getMemberNickname())
+                .profileImageUrl(channelMember.getServerMember().getMemberProfileImageUrl())
+                .joinAt(channelMember.getCreatedAt())
+                .build();
+    }
+
+    public static ServerMemberInfo convertToServerMemberInfo(ServerMember serverMember) {
+        return ServerMemberInfo.builder()
+                .memberId(serverMember.getMemberId())
+                .nickName(serverMember.getMemberNickname())
+                .profileImageUrl(serverMember.getMemberProfileImageUrl())
+                .joinAt(serverMember.getCreatedAt())
                 .build();
     }
 
