@@ -30,6 +30,7 @@ public class PassportValidator {
 
             // 만료 시간 검증
             long now = Instant.now().getEpochSecond();
+
             if (passport.getExpiresAt() < now) {
                 throw new ErrorHandler(ErrorStatus.PASSPORT_EXPIRED);
             }

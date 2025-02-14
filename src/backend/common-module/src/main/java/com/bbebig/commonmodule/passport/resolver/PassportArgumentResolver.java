@@ -22,7 +22,7 @@ public class PassportArgumentResolver implements HandlerMethodArgumentResolver {
     private final PassportValidator passportValidator;
 
     @Value("${eas.passport.header}")
-    private String PASSPORT_HEADER;
+    private String passportHeader;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -36,7 +36,7 @@ public class PassportArgumentResolver implements HandlerMethodArgumentResolver {
                                   NativeWebRequest webRequest,
                                   WebDataBinderFactory binderFactory) {
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
-        String base64Passport = request.getHeader(PASSPORT_HEADER);
+        String base64Passport = request.getHeader(passportHeader);
         if (base64Passport == null) {
             throw new ErrorHandler(ErrorStatus.PASSPORT_HEADER_MISSING);
         }
