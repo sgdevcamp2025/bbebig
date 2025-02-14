@@ -2,6 +2,7 @@ import { CSSProperties, useState } from 'react'
 
 import AvatarCard from '@/components/avatar-card'
 import CustomButton from '@/components/custom-button'
+import useUserStatus from '@/hooks/store/use-user-status'
 import { cn } from '@/libs/cn'
 import { User } from '@/types/user'
 
@@ -10,6 +11,7 @@ import ChatArea from './chat-area'
 interface Props {
   channelId: number
   channelName: string
+  serverName: string
 }
 
 const userList = [
@@ -37,19 +39,32 @@ const userList = [
   backgroundColor: CSSProperties['backgroundColor']
 })[]
 
-function VideoComponent({ channelId, channelName }: Props) {
+function VideoComponent({ channelId, serverName, channelName }: Props) {
   const [sideBar, setSideBar] = useState(true)
+  const { joinVoiceChannel, getCurrentChannelInfo, leaveVoiceChannel } = useUserStatus()
 
+  const isInVoiceChannel = getCurrentChannelInfo()?.channelId === channelId
   const isEmptyText = userList.length === 0
+
+  const handleJoinVoiceChannel = () => {
+    joinVoiceChannel({ channelId, channelName, serverName })
+  }
+
+  const handleLeaveVoiceChannel = () => {
+    leaveVoiceChannel()
+  }
 
   return (
     <div className='flex flex-1 h-screen'>
       <div
-        className={cn('flex w-full bg-black', {
+        className={cn('flex w-full group bg-black', {
           'rounded-r-lg mr-2': sideBar
         })}>
         <div className='w-full h-full flex flex-col'>
-          <section className='h-12 px-4 w-full flex items-center justify-between'>
+          <section
+            className={cn(
+              'opacity-0 h-12 px-4 w-full flex items-center justify-between transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 group-hover:blur-none'
+            )}>
             <div className='flex items-center gap-2'>
               <img
                 src={`/icon/channel/type-voice.svg`}
@@ -69,7 +84,7 @@ function VideoComponent({ channelId, channelName }: Props) {
           </section>
           <div />
           <section className='flex-1 flex flex-col items-center justify-center gap-2'>
-            <ul className='flex gap-2 flex-wrap mb-8'>
+            <ul className='flex gap-2 flex-wrap mb-8 w-full justify-center'>
               {userList.map((user) => (
                 <li key={user.id}>
                   <AvatarCard
@@ -77,24 +92,55 @@ function VideoComponent({ channelId, channelName }: Props) {
                     avatarUrl={user.avatarUrl}
                     backgroundUrl={user.bannerUrl}
                     backgroundColor={user.backgroundColor}
-                    size='sm'
+                    size={userList.length > 3 ? 'sm' : isInVoiceChannel ? 'md' : 'sm'}
                     micStatus={user.micStatus}
                     headphoneStatus={user.headphoneStatus}
                   />
                 </li>
               ))}
             </ul>
-            <h4 className='text-gray-10 text-3xl font-bold'>{channelName}</h4>
-            <span className='text-gray-90 text-sm font-semibold'>
-              {isEmptyText
-                ? '현재 채널에 아무도 없어요'
-                : `${userList.map((user) => user.name).join(', ')} 님이 현재 음성 채널에 있어요.`}
-            </span>
-            <CustomButton
-              className='w-fit px-4 py-2 mt-5 mb-10'
-              variant='secondary'>
-              음성 채널 참가하기
-            </CustomButton>
+            {!isInVoiceChannel && (
+              <>
+                <h4 className='text-gray-10 text-3xl font-bold'>{channelName}</h4>
+                <span className='text-gray-90 text-sm font-semibold'>
+                  {isEmptyText
+                    ? '현재 채널에 아무도 없어요'
+                    : `${userList.map((user) => user.name).join(', ')} 님이 현재 음성 채널에 있어요.`}
+                </span>
+                <CustomButton
+                  className='w-fit px-4 py-2 mt-5 mb-10'
+                  variant='secondary'
+                  onClick={handleJoinVoiceChannel}>
+                  음성 채널 참가하기
+                </CustomButton>
+              </>
+            )}
+            {isInVoiceChannel && (
+              <div
+                className={cn(
+                  'absolute bottom-4 opacity-0 flex items-center justify-center gap-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 group-hover:blur-none'
+                )}>
+                <button
+                  type='button'
+                  className='w-14 h-14 rounded-full bg-[#282d31] flex items-center justify-center'>
+                  <img
+                    alt='음성 채널 소리 끄기'
+                    src='/icon/channel/microphone-muted.svg'
+                    className='w-6 h-6'
+                  />
+                </button>
+                <button
+                  type='button'
+                  onClick={handleLeaveVoiceChannel}
+                  className='w-14 h-14 rounded-full bg-red-100 flex items-center justify-center'>
+                  <img
+                    alt='음성 채널 나가기'
+                    src='/icon/channel/voice.svg'
+                    className='w-6 h-6'
+                  />
+                </button>
+              </div>
+            )}
           </section>
         </div>
       </div>
