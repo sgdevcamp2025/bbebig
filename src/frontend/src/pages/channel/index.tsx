@@ -4,8 +4,9 @@ import TextComponent from './components/text'
 import VideoComponent from './components/voice'
 
 const CHANNEL_INFO = {
-  type: 'TEXT',
-  channelName: '음성 테스트 채널'
+  type: 'VOICE',
+  serverName: 'test 서버 이름',
+  channelName: 'test 음성 채널'
 }
 
 function ChannelPage() {
@@ -20,6 +21,7 @@ function ChannelPage() {
     return (
       <VideoComponent
         channelId={Number(channelId)}
+        serverName={data.serverName}
         channelName={data.channelName}
       />
     )

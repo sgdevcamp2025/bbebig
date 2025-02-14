@@ -1,4 +1,4 @@
-const SERVER_URL = import.meta.env.VITE_SERVER_URL
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL
+const SIGNALING_SERVER_URL = import.meta.env.SIGNALING_SERVER_URL
+const CHAT_SERVER_URL = import.meta.env.CHAT_SERVER_URL
 
 export { SERVER_URL, SOCKET_URL }

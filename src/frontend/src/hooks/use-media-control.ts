@@ -28,7 +28,9 @@ function useMediaControl() {
           width: 1920,
           height: 1080
         },
-        audio: false
+        audio: {
+          deviceId: devices.audioInput || undefined
+        }
       })
 
       stream.getTracks().forEach((track) => {
@@ -71,11 +73,19 @@ function useMediaControl() {
     }
   }, [stopStream])
 
+  const getStream = (constraint?: MediaStreamConstraints) => {
+    return navigator.mediaDevices.getUserMedia({
+      video: constraint?.video,
+      audio: constraint?.audio
+    })
+  }
+
   return {
     videoRef,
     streamRef,
     startStream,
-    stopStream
+    stopStream,
+    getStream
   }
 }
 
