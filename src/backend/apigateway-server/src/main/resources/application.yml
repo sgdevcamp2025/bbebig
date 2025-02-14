@@ -45,11 +45,14 @@ spring:
             - Path=/auth-server/**
           filters:
             - name: PassportFilter
+            - StripPrefix=1
 
         - id: auth-server-public
           uri: lb://auth-server
           predicates:
             - Path=/auth-server/login,/auth-server/register,/auth-server/health-check
+          filters:
+              - StripPrefix=1
 
         # User Server 라우팅
         - id: user-server
@@ -58,6 +61,7 @@ spring:
             - Path=/user-server/**
           filters:
             - name: PassportFilter
+            - StripPrefix=1
 
         # Service Server 라우팅
         - id: service-server
@@ -66,6 +70,7 @@ spring:
             - Path=/service-server/**
           filters:
             - name: PassportFilter
+            - StripPrefix=1
 
         # Search Server 라우팅
         - id: search-server
@@ -74,6 +79,7 @@ spring:
             - Path=/search-server/**
           filters:
             - name: PassportFilter
+            - StripPrefix=1
 
         # 상태관리 서버(State Management Server)
         - id: state-server
@@ -82,6 +88,7 @@ spring:
             - Path=/state-server/**
           filters:
             - name: PassportFilter
+            - StripPrefix=1
 
         # 채팅 서버(Chat Server)
         - id: chat-server
@@ -90,12 +97,15 @@ spring:
             - Path=/chat-server/**
           filters:
             - name: PassportFilter
+            - StripPrefix=1
 
         # 채팅 서버 소켓(Chat Server Socket)
         - id: chat-server-socket
           uri: lb://chat-server
           predicates:
             - Path=/ws-chat/**
+          filters:
+            - StripPrefix=1
 
         # 푸시 서버(Push Server)
         - id: push-server
@@ -104,18 +114,23 @@ spring:
             - Path=/push-server/**
           filters:
             - name: PassportFilter
+            - StripPrefix=1
 
         # 시그널링 서버(Signaling Server)
         - id: signaling-server
           uri: lb://signaling-server
           predicates:
             - Path=/signal-server/**
+          filters:
+            - StripPrefix=1
 
         # 미디어 서버(Kurento Server)
         - id: kurento-server
           uri: lb://kurento-server
           predicates:
             - Path=/kurento-server/**
+          filters:
+            - StripPrefix=1
 
 eas:
   passport:
