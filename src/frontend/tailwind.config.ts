@@ -14,7 +14,7 @@ const config: Pick<Config, 'presets' | 'content' | 'theme' | 'plugins'> = {
         'focus-border': '#00b0f4',
         'status-green': '#43b581',
         'text-link': '#00b0f4',
-        'text-normal': '#hsl(210 calc(1 * 9.091%) 87.059% / 1)',
+        'text-normal': 'hsl(210 calc(1 * 9.091%) 87.059% / 1)',
         'off-white': '#f6f6f6',
         'white-10': 'hsl(220 calc(1 * 13.043%) 95.49% / 1)',
         'white-20': 'hsl(215 calc(1 * 8.824%) 73.333% / 1)',

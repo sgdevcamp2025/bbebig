@@ -36,21 +36,21 @@ function DateInput({ label, required, setDate, error }: Props) {
       <div className='flex justify-between'>
         <SelectBox
           label='년'
-          options={year.map((year) => ({ label: year, value: year + '년' }))}
+          options={year.map((year) => ({ label: year, value: year }))}
           value={selectedYear ? { label: selectedYear, value: selectedYear + '년' } : null}
           onChange={(value) => setSelectedYear(value.value)}
           className='w-[30%]'
         />
         <SelectBox
           label='월'
-          options={month.map((month) => ({ label: month, value: month + '월' }))}
+          options={month.map((month) => ({ label: month, value: month }))}
           value={selectedMonth ? { label: selectedMonth, value: selectedMonth + '월' } : null}
-          onChange={(value) => setSelectedMonth(value.value)}
+          onChange={(value) => setSelectedMonth(value.value.split('월')[0])}
           className='w-[35%]'
         />
         <SelectBox
           label='일'
-          options={day.map((day) => ({ label: day, value: day + '일' }))}
+          options={day.map((day) => ({ label: day, value: day }))}
           value={selectedDay ? { label: selectedDay, value: selectedDay + '일' } : null}
           onChange={(value) => setSelectedDay(value.value)}
           className='w-[30%]'

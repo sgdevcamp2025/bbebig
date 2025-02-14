@@ -17,7 +17,7 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const ServerSidebar: Story = {
+export const PrimaryServerSidebar: Story = {
   args: {
     serverName: '서버 이름'
   }

@@ -1,19 +1,23 @@
-import { X } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 
 import Avatar from '@/components/avatar'
+import CommonHeader from '@/components/common-header'
 import { cn } from '@/libs/cn'
+import useStatusBarStore from '@/stores/use-status-bar-store'
 import { Message } from '@/types/message'
 import timeHelper from '@/utils/format-time'
 
 interface Props {
   channelId: number
+  isVoice: boolean
   onClose?: () => void
 }
 
-function ChatArea({ channelId, onClose }: Props) {
+function ChatArea({ channelId, isVoice, onClose }: Props) {
   const messagesRef = useRef<HTMLDivElement>(null)
   const [messages, setMessages] = useState<Record<string, Message[]>>({})
+  const [searchValue, setSearchValue] = useState('')
+  const { isStatusBarOpen, toggleStatusBar } = useStatusBarStore()
   const inputRef = useRef<HTMLInputElement>(null)
   const sendMessage = () => {
     if (!inputRef.current || !channelId) return
@@ -53,36 +57,35 @@ function ChatArea({ channelId, onClose }: Props) {
     }
   }
 
-  const isVoice = Boolean(onClose)
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value)
+  }
+
+  const handleClear = () => {
+    setSearchValue('')
+  }
 
   return (
     <>
-      <div
-        className={cn('h-12 border-b border-discord-gray-800 px-4 flex items-center', {
-          'justify-between': isVoice
-        })}>
-        <span className='flex items-center gap-1.5 text-discord-font-color-normal font-medium'>
-          {isVoice ? (
-            <img
-              className='w-[17px] h-[17px]'
-              src='/icon/channel/type-text.svg'
-            />
-          ) : (
-            <img
-              src='/icon/channel/threads.svg'
-              className='w-5 h-5'
-            />
-          )}
-          채널 {channelId}
-        </span>
-        {isVoice && (
-          <button
-            type='button'
-            onClick={onClose}>
-            <X className='text-white-20' />
-          </button>
-        )}
-      </div>
+      <CommonHeader
+        type={isVoice ? 'VOICE' : 'DEFAULT'}
+        isStatusBarOpen={isStatusBarOpen}
+        onToggleStatusBar={toggleStatusBar}
+        onClose={onClose}
+        searchProps={{
+          value: searchValue,
+          onChange: handleSearch,
+          handleClear: handleClear,
+          placeholder: '채팅 검색하기'
+        }}>
+        <img
+          className={cn(isVoice ? 'w-5 h-5' : 'w-[17px] h-[17px]')}
+          src={isVoice ? '/icon/channel/threads.svg' : '/icon/channel/type-text.svg'}
+          alt={isVoice ? '음성 채널' : '텍스트 채널'}
+        />
+        <span className='text-discord-font-color-normal font-medium'>채널 {channelId}</span>
+      </CommonHeader>
+
       {/* 메시지 영역 */}
       <div className='flex-1 p-4 text-discord-font-color-normal space-y-4 overflow-y-auto'>
         {channelId &&
@@ -121,7 +124,7 @@ function ChatArea({ channelId, onClose }: Props) {
 
       {/* 입력창 */}
       <div className='px-4 pb-4'>
-        <div className='h-12 flex items-center bg-discord-gray-600 rounded-md'>
+        <div className='h-12 flex items-center bg-discord-gray-500 rounded-md'>
           <img
             className='ml-3 w-[25px] h-[25px]'
             src='/icon/chat/plus.svg'

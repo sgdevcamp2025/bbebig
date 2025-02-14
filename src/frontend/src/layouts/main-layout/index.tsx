@@ -1,3 +1,4 @@
+import { PlusIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
 import { useShallow } from 'zustand/shallow'
@@ -11,6 +12,7 @@ import { useSignalingStompStore } from '@/stores/use-signaling-stomp-store'
 
 import ProfileCard from './components/profile-card'
 import ProfileStatusButton from './components/profile-status-button'
+import ServerCreateModal from './components/server-create-modal'
 import SettingModal, { SettingModalTabsID } from './components/setting-modal'
 
 const myServerList = [
@@ -71,7 +73,7 @@ const MainRootLayout = () => {
   })
 
   const [isProfileCardOpen, setIsProfileCardOpen] = useState(false)
-
+  const [isServerCreateModalOpen, setIsServerCreateModalOpen] = useState(false)
   const { muted, toggleAudioInputMute, toggleAudioOutputMute } = useMediaSettingsStore(
     useShallow((state) => ({
       muted: state.muted,
@@ -95,6 +97,10 @@ const MainRootLayout = () => {
     })
   }
 
+  const handleClickServerCreate = () => {
+    setIsServerCreateModalOpen(true)
+  }
+
   const handleClickEditProfileSettingModal = () => {
     setSettingModalState({
       itemId: SettingModalTabsID.myProfile,
@@ -111,6 +117,10 @@ const MainRootLayout = () => {
 
   const handleClickProfile = () => {
     setIsProfileCardOpen((prev) => !prev)
+  }
+
+  const handleClickServerCreateModalClose = () => {
+    setIsServerCreateModalOpen(false)
   }
 
   useEffect(() => {
@@ -170,6 +180,20 @@ const MainRootLayout = () => {
                 />
               </li>
             ))}
+            <li>
+              <button
+                aria-label='서버 생성'
+                type='button'
+                onClick={handleClickServerCreate}
+                className='flex items-center justify-center w-full'>
+                <div
+                  className={cn(
+                    'w-[48px] h-[48px] flex items-center justify-center rounded-[48px] bg-brand-10 overflow-hidden transition-all duration-300 hover:rounded-[14px] hover:bg-brand'
+                  )}>
+                  <PlusIcon className='w-5 h-5 text-white' />
+                </div>
+              </button>
+            </li>
           </ul>
         </nav>
         <div className='flex-1 bg-gray-20 relative'>
@@ -241,6 +265,10 @@ const MainRootLayout = () => {
         itemId={settingModalState.itemId}
         isOpen={settingModalState.isOpen}
         onClose={handleClickSettingModalClose}
+      />
+      <ServerCreateModal
+        isOpen={isServerCreateModalOpen}
+        onClose={handleClickServerCreateModalClose}
       />
     </>
   )

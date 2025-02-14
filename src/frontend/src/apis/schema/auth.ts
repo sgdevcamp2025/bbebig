@@ -27,7 +27,7 @@ const registerRequestSchema = z.object({
     .string()
     .min(8, { message: '8자 이상 입력해주세요.' })
     .max(20, { message: '20자 이하로 입력해주세요.' }),
-  birthDate: z.string().date()
+  birthdate: z.string().date()
 })
 
 const registerResponseSchema = commonResponseSchema

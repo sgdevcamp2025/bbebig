@@ -1,3 +1,4 @@
+import CommonHeader from '@/components/common-header'
 import { cn } from '@/libs/cn'
 
 const navigation = [
@@ -22,18 +23,17 @@ interface HeaderProps {
   currentTab: TabType
 }
 
-function Header({ onTabChange, currentTab }: HeaderProps) {
+function FriendHeader({ onTabChange, currentTab }: HeaderProps) {
   return (
-    <div className='flex items-center px-3 py-3 border-b border-discord-gray-800'>
-      <div className='flex items-center gap-2'>
-        <img
-          src='/icon/dm/friend.svg'
-          alt='친구'
-          className='w-[20px] h-[20px]'
-        />
-        <span className='text-discord-font-color-normal text-lg font-semibold'>친구</span>
-        <div className='h-5 border-r border-discord-gray-500 mr-4' />
-      </div>
+    <CommonHeader type='FRIEND'>
+      <img
+        src='/icon/dm/friend.svg'
+        alt='친구'
+        className='w-[20px] h-[20px]'
+      />
+      <span className='text-discord-font-color-normal text-lg font-semibold'>친구</span>
+      <div className='h-5 border-r border-discord-gray-500 mr-4' />
+
       <div className='flex items-center gap-5'>
         {navigation.map((item) => (
           <button
@@ -54,8 +54,8 @@ function Header({ onTabChange, currentTab }: HeaderProps) {
         className='ml-5 px-1 py-0.5 rounded-md bg-[#248045] text-base text-white font-medium'>
         친구 추가하기
       </button>
-    </div>
+    </CommonHeader>
   )
 }
 
-export default Header
+export default FriendHeader
