@@ -1,5 +1,6 @@
 package com.bbebig.userserver.member.dto.response;
 
+import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
 import com.bbebig.userserver.member.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,7 +15,9 @@ public class MemberUpdateResponseDto {
     private final String name;
     private final String nickname;
     private final LocalDate birthdate;
-    private final String profileImageUrl;
+    private final String avatarUrl;
+    private final String bannerUrl;
+    private final String introduce;
 
     public static MemberUpdateResponseDto convertToMemberUpdateResponseDto(Member member) {
         return MemberUpdateResponseDto.builder()
@@ -22,7 +25,9 @@ public class MemberUpdateResponseDto {
                 .name(member.getName())
                 .nickname(member.getNickname())
                 .birthdate(member.getBirthdate())
-                .profileImageUrl(member.getProfileImageUrl())
+                .avatarUrl(member.getAvatarUrl())
+                .bannerUrl(member.getBannerUrl())
+                .introduce(member.getIntroduce())
                 .build();
     }
 }
