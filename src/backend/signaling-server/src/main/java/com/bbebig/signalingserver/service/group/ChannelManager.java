@@ -1,7 +1,7 @@
 package com.bbebig.signalingserver.service.group;
 
-import com.bbebig.signalingserver.global.response.code.error.ErrorStatus;
-import com.bbebig.signalingserver.global.response.exception.ErrorHandler;
+import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
+import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;

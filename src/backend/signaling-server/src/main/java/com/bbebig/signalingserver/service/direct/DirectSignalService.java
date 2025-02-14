@@ -2,8 +2,8 @@ package com.bbebig.signalingserver.service.direct;
 
 import com.bbebig.signalingserver.domain.Path;
 import com.bbebig.signalingserver.domain.SignalMessage;
-import com.bbebig.signalingserver.global.response.code.error.ErrorStatus;
-import com.bbebig.signalingserver.global.response.exception.ErrorHandler;
+import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
+import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;

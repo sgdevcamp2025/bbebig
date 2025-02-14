@@ -6,6 +6,7 @@ import org.kurento.client.KurentoClient;
 import org.kurento.client.MediaPipeline;
 import org.kurento.client.WebRtcEndpoint;
 import org.kurento.client.WebRtcEndpoint.Builder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -19,9 +20,8 @@ public class KurentoManager {
     // channelId -> (sessionId -> WebRtcEndpoint)
     private final Map<String, Map<String, WebRtcEndpoint>> endpoints = new ConcurrentHashMap<>();
 
-    // TODO: kurento-media-server 주소 변경
-    public KurentoManager() {
-        this.kurentoClient = KurentoClient.create("ws://localhost:8888/kurento");
+    public KurentoManager(@Value("${kurento.ws.url}") String kurentoWsUrl) {
+        this.kurentoClient = KurentoClient.create(kurentoWsUrl);
     }
 
     /**

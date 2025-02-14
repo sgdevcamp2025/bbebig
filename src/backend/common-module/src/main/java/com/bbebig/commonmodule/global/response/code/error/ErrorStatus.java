@@ -26,6 +26,15 @@ public enum ErrorStatus implements BaseErrorCode {
     PASSPORT_HEADER_MISSING(HttpStatus.UNAUTHORIZED, "PASSPORT07", "Passport 헤더가 누락되었습니다."),
     INVALID_JWT(HttpStatus.BAD_REQUEST, "PASSPORT08", "JWT 파싱에 실패했습니다."),
 
+    // 다이렉트 스트리밍
+    DIRECT_STREAM_RECEIVER_ID_MISSING(HttpStatus.BAD_REQUEST, "400", "수신자 ID(receiverID)가 누락되었습니다."),
+
+    // 그룹 스트리밍
+    GROUP_STREAM_INVALID_SIGNAL(HttpStatus.BAD_REQUEST, "400", "잘못된 시그널링 요청입니다."),
+    GROUP_STREAM_CHANNEL_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "채널 ID를 찾을 수 없습니다."),
+    GROUP_STREAM_SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "세션 ID에 해당하는 사용자를 찾을 수 없습니다."),
+    GROUP_STREAM_ENDPOINT_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "해당 세션에 대한 WebRtcEndpoint를 찾을 수 없습니다."),
+
     // Chat
     CHAT_ROOM_NOT_FOUND(HttpStatus.BAD_REQUEST, "CHAT401", "채팅방이 존재하지 않습니다."),
     CHAT_ROOM_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "CHAT402", "이미 존재하는 채팅방입니다."),
