@@ -1,5 +1,6 @@
 package com.bbebig.stateserver.service;
 
+import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.*;
 import com.bbebig.commonmodule.redis.domain.ServerMemberStatus;
 import com.bbebig.stateserver.dto.StateResponseDto.MemberStatusResponseDto;
@@ -72,8 +73,8 @@ public class ServerEventConsumerService {
 
 			ServerMemberStatus status = ServerMemberStatus.builder()
 					.memberId(eventDto.getMemberId())
-					.globalStatus(memberStatusResponseDto.getGlobalStatus())
-					.actualStatus(memberStatusResponseDto.getActualStatus())
+					.globalStatus(PresenceType.valueOf(memberStatusResponseDto.getGlobalStatus()))
+					.actualStatus(PresenceType.valueOf(memberStatusResponseDto.getActualStatus()))
 					.build();
 			serverRedisRepositoryImpl.saveServerMemberPresenceStatus(serverId, eventDto.getMemberId(), status);
 

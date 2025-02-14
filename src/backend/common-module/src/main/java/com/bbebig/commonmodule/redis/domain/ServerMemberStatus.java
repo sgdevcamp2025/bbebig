@@ -1,5 +1,6 @@
 package com.bbebig.commonmodule.redis.domain;
 
+import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
 import lombok.Builder;
 import lombok.Data;
 
@@ -8,7 +9,7 @@ import lombok.Data;
 public class ServerMemberStatus {
 
 	private Long memberId;
-	private String actualStatus;            // "ONLINE", "OFFLINE", "DND", ...
-	private String globalStatus;      // if user is DND or INVISIBLE, etc.
+	private PresenceType actualStatus;            // "ONLINE", "OFFLINE", "DND", ...
+	private PresenceType globalStatus;      // if user is DND or INVISIBLE, etc.
 
 }

@@ -13,6 +13,7 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -125,8 +126,11 @@ public class StompHandler implements ChannelInterceptor {
 
 			kafkaProducerService.sendMessageForSession(connectionEventDto);
 		}
-
-		return message;
+		headerAccessor.getSessionAttributes().put("simpSessionId", sessionId);
+		return MessageBuilder
+				.withPayload(message.getPayload())
+				.setHeader("sessionId", sessionId)
+				.build();
 	}
 
 	// Native 헤더 "Authorization: Bearer <token>" 추출

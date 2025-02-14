@@ -24,7 +24,6 @@ public class ChannelEventDto {
 	@NotNull(message = "채널 타입은 null일 수 없습니다.")
 	private ChannelType channelType;
 
-	@NotNull(message = "세션 ID는 null일 수 없습니다.")
 	private String sessionId;
 
 	private Long lastReadMessageId;

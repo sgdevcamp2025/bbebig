@@ -3,8 +3,12 @@ package com.bbebig.serviceserver.server.controller;
 import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto;
 import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto.ServerLastInfoResponseDto;
 import com.bbebig.commonmodule.global.response.code.CommonResponse;
+import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerActionEventDto;
+import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerEventType;
+import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerMemberPresenceEventDto;
 import com.bbebig.commonmodule.passport.annotation.PassportUser;
 import com.bbebig.commonmodule.proto.PassportProto.Passport;
+import com.bbebig.serviceserver.global.kafka.KafkaProducerService;
 import com.bbebig.serviceserver.server.dto.request.*;
 import com.bbebig.serviceserver.server.dto.response.*;
 import com.bbebig.serviceserver.server.service.ServerService;
@@ -20,12 +24,13 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("servers")
+@RequestMapping("/servers")
 @RequiredArgsConstructor
 @Tag(name = "서버", description = "서버 관련 API")
 public class ServerController {
 
     private final ServerService serverService;
+    private final KafkaProducerService kafkaProducerService;
 
     @Operation(summary = "서버 생성", description = "서버를 생성합니다.")
     @ApiResponses(value = {
