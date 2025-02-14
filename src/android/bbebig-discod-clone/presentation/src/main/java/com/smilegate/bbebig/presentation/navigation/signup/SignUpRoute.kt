@@ -3,7 +3,7 @@ package com.smilegate.bbebig.presentation.navigation.signup
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object SignUp
+data object SignUpNavGraph
 
 @Serializable
 data object InputAccount
