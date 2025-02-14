@@ -1,6 +1,7 @@
 package com.bbebig.stateserver.service;
 
 import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto;
+import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
 import com.bbebig.commonmodule.redis.domain.MemberPresenceStatus;
 import com.bbebig.commonmodule.redis.domain.ServerMemberStatus;
 import com.bbebig.stateserver.client.ServiceClient;
@@ -54,8 +55,8 @@ public class StateService {
 		List<MemberPresenceStatusDto> memberStatusResponseDtoList = allServerMemberStatus.stream()
 				.map(serverMemberStatus -> MemberPresenceStatusDto.builder()
 						.memberId(serverMemberStatus.getMemberId())
-						.globalStatus(serverMemberStatus.getGlobalStatus())
-						.actualStatus(serverMemberStatus.getActualStatus())
+						.globalStatus(serverMemberStatus.getGlobalStatus().toString())
+						.actualStatus(serverMemberStatus.getActualStatus().toString())
 						.build())
 				.toList();
 
@@ -81,8 +82,8 @@ public class StateService {
 			MemberStatusResponseDto memberStatusResponseDto = checkMemberState(memberId);
 			ServerMemberStatus status = ServerMemberStatus.builder()
 					.memberId(memberId)
-					.globalStatus(memberStatusResponseDto.getGlobalStatus())
-					.actualStatus(memberStatusResponseDto.getActualStatus())
+					.globalStatus(PresenceType.valueOf(memberStatusResponseDto.getGlobalStatus()))
+					.actualStatus(PresenceType.valueOf(memberStatusResponseDto.getActualStatus()))
 					.build();
 			serverRedisRepositoryImpl.saveServerMemberPresenceStatus(serverId, memberId, status);
 		}

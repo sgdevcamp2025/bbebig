@@ -35,6 +35,7 @@ public class ServerReadResponseDto {
     public static class ChannelInfo {
         private Long channelId;
         private Long categoryId;
+        private String channelName;
         private int position;
         private String channelType;
         private boolean privateStatus;
@@ -64,6 +65,7 @@ public class ServerReadResponseDto {
         return ChannelInfo.builder()
                 .channelId(channel.getId())
                 .categoryId(channel.getCategory() == null ? null : channel.getCategory().getId())
+                .channelName(channel.getName())
                 .position(channel.getPosition())
                 .channelType(channel.getChannelType().name())
                 .privateStatus(channel.isPrivateStatus())

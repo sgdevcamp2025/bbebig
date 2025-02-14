@@ -1,10 +1,8 @@
 package com.bbebig.stateserver.repository;
 
 import com.bbebig.commonmodule.redis.domain.MemberPresenceStatus;
-import com.bbebig.commonmodule.redis.domain.RecentServerChannelInfo;
 import com.bbebig.commonmodule.redis.repository.MemberRedisRepository;
 import com.bbebig.commonmodule.redis.util.MemberRedisKeys;
-import com.bbebig.commonmodule.redis.util.MemberRedisTTL;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;

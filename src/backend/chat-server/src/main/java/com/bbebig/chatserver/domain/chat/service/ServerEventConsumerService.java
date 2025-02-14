@@ -21,6 +21,9 @@ public class ServerEventConsumerService {
 			return;
 		}
 
+		// 개발용 로그
+		log.info("[Chat] ServerEventConsumerService: 서버 이벤트 수신. ServerEventDto: {}", serverEventDto);
+
 		if (serverEventDto instanceof ServerChannelEventDto
 				|| serverEventDto instanceof ServerCategoryEventDto
 				|| serverEventDto instanceof ServerMemberPresenceEventDto

@@ -242,8 +242,8 @@ public class ServerService {
 
         Set<Long> serverChannelList = serverRedisRepository.getServerChannelList(serverId);
         if (serverChannelList.isEmpty()) {
-            List<Long> longs = makeServerChannelListCache(serverId);
-            serverChannelList.addAll(longs);
+            List<Long> channelList = makeServerChannelListCache(serverId);
+            serverChannelList.addAll(channelList);
         }
         return CommonServiceServerClientResponseDto.ServerChannelListResponseDto.builder()
                 .serverId(serverId)
@@ -263,8 +263,8 @@ public class ServerService {
 
         Set<Long> serverMemberList = serverRedisRepository.getServerMemberList(serverId);
         if (serverMemberList.isEmpty()) {
-            List<Long> longs = makeServerMemberListCache(serverId);
-            serverMemberList.addAll(longs);
+            List<Long> channelList = makeServerMemberListCache(serverId);
+            serverMemberList.addAll(channelList);
         }
         return CommonServiceServerClientResponseDto.ServerMemberListResponseDto.builder()
                 .serverId(serverId)
@@ -282,8 +282,8 @@ public class ServerService {
     public CommonServiceServerClientResponseDto.MemberServerListResponseDto getMemberServerList(Long memberId) {
         Set<Long> memberServerList = memberRedisRepository.getMemberServerList(memberId);
         if (memberServerList.isEmpty()) {
-            List<Long> longs = makeMemberServerListCache(memberId);
-            memberServerList.addAll(longs);
+            List<Long> channelList = makeMemberServerListCache(memberId);
+            memberServerList.addAll(channelList);
         }
         return CommonServiceServerClientResponseDto.MemberServerListResponseDto.builder()
                 .memberId(memberId)
