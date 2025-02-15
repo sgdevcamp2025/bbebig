@@ -66,7 +66,8 @@ public class ServerService {
                 .server(server)
                 .memberId(memberId)
                 .memberNickname(null)
-                .memberProfileImageUrl(null)
+                .memberAvatarImageUrl(null)
+                .memberBannerImageUrl(null)
                 .roleType(RoleType.OWNER)
                 .build();
 
@@ -388,7 +389,8 @@ public class ServerService {
                 .server(server)
                 .memberId(memberId)
                 .memberNickname(serverParticipateRequestDto.getMemberNickname())
-                .memberProfileImageUrl(serverParticipateRequestDto.getMemberProfileUrl())
+                .memberAvatarImageUrl(serverParticipateRequestDto.getMemberAvatarUrl())
+                .memberBannerImageUrl(serverParticipateRequestDto.getMemberBannerUrl())
                 .roleType(RoleType.MEMBER)
                 .build();
         serverMemberRepository.save(serverMember);
@@ -412,7 +414,8 @@ public class ServerService {
         ServerMemberActionEventDto serverMemberActionEventDto = ServerMemberActionEventDto.builder()
                 .memberId(memberId)
                 .nickname(serverParticipateRequestDto.getMemberNickname())
-                .profileImageUrl(serverParticipateRequestDto.getMemberProfileUrl())
+                .avatarUrl(serverParticipateRequestDto.getMemberAvatarUrl())
+                .bannerUrl(serverParticipateRequestDto.getMemberBannerUrl())
                 .status("JOIN")
                 .build();
         kafkaProducerService.sendServerEvent(serverMemberActionEventDto);
@@ -443,7 +446,6 @@ public class ServerService {
         ServerMemberActionEventDto serverMemberActionEventDto = ServerMemberActionEventDto.builder()
                 .memberId(memberId)
                 .nickname(serverMember.getMemberNickname())
-                .profileImageUrl(serverMember.getMemberProfileImageUrl())
                 .status("LEAVE")
                 .build();
         kafkaProducerService.sendServerEvent(serverMemberActionEventDto);

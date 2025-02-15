@@ -12,5 +12,8 @@ public class ServerParticipateRequestDto {
     private final String memberNickname;
 
     @Schema(description = "멤버의 이미지 URL", example = "https://...|null", required = true)
-    private final String memberProfileUrl;
+    private final String memberAvatarUrl;
+
+    @Schema(description = "멤버의 배너 URL", example = "https://...|null", required = true)
+    private final String memberBannerUrl;
 }

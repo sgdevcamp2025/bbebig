@@ -7,6 +7,7 @@ import com.bbebig.userserver.friend.entity.Friend;
 import com.bbebig.userserver.friend.entity.FriendStatus;
 import com.bbebig.userserver.friend.repository.FriendRepository;
 import com.bbebig.userserver.member.entity.Member;
+import com.bbebig.userserver.member.repository.MemberRedisRepositoryImpl;
 import com.bbebig.userserver.member.repository.MemberRepository;
 import com.bbebig.userserver.friend.dto.request.FriendCreateRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,8 @@ public class FriendService {
 
     private final FriendRepository friendRepository;
     private final MemberRepository memberRepository;
+
+    private final MemberRedisRepositoryImpl memberRedisRepository;
 
     /**
      * 친구 요청 (생성)
@@ -60,6 +63,7 @@ public class FriendService {
                 .build();
 
         friendRepository.save(friend);
+
 
         return FriendCreateResponseDto.convertToFriendCreateResponseDto(friend);
     }
@@ -110,6 +114,12 @@ public class FriendService {
         Friend friend = friendRepository.findById(friendId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.FRIEND_NOT_FOUND));
 
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Member friendMember = memberRepository.findById(friend.getFromMember().getId())
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
         // 친구 요청을 받은 사람이 본인인지 확인
         validateToMember(memberId, friend);
 
@@ -119,6 +129,21 @@ public class FriendService {
         }
 
         friend.updateFriendStatus(friendStatus);
+
+        if (friendStatus == FriendStatus.ACCEPTED) {
+            if (memberRedisRepository.existsMemberFriendList(friendMember.getId())) {
+                memberRedisRepository.addMemberFriendToSet(friendMember.getId(), friendMember.getId());
+            } else {
+                makeMemberFriendListCache(friendMember.getId());
+            }
+
+            if (memberRedisRepository.existsMemberFriendList(member.getId())) {
+                memberRedisRepository.addMemberFriendToSet(member.getId(), member.getId());
+            } else {
+                makeMemberFriendListCache(member.getId());
+            }
+        }
+
 
         return FriendUpdateResponseDto.convertToFriendUpdateResponseDto(friend);
     }
@@ -140,6 +165,8 @@ public class FriendService {
         }
 
         friendRepository.delete(friend);
+        memberRedisRepository.removeMemberFriendFromSet(friend.getFromMember().getId(), friend.getToMember().getId());
+        memberRedisRepository.removeMemberFriendFromSet(friend.getToMember().getId(), friend.getFromMember().getId());
 
         return FriendDeleteResponseDto.convertToFriendDeleteResponseDto(friend);
     }
@@ -163,6 +190,26 @@ public class FriendService {
         friendRepository.delete(friend);
 
         return FriendDeleteResponseDto.convertToFriendDeleteResponseDto(friend);
+    }
+
+    public List<Long> getMemberFriendIdList(Long memberId) {
+        if (memberRedisRepository.existsMemberFriendList(memberId)) {
+            return memberRedisRepository.getMemberFriendList(memberId).stream().toList();
+        } else {
+            return makeMemberFriendListCache(memberId);
+        }
+    }
+
+    public List<Long> makeMemberFriendListCache(Long memberId) {
+        List<Friend> friendList = friendRepository.findFriendsByMemberIdAndStatus(memberId, FriendStatus.ACCEPTED);
+        List<Long> friendIdList = friendList.stream()
+                .map(friend -> {
+                    return friend.getFromMember().getId().equals(memberId)
+                            ? friend.getToMember().getId() : friend.getFromMember().getId();
+                })
+                .toList();
+        memberRedisRepository.saveMemberFriendSet(memberId, friendIdList);
+        return friendIdList;
     }
 
     /**
