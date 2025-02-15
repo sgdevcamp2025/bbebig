@@ -13,13 +13,13 @@ fun NavController.navigateToAccount() {
 }
 
 fun NavGraphBuilder.accountNavigation(
-    navigateToPhoneNumber: () -> Unit,
+    navigateToEmail: () -> Unit,
     onBackClick: () -> Unit,
     navController: NavController,
 ) {
     composable<InputAccount> {
         AccountRoute(
-            navigateToPhoneNumber = navigateToPhoneNumber,
+            navigateToPhoneNumber = navigateToEmail,
             onBackClick = onBackClick,
             navBackStackEntry = navController.getBackStackEntry<SignUpNavGraph>(),
         )
