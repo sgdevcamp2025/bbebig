@@ -60,8 +60,9 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
 
         // 최대 인원 초과로 인해 join 실패
         if (!joinStatus) {
-            SignalMessage fullMessage = SignalMessage.builder().
-                    messageType(MessageType.CHANNEL_FULL)
+            SignalMessage fullMessage = SignalMessage.builder()
+                    .messageType(MessageType.CHANNEL_FULL)
+                    .channelId(message.getChannelId())
                     .senderId(sessionId)
                     .build();
 

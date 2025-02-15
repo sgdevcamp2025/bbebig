@@ -1,18 +1,24 @@
 package com.bbebig.signalingserver.service.group;
 
+import com.bbebig.signalingserver.domain.MessageType;
+import com.bbebig.signalingserver.domain.Path;
+import com.bbebig.signalingserver.domain.SignalMessage;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.kurento.client.IceCandidate;
 import org.kurento.client.KurentoClient;
 import org.kurento.client.MediaPipeline;
 import org.kurento.client.WebRtcEndpoint;
 import org.kurento.client.WebRtcEndpoint.Builder;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
 public class KurentoManager {
 
     private final KurentoClient kurentoClient;
+    private final SimpMessagingTemplate messagingTemplate;
 
     // channelId -> MediaPipeline
     private final Map<String, MediaPipeline> pipelines = new ConcurrentHashMap<>();
@@ -20,8 +26,12 @@ public class KurentoManager {
     // channelId -> (sessionId -> WebRtcEndpoint)
     private final Map<String, Map<String, WebRtcEndpoint>> endpoints = new ConcurrentHashMap<>();
 
-    public KurentoManager(@Value("${kurento.ws.url}") String kurentoWsUrl) {
+    public KurentoManager(
+            @Value("${kurento.ws.url}") String kurentoWsUrl,
+            SimpMessagingTemplate messagingTemplate
+    ) {
         this.kurentoClient = KurentoClient.create(kurentoWsUrl);
+        this.messagingTemplate = messagingTemplate;
     }
 
     /**
@@ -42,9 +52,37 @@ public class KurentoManager {
         MediaPipeline pipeline = getOrCreatePipeline(channelId);
         WebRtcEndpoint webRtcEndpoint = new Builder(pipeline).build();
 
+        // (1) 구글 STUN 설정
         webRtcEndpoint.setStunServerAddress("stun.l.google.com");
         webRtcEndpoint.setStunServerPort(19302);
 
+
+        // (2) 서버 -> 클라이언트 ICE Candidate 전송을 위한 이벤트 리스너
+        webRtcEndpoint.addOnIceCandidateListener(event -> {
+            IceCandidate candidate = event.getCandidate();
+
+            Map<String, Object> candidateMap = Map.of(
+                    "candidate", candidate.getCandidate(),
+                    "sdpMid", candidate.getSdpMid(),
+                    "sdpMLineIndex", candidate.getSdpMLineIndex()
+            );
+
+            SignalMessage candidateMessage = SignalMessage.builder()
+                    .messageType(MessageType.CANDIDATE)
+                    .channelId(channelId)
+                    .senderId("SFU_SERVER")
+                    .receiverId(sessionId)
+                    .candidate(candidateMap)
+                    .build();
+
+            messagingTemplate.convertAndSendToUser(
+                    sessionId,
+                    Path.directSubPath,
+                    candidateMessage
+            );
+        });
+
+        // (3) endpoints 저장
         endpoints.putIfAbsent(channelId, new ConcurrentHashMap<>());
         endpoints.get(channelId).put(sessionId, webRtcEndpoint);
     }
