@@ -2,16 +2,22 @@ package com.smilegate.bbebig.presentation.ui.signup
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.smilegate.bbebig.domain.usecase.SignUpUseCase
 import com.smilegate.bbebig.presentation.base.BaseViewModel
 import com.smilegate.bbebig.presentation.ui.signup.mvi.SignUpIntent
 import com.smilegate.bbebig.presentation.ui.signup.mvi.SignUpSideEffect
 import com.smilegate.bbebig.presentation.ui.signup.mvi.SignUpUiState
+import com.smilegate.bbebig.presentation.ui.signup.mvi.toDomainParam
+import com.smilegate.bbebig.presentation.utils.LocalDateUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val signUpUseCase: SignUpUseCase,
 ) : BaseViewModel<SignUpUiState, SignUpSideEffect, SignUpIntent>(savedStateHandle) {
 
     override fun createInitialState(savedStateHandle: SavedStateHandle): SignUpUiState {
@@ -29,45 +35,39 @@ class SignUpViewModel @Inject constructor(
 
             is SignUpIntent.ConfirmBirth -> {
                 updateBirth(intent.birth)
-                if (makeAccount()) {
-                    postSideEffect(SignUpSideEffect.NavigateToHome)
-                } else {
-                    postSideEffect(SignUpSideEffect.ShowErrorToast("계정 만들기 실패"))
-                }
+                makeAccount()
             }
 
             is SignUpIntent.ConfirmNickname -> {
                 updateNickname(intent.nickname)
             }
 
-            is SignUpIntent.ConfirmPhoneNumber -> {
-                updatePhoneNumber(intent.phoneNumber)
+            is SignUpIntent.ConfirmEmail -> {
+                updateEmail(intent.email)
             }
         }
     }
 
-    private fun updatePhoneNumber(phoneNumber: String) {
-        Log.d("SignUpViewModel", "updatePhoneNumber: $phoneNumber")
+    private fun updateEmail(email: String) {
+        Log.d("SignUpViewModel", "updatePhoneNumber: $email")
         reduce {
             copy(
-                phoneNumber = phoneNumber.toInt(),
+                email = email,
             )
         }
     }
 
     private fun updateBirth(birth: String) {
         Log.d("SignUpViewModel", "updateBirth: $birth")
-
         reduce {
             copy(
-                birth = birth,
+                birth = LocalDateUtil.format(birth),
             )
         }
     }
 
     private fun updateAccount(userName: String, password: String) {
         Log.d("SignUpViewModel", "updateAccount: $userName, $password")
-
         reduce {
             copy(
                 userName = userName,
@@ -79,13 +79,21 @@ class SignUpViewModel @Inject constructor(
     private fun updateNickname(nickname: String) {
         reduce {
             copy(
-                nickname = nickname,
+                nickName = nickname,
             )
         }
     }
 
-    private fun makeAccount(): Boolean {
-        // TODO: Implement account creation logic
-        return true
+    private fun makeAccount() {
+        viewModelScope.launch {
+            signUpUseCase(
+                uiState.value.toDomainParam(),
+            )
+                .onSuccess { postSideEffect(SignUpSideEffect.NavigateToHome) }
+                .onFailure {
+                    Log.d("SignUpViewModel", "makeAccount: $it")
+                    postSideEffect(SignUpSideEffect.ShowErrorToast("계정 만들기 실패"))
+                }
+        }
     }
 }
