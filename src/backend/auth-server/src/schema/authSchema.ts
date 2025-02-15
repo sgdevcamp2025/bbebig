@@ -20,6 +20,26 @@ const signInSchema = {
   },
 };
 
+const mobileSignInSchema = {
+  tags: ['auth'],
+  description: '모바일 로그인 합니다.',
+  body: z.object({
+    email: z.string().email(),
+    password: z.string(),
+  }),
+  response: {
+    200: z.object({
+      code: z.string().default('AUTH100'),
+      message: z.string().default('Login Ok!'),
+      result: z.object({
+        accessToken: z.string(),
+        refreshToken: z.string(),
+      }),
+    }),
+    400: commonResponseSchema,
+  },
+};
+
 const registerSchema = {
   tags: ['auth'],
   description: '회원가입 합니다.',
@@ -156,6 +176,7 @@ export {
   verifyTokenSchema,
   registerSchema,
   signInSchema,
+  mobileSignInSchema,
   verifyEmailSchema,
   tokenDecodeSchema,
   healthCheckSchema,

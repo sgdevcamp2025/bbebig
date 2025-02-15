@@ -3,6 +3,7 @@ import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import {
   healthCheckSchema,
   logoutSchema,
+  mobileSignInSchema,
   refreshTokenSchema,
   registerSchema,
   signInSchema,
@@ -17,6 +18,13 @@ const authRoute = async (app: FastifyInstance) => {
     url: '/login',
     schema: signInSchema,
     handler: authController.login,
+  });
+
+  app.withTypeProvider<ZodTypeProvider>().route({
+    method: 'POST',
+    url: '/mobile-login',
+    schema: mobileSignInSchema,
+    handler: authController.mobileLogin,
   });
 
   app.withTypeProvider<ZodTypeProvider>().route({

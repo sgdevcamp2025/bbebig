@@ -75,6 +75,33 @@ function authController() {
     }
   };
 
+  const mobileLogin = async (req: FastifyRequest, res: FastifyReply) => {
+    const { email, password } = req.body as { email: string; password: string };
+
+    const values = await authService.loginWithPassword(email, password);
+
+    if (!values) {
+      handleError(res, ERROR_MESSAGE.notFound);
+      return;
+    }
+
+    const result = {
+      accessToken: values.accessToken,
+      refreshToken: values.refreshToken,
+    };
+
+    await redis.set(REDIS_KEY.refreshToken(values.id), values.refreshToken);
+
+    handleSuccess(
+      res,
+      {
+        ...SUCCESS_MESSAGE.loginOk,
+        result,
+      },
+      200,
+    );
+  };
+
   const register = async (
     req: FastifyRequest<{
       Body: { email: string; password: string; name: string; nickname: string; birthdate: string };
@@ -186,6 +213,7 @@ function authController() {
     refresh,
     verifyToken,
     healthCheck,
+    mobileLogin,
   };
 }
 
