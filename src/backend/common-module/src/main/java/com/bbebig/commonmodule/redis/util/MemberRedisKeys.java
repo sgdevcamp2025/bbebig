@@ -13,6 +13,7 @@ public class MemberRedisKeys {
 	private static final String MEMBER_STATUS_KEY_SUFFIX = ":memberStatus";
 	private static final String MEMBER_DM_LIST_KEY_SUFFIX = ":dmList";
 	private static final String MEMBER_SERVER_LIST_KEY_SUFFIX = ":serverList";
+	private static final String MEMBER_FRIEND_LIST_KEY_SUFFIX = ":friendList";
 
 	private static final String CHANNEL_LAST_INFO_KEY_SUFFIX = ":channelLastInfo";
 
@@ -86,6 +87,22 @@ public class MemberRedisKeys {
 	 */
 	public static String getChannelLastInfoKey(Long memberId) {
 		return MEMBER_KEY_PREFIX + memberId + CHANNEL_LAST_INFO_KEY_SUFFIX;
+	}
+
+	/**
+	 * Key pattern: "member:{memberId}:friendList"
+	 * Type: Set
+	 * Value: memberId (Long/String)들의 집합
+	 * TTL: none (필요 시 추후 설정)
+	 * Used by: State Server, Service Server, Push Server 등
+	 *
+	 * 예시 Key: member:100:friendList
+	 * 해당 Set은 "멤버가 추가한 친구(멤버) 아이디" 전체를 저장.
+	 * ex) SADD member:100:friendList 1,2,3
+	 *
+	 */
+	public static String getMemberFriendListKey(Long memberId) {
+		return MEMBER_KEY_PREFIX + memberId + MEMBER_FRIEND_LIST_KEY_SUFFIX;
 	}
 
 }
