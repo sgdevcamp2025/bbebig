@@ -1,6 +1,7 @@
 package com.bbebig.userserver.member.entity;
 
 import com.bbebig.commonmodule.global.common.BaseTimeEntity;
+import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
 import com.bbebig.userserver.member.dto.request.MemberUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,12 +28,16 @@ public class Member extends BaseTimeEntity {
 
     private String password;
 
+    private String avatarUrl;
+
+    private String bannerUrl;
+
+    private String introduce;
+
     private LocalDate birthdate;
 
-    private String profileImageUrl;
-
     @Enumerated(EnumType.STRING)
-    private CustomPresenceStatus customPresenceStatus;
+    private PresenceType customPresenceStatus;
 
     private LocalDateTime lastAccessAt;
 
@@ -40,10 +45,12 @@ public class Member extends BaseTimeEntity {
         this.name = memberUpdateRequestDto.getName();
         this.nickname = memberUpdateRequestDto.getNickname();
         this.birthdate = memberUpdateRequestDto.getBirthdate();
-        this.profileImageUrl = memberUpdateRequestDto.getProfileImageUrl();
+        this.introduce = memberUpdateRequestDto.getIntroduce();
+        this.avatarUrl = memberUpdateRequestDto.getAvatarUrl();
+        this.bannerUrl = memberUpdateRequestDto.getBannerUrl();
     }
 
-    public void updateCustomPresenceStatus(CustomPresenceStatus customPresenceStatus) {
-        this.customPresenceStatus = customPresenceStatus;
+    public void updateCustomPresenceStatus(PresenceType presenceType) {
+        this.customPresenceStatus = presenceType;
     }
 }

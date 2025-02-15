@@ -17,7 +17,9 @@ public class FriendActionEventDto extends NotificationEventDto {
 
 	private String friendNickName;
 
-	private String friendProfileImageUrl;
+	private String friendAvatarUrl;
+
+	private String friendBannerUrl;
 
 	@JsonCreator
 	public FriendActionEventDto(
@@ -26,12 +28,15 @@ public class FriendActionEventDto extends NotificationEventDto {
 			@JsonProperty("friendMemberId") Long friendMemberId,
 			@JsonProperty("status") String status,
 			@JsonProperty("friendNickName") String friendNickName,
-			@JsonProperty("friendProfileImageUrl") String friendProfileImageUrl
+			@JsonProperty("friendAvatarUrl") String friendAvatarUrl,
+			@JsonProperty("friendBannerUrl") String friendBannerUrl
+
 	) {
 		super(notificationId, notificationEventType);
 		this.friendMemberId = friendMemberId;
 		this.status = status;
 		this.friendNickName = friendNickName;
-		this.friendProfileImageUrl = friendProfileImageUrl;
+		this.friendAvatarUrl = friendAvatarUrl;
+		this.friendBannerUrl = friendBannerUrl;
 	}
 }

@@ -1,15 +1,16 @@
-package com.bbebig.stateserver.dto;
+package com.bbebig.commonmodule.clientDto.userServer;
+
 
 import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
 import lombok.Builder;
 import lombok.Data;
 
-public class MemberResponseDto {
+public class CommonUserServerResponseDto {
 
 	@Data
 	@Builder
 	public static class MemberGlobalStatusResponseDto {
-		private String memberId;
+		private Long memberId;
 		private PresenceType globalStatus;
 	}
 }
