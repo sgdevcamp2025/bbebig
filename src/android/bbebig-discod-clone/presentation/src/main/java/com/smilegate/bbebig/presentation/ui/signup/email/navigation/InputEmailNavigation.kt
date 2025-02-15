@@ -1,24 +1,24 @@
-package com.smilegate.bbebig.presentation.ui.signup.phonenumber.navigation
+package com.smilegate.bbebig.presentation.ui.signup.email.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.smilegate.bbebig.presentation.navigation.signup.InputPhoneNumber
+import com.smilegate.bbebig.presentation.navigation.signup.InputEmail
 import com.smilegate.bbebig.presentation.navigation.signup.SignUpNavGraph
 
-fun NavController.navigateToPhoneNumber() {
+fun NavController.navigateToEmail() {
     navigate(
-        route = InputPhoneNumber,
+        route = InputEmail,
     )
 }
 
-fun NavGraphBuilder.phoneNumberNavigation(
+fun NavGraphBuilder.emailNavigation(
     navController: NavController,
     onBackClick: () -> Unit,
     navigateToNickname: () -> Unit,
 ) {
-    composable<InputPhoneNumber> {
-        PhoneNumberRoute(
+    composable<InputEmail> {
+        EmailRoute(
             onBackClick = onBackClick,
             navigateToNickname = navigateToNickname,
             navBackStackEntry = navController.getBackStackEntry<SignUpNavGraph>(),

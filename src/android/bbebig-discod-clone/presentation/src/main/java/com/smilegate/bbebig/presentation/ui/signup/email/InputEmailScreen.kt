@@ -1,4 +1,4 @@
-package com.smilegate.bbebig.presentation.ui.signup.phonenumber
+package com.smilegate.bbebig.presentation.ui.signup.email
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,11 +23,11 @@ import com.smilegate.bbebig.presentation.theme.White
 import com.smilegate.devcamp.presentation.R
 
 @Composable
-fun PhoneNumberScreen(
+fun InputEmailScreen(
     onBackClick: () -> Unit,
-    onClickConfirm: (Int) -> Unit,
+    onClickConfirm: (String) -> Unit,
 ) {
-    val phoneNumberState = rememberTextFieldState()
+    val emailTextState = rememberTextFieldState()
 
     Column(
         modifier = Modifier
@@ -42,16 +42,16 @@ fun PhoneNumberScreen(
         )
         Text(
             modifier = Modifier.padding(top = 20.dp),
-            text = stringResource(R.string.phone_numer_title),
+            text = stringResource(R.string.input_email_title),
             fontSize = 24.sp,
             textAlign = TextAlign.Center,
         )
         DiscordInputContainer(
             modifier = Modifier.padding(top = 20.dp),
-            textState = phoneNumberState,
-            titleResId = R.string.phone_number,
-            textHintResId = R.string.phone_number,
-            keyboardType = KeyboardType.NumberPassword,
+            textState = emailTextState,
+            titleResId = R.string.sign_up_email_label,
+            textHintResId = R.string.sign_up_email_label,
+            keyboardType = KeyboardType.Email,
         )
         DiscordRoundButton(
             modifier = Modifier
@@ -60,21 +60,19 @@ fun PhoneNumberScreen(
             textResId = R.string.auth,
             backgroundColor = Blue70,
             onClick = {
-                onClickConfirm(
-                    phoneNumberState.text.toString().toInt(),
-                )
+                onClickConfirm(emailTextState.text.toString())
             },
             textColor = White,
             radiusDp = 5.dp,
-            isEnable = phoneNumberState.text.isNotEmpty(),
+            isEnable = emailTextState.text.isNotEmpty(),
         )
     }
 }
 
 @Composable
 @Preview
-private fun PreviewPhoneNumberScreen() {
-    PhoneNumberScreen(
+private fun PreviewInputEmailScreen() {
+    InputEmailScreen(
         onBackClick = {},
         onClickConfirm = {},
     )
