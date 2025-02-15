@@ -19,7 +19,7 @@
     <string name="username">사용자명</string>
     <string name="require_pw">비밀번호는 8자 이상으로 입력해주세요.</string>
     <string name="user_info_title">이제 계정을 만들어 보세요</string>
-    <string name="phone_numer_title">전화번호나 이메일 주소를 입력하세요</string>
+    <string name="input_email_title">이메일 주소를 입력하세요</string>
     <string name="phone_number">전화번호</string>
     <string name="auth_code_title">확인 코드를 입력해주세요</string>
     <string name="alias_title">별명</string>
@@ -51,5 +51,6 @@
     <string name="msg_send_hint">메시지를 입력해주세요</string>
     <string name="bottom_join_chat">음성 채널 참가하기</string>
     <string name="invite">초대하기</string>
+    <string name="sign_up_email_label">이메일</string>
 
 </resources>

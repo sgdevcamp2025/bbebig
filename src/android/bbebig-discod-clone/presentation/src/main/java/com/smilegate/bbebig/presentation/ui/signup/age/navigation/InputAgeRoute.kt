@@ -1,7 +1,7 @@
 package com.smilegate.bbebig.presentation.ui.signup.age.navigation
 
-import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,6 +28,10 @@ fun AgeRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
+    BackHandler {
+        viewModel.handleIntent(InputAgeIntent.ClickBack)
+    }
+
     AgeScreen(
         onBackClick = { viewModel.handleIntent(InputAgeIntent.ClickBack) },
         onClickConfirm = {
@@ -38,9 +42,7 @@ fun AgeRoute(
     LaunchedEffect(viewModel.sideEffect) {
         viewModel.sideEffect.collect { sideEffect ->
             when (sideEffect) {
-                is InputAgeSideEffect.NavigateToBack -> {
-                    onBackClick()
-                }
+                is InputAgeSideEffect.NavigateToBack -> onBackClick()
 
                 InputAgeSideEffect.NavigateToHome -> {
                     sharedViewModel.handleIntent(SignUpIntent.ConfirmBirth(uiState.birth))
@@ -49,14 +51,10 @@ fun AgeRoute(
         }
     }
 
-    LaunchedEffect(true) {
-        Log.d("AgeRoute", "LaunchedEffect: ${sharedViewModel.uiState.value}")
+    LaunchedEffect(sharedViewModel.sideEffect) {
         sharedViewModel.sideEffect.collect { sideEffect ->
             when (sideEffect) {
-                is SignUpSideEffect.NavigateToHome -> {
-                    // navigateToHome()
-                    Log.d("AgeRoute", "NavigateToHome: ${sharedViewModel.uiState.value}")
-                }
+                is SignUpSideEffect.NavigateToHome -> navigateToHome()
 
                 is SignUpSideEffect.ShowErrorToast -> {
                     Toast.makeText(

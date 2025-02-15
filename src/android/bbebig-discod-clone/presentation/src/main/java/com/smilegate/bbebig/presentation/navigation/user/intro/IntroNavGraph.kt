@@ -13,11 +13,9 @@ fun NavGraphBuilder.introNavGraph(
     introNavigation(
         navigateToLogin = navController::navigateToLogin,
         navigateToSignUp = {
-            navController.navigate(SignUpNavGraph) {
-                popUpTo<SignUpNavGraph> {
-                    inclusive = true
-                }
-            }
+            navController.navigate(
+                route = SignUpNavGraph,
+            )
         },
     )
 }

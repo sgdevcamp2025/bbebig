@@ -8,8 +8,8 @@ sealed interface SignUpIntent : UiIntent {
         val password: String,
     ) : SignUpIntent
 
-    data class ConfirmPhoneNumber(
-        val phoneNumber: String,
+    data class ConfirmEmail(
+        val email: String,
     ) : SignUpIntent
 
     data class ConfirmNickname(

@@ -8,11 +8,10 @@ import com.smilegate.bbebig.presentation.ui.intro.navigation.navigateToIntro
 import com.smilegate.bbebig.presentation.ui.signup.account.navigation.accountNavigation
 import com.smilegate.bbebig.presentation.ui.signup.age.navigation.ageNavigation
 import com.smilegate.bbebig.presentation.ui.signup.age.navigation.navigateToAge
-import com.smilegate.bbebig.presentation.ui.signup.authcode.navigation.authCodeNavigation
+import com.smilegate.bbebig.presentation.ui.signup.email.navigation.emailNavigation
+import com.smilegate.bbebig.presentation.ui.signup.email.navigation.navigateToEmail
 import com.smilegate.bbebig.presentation.ui.signup.nickname.navigation.navigateToNickname
 import com.smilegate.bbebig.presentation.ui.signup.nickname.navigation.nicknameNavigation
-import com.smilegate.bbebig.presentation.ui.signup.phonenumber.navigation.navigateToPhoneNumber
-import com.smilegate.bbebig.presentation.ui.signup.phonenumber.navigation.phoneNumberNavigation
 
 fun NavGraphBuilder.signUpNavGraph(
     navController: NavController,
@@ -21,14 +20,9 @@ fun NavGraphBuilder.signUpNavGraph(
         accountNavigation(
             navController = navController,
             onBackClick = navController::navigateToIntro,
-            navigateToPhoneNumber = navController::navigateToPhoneNumber,
+            navigateToEmail = navController::navigateToEmail,
         )
-        phoneNumberNavigation(
-            navController = navController,
-            onBackClick = navController::popBackStack,
-            navigateToNickname = navController::navigateToNickname,
-        )
-        authCodeNavigation(
+        emailNavigation(
             navController = navController,
             onBackClick = navController::popBackStack,
             navigateToNickname = navController::navigateToNickname,

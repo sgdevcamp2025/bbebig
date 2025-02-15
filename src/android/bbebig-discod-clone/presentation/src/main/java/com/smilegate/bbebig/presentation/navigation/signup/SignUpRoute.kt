@@ -9,10 +9,7 @@ data object SignUpNavGraph
 data object InputAccount
 
 @Serializable
-data object InputPhoneNumber
-
-@Serializable
-data object InputAuthCode
+data object InputEmail
 
 @Serializable
 data object InputNickname
