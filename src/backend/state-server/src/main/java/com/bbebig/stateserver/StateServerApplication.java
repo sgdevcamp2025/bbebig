@@ -1,15 +1,23 @@
 package com.bbebig.stateserver;
 
+import com.bbebig.commonmodule.passport.config.WebMvcConfig;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 @EnableFeignClients
 @EnableDiscoveryClient
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+@ComponentScan(basePackages = {
+		"com.bbebig.stateserver",
+		"com.bbebig.commonmodule"
+})
+@Import(WebMvcConfig.class)
 public class StateServerApplication {
 
 	public static void main(String[] args) {
