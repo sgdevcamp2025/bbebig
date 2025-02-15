@@ -34,8 +34,8 @@ public class ServerEventConsumerService {
 
 			ServerMemberStatus status = ServerMemberStatus.builder()
 					.memberId(eventDto.getMemberId())
-					.globalStatus(eventDto.getGlobalStatus().toString())
-					.actualStatus(eventDto.getActualStatus().toString())
+					.globalStatus(eventDto.getGlobalStatus())
+					.actualStatus(eventDto.getActualStatus())
 					.build();
 
 			serverRedisRepositoryImpl.saveServerMemberPresenceStatus(serverId, eventDto.getMemberId(), status);
