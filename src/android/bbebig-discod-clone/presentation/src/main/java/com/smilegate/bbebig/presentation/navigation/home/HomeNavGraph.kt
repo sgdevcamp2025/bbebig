@@ -15,9 +15,7 @@ fun NavGraphBuilder.homeNavGraph(
     navController: NavController,
 ) {
     navigation<HomeNavGraph>(startDestination = Home) {
-        homeNavigation(
-            onBackClick = navController::popBackStack,
-        )
+        homeNavigation()
         createServerNavigation()
         liveChatNavigation(
             onBackClick = navController::popBackStack,
