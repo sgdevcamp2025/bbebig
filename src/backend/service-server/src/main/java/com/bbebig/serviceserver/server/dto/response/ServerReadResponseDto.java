@@ -50,6 +50,13 @@ public class ServerReadResponseDto {
 
     @Data
     @Builder
+    public static class ServerMemberInfoResponseDto {
+        private Long serverId;
+        private List<ServerMemberInfo> serverMemberInfoList;
+    }
+
+    @Data
+    @Builder
     public static class ServerMemberInfo {
         private Long memberId;
         private String nickName;
@@ -58,7 +65,7 @@ public class ServerReadResponseDto {
     }
 
     public static ServerReadResponseDto convertToServerReadResponseDto(Server server, List<Channel> channelList, List<Category> categoryList,
-                                                                       List<ServerMember> serverMemberList, Map<Long, List<ChannelMember>> channelMemberMap) {
+                                                                        Map<Long, List<ChannelMember>> channelMemberMap) {
         List<CategoryInfo> categoryInfoList = new ArrayList<>();
 
         for (Category category : categoryList) {
@@ -79,7 +86,6 @@ public class ServerReadResponseDto {
                 .ownerId(server.getOwnerId())
                 .serverImageUrl(server.getServerImageUrl())
                 .categoryInfoList(categoryInfoList)
-                .serverMemberInfoList(serverMemberList.stream().map(ServerReadResponseDto::convertToServerMemberInfo).toList())
                 .build();
     }
 
