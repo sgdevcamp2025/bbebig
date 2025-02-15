@@ -192,6 +192,14 @@ public class FriendService {
         return FriendDeleteResponseDto.convertToFriendDeleteResponseDto(friend);
     }
 
+    public List<Long> getMemberFriendIdList(Long memberId) {
+        if (memberRedisRepository.existsMemberFriendList(memberId)) {
+            return memberRedisRepository.getMemberFriendList(memberId).stream().toList();
+        } else {
+            return makeMemberFriendListCache(memberId);
+        }
+    }
+
     public List<Long> makeMemberFriendListCache(Long memberId) {
         List<Friend> friendList = friendRepository.findFriendsByMemberIdAndStatus(memberId, FriendStatus.ACCEPTED);
         List<Long> friendIdList = friendList.stream()
