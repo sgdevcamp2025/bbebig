@@ -1,5 +1,6 @@
 package com.bbebig.stateserver.service;
 
+import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto.MemberGlobalStatusResponseDto;
 import com.bbebig.commonmodule.kafka.dto.ConnectionEventDto;
 import com.bbebig.commonmodule.kafka.dto.PresenceEventDto;
 import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-import static com.bbebig.stateserver.dto.MemberResponseDto.*;
 
 @Slf4j
 @Service

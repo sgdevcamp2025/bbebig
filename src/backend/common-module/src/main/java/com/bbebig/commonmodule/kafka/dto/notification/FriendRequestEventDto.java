@@ -15,7 +15,9 @@ public class FriendRequestEventDto extends NotificationEventDto {
 
 	private String friendNickName;
 
-	private String friendProfileImageUrl;
+	private String friendAvatarUrl;
+
+	private String friendBannerUrl;
 
 	private String status; // SEND, RECEIVE, ACCEPT, REJECT
 
@@ -25,13 +27,15 @@ public class FriendRequestEventDto extends NotificationEventDto {
 			@JsonProperty("notificationEventType") NotificationEventType notificationEventType,
 			@JsonProperty("friendMemberId") Long friendMemberId,
 			@JsonProperty("friendNickName") String friendNickName,
-			@JsonProperty("friendProfileImageUrl") String friendProfileImageUrl,
+			@JsonProperty("friendAvatarUrl") String friendAvatarUrl,
+			@JsonProperty("friendBannerUrl") String friendBannerUrl,
 			@JsonProperty("status") String status
 	) {
 		super(notificationId, notificationEventType);
 		this.friendMemberId = friendMemberId;
 		this.friendNickName = friendNickName;
-		this.friendProfileImageUrl = friendProfileImageUrl;
+		this.friendAvatarUrl = friendAvatarUrl;
+		this.friendBannerUrl = friendBannerUrl;
 		this.status = status;
 	}
 }

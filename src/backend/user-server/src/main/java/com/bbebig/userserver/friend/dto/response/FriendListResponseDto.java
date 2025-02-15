@@ -13,7 +13,9 @@ public class FriendListResponseDto {
     private final Long friendMemberId;
     private final String friendName;
     private final String friendNickname;
-    private final String friendProfileImageUrl;
+    private final String friendAvatarUrl;
+    private final String friendBannerUrl;
+    private final String friendIntroduce;
     private final String friendEmail;
 
     public static FriendListResponseDto convertToFriendListResponseDto(Friend friend, Member member) {
@@ -22,7 +24,9 @@ public class FriendListResponseDto {
                 .friendMemberId(member.getId())
                 .friendName(member.getName())
                 .friendNickname(member.getNickname())
-                .friendProfileImageUrl(member.getProfileImageUrl())
+                .friendAvatarUrl(member.getAvatarUrl())
+                .friendBannerUrl(member.getBannerUrl())
+                .friendIntroduce(member.getIntroduce())
                 .friendEmail(member.getEmail())
                 .build();
     }
