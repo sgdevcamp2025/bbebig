@@ -1,9 +1,9 @@
-import { InternalAxiosRequestConfig } from 'axios'
+import { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 
 import { COOKIE_KEYS } from '@/constants/keys'
 import cookie from '@/utils/cookie'
 
-export function axiosInterceptorHelper(config: InternalAxiosRequestConfig) {
+export function requestInterceptor(config: InternalAxiosRequestConfig) {
   const cookieValue = cookie.getCookie(COOKIE_KEYS.ACCESS_TOKEN)
 
   if (cookieValue) {
@@ -16,4 +16,12 @@ export function axiosInterceptorHelper(config: InternalAxiosRequestConfig) {
   }
 
   return config
+}
+
+export function responseInterceptor(response: AxiosResponse) {
+  return response
+}
+
+export function errorInterceptor(error: AxiosError) {
+  return Promise.reject(error)
 }
