@@ -1,5 +1,7 @@
 package com.bbebig.userserver.member.service;
 
+import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto;
+import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto.MemberGlobalStatusResponseDto;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.userserver.friend.repository.FriendRepository;
@@ -73,5 +75,18 @@ public class MemberService {
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         return MemberReadResponseDto.convertToMemberReadResponseDto(member);
+    }
+
+    /**
+     * 멤버 전역 상태 조회
+     */
+    public MemberGlobalStatusResponseDto getMemberGlobalStatus(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        return MemberGlobalStatusResponseDto.builder()
+                .memberId(memberId)
+                .globalStatus(member.getCustomPresenceStatus())
+                .build();
     }
 }
