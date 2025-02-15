@@ -1,5 +1,7 @@
 package com.bbebig.userserver.member.controller;
 
+import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto;
+import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto.MemberGlobalStatusResponseDto;
 import com.bbebig.commonmodule.global.response.code.CommonResponse;
 import com.bbebig.commonmodule.passport.annotation.PassportUser;
 import com.bbebig.commonmodule.proto.PassportProto.Passport;
@@ -95,4 +97,19 @@ public class MemberController {
         log.info("[Member] 특정 멤버 조회 요청: memberId = {}", memberId);
         return CommonResponse.onSuccess(memberService.readMember(memberId));
     }
+
+    @Operation(summary = "멤버 전역 상태 조회", description = "멤버 전역 상태를 조회합니다. (For Feign Client)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "멤버 전역 상태 조회 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "", content = @Content)
+    })
+    @GetMapping("/{memberId}/global-status")
+    public CommonResponse<MemberGlobalStatusResponseDto> getMemberGlobalStatus(
+            @PathVariable Long memberId
+    ) {
+        log.info("[Member] 멤버 전역 상태 조회 요청: memberId = {}", memberId);
+        return CommonResponse.onSuccess(memberService.getMemberGlobalStatus(memberId));
+    }
+
+
 }

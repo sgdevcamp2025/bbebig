@@ -1,7 +1,6 @@
 package com.bbebig.stateserver.service;
 
 import com.bbebig.commonmodule.kafka.dto.ChannelEventDto;
-import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
 import com.bbebig.commonmodule.redis.domain.DeviceInfo;
 import com.bbebig.commonmodule.redis.domain.MemberPresenceStatus;
 import com.bbebig.stateserver.repository.MemberRedisRepositoryImpl;

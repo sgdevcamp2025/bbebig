@@ -33,8 +33,12 @@ public class ServerMember extends BaseTimeEntity {
     private String memberNickname;
 
     @Lob
-    @Column(name = "member_profile_image_url")
-    private String memberProfileImageUrl;
+    @Column(name = "member_avatar_image_url")
+    private String memberAvatarImageUrl;
+
+    @Lob
+    @Column(name = "member_banner_image_url")
+    private String memberBannerImageUrl;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role_type")

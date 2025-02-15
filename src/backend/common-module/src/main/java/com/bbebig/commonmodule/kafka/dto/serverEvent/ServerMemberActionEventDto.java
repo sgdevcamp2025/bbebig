@@ -15,7 +15,9 @@ public class ServerMemberActionEventDto extends ServerEventDto {
 
 	private String nickname;
 
-	private String profileImageUrl;
+	private String avatarUrl;
+
+	private String bannerUrl;
 
 	private String status; // JOIN, LEAVE, UPDATE
 
@@ -25,13 +27,15 @@ public class ServerMemberActionEventDto extends ServerEventDto {
 			@JsonProperty("serverEventType") ServerEventType serverEventType,
 			@JsonProperty("memberId") Long memberId,
 			@JsonProperty("nickname") String nickname,
-			@JsonProperty("profileImageUrl") String profileImageUrl,
+			@JsonProperty("avatarUrl") String avatarUrl,
+			@JsonProperty("bannerUrl") String bannerUrl,
 			@JsonProperty("status") String status
 	) {
 		super(serverId, serverEventType);
 		this.memberId = memberId;
 		this.nickname = nickname;
-		this.profileImageUrl = profileImageUrl;
+		this.avatarUrl = avatarUrl;
+		this.bannerUrl = bannerUrl;
 		this.status = status;
 	}
 
