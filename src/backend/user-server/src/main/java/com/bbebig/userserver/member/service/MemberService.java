@@ -4,6 +4,11 @@ import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto;
 import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto.MemberGlobalStatusResponseDto;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
+import com.bbebig.commonmodule.kafka.dto.MemberEventDto;
+import com.bbebig.commonmodule.kafka.dto.notification.FriendActionEventDto;
+import com.bbebig.commonmodule.kafka.dto.notification.NotificationEventType;
+import com.bbebig.userserver.friend.entity.Friend;
+import com.bbebig.userserver.friend.entity.FriendStatus;
 import com.bbebig.userserver.friend.repository.FriendRepository;
 import com.bbebig.userserver.member.dto.request.MemberPresenceUpdateRequestDto;
 import com.bbebig.userserver.member.dto.request.MemberUpdateRequestDto;
@@ -17,12 +22,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class MemberService {
 
     private final MemberRepository memberRepository;
     private final FriendRepository friendRepository;
+    private final KafkaProducerService kafkaProducerService;
 
     /**
      * 멤버 정보 업데이트
@@ -33,6 +41,37 @@ public class MemberService {
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         member.updateInfo(memberUpdateRequestDto);
+
+        List<Friend> friendList = friendRepository.findFriendsByMemberIdAndStatus(memberId, FriendStatus.ACCEPTED);
+        for (Friend friend : friendList) {
+            Member friendMember;
+            if (friend.getFromMember().getId() == memberId) {
+                friendMember = friend.getToMember();
+            } else {
+                friendMember = friend.getFromMember();
+            }
+            // 친구 관계 업데이트 이벤트 발행
+            FriendActionEventDto friendActionEventDto = FriendActionEventDto.builder()
+                    .memberId(memberId)
+                    .type(NotificationEventType.FRIEND_ACTION)
+                    .friendMemberId(friendMember.getId())
+                    .friendNickName(friendMember.getNickname())
+                    .friendAvatarUrl(friendMember.getAvatarUrl())
+                    .friendBannerUrl(friendMember.getBannerUrl())
+                    .status("UPDATE")
+                    .build();
+            kafkaProducerService.sendNotificationEvent(friendActionEventDto);
+        }
+
+        // Kafka로 이벤트 발행
+        MemberEventDto memberEventDto = MemberEventDto.builder()
+                .memberId(memberId)
+                .type("DELETE")
+                .nickname(member.getNickname())
+                .avatarUrl(member.getAvatarUrl())
+                .bannerUrl(member.getBannerUrl())
+                .build();
+        kafkaProducerService.sendMemberEvent(memberEventDto);
 
         return MemberUpdateResponseDto.convertToMemberUpdateResponseDto(member);
     }
@@ -47,6 +86,13 @@ public class MemberService {
 
         member.updateCustomPresenceStatus(memberPresenceUpdateRequestDto.getCustomPresenceStatus());
 
+        MemberEventDto memberEventDto = MemberEventDto.builder()
+                .memberId(memberId)
+                .type("PRESENCE_UPDATE")
+                .globalStatus(member.getCustomPresenceStatus())
+                .build();
+        kafkaProducerService.sendMemberEvent(memberEventDto);
+
         return MemberPresenceUpdateResponseDto.convertToMemberPresenceUpdateResponseDto(member);
     }
 
@@ -58,10 +104,30 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
+        List<Friend> friendList = friendRepository.findFriendsByMemberIdAndStatus(memberId, FriendStatus.ACCEPTED);
+        for (Friend friend : friendList) {
+            // 친구 관계 삭제 이벤트 발행
+            FriendActionEventDto friendActionEventDto = FriendActionEventDto.builder()
+                    .memberId(memberId)
+                    .type(NotificationEventType.FRIEND_ACTION)
+                    .friendMemberId(friend.getToMember().getId() == memberId ? friend.getFromMember().getId() : friend.getToMember().getId())
+                    .status("DELETE")
+                    .build();
+            kafkaProducerService.sendNotificationEvent(friendActionEventDto);
+        }
 
         friendRepository.deleteAllByFromMemberOrToMember(member, member);
 
         memberRepository.delete(member);
+
+        // Kafka로 이벤트 발행
+        MemberEventDto memberEventDto = MemberEventDto.builder()
+                .memberId(memberId)
+                .type("DELETE")
+                .build();
+        kafkaProducerService.sendMemberEvent(memberEventDto);
+
+
 
         return MemberDeleteResponseDto.convertToMemberDeleteResponseDto(member);
     }

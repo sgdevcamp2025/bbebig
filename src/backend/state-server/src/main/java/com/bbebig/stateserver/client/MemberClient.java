@@ -1,6 +1,5 @@
 package com.bbebig.stateserver.client;
 
-import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto;
 import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto.MemberGlobalStatusResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
