@@ -42,6 +42,9 @@ public class KurentoManager {
         MediaPipeline pipeline = getOrCreatePipeline(channelId);
         WebRtcEndpoint webRtcEndpoint = new Builder(pipeline).build();
 
+        webRtcEndpoint.setStunServerAddress("stun.l.google.com");
+        webRtcEndpoint.setStunServerPort(19302);
+
         endpoints.putIfAbsent(channelId, new ConcurrentHashMap<>());
         endpoints.get(channelId).put(sessionId, webRtcEndpoint);
     }

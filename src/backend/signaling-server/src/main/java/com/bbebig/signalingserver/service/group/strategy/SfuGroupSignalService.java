@@ -7,8 +7,10 @@ import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.signalingserver.service.group.ChannelManager;
 import com.bbebig.signalingserver.service.group.KurentoManager;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.kurento.client.IceCandidate;
 import org.kurento.client.WebRtcEndpoint;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -45,7 +47,7 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
             case ANSWER:
                 break;
             default:
-                log.error("[Stream] 채널 타입: Group, 메시지 타입: {}, 상세: 지원되지 않는 메시지 타입입니다.", message.getMessageType());
+                log.error("[Signal] 채널 타입: Group, 메시지 타입: {}, 상세: 지원되지 않는 메시지 타입입니다.", message.getMessageType());
                 throw new ErrorHandler(ErrorStatus.GROUP_STREAM_INVALID_SIGNAL);
         }
     }
@@ -70,7 +72,7 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
             );
         }
 
-        // KurentoManager에서 WebRtcEndpoint 생성
+        // (1) KurentoManager에서 WebRtcEndpoint 생성
         kurentoManager.createEndpoint(message.getChannelId(), sessionId);
 
 //        // 나를 제외한 기존 멤버 목록
@@ -78,7 +80,10 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
 //        List<String> otherUsers = new ArrayList<>(participants);
 //        otherUsers.remove(sessionId);
 
+        // (2) 본인에게 기존 멤버 정보 안내 (필요 시 ID 목록 추가)
         notifyExistUsers(message, sessionId);
+
+        // (3) 방 전체에 새 사용자의 입장 알림
         notifyUserJoined(message, sessionId);
     }
 
@@ -147,19 +152,18 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
     private void handleOffer(SignalMessage message, String sessionId) {
         WebRtcEndpoint endpoint = kurentoManager.getEndpoint(message.getChannelId(), sessionId);
         if (endpoint == null) {
-            log.error("[Stream] 채널 타입: Group, 채널 ID: {}, 세션 ID: {}, 상세: Offer 처리 실패 - 엔드포인트를 찾을 수 없습니다.",
+            log.error("[Signal] 채널 타입: Group, 채널 ID: {}, 세션 ID: {}, 상세: Offer 처리 실패 - 엔드포인트를 찾을 수 없습니다.",
                     message.getChannelId(), sessionId);
             throw new ErrorHandler(ErrorStatus.GROUP_STREAM_ENDPOINT_NOT_FOUND);
         }
 
-        // TODO: JSON -> String 형태로 파싱
-        // Kurento processOffer -> return SDP Answer
         String sdpOffer = (String) message.getSdp(); // 브라우저에서 보내온 SDP
         String sdpAnswer = endpoint.processAnswer(sdpOffer);
 
         // ICE Candidate 수집 시작
         endpoint.gatherCandidates();
 
+        // 생성된 SDP Answer를 클라이언트에게 전송
         SignalMessage answerMessage = SignalMessage.builder()
                 .messageType(MessageType.ANSWER)
                 .channelId(message.getChannelId())
@@ -181,17 +185,25 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
     private void handleCandidate(SignalMessage message, String sessionId) {
         WebRtcEndpoint endpoint = kurentoManager.getEndpoint(message.getChannelId(), sessionId);
         if (endpoint == null) {
-            log.error("[Stream] 채널 타입: Group, 체널 ID: {}, 세션 ID: {}, 상세: Candidate 처리 실패 - 엔드포인트를 찾을 수 없습니다.",
+            log.error("[Signal] 채널 타입: Group, 체널 ID: {}, 세션 ID: {}, 상세: Candidate 처리 실패 - 엔드포인트를 찾을 수 없습니다.",
                     message.getCandidate(), sessionId);
             return;
         }
 
-        // TODO: JSON -> String 형태로 파싱
-        Object candidate = message.getCandidate();
-//        String sdpMid = message.getSdpMid();
-//        int sdpMLineIndex = message.getSdpMLineIndex();
-//
-//        IceCandidate candidate = new IceCandidate(candidate, sdpMid, sdpMLineIndex);
-//        endpoint.addIceCandidate(candidate);
+        if (message.getCandidate() instanceof Map) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> candidateMap = (Map<String, Object>) message.getCandidate();
+            String candidateStr = (String) candidateMap.get("candidate");
+            String sdpMid = (String) candidateMap.get("sdpMid");
+            int sdpMLineIndex = (int) candidateMap.get("sdpMLineIndex");
+
+            IceCandidate kc = new IceCandidate(candidateStr, sdpMid, sdpMLineIndex);
+            endpoint.addIceCandidate(kc);
+
+            log.info("[Signal] 채널 타입: Group, 세션 ID: {}, ICE Candidate 등록 완료: {}", sessionId, candidateStr);
+        } else {
+            log.error("[Signal] 채널 타입: Group, 세션 ID: {}, candidate 형식이 Map이 아닙니다: {}",
+                    sessionId, message.getCandidate());
+        }
     }
 }
