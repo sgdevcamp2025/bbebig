@@ -60,7 +60,8 @@ public class ServerReadResponseDto {
     public static class ServerMemberInfo {
         private Long memberId;
         private String nickName;
-        private String profileImageUrl;
+        private String avatarUrl;
+        private String bannerUrl;
         private LocalDateTime joinAt;
     }
 
@@ -115,7 +116,8 @@ public class ServerReadResponseDto {
         return ServerMemberInfo.builder()
                 .memberId(serverMember.getMemberId())
                 .nickName(serverMember.getMemberNickname())
-                .profileImageUrl(serverMember.getMemberProfileImageUrl())
+                .avatarUrl(serverMember.getMemberAvatarImageUrl())
+                .bannerUrl(serverMember.getMemberBannerImageUrl())
                 .joinAt(serverMember.getCreatedAt())
                 .build();
     }
