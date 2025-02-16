@@ -26,15 +26,5 @@
       "@/*": ["src/*"]
     }
   },
-  "include": [
-    "src",
-    "src/main.tsx",
-    "app/**/*.ts",
-    "app/**/*.tsx",
-    "app/routes",
-    "src/layouts",
-    "src/pages/landing/components",
-    "src/pages/channel",
-    "src/pages/auth/my"
-  ]
+  "include": ["src", "src/main.tsx", "app/**/*.ts", "app/**/*.tsx"]
 }

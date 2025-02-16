@@ -68,7 +68,7 @@ function Header() {
           </ul>
           <div className='flex h-[38px] items-center rounded-full bg-white'>
             <Link
-              to={isLogin ? '/discord' : '/login'}
+              to={isLogin ? '/channels/@me' : '/login'}
               className='px-4 py-[7px] text-[14px] font-semibold leading-6 text-black transition-colors hover:text-brand'>
               {isLogin ? 'Discord 열기' : '로그인'}
             </Link>
