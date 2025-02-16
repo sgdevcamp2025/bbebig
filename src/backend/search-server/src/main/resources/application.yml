@@ -46,7 +46,7 @@ spring:
       auto-offset-reset: latest
 
 server:
-  port: 9201
+  port: 9030
 
 eureka:
   client:

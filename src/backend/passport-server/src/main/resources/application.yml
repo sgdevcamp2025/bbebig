@@ -1,0 +1,27 @@
+server:
+  port: 9080
+
+spring:
+  application:
+    name: passport-server
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka
+
+eas:
+  passport:
+    secretKey: ${PASSPORT_SECRET_KEY}
+    expiration: ${PASSPORT_EXPIRATION}
+    header: ${PASSPORT_HEADER}
+    algorithm: ${PASSPORT_ALGORITHM}
+
+jwt:
+  secret: ${JWT_SECRET_KEY}
+
+passport:
+  server:
+    url: ${PASSPORT_SERVER_URL}

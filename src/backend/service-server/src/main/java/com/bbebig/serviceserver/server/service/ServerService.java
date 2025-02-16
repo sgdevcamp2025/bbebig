@@ -20,6 +20,7 @@ import com.bbebig.serviceserver.server.dto.request.ServerCreateRequestDto;
 import com.bbebig.serviceserver.server.dto.request.ServerParticipateRequestDto;
 import com.bbebig.serviceserver.server.dto.request.ServerUpdateRequestDto;
 import com.bbebig.serviceserver.server.dto.response.*;
+import com.bbebig.serviceserver.server.dto.response.ServerReadResponseDto.ServerMemberInfoResponseDto;
 import com.bbebig.serviceserver.server.entity.RoleType;
 import com.bbebig.serviceserver.server.entity.Server;
 import com.bbebig.serviceserver.server.entity.ServerMember;
@@ -31,9 +32,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -148,7 +147,27 @@ public class ServerService {
 
         List<Channel> channels = channelRepository.findAllByServerId(serverId);
         List<Category> categories = categoryRepository.findAllByServerId(serverId);
-        return ServerReadResponseDto.convertToServerReadResponseDto(server, channels, categories);
+        Map<Long, List<ChannelMember>> channelMembers = new HashMap<>();
+        for (Channel channel : channels) {
+            List<ChannelMember> channelMemberList = channelMemberRepository.findAllByChannelId(channel.getId());
+            channelMembers.put(channel.getId(), channelMemberList);
+        }
+        return ServerReadResponseDto.convertToServerReadResponseDto(server, channels, categories, channelMembers);
+    }
+
+    /**
+     * 서버 멤버 목록 조회
+     */
+    public ServerMemberInfoResponseDto getMemberInfoList(Long serverId) {
+        List<ServerMember> serverMembers = serverMemberRepository.findAllByServerId(serverId);
+        return ServerMemberInfoResponseDto.builder()
+                .serverId(serverId)
+                .serverMemberInfoList(
+                        serverMembers.stream()
+                                .map(ServerReadResponseDto::convertToServerMemberInfo)
+                                .collect(Collectors.toList())
+                )
+                .build();
     }
 
     /**
