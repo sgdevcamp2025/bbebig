@@ -177,11 +177,10 @@ public class ServerController {
     @PostMapping("/{serverId}/participate")
     public CommonResponse<ServerParticipateResponseDto> participateServer(
             @Parameter(hidden = true) @PassportUser Passport passport,
-            @PathVariable Long serverId,
-            @RequestBody ServerParticipateRequestDto serverParticipateRequestDto
+            @PathVariable Long serverId
     ) {
         log.info("[Service] 서버 참여 요청: serverId = {}, memberId = {}", serverId, passport.getMemberId());
-        return CommonResponse.onSuccess(serverService.participateServer(passport.getMemberId(), serverId, serverParticipateRequestDto));
+        return CommonResponse.onSuccess(serverService.participateServer(passport.getMemberId(), serverId));
     }
 
     @Operation(summary = "서버 탈퇴", description = "서버를 탈퇴합니다.")

@@ -1,6 +1,8 @@
 package com.bbebig.serviceserver.server.service;
 
 import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto;
+import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto;
+import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto.MemberInfoResponseDto;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerActionEventDto;
@@ -15,9 +17,9 @@ import com.bbebig.serviceserver.channel.entity.ChannelMember;
 import com.bbebig.serviceserver.channel.entity.ChannelType;
 import com.bbebig.serviceserver.channel.repository.ChannelMemberRepository;
 import com.bbebig.serviceserver.channel.repository.ChannelRepository;
+import com.bbebig.serviceserver.global.client.MemberClient;
 import com.bbebig.serviceserver.global.kafka.KafkaProducerService;
 import com.bbebig.serviceserver.server.dto.request.ServerCreateRequestDto;
-import com.bbebig.serviceserver.server.dto.request.ServerParticipateRequestDto;
 import com.bbebig.serviceserver.server.dto.request.ServerUpdateRequestDto;
 import com.bbebig.serviceserver.server.dto.response.*;
 import com.bbebig.serviceserver.server.dto.response.ServerReadResponseDto.ServerMemberInfoResponseDto;
@@ -49,6 +51,8 @@ public class ServerService {
     private final MemberRedisRepositoryImpl memberRedisRepository;
     private final KafkaProducerService kafkaProducerService;
 
+    private final MemberClient memberClient;
+
 
     /**
      * 서버 생성
@@ -61,13 +65,14 @@ public class ServerService {
                 .serverImageUrl(serverCreateRequestDto.getServerImageUrl())
                 .build();
 
-        // TODO: 마일스톤2 에서 Passport 에 member 정보 넣기
+
+        MemberInfoResponseDto memberInfo = memberClient.getMemberInfo(memberId);
         ServerMember serverMember = ServerMember.builder()
                 .server(server)
                 .memberId(memberId)
-                .memberNickname(null)
-                .memberAvatarImageUrl(null)
-                .memberBannerImageUrl(null)
+                .memberNickname(memberInfo.getNickname())
+                .memberAvatarImageUrl(memberInfo.getAvatarUrl())
+                .memberBannerImageUrl(memberInfo.getBannerUrl())
                 .roleType(RoleType.OWNER)
                 .build();
 
@@ -375,7 +380,7 @@ public class ServerService {
      * 서버 참여하기
      */
     @Transactional
-    public ServerParticipateResponseDto participateServer(Long memberId, Long serverId, ServerParticipateRequestDto serverParticipateRequestDto) {
+    public ServerParticipateResponseDto participateServer(Long memberId, Long serverId) {
         Server server = serverRepository.findById(serverId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
 
@@ -384,13 +389,15 @@ public class ServerService {
             throw new ErrorHandler(ErrorStatus.SERVER_MEMBER_ALREADY_EXIST);
         }
 
+        MemberInfoResponseDto memberInfo = memberClient.getMemberInfo(memberId);
+
         // 서버의 멤버 저장
         ServerMember serverMember = ServerMember.builder()
                 .server(server)
                 .memberId(memberId)
-                .memberNickname(serverParticipateRequestDto.getMemberNickname())
-                .memberAvatarImageUrl(serverParticipateRequestDto.getMemberAvatarUrl())
-                .memberBannerImageUrl(serverParticipateRequestDto.getMemberBannerUrl())
+                .memberNickname(memberInfo.getNickname())
+                .memberAvatarImageUrl(memberInfo.getAvatarUrl())
+                .memberBannerImageUrl(memberInfo.getBannerUrl())
                 .roleType(RoleType.MEMBER)
                 .build();
         serverMemberRepository.save(serverMember);
@@ -413,9 +420,9 @@ public class ServerService {
         // 카프카 이벤트 발행
         ServerMemberActionEventDto serverMemberActionEventDto = ServerMemberActionEventDto.builder()
                 .memberId(memberId)
-                .nickname(serverParticipateRequestDto.getMemberNickname())
-                .avatarUrl(serverParticipateRequestDto.getMemberAvatarUrl())
-                .bannerUrl(serverParticipateRequestDto.getMemberBannerUrl())
+                .nickname(memberInfo.getNickname())
+                .avatarUrl(memberInfo.getAvatarUrl())
+                .bannerUrl(memberInfo.getBannerUrl())
                 .status("JOIN")
                 .build();
         kafkaProducerService.sendServerEvent(serverMemberActionEventDto);
