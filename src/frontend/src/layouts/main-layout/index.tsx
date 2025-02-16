@@ -1,10 +1,13 @@
-import { QueryClientProvider, useSuspenseQuery } from '@tanstack/react-query'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { PlusIcon } from 'lucide-react'
 import { Suspense, useEffect, useState } from 'react'
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
 import { useShallow } from 'zustand/shallow'
 
-import serviceService from '@/apis/service/service'
+import {
+  GetChannelIdListInServerResponseSchema,
+  GetServersResponseSchema
+} from '@/apis/schema/types/service'
 import Avatar from '@/components/avatar'
 import LoadingModal from '@/components/loading-modal'
 import ServerIcon from '@/components/server-icon'
@@ -17,7 +20,6 @@ import ProfileCard from './components/profile-card'
 import ProfileStatusButton from './components/profile-status-button'
 import ServerCreateModal from './components/server-create-modal'
 import SettingModal, { SettingModalTabsID } from './components/setting-modal'
-
 const mockUser = {
   id: 1,
   name: '서정우',
@@ -41,10 +43,32 @@ const Inner = () => {
     }
   }, [serverId, navigate])
 
-  const { data: myChannelList } = useSuspenseQuery({
-    queryKey: ['myChannelList'],
-    queryFn: serviceService.getServers
-  })
+  // const { data: myChannelList } = useSuspenseQuery({
+  //   queryKey: ['myChannelList'],
+  //   queryFn: serviceService.getServers
+  // })
+
+  const myChannelList = {
+    result: {
+      servers: [
+        {
+          serverId: 1,
+          serverName: '서정우의 서버',
+          serverImageUrl: null
+        },
+        {
+          serverId: 2,
+          serverName: '서정우의 서버2',
+          serverImageUrl: null
+        },
+        {
+          serverId: 3,
+          serverName: '서정우의 서버3',
+          serverImageUrl: null
+        }
+      ] as GetServersResponseSchema['servers']
+    }
+  }
 
   const { muted, toggleAudioInputMute, toggleAudioOutputMute } = useMediaSettingsStore(
     useShallow((state) => ({
@@ -58,9 +82,11 @@ const Inner = () => {
   const [isServerCreateModalOpen, setIsServerCreateModalOpen] = useState(false)
 
   const handleClickServer = async (serverId: number) => {
-    const {
-      result: { channelIdList }
-    } = await serviceService.getChannelIdListInServer({ serverId })
+    // TODO: 서버 채널 목록 조회 마지막으로 방문한 채널 혹은 채널 목록 조회
+    // const {
+    //   result: { channelIdList }
+    // } = await serviceService.getChannelIdListInServer({ serverId })
+    const channelIdList = [1, 2, 3] as GetChannelIdListInServerResponseSchema['channelIdList']
     navigate(`/channels/${serverId}/${channelIdList[0]}`)
   }
 

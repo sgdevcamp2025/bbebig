@@ -2,12 +2,11 @@ import { Outlet, useNavigate, useParams } from 'react-router'
 
 import { GetServerListResponseSchema } from '@/apis/schema/types/service'
 import useStatusBarStore from '@/stores/use-status-bar-store'
-import { ChannelUser } from '@/types/server'
 
 import ServerSidebar from './components/server-side-bar'
 import StatusSideBar from './components/status-side-bar'
 
-const mockServerData: GetServerListResponseSchema = {
+const mockServerData = {
   serverId: 1,
   serverName: '서버 이름',
   ownerId: 1,
@@ -24,7 +23,8 @@ const mockServerData: GetServerListResponseSchema = {
           position: 1,
           channelName: 'test-channel',
           channelType: 'TEXT',
-          privateStatus: false
+          privateStatus: false,
+          channelMemberList: [1, 2, 3]
         }
       ]
     },
@@ -39,7 +39,8 @@ const mockServerData: GetServerListResponseSchema = {
           position: 2,
           channelName: 'test-channel2',
           channelType: 'TEXT',
-          privateStatus: false
+          privateStatus: false,
+          channelMemberList: [1, 3]
         }
       ]
     },
@@ -54,7 +55,8 @@ const mockServerData: GetServerListResponseSchema = {
           position: 3,
           channelName: 'test-channel3',
           channelType: 'TEXT',
-          privateStatus: false
+          privateStatus: false,
+          channelMemberList: [3, 4]
         },
         {
           channelId: 4,
@@ -62,37 +64,50 @@ const mockServerData: GetServerListResponseSchema = {
           position: 4,
           channelName: 'test-channel4',
           channelType: 'TEXT',
-          privateStatus: false
+          privateStatus: false,
+          channelMemberList: [4]
         }
       ]
     }
+  ],
+  serverMemberList: [
+    {
+      memberId: 1,
+      nickname: '서정우',
+      profileImageUrl: '/image/common/default-avatar.png',
+      joinAt: '2025-02-14T17:00:00.000Z',
+      customPresenceStatus: 'ONLINE'
+    },
+    {
+      memberId: 2,
+      nickname: '이지형',
+      profileImageUrl: null,
+      joinAt: '2025-02-14T17:00:00.000Z',
+      customPresenceStatus: 'INVISIBLE'
+    },
+    {
+      memberId: 3,
+      nickname: '김예지',
+      profileImageUrl: '/image/common/default-avatar.png',
+      joinAt: '2025-02-14T17:00:00.000Z',
+      customPresenceStatus: 'ONLINE'
+    },
+    {
+      memberId: 4,
+      nickname: '백도현',
+      profileImageUrl: '/image/common/default-avatar.png',
+      joinAt: '2025-02-14T17:00:00.000Z',
+      customPresenceStatus: 'OFFLINE'
+    },
+    {
+      memberId: 5,
+      nickname: '이소은',
+      profileImageUrl: '/image/common/default-avatar.png',
+      joinAt: '2025-02-14T17:00:00.000Z',
+      customPresenceStatus: 'OFFLINE'
+    }
   ]
-}
-
-const channelUsers = [
-  {
-    id: '1',
-    name: '김예지',
-    avatarUrl: '/image/common/default-avatar.png',
-    bannerUrl: '/image/common/default-background.png',
-    customPresenceStatus: 'ONLINE',
-    introduction: '안뇽',
-    introductionEmoji: '👋',
-    email: 'yeji@gmail.com',
-    includeChannelId: [1, 3, 4]
-  },
-  {
-    id: '2',
-    name: '이지형',
-    avatarUrl: '/image/common/default-avatar.png',
-    bannerUrl: '/image/common/default-background.png',
-    customPresenceStatus: 'OFFLINE',
-    introduction: '하이루',
-    introductionEmoji: '👋',
-    email: 'jihyung@gmail.com',
-    includeChannelId: [1, 2, 3, 4]
-  }
-] as ChannelUser[]
+} satisfies GetServerListResponseSchema
 
 function ServerLayout() {
   const { serverId, channelId } = useParams<{ serverId: string; channelId: string }>()
@@ -107,17 +122,27 @@ function ServerLayout() {
   //   queryFn: () => serviceService.getServersList({ serverId })
   // })
 
+  const serverData = {
+    result: mockServerData satisfies GetServerListResponseSchema
+  }
+
   const navigate = useNavigate()
 
-  const currentChannelUsers = channelUsers.filter((user) =>
-    user.includeChannelId.includes(Number(channelId))
+  const currentChannelUsers = serverData.result.categoryInfoList.flatMap((category) =>
+    category.channelInfoList.flatMap((channel) =>
+      channel.channelMemberList
+        .map((memberId) =>
+          serverData.result.serverMemberList.find((user) => user.memberId === memberId)
+        )
+        .filter((user): user is NonNullable<typeof user> => Boolean(user))
+    )
   )
 
   const handleChannelSelect = (selectedChannelId: number) => {
     navigate(`/channels/${serverId}/${selectedChannelId}`)
   }
 
-  const { serverId: responseServerId, serverName, categoryInfoList } = mockServerData
+  const { serverId: responseServerId, serverName, categoryInfoList } = serverData.result
 
   return (
     <div className='flex h-screen w-full'>

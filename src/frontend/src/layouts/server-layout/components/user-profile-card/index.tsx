@@ -1,20 +1,19 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 
+import { GetUserResponseSchema } from '@/apis/schema/types/user'
 import Avatar from '@/components/avatar'
 import { User } from '@/types/user'
 
-interface UserProfileCardProps {
-  user: User | null
+interface InnerProps {
+  user: User
   onSendFriendRequest: () => void
   onMoreButtonClick: () => void
 }
 
-function UserProfileCard({ user, onSendFriendRequest, onMoreButtonClick }: UserProfileCardProps) {
+export function Inner({ user, onSendFriendRequest, onMoreButtonClick }: InnerProps) {
   const [message, setMessage] = useState('')
   const navigate = useNavigate()
-
-  if (!user) return null
 
   const sendMessage = () => {
     navigate(`/channels/@me`, {
@@ -96,6 +95,42 @@ function UserProfileCard({ user, onSendFriendRequest, onMoreButtonClick }: UserP
         </div>
       </div>
     </div>
+  )
+}
+
+interface UserProfileCardProps {
+  userId: number
+  onSendFriendRequest: () => void
+  onMoreButtonClick: () => void
+}
+
+function UserProfileCard({ userId, onSendFriendRequest, onMoreButtonClick }: UserProfileCardProps) {
+  // TODO: 유저 정보 조회
+  // const { data: userData } = useSuspenseQuery({
+  //   queryKey: ['user', userId],
+  //   queryFn: () => userService.getUser(userId)
+  // })
+
+  const userData = {
+    result: {
+      user: {
+        id: userId,
+        name: '서정우',
+        email: 'seojungwoo@gmail.com',
+        avatarUrl: '/image/common/default-avatar.png',
+        bannerUrl: '/image/common/default-background.png',
+        customPresenceStatus: 'ONLINE',
+        introduce: { text: '안녕하세요', emoji: '👋' }
+      }
+    }
+  } satisfies GetUserResponseSchema
+
+  return (
+    <Inner
+      user={userData.result.user}
+      onSendFriendRequest={onSendFriendRequest}
+      onMoreButtonClick={onMoreButtonClick}
+    />
   )
 }
 

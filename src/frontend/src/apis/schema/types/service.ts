@@ -1,4 +1,5 @@
 import { ChannelType, ChannelUser } from '@/types/server'
+import { CustomPresenceStatus } from '@/types/user'
 
 export interface DeleteServerRequestSchema {
   serverId: number
@@ -36,7 +37,15 @@ export interface GetServerListResponseSchema {
       channelName: string
       channelType: ChannelType
       privateStatus: boolean
+      channelMemberList: number[]
     }[]
+  }[]
+  serverMemberList: {
+    memberId: number
+    customPresenceStatus: CustomPresenceStatus
+    nickname: string
+    profileImageUrl: string | null
+    joinAt: string
   }[]
 }
 

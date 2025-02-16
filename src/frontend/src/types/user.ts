@@ -1,12 +1,14 @@
 interface User {
-  id: string
+  id: number
   name: string
   email: string
   avatarUrl: string
   bannerUrl: string
   customPresenceStatus: CustomPresenceStatus
-  introduction: string
-  introductionEmoji: string
+  introduce: {
+    text: string
+    emoji: string
+  }
 }
 
 type CustomPresenceStatus = 'ONLINE' | 'OFFLINE' | 'NOT_DISTURB' | 'INVISIBLE'

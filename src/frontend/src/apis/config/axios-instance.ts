@@ -6,7 +6,8 @@ import { errorInterceptor, requestInterceptor, responseInterceptor } from './axi
 
 const axiosInstance = axios.create({
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImlhdCI6MTczOTY3MTk5NCwiZXhwIjoxNzM5Njc1NTk0fQ.u1kL4vdkly3xTprljuyucavFofwI1ldUL17oScpYYHE`
   },
   baseURL: SERVER_URL,
   withCredentials: true

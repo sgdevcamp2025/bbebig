@@ -1,13 +1,13 @@
-import { useRef, useState } from 'react'
+import { Suspense, useRef, useState } from 'react'
 
+import { GetServerListResponseSchema } from '@/apis/schema/types/service'
 import Avatar from '@/components/avatar'
-import { ChannelUser } from '@/types/server'
-import { User } from '@/types/user'
+import LoadingIcon from '@/components/loading-icon'
 
 import UserProfileCard from '../user-profile-card'
 
 interface StatusSideBarProps {
-  channelUserList: ChannelUser[]
+  channelUserList: GetServerListResponseSchema['serverMemberList']
 }
 
 function StatusSideBar({ channelUserList }: StatusSideBarProps) {
@@ -15,7 +15,9 @@ function StatusSideBar({ channelUserList }: StatusSideBarProps) {
     channelUserList?.filter((user) => user.customPresenceStatus === 'ONLINE') ?? []
   const offlineUsers =
     channelUserList?.filter((user) => user.customPresenceStatus !== 'ONLINE') ?? []
-  const [selectedUser, setSelectedUser] = useState<User | null>(null)
+  const [selectedUser, setSelectedUser] = useState<
+    GetServerListResponseSchema['serverMemberList'][number] | null
+  >(null)
   const [selectedUserPosition, setSelectedUserPosition] = useState<{ top: number; left: number }>({
     top: 0,
     left: 0
@@ -23,14 +25,17 @@ function StatusSideBar({ channelUserList }: StatusSideBarProps) {
   const sidebarRef = useRef<HTMLDivElement>(null)
 
   const handleSendFriendRequest = () => {
-    console.log('친구 요청 보내기:', selectedUser?.name)
+    console.log('친구 요청 보내기:', selectedUser?.nickname)
   }
 
   const handleMoreButtonClick = () => {
     console.log('더보기 메뉴')
   }
 
-  const handleClickUser = (user: User, event: React.MouseEvent<HTMLDivElement>) => {
+  const handleClickUser = (
+    user: GetServerListResponseSchema['serverMemberList'][number],
+    event: React.MouseEvent<HTMLDivElement>
+  ) => {
     setSelectedUser(user)
 
     if (sidebarRef.current) {
@@ -57,16 +62,16 @@ function StatusSideBar({ channelUserList }: StatusSideBarProps) {
             <div className='flex flex-col gap-2 mb-8'>
               {onlineUsers.map((user) => (
                 <div
-                  key={user.id}
+                  key={user.memberId}
                   className='flex items-center gap-2 cursor-pointer hover:bg-discord-gray-600 rounded p-1'
                   onClick={(event) => handleClickUser(user, event)}>
                   <Avatar
-                    avatarUrl={user.avatarUrl}
+                    avatarUrl={user.profileImageUrl ?? ''}
                     size='sm'
                     status={user.customPresenceStatus}
                     statusColor={'black'}
                   />
-                  <span className='text-sm'>{user.name}</span>
+                  <span className='text-sm'>{user.nickname}</span>
                 </div>
               ))}
             </div>
@@ -81,16 +86,16 @@ function StatusSideBar({ channelUserList }: StatusSideBarProps) {
             <div className='flex flex-col gap-2 opacity-50'>
               {offlineUsers.map((user) => (
                 <div
-                  key={user.id}
+                  key={user.memberId}
                   className='flex items-center gap-2 cursor-pointer hover:bg-discord-gray-600 rounded p-1'
                   onClick={(event) => handleClickUser(user, event)}>
                   <Avatar
-                    avatarUrl={user.avatarUrl}
+                    avatarUrl={user.profileImageUrl ?? ''}
                     size='sm'
                     status={user.customPresenceStatus}
                     statusColor={'black'}
                   />
-                  <span className='text-sm'>{user.name}</span>
+                  <span className='text-sm'>{user.nickname}</span>
                 </div>
               ))}
             </div>
@@ -105,11 +110,18 @@ function StatusSideBar({ channelUserList }: StatusSideBarProps) {
             top: `${selectedUserPosition.top}px`,
             left: `${selectedUserPosition.left}px`
           }}>
-          <UserProfileCard
-            user={selectedUser}
-            onSendFriendRequest={handleSendFriendRequest}
-            onMoreButtonClick={handleMoreButtonClick}
-          />
+          <Suspense
+            fallback={
+              <div className='flex justify-center items-center h-full bg-black-100 p-2 rounded-[8px] border-black-90 border-[4px]'>
+                <LoadingIcon />
+              </div>
+            }>
+            <UserProfileCard
+              userId={selectedUser.memberId}
+              onSendFriendRequest={handleSendFriendRequest}
+              onMoreButtonClick={handleMoreButtonClick}
+            />
+          </Suspense>
         </div>
       )}
     </div>
