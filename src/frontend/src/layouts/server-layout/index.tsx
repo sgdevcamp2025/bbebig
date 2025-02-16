@@ -142,12 +142,11 @@ function ServerLayout() {
     navigate(`/channels/${serverId}/${selectedChannelId}`)
   }
 
-  const { serverId: responseServerId, serverName, categoryInfoList } = serverData.result
+  const { serverName, categoryInfoList } = serverData.result
 
   return (
     <div className='flex h-screen w-full'>
       <ServerSidebar
-        serverId={responseServerId}
         serverName={serverName}
         categories={categoryInfoList}
         onChannelSelect={handleChannelSelect}

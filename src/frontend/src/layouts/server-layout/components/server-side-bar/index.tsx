@@ -10,7 +10,6 @@ import ChannelCreateModal from '../channel-create-modal'
 import SettingModal from '../setting-modal'
 
 interface ServerSideBarProps {
-  serverId: number
   serverName: string
   categories: CategoryInfo[]
   selectedChannelId?: string
@@ -20,7 +19,6 @@ interface ServerSideBarProps {
 function ServerSideBar({
   serverName,
   categories = [],
-  serverId,
   selectedChannelId,
   onChannelSelect
 }: ServerSideBarProps) {
@@ -177,7 +175,7 @@ function ServerSideBar({
                 onClick={(e) => {
                   e.stopPropagation()
                   selectCategoryId.current = category.categoryId
-                  setCategoryCreateModalOpen(true)
+                  setChannelCreateModalOpen(true)
                 }}>
                 <Plus className='w-4 h-4 text-discord-font-color-muted' />
               </button>
@@ -248,13 +246,13 @@ function ServerSideBar({
         onClose={() => setSelectedChannel(null)}
       />
       <ChannelCreateModal
+        selectCategoryId={selectCategoryId.current}
         isOpen={channelCreateModalOpen}
         onClose={() => setChannelCreateModalOpen(false)}
       />
       <CategoryCreateModal
         isOpen={categoryCreateModalOpen}
         onClose={() => setCategoryCreateModalOpen(false)}
-        serverId={serverId}
       />
     </div>
   )

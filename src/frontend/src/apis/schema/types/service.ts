@@ -1,6 +1,12 @@
+import { z } from 'zod'
+
 import { ChannelType, ChannelUser } from '@/types/server'
 import { CustomPresenceStatus } from '@/types/user'
 
+import { createCategoryResponseSchema } from '../server'
+import { createCategoryRequestSchema } from '../server'
+import { createChannelResponseSchema } from '../server'
+import { createChannelRequestSchema } from '../server'
 export interface DeleteServerRequestSchema {
   serverId: number
 }
@@ -289,3 +295,8 @@ export interface GetChannelUserListRequestSchema {
 export interface GetChannelUserListResponseSchema {
   channelUserList: ChannelUser[]
 }
+
+export type ZCreateChannelRequestSchema = z.infer<typeof createChannelRequestSchema>
+export type ZCreateChannelResponseSchema = z.infer<typeof createChannelResponseSchema>
+export type ZCreateCategoryRequestSchema = z.infer<typeof createCategoryRequestSchema>
+export type ZCreateCategoryResponseSchema = z.infer<typeof createCategoryResponseSchema>

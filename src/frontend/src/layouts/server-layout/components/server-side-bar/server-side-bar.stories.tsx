@@ -18,7 +18,6 @@ type Story = StoryObj<typeof meta>
 
 export const PrimaryServerSidebar: Story = {
   args: {
-    serverId: 1,
     serverName: '서버 이름',
     categories: [
       {

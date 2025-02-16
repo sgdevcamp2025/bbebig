@@ -1,11 +1,21 @@
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useParams } from 'react-router-dom'
 
+import { createChannelRequestSchema } from '@/apis/schema/server'
+import { ZCreateChannelRequestSchema } from '@/apis/schema/types/service'
+import serviceService from '@/apis/service/service'
 import CustomButton from '@/components/custom-button'
 import CustomModal from '@/components/custom-modal'
 import CustomRadio, { RadioItem } from '@/components/custom-radio'
 import { cn } from '@/libs/cn'
+import { ChannelType } from '@/types/server'
 
-interface Props {
+interface InnerProps {
+  selectCategoryId: number | null
+  serverId: number
   categoryInfo?: {
     id: string
     name: string
@@ -45,11 +55,56 @@ const CHANNEL_TYPE_ITEMS = [
   }
 ]
 
-function ChannelCreateModal({ isOpen, onClose, categoryInfo }: Props) {
+export function Inner({ serverId, isOpen, onClose, categoryInfo, selectCategoryId }: InnerProps) {
   const [selectedChannelType, setSelectedChannelType] = useState<RadioItem>(CHANNEL_TYPE_ITEMS[0])
 
-  const handleCreateChannel = () => {
-    console.log('create channel')
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm<ZCreateChannelRequestSchema>({
+    defaultValues: {
+      serverId: String(serverId),
+      categoryId: undefined,
+      channelType: '',
+      channelName: '',
+      privateStatus: false,
+      memberIds: []
+    },
+    resolver: zodResolver(createChannelRequestSchema)
+  })
+
+  const { mutate: createChannel } = useMutation({
+    mutationFn: (data: ZCreateChannelRequestSchema) => {
+      return serviceService.createChannel({
+        serverId: Number(data.serverId),
+        categoryId: selectCategoryId ? selectCategoryId : undefined,
+        channelType: data.channelType as ChannelType,
+        channelName: data.channelName,
+        privateStatus: data.privateStatus,
+        memberIds: data.memberIds.map(Number)
+      })
+    }
+  })
+
+  const handleCreateChannel = (data: ZCreateChannelRequestSchema) => {
+    createChannel({
+      channelName: data.channelName,
+      channelType: selectedChannelType.value,
+      privateStatus: false,
+      memberIds: [],
+      serverId: String(serverId),
+      categoryId: data.categoryId ? String(data.categoryId) : undefined
+    })
+
+    if (selectCategoryId) {
+      selectCategoryId = null
+    }
+
+    setSelectedChannelType(CHANNEL_TYPE_ITEMS[0])
+    onClose()
+    reset()
   }
 
   return (
@@ -64,53 +119,80 @@ function ChannelCreateModal({ isOpen, onClose, categoryInfo }: Props) {
           </div>
         )}
       </CustomModal.Header>
-      <CustomModal.Content>
-        <CustomRadio
-          label='채널 유형'
-          items={CHANNEL_TYPE_ITEMS}
-          selectedItem={selectedChannelType}
-          onChange={setSelectedChannelType}
-        />
-        <div className='flex flex-col gap-2 mt-6'>
-          <label className='text-white-100 text-[12px] leading-[16px] font-bold'>채널 이름</label>
-          <div className='relative'>
-            <div className='absolute left-[16px] top-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center'>
-              <img
-                src='/icon/channel/type-text.svg'
-                alt='텍스트'
-                width={14}
-                height={14}
+      <form onSubmit={handleSubmit(handleCreateChannel)}>
+        <CustomModal.Content>
+          <CustomRadio
+            label='채널 유형'
+            items={CHANNEL_TYPE_ITEMS}
+            selectedItem={selectedChannelType}
+            onChange={setSelectedChannelType}
+          />
+          <div
+            className='flex flex-col gap-2 mt-6'
+            onSubmit={handleSubmit(handleCreateChannel)}>
+            <label className='text-white-100 text-[12px] leading-[16px] font-bold'>채널 이름</label>
+            <div className='relative'>
+              <div className='absolute left-[16px] top-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center'>
+                <img
+                  src='/icon/channel/type-text.svg'
+                  alt='텍스트'
+                  width={14}
+                  height={14}
+                />
+              </div>
+              <input
+                {...register('channelName')}
+                type='text'
+                placeholder='새로운 채널'
+                className={cn(
+                  'w-full outline-none h-[40px] bg-black-80 rounded-[3px] p-[10px] pl-[28px] text-text-normal text-[16px] leading-[24px]'
+                )}
               />
+              <p className='text-red-500 text-[12px] leading-[16px]'>
+                {errors.channelName?.message}
+              </p>
             </div>
-            <input
-              type='text'
-              placeholder='새로운 채널'
-              className={cn(
-                'w-full outline-none h-[40px] bg-black-80 rounded-[3px] p-[10px] pl-[28px] text-text-normal text-[16px] leading-[24px]'
-              )}
-            />
           </div>
-        </div>
-      </CustomModal.Content>
-      <CustomModal.Bottom>
-        <div className='flex justify-end gap-2'>
-          <button
-            aria-label='취소'
-            type='button'
-            onClick={onClose}
-            className='text-white-10 leading-[20px] py-[2px] px-4 w-[96px] text-[14px] h-[38px]'>
-            취소
-          </button>
-          <CustomButton
-            aria-label='채널 만들기'
-            type='button'
-            onClick={handleCreateChannel}
-            className='py-[2px] px-4 w-[96px] text-[14px] h-[38px]'>
-            만들기
-          </CustomButton>
-        </div>
-      </CustomModal.Bottom>
+        </CustomModal.Content>
+        <CustomModal.Bottom>
+          <div className='flex justify-end gap-2'>
+            <button
+              aria-label='취소'
+              type='button'
+              onClick={onClose}
+              className='text-white-10 leading-[20px] py-[2px] px-4 w-[96px] text-[14px] h-[38px]'>
+              취소
+            </button>
+            <CustomButton
+              aria-label='채널 만들기'
+              className='py-[2px] px-4 w-[96px] text-[14px] h-[38px]'>
+              만들기
+            </CustomButton>
+          </div>
+        </CustomModal.Bottom>
+      </form>
     </CustomModal>
+  )
+}
+
+type Props = Omit<InnerProps, 'serverId'>
+
+function ChannelCreateModal({ isOpen, onClose, categoryInfo, selectCategoryId }: Props) {
+  const { serverId } = useParams<{ serverId: string }>()
+  console.log('serverId', serverId)
+
+  if (!serverId) {
+    throw new Error('serverId is required')
+  }
+
+  return (
+    <Inner
+      selectCategoryId={selectCategoryId}
+      isOpen={isOpen}
+      onClose={onClose}
+      categoryInfo={categoryInfo}
+      serverId={Number(serverId)}
+    />
   )
 }
 
