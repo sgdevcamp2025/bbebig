@@ -12,6 +12,7 @@ import AuthInput from '@/components/auth-input'
 import CheckBox from '@/components/check-box'
 import CustomButton from '@/components/custom-button'
 import DateInput from '@/components/date-input'
+import * as Sentry from '@sentry/react'
 
 function RegisterPage() {
   const navigate = useNavigate()
@@ -58,7 +59,7 @@ function RegisterPage() {
       } catch (e) {
         if (e instanceof AxiosError) {
           toast.error('회원가입에 실패하였습니다.')
-          throw new Error(e.response?.data.message)
+          Sentry.captureException(e.response?.data.message)
         }
       }
     },

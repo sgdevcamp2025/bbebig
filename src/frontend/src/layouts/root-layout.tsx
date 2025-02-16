@@ -3,6 +3,17 @@ import { Outlet } from 'react-router'
 
 import queryClient from '@/libs/query-client'
 import { Toaster } from 'react-hot-toast'
+import * as Sentry from '@sentry/react'
+import { SENTRY_DSN } from '@/constants/env'
+
+Sentry.init({
+  dsn: SENTRY_DSN,
+  integrations: [Sentry.browserTracingIntegration(), Sentry.replayIntegration()],
+  tracesSampleRate: 1.0,
+  tracePropagationTargets: ['localhost'],
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1.0
+})
 
 function RootLayout() {
   return (
