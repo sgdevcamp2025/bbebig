@@ -4,7 +4,6 @@ import { Suspense, useEffect, useState } from 'react'
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
 import { useShallow } from 'zustand/shallow'
 
-import { GetChannelIdListInServerResponseSchema } from '@/apis/schema/types/service'
 import { GetUserResponseSchema } from '@/apis/schema/types/user'
 import Avatar from '@/components/avatar'
 import LoadingModal from '@/components/loading-modal'
@@ -41,8 +40,6 @@ const Inner = () => {
   //   queryKey: ['user', userId],
   //   queryFn: () => userService.getUser(userId)
   // })
-
-  console.log(myChannelList)
 
   const userData = {
     result: {

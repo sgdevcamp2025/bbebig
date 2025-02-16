@@ -20,9 +20,9 @@ export default defineConfig({
       org: 'bbebig-ck',
       project: 'bissgcode',
       sourcemaps: {
-        assets: './build/**',
+        assets: './build/client/**',
         ignore: ['node_modules', 'dist', 'build'],
-        filesToDeleteAfterUpload: './build/**'
+        filesToDeleteAfterUpload: './build/client/**'
       }
     })
   ],
