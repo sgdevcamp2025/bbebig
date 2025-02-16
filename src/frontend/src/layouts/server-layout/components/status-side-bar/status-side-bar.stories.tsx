@@ -13,36 +13,27 @@ type Story = StoryObj<typeof meta>
 
 export const PrimaryStatusSidebar: Story = {
   args: {
-    users: [
+    channelUserList: [
       {
-        id: '1',
-        name: '김예지',
-        avatarUrl: 'https://via.placeholder.com/150',
-        bannerUrl: 'https://via.placeholder.com/150',
-        customPresenceStatus: 'ONLINE',
-        introduction: '안뇽',
-        introductionEmoji: '👋',
-        email: 'yeji@gmail.com'
+        memberId: 1,
+        nickname: '김예지',
+        profileImageUrl: 'https://via.placeholder.com/150',
+        joinAt: '2024-01-01',
+        customPresenceStatus: 'ONLINE'
       },
       {
-        id: '2',
-        name: '이지형',
-        avatarUrl: 'https://via.placeholder.com/150',
-        bannerUrl: 'https://via.placeholder.com/150',
-        customPresenceStatus: 'NOT_DISTURB',
-        introduction: '하이루',
-        introductionEmoji: '👋',
-        email: 'jihyung@gmail.com'
+        memberId: 2,
+        nickname: '이지형',
+        profileImageUrl: 'https://via.placeholder.com/150',
+        joinAt: '2024-01-01',
+        customPresenceStatus: 'NOT_DISTURB'
       },
       {
-        id: '2',
-        name: '이소은',
-        avatarUrl: 'https://via.placeholder.com/150',
-        bannerUrl: 'https://via.placeholder.com/150',
-        customPresenceStatus: 'OFFLINE',
-        introduction: '뇽안',
-        introductionEmoji: '👋',
-        email: 'soeun@gmail.com'
+        memberId: 3,
+        nickname: '이소은',
+        profileImageUrl: 'https://via.placeholder.com/150',
+        joinAt: '2024-01-01',
+        customPresenceStatus: 'OFFLINE'
       }
     ]
   }

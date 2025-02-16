@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import { fn } from '@storybook/test'
 
 import MenuButton from '.'
 
@@ -18,6 +19,6 @@ export const PrimaryMenuButton: Story = {
   args: {
     label: '친구',
     isActive: false,
-    onClick: () => {}
+    onClick: fn()
   }
 }

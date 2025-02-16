@@ -1,7 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
+import { useShallow } from 'zustand/shallow'
 
 import { loginRequestSchema } from '@/apis/schema/auth'
 import { LoginSchema } from '@/apis/schema/types/auth'
@@ -17,7 +18,12 @@ function LoginPage() {
     resolver: zodResolver(loginRequestSchema)
   })
 
-  const login = useLoginStore((state) => state.login)
+  const { login, isLogin } = useLoginStore(
+    useShallow((state) => ({
+      login: state.login,
+      isLogin: state.isLogin
+    }))
+  )
 
   const handleMoveSignUpPage = useCallback(() => {
     setMovePage(true)
@@ -27,19 +33,20 @@ function LoginPage() {
     }, 500)
   }, [navigate])
 
-  const signIn = useCallback(
-    async (data: LoginSchema) => {
-      await authService.login(data)
+  const signIn = async (data: LoginSchema) => {
+    await authService.login(data)
+    login()
+  }
 
-      login()
+  useEffect(() => {
+    if (isLogin) {
       setMovePage(true)
 
       setTimeout(() => {
         navigate('/channels/@me', { replace: true })
       }, 500)
-    },
-    [navigate, login]
-  )
+    }
+  }, [isLogin, navigate])
 
   return (
     <form

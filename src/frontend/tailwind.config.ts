@@ -8,6 +8,7 @@ const config: Pick<Config, 'presets' | 'content' | 'theme' | 'plugins'> = {
       colors: {
         brand: '#5865f2',
         'brand-10': 'hsl(222.857 calc(1 * 6.667%) 20.588% / 1)',
+        'brand-20': 'hsl(235.152 calc(1*86.087%) 77.451% /1)',
         'brand-gradient': 'linear-gradient(90deg, #8ea1e1 0%, #7289da 100%)',
         greyple: '#99aab5',
         'dark-not-black': '#2c2f33',

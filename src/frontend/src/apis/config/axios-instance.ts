@@ -1,36 +1,19 @@
 import axios from 'axios'
 
-import SERVER_PORT from '@/constants/base-port'
 import { SERVER_URL } from '@/constants/env'
-import { COOKIE_KEYS } from '@/constants/keys'
-import cookie from '@/utils/cookie'
 
-const getAxiosInstance = (port: (typeof SERVER_PORT)[keyof typeof SERVER_PORT]) => {
-  const axiosInstance = axios.create({
-    baseURL: `${SERVER_URL}:${port}`,
-    withCredentials: true
-  })
+import { errorInterceptor, requestInterceptor, responseInterceptor } from './axios-helper'
 
-  axiosInstance.interceptors.request.use((config) => {
-    const accessToken = cookie.getCookie(COOKIE_KEYS.ACCESS_TOKEN)
+const axiosInstance = axios.create({
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  baseURL: SERVER_URL,
+  withCredentials: true
+})
 
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`
-    }
+axiosInstance.interceptors.request.use(requestInterceptor)
 
-    return config
-  })
+axiosInstance.interceptors.response.use(responseInterceptor, errorInterceptor)
 
-  axiosInstance.interceptors.response.use(
-    (response) => {
-      return response
-    },
-    (error) => {
-      return Promise.reject(error)
-    }
-  )
-
-  return axiosInstance
-}
-
-export default getAxiosInstance
+export default axiosInstance

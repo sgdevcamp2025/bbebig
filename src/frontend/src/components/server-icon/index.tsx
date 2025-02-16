@@ -50,7 +50,7 @@ function ServerIcon({ imageUrl, imageSize = 48, label, isActive, hasAlarm, ...pr
               }}
             />
           ) : (
-            <span className='text-gray-100 text-[14px] font-bold'>{label.charAt(0)}</span>
+            <span className='text-gray-100 text-[12px] font-bold text-nowrap'>{label}</span>
           )}
         </div>
       </div>

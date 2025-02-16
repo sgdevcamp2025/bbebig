@@ -2,11 +2,11 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
 import { useState } from 'react'
 
-import { Inner } from '.'
+import LoadingModal from '.'
 
 const meta = {
-  title: 'Layout/ServerLayout/ChannelCreateModal',
-  component: Inner,
+  title: 'Component/LoadingModal',
+  component: LoadingModal,
   parameters: {
     layout: 'centered'
   },
@@ -15,21 +15,15 @@ const meta = {
     isOpen: { control: 'boolean' },
     onClose: { action: 'close' }
   }
-} satisfies Meta<typeof Inner>
+} satisfies Meta<typeof LoadingModal>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
 export const Primary: Story = {
   args: {
-    serverId: 1,
-    selectCategoryId: 1,
     isOpen: false,
-    onClose: () => fn(),
-    categoryInfo: {
-      id: '1',
-      name: '테스트 카테고리 이름'
-    }
+    onClose: () => fn()
   },
   render: (args) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -37,8 +31,7 @@ export const Primary: Story = {
     return (
       <div className='w-[480px]'>
         <button onClick={() => setIsOpen(true)}>Open Modal</button>
-        <Inner
-          {...args}
+        <LoadingModal
           isOpen={isOpen}
           onClose={() => setIsOpen(false)}
         />

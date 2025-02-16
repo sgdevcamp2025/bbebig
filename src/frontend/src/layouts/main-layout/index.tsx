@@ -1,79 +1,63 @@
+import { QueryClientProvider, useSuspenseQuery } from '@tanstack/react-query'
 import { PlusIcon } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
 import { useShallow } from 'zustand/shallow'
 
+import { GetChannelIdListInServerResponseSchema } from '@/apis/schema/types/service'
+import { GetUserResponseSchema } from '@/apis/schema/types/user'
 import Avatar from '@/components/avatar'
+import LoadingModal from '@/components/loading-modal'
 import ServerIcon from '@/components/server-icon'
 import { statusKo } from '@/constants/status'
 import { cn } from '@/libs/cn'
+import queryClient from '@/libs/query-client'
 import useMediaSettingsStore from '@/stores/use-media-setting.store'
-import { useSignalingStompStore } from '@/stores/use-signaling-stomp-store'
 
 import ProfileCard from './components/profile-card'
 import ProfileStatusButton from './components/profile-status-button'
 import ServerCreateModal from './components/server-create-modal'
 import SettingModal, { SettingModalTabsID } from './components/setting-modal'
+import serviceService from '@/apis/service/service'
 
-const myServerList = [
-  {
-    serverId: 1,
-    name: '서버 이름1',
-    image: 'https://placehold.co/75',
-    alarm: true,
-    channelId: 1
-  },
-  {
-    serverId: 2,
-    name: '서버 이름2',
-    image: 'https://placehold.co/75',
-    alarm: false,
-    channelId: 2
-  },
-  {
-    serverId: 3,
-    name: '서버 이름3',
-    image: 'https://placehold.co/75',
-    alarm: false,
-    channelId: 3
-  }
-] as const
-
-const mockUser = {
-  id: 1,
-  name: '서정우',
-  email: 'test@test.com',
-  customPresenceStatus: 'ONLINE',
-  introduction: '안녕하세요',
-  introductionEmoji: '👋',
-  avatarUrl: '/image/common/default-avatar.png',
-  status: 'ONLINE',
-  statusColor: 'black'
-} as const
-
-const MainRootLayout = () => {
+const Inner = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const { serverId } = useParams<{ serverId: string }>()
-  const { disconnect, connect } = useSignalingStompStore()
 
   useEffect(() => {
-    connect()
-    return () => {
-      disconnect()
+    if (!serverId) {
+      navigate('/channels/@me', { replace: true })
     }
-  }, [connect, disconnect])
+  }, [serverId, navigate])
 
-  const pathname =
-    location.pathname.split('/')[1] === 'channels' ? location.pathname.split('/')[2] : null
-
-  const [settingModalState, setSettingModalState] = useState({
-    itemId: SettingModalTabsID.none,
-    isOpen: false
+  const { data: myChannelList } = useSuspenseQuery({
+    queryKey: ['servers'],
+    queryFn: serviceService.getServers
   })
 
-  const [isProfileCardOpen, setIsProfileCardOpen] = useState(false)
-  const [isServerCreateModalOpen, setIsServerCreateModalOpen] = useState(false)
+  // TODO: 유저 정보 조회
+  // const { data: userData } = useSuspenseQuery({
+  //   queryKey: ['user', userId],
+  //   queryFn: () => userService.getUser(userId)
+  // })
+
+  console.log(myChannelList)
+
+  const userData = {
+    result: {
+      user: {
+        id: 1,
+        name: '서정우',
+        email: 'seojungwoo@gmail.com',
+        avatarUrl: '/image/common/default-avatar.png',
+        bannerUrl: '/image/common/default-background.png',
+        customPresenceStatus: 'ONLINE',
+        introduce: { text: '안녕하세요', emoji: '👋' }
+      }
+    }
+  } satisfies GetUserResponseSchema
+
   const { muted, toggleAudioInputMute, toggleAudioOutputMute } = useMediaSettingsStore(
     useShallow((state) => ({
       muted: state.muted,
@@ -82,13 +66,25 @@ const MainRootLayout = () => {
     }))
   )
 
-  const handleClickServer = (serverId: number, channelId: number) => {
-    navigate(`/channels/${serverId}/${channelId}`)
+  const [isProfileCardOpen, setIsProfileCardOpen] = useState(false)
+  const [isServerCreateModalOpen, setIsServerCreateModalOpen] = useState(false)
+
+  const handleClickServer = async (serverId: number) => {
+    const {
+      result: { channelIdList }
+    } = await serviceService.getChannelIdListInServer({ serverId })
+    const firstChannelId = channelIdList[0]
+    navigate(`/channels/${serverId}/${firstChannelId}`)
   }
 
   const handleClickMyServer = () => {
     navigate('/channels/@me')
   }
+
+  const [settingModalState, setSettingModalState] = useState({
+    itemId: SettingModalTabsID.none,
+    isOpen: false
+  })
 
   const handleClickSetting = () => {
     setSettingModalState({
@@ -123,14 +119,11 @@ const MainRootLayout = () => {
     setIsServerCreateModalOpen(false)
   }
 
-  useEffect(() => {
-    if (!serverId) {
-      navigate('/channels/@me', { replace: true })
-    }
-  }, [serverId, navigate])
+  const pathname =
+    location.pathname.split('/')[1] === 'channels' ? location.pathname.split('/')[2] : null
 
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <div className='flex'>
         <nav className='bg-black-80 h-full min-h-screen w-[72px] pt-[12px]'>
           <ul className='w-[72px] flex flex-col gap-2'>
@@ -167,15 +160,15 @@ const MainRootLayout = () => {
             <div className='w-full flex justify-center'>
               <div className='h-[2px] w-8 rounded-[1px] bg-gray-80' />
             </div>
-            {myServerList.map((server) => (
+            {myChannelList.result.servers.map((server) => (
               <li key={server.serverId}>
                 <ServerIcon
-                  imageUrl={server.image}
-                  label={server.name}
+                  imageUrl={server.serverImageUrl}
+                  label={server.serverName}
                   isActive={pathname === server.serverId.toString()}
-                  hasAlarm={server.alarm}
+                  hasAlarm={false}
                   onClick={() => {
-                    handleClickServer(server.serverId, server.channelId)
+                    handleClickServer(server.serverId)
                   }}
                 />
               </li>
@@ -215,22 +208,23 @@ const MainRootLayout = () => {
               onClick={handleClickProfile}
               className='flex gap-2 flex-1 hover:bg-gray-80 rounded-md p-1 group'>
               <Avatar
-                avatarUrl={mockUser.avatarUrl}
+                name={userData.result.user.name}
+                avatarUrl={userData.result.user.avatarUrl}
                 size='sm'
-                status={mockUser.status}
-                statusColor={mockUser.statusColor}
+                status={userData.result.user.customPresenceStatus}
+                statusColor={'black'}
               />
               <div className='flex flex-col'>
                 <span className='text-text-normal text-left text-sm font-medium text-white leading-[18px]'>
-                  {mockUser.name}
+                  {userData.result.user.name}
                 </span>
                 <div className='h-[13px] overflow-hidden'>
                   <div className='flex flex-col h-[13px] leading-[13px] group-hover:translate-y-[-100%] transition-all duration-300'>
                     <span className='text-[13px] text-left text-gray-10'>
-                      {statusKo[mockUser.status]} 표시
+                      {statusKo[userData.result.user.customPresenceStatus]} 표시
                     </span>
                     <span className='text-[13px] text-left text-gray-10'>
-                      {mockUser.email.split('@')[0]}
+                      {userData.result.user.email.split('@')[0]}
                     </span>
                   </div>
                 </div>
@@ -270,8 +264,14 @@ const MainRootLayout = () => {
         isOpen={isServerCreateModalOpen}
         onClose={handleClickServerCreateModalClose}
       />
-    </>
+    </QueryClientProvider>
   )
 }
 
-export default MainRootLayout
+export default function MainRootLayout() {
+  return (
+    <Suspense fallback={<LoadingModal isOpen={true} />}>
+      <Inner />
+    </Suspense>
+  )
+}

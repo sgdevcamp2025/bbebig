@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { Inner } from '.'
 
 const meta = {
-  title: 'Layout/ServerLayout/ChannelCreateModal',
+  title: 'Layout/ServerLayout/CategoryCreateModal',
   component: Inner,
   parameters: {
     layout: 'centered'
@@ -22,14 +22,9 @@ type Story = StoryObj<typeof meta>
 
 export const Primary: Story = {
   args: {
-    serverId: 1,
-    selectCategoryId: 1,
     isOpen: false,
     onClose: () => fn(),
-    categoryInfo: {
-      id: '1',
-      name: '테스트 카테고리 이름'
-    }
+    serverId: 1
   },
   render: (args) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -41,6 +36,7 @@ export const Primary: Story = {
           {...args}
           isOpen={isOpen}
           onClose={() => setIsOpen(false)}
+          serverId={1}
         />
       </div>
     )

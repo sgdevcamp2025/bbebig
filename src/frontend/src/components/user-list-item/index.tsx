@@ -12,7 +12,8 @@ interface UserListItemProps {
   status: CustomPresenceStatus
   statusColor?: string
   iconType: 'default' | 'request' | 'response'
-  onClick?: () => void
+  handleNavigateToDM: (id: number) => void
+  handleDMIconClick: (e: React.MouseEvent<HTMLButtonElement>, id: number) => void
 }
 
 const ICON_PATH = {
@@ -21,32 +22,24 @@ const ICON_PATH = {
   request: ['/icon/friend/reject.svg']
 } as const
 
-function UserListItem({
+export function Inner({
   id,
   avatarUrl,
   name,
   description,
   status,
   statusColor,
-  iconType = 'default'
+  iconType = 'default',
+  handleNavigateToDM,
+  handleDMIconClick
 }: UserListItemProps) {
-  const navigate = useNavigate()
-
-  const handleNavigateToDM = () => {
-    navigate(`/channels/@me/${id}`)
-  }
-
-  const handleDMIconClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation()
-    handleNavigateToDM()
-  }
-
   return (
     <div
       className='group flex items-center justify-between p-2 hover:bg-discord-gray-500 rounded cursor-pointer'
-      onClick={handleNavigateToDM}>
+      onClick={() => handleNavigateToDM(id)}>
       <div className='flex items-center gap-3'>
         <Avatar
+          name={name}
           avatarUrl={avatarUrl}
           statusColor={statusColor}
           status={status}
@@ -64,7 +57,9 @@ function UserListItem({
           <button
             key={iconPath}
             type='button'
-            onClick={iconPath === '/icon/friend/dm.svg' ? handleDMIconClick : undefined}
+            onClick={
+              iconPath === '/icon/friend/dm.svg' ? (e) => handleDMIconClick?.(e, id) : undefined
+            }
             aria-label={'icon'}
             className='p-2 bg-discord-gray-700 hover:bg-discord-gray-800 rounded-3xl group-hover:bg-discord-gray-800'>
             <img
@@ -78,4 +73,26 @@ function UserListItem({
   )
 }
 
-export default UserListItem
+type UserListItemLinkProps = Omit<UserListItemProps, 'onClick'>
+
+function UserListItemLink({ ...props }: UserListItemLinkProps) {
+  const navigate = useNavigate()
+
+  const handleNavigateToDM = (id: number) => {
+    navigate(`/channels/@me/${id}`)
+  }
+
+  const handleDMIconClick = (e: React.MouseEvent<HTMLButtonElement>, id: number) => {
+    e.stopPropagation()
+    handleNavigateToDM(id)
+  }
+
+  return (
+    <Inner
+      {...props}
+      handleNavigateToDM={handleNavigateToDM}
+      handleDMIconClick={handleDMIconClick}
+    />
+  )
+}
+export default UserListItemLink

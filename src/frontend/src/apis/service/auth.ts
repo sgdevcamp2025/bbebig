@@ -1,19 +1,25 @@
+import { AxiosRequestConfig } from 'axios'
+
 import { COOKIE_KEYS } from '@/constants/keys'
 import cookie from '@/utils/cookie'
 
-import SERVER_PORT from '../../constants/base-port'
-import getAxiosInstance from '../config/axios-instance'
+import axiosInstance from '../config/axios-instance'
 import { LoginResponseSchema, LoginSchema, RegisterSchema } from '../schema/types/auth'
 
-const BASE_PATH = `/auth-server`
+const BASE_PATH = `/auth-server/auth`
 
-const axiosInstance = getAxiosInstance(SERVER_PORT.AUTH)
+export interface CustomAxiosRequestConfig extends AxiosRequestConfig {
+  useAuth?: boolean
+}
 
 const authService = () => {
   const login = async (data: LoginSchema) => {
     try {
-      const res = await axiosInstance.post<LoginResponseSchema>(`${BASE_PATH}/login`, data)
-      cookie.setCookie(COOKIE_KEYS.ACCESS_TOKEN, res.data.result.accessToken)
+      const res = await axiosInstance.post<LoginResponseSchema>(`${BASE_PATH}/login`, data, {
+        useAuth: false
+      } as CustomAxiosRequestConfig)
+      const accessToken = res.data.result.accessToken
+      cookie.setCookie(COOKIE_KEYS.ACCESS_TOKEN, accessToken)
     } catch (error) {
       console.error(error)
       throw error
@@ -22,7 +28,9 @@ const authService = () => {
 
   const register = async (data: RegisterSchema) => {
     try {
-      const response = await axiosInstance.post(`${BASE_PATH}/register`, data)
+      const response = await axiosInstance.post(`${BASE_PATH}/register`, data, {
+        useAuth: false
+      } as CustomAxiosRequestConfig)
       return response.data
     } catch (error) {
       console.error(error)

@@ -63,7 +63,18 @@ function VoiceSetting() {
         onChangePerceantage: setOutputVolume
       }
     ],
-    [UserDevices, devices, volume]
+    [
+      UserDevices.audioDevices,
+      UserDevices.outputDevices,
+      devices.audioInput,
+      devices.audioOutput,
+      setInputDevice,
+      setInputVolume,
+      setOutputDevice,
+      setOutputVolume,
+      volume.input,
+      volume.output
+    ]
   )
 
   const { videoRef, startStream, stopStream } = useMediaControl()

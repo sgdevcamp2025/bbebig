@@ -3,22 +3,21 @@ import { MemoryRouter } from 'react-router-dom'
 
 import { User } from '@/types/user'
 
-import UserProfileCard from '.'
+import { Inner } from '.'
 
 const user: User = {
-  id: '1',
+  id: 1,
   name: '김예지',
   avatarUrl: '/image/common/default-avatar.png',
   bannerUrl: '/image/common/default-background.png',
   customPresenceStatus: 'ONLINE',
-  introduction: '안뇽',
-  introductionEmoji: '👋',
+  introduce: { text: '안뇽', emoji: '👋' },
   email: 'yeji@gmail.com'
 }
 
-const meta: Meta<typeof UserProfileCard> = {
+const meta: Meta<typeof Inner> = {
   title: 'Layout/ServerLayout/UserProfileCard',
-  component: UserProfileCard,
+  component: Inner,
   parameters: {
     layout: 'fullscreen'
   },
@@ -33,11 +32,11 @@ const meta: Meta<typeof UserProfileCard> = {
 }
 
 export default meta
-type Story = StoryObj<typeof UserProfileCard>
+type Story = StoryObj<typeof Inner>
 
 export const PrimaryUserProfileCard: Story = {
   args: {
-    user: user,
+    user,
     onSendFriendRequest: () => console.log('친구 요청'),
     onMoreButtonClick: () => console.log('더보기 클릭')
   }
