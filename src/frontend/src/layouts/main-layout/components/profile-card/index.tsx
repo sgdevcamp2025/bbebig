@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router'
 
-import authService from '@/apis/service/auth'
 import Avatar from '@/components/avatar'
 import LoadingIcon from '@/components/loading-icon'
 import StatusIcon from '@/components/status-icon'
 import { statusKo } from '@/constants/status'
+import useLoginStore from '@/stores/use-login-store'
 import { CustomPresenceStatus } from '@/types/user'
 
 import MenuItem from './menu-item'
@@ -19,6 +19,7 @@ interface Props {
 
 export function Content({ name, email, status, avatarUrl, backgroundUrl, onEditProfile }: Props) {
   const navigate = useNavigate()
+  const { logout } = useLoginStore()
 
   const handleClickEditProfile = () => {
     onEditProfile()
@@ -29,7 +30,7 @@ export function Content({ name, email, status, avatarUrl, backgroundUrl, onEditP
   }
 
   const handleClickLogout = () => {
-    authService.logout()
+    logout()
     navigate('/', { replace: true })
   }
 
@@ -81,6 +82,7 @@ export function Content({ name, email, status, avatarUrl, backgroundUrl, onEditP
       <div className='relative p-4'>
         <div className='flex justify-center items-center absolute top-[-40px]'>
           <Avatar
+            name={name}
             status={status}
             avatarUrl={avatarUrl}
             size='lg'

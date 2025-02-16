@@ -5,6 +5,7 @@ import cookie from '@/utils/cookie'
 
 import axiosInstance from '../config/axios-instance'
 import { LoginResponseSchema, LoginSchema, RegisterSchema } from '../schema/types/auth'
+import * as Sentry from '@sentry/react'
 
 const BASE_PATH = `/auth-server/auth`
 
@@ -21,7 +22,7 @@ const authService = () => {
       const accessToken = res.data.result.accessToken
       cookie.setCookie(COOKIE_KEYS.ACCESS_TOKEN, accessToken)
     } catch (error) {
-      console.error(error)
+      Sentry.captureException(error)
       throw error
     }
   }
@@ -33,7 +34,7 @@ const authService = () => {
       } as CustomAxiosRequestConfig)
       return response.data
     } catch (error) {
-      console.error(error)
+      Sentry.captureException(error)
       throw error
     }
   }
@@ -43,7 +44,7 @@ const authService = () => {
       await axiosInstance.post(`${BASE_PATH}/logout`)
       cookie.deleteCookie(COOKIE_KEYS.ACCESS_TOKEN)
     } catch (error) {
-      console.error(error)
+      Sentry.captureException(error)
       throw error
     }
   }
