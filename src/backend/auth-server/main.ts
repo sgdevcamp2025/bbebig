@@ -149,10 +149,6 @@ app
     }
   });
 
-app.register(cors, {
-  origin: true,
-  credentials: true,
-});
 app.register(fastifyCookie, {
   secret: SECRET_KEY,
 } as FastifyCookieOptions);
