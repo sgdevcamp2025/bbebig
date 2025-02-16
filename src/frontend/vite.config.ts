@@ -1,4 +1,5 @@
 import { reactRouter } from '@react-router/dev/vite'
+import { sentryVitePlugin } from '@sentry/vite-plugin'
 import autoprefixer from 'autoprefixer'
 import { reactRouterDevTools } from 'react-router-devtools'
 import tailwindcss from 'tailwindcss'
@@ -11,9 +12,23 @@ export default defineConfig({
       plugins: [autoprefixer, tailwindcss]
     }
   },
-  plugins: [reactRouterDevTools(), reactRouter(), tsconfigPaths()],
+  plugins: [
+    reactRouterDevTools(),
+    reactRouter(),
+    tsconfigPaths(),
+    sentryVitePlugin({
+      org: 'bbebig-ck',
+      project: 'bissgcode',
+      sourcemaps: {
+        assets: './build/client/**',
+        ignore: ['node_modules', 'dist', 'build'],
+        filesToDeleteAfterUpload: './build/client/**'
+      }
+    })
+  ],
   build: {
     cssMinify: true,
-    ssr: true
+    ssr: true,
+    sourcemap: true
   }
 })

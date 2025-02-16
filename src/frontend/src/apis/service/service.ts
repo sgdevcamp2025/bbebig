@@ -1,5 +1,6 @@
 import axiosInstance from '../config/axios-instance'
 import { CommonResponseType } from '../schema/types/common'
+import * as Sentry from '@sentry/react'
 import type {
   CreateCategoryRequestSchema,
   CreateCategoryResponseSchema,
@@ -57,7 +58,7 @@ const serviceService = () => {
       )
       return response.data
     } catch (error) {
-      console.error(error)
+      Sentry.captureException(error)
       throw error
     }
   }
@@ -69,7 +70,7 @@ const serviceService = () => {
       )
       return response.data
     } catch (error) {
-      console.error(error)
+      Sentry.captureException(error)
       throw error
     }
   }
@@ -81,7 +82,7 @@ const serviceService = () => {
       )
       return response.data
     } catch (error) {
-      console.error(error)
+      Sentry.captureException(error)
       throw error
     }
   }
@@ -93,7 +94,7 @@ const serviceService = () => {
       )
       return response.data
     } catch (error) {
-      console.error(error)
+      Sentry.captureException(error)
       throw error
     }
   }
@@ -105,7 +106,7 @@ const serviceService = () => {
       >(`${SERVER_PATH}/${data.serverId}/list/members`)
       return response.data
     } catch (error) {
-      console.error(error)
+      Sentry.captureException(error)
       throw error
     }
   }
@@ -117,7 +118,7 @@ const serviceService = () => {
       >(`${SERVER_PATH}/${data.serverId}/list/channel`)
       return response.data
     } catch (error) {
-      console.error(error)
+      Sentry.captureException(error)
       throw error
     }
   }
@@ -131,7 +132,7 @@ const serviceService = () => {
       >(`${SERVER_PATH}/${data.serverId}/channels/info/member/${data.memberId}`)
       return response.data
     } catch (error) {
-      console.error(error)
+      Sentry.captureException(error)
       throw error
     }
   }
@@ -143,7 +144,7 @@ const serviceService = () => {
       >(`${SERVER_PATH}/${data.memberId}/list/servers`)
       return response.data
     } catch (error) {
-      console.error(error)
+      Sentry.captureException(error)
       throw error
     }
   }
@@ -156,7 +157,7 @@ const serviceService = () => {
       )
       return response.data
     } catch (error) {
-      console.error(error)
+      Sentry.captureException(error)
       throw error
     }
   }
@@ -168,7 +169,7 @@ const serviceService = () => {
       >(`${SERVER_PATH}/${data.serverId}/participate`, data)
       return response.data
     } catch (error) {
-      console.error(error)
+      Sentry.captureException(error)
       throw error
     }
   }
@@ -181,7 +182,7 @@ const serviceService = () => {
       )
       return response.data
     } catch (error) {
-      console.error(error)
+      Sentry.captureException(error)
       throw error
     }
   }
@@ -194,7 +195,7 @@ const serviceService = () => {
       )
       return response.data
     } catch (error) {
-      console.error(error)
+      Sentry.captureException(error)
       throw error
     }
   }
@@ -206,7 +207,7 @@ const serviceService = () => {
       )
       return response.data
     } catch (error) {
-      console.error(error)
+      Sentry.captureException(error)
       throw error
     }
   }
@@ -220,7 +221,7 @@ const serviceService = () => {
       >(`${CHANNEL_PATH}/${data.channelId}/lastInfo/member/${data.memberId}`)
       return response.data
     } catch (error) {
-      console.error(error)
+      Sentry.captureException(error)
       throw error
     }
   }
@@ -233,7 +234,7 @@ const serviceService = () => {
       )
       return response.data
     } catch (error) {
-      console.error(error)
+      Sentry.captureException(error)
       throw error
     }
   }
@@ -246,7 +247,7 @@ const serviceService = () => {
       )
       return response.data
     } catch (error) {
-      console.error(error)
+      Sentry.captureException(error)
       throw error
     }
   }
@@ -259,7 +260,7 @@ const serviceService = () => {
       )
       return response.data
     } catch (error) {
-      console.error(error)
+      Sentry.captureException(error)
       throw error
     }
   }
@@ -271,7 +272,7 @@ const serviceService = () => {
       )
       return response.data
     } catch (error) {
-      console.error(error)
+      Sentry.captureException(error)
       throw error
     }
   }
@@ -284,7 +285,7 @@ const serviceService = () => {
       )
       return response.data
     } catch (error) {
-      console.error(error)
+      Sentry.captureException(error)
       throw error
     }
   }
@@ -297,7 +298,7 @@ const serviceService = () => {
       )
       return response.data
     } catch (error) {
-      console.error(error)
+      Sentry.captureException(error)
       throw error
     }
   }
@@ -309,7 +310,7 @@ const serviceService = () => {
       >(`${CHANNEL_PATH}/${data.channelId}/list/users`)
       return response.data
     } catch (error) {
-      console.error(error)
+      Sentry.captureException(error)
       throw error
     }
   }
