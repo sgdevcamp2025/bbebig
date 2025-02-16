@@ -2,6 +2,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { Outlet } from 'react-router'
 
 import queryClient from '@/libs/query-client'
+import { Toaster } from 'react-hot-toast'
 
 function RootLayout() {
   return (
@@ -9,6 +10,7 @@ function RootLayout() {
       <title>Discord Clone</title>
       <QueryClientProvider client={queryClient}>
         <Outlet />
+        <Toaster position='top-right' />
       </QueryClientProvider>
     </div>
   )

@@ -1,3 +1,4 @@
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 import { reactRouter } from '@react-router/dev/vite'
 import autoprefixer from 'autoprefixer'
 import { reactRouterDevTools } from 'react-router-devtools'
@@ -11,9 +12,13 @@ export default defineConfig({
       plugins: [autoprefixer, tailwindcss]
     }
   },
-  plugins: [reactRouterDevTools(), reactRouter(), tsconfigPaths()],
+  plugins: [reactRouterDevTools(), reactRouter(), tsconfigPaths(), sentryVitePlugin({
+    org: "bbebig-ck",
+    project: "bissgcode"
+  })],
   build: {
     cssMinify: true,
-    ssr: true
+    ssr: true,
+    sourcemap: true
   }
 })

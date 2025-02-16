@@ -1,6 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { AxiosError } from 'axios'
 import { useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'react-hot-toast'
 import { useNavigate } from 'react-router'
 
 import { registerRequestSchema } from '@/apis/schema/auth'
@@ -49,9 +51,16 @@ function RegisterPage() {
 
   const signUp = useCallback(
     async (data: RegisterSchema) => {
-      await authService.register(data)
-
-      handleMoveLoginPage()
+      try {
+        await authService.register(data)
+        toast.success('회원가입이 완료되었습니다.')
+        handleMoveLoginPage()
+      } catch (e) {
+        if (e instanceof AxiosError) {
+          toast.error('회원가입에 실패하였습니다.')
+          throw new Error(e.response?.data.message)
+        }
+      }
     },
     [handleMoveLoginPage]
   )
@@ -117,10 +126,7 @@ function RegisterPage() {
               등록하는 순간 Discord의 <a className='text-text-link'>서비스 이용 약관</a>와
               <a className='text-text-link'>개인정보 보호 정책</a>에 동의하게 됩니다.
             </div>
-            <button
-              type='button'
-              onClick={handleMoveLoginPage}
-              className='text-sm w-min-[130px] mt-5 w-auto h-4 text-text-link'>
+            <button className='text-sm w-min-[130px] mt-5 w-auto h-4 text-text-link'>
               <span>이미 계정이 있으신가요?</span>
             </button>
           </div>
