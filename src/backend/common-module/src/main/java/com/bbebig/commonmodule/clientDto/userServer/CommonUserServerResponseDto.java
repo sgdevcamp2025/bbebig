@@ -13,4 +13,17 @@ public class CommonUserServerResponseDto {
 		private Long memberId;
 		private PresenceType globalStatus;
 	}
+
+	@Data
+	@Builder
+	public static class MemberInfoResponseDto {
+		private Long memberId;
+		private String name;
+		private String nickname;
+		private String email;
+		private String avatarUrl;
+		private String bannerUrl;
+		private String introduce;
+		private PresenceType globalStatus;
+	}
 }
