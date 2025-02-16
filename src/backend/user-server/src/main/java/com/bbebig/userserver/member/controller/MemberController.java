@@ -104,7 +104,7 @@ public class MemberController {
             @ApiResponse(responseCode = "200", description = "멤버 조회 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "", content = @Content)
     })
-    @GetMapping("/{memberId}")
+    @GetMapping("/{memberId}/info")
     public CommonResponse<MemberInfoResponseDto> getMemberInfo(
             @PathVariable Long memberId
     ) {
