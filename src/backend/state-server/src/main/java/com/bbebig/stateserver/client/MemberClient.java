@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "user-server")
 public interface MemberClient {
 
-	@GetMapping("/members/{memberId}/global-status")
+	@GetMapping("/feign/members/{memberId}/global-status")
 	MemberGlobalStatusResponseDto getMemberGlobalStatus(@PathVariable(value = "memberId") Long memberId);
 }
