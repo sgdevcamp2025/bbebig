@@ -6,7 +6,7 @@ import cookie from '@/utils/cookie'
 import axiosInstance from '../config/axios-instance'
 import { LoginResponseSchema, LoginSchema, RegisterSchema } from '../schema/types/auth'
 
-const BASE_PATH = `/auth-server`
+const BASE_PATH = `/auth-server/auth`
 
 export interface CustomAxiosRequestConfig extends AxiosRequestConfig {
   useAuth?: boolean

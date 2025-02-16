@@ -9,9 +9,7 @@ import { LoginSchema } from '@/apis/schema/types/auth'
 import authService from '@/apis/service/auth'
 import AuthInput from '@/components/auth-input'
 import CustomButton from '@/components/custom-button'
-import { COOKIE_KEYS } from '@/constants/keys'
 import useLoginStore from '@/stores/use-login-store'
-import cookie from '@/utils/cookie'
 
 function LoginPage() {
   const navigate = useNavigate()
@@ -42,19 +40,11 @@ function LoginPage() {
 
   useEffect(() => {
     if (isLogin) {
-      let accessToken = cookie.getCookie(COOKIE_KEYS.ACCESS_TOKEN)
+      setMovePage(true)
 
-      if (!accessToken) {
-        accessToken = localStorage.getItem(COOKIE_KEYS.ACCESS_TOKEN)
-      }
-
-      if (accessToken) {
-        setMovePage(true)
-
-        setTimeout(() => {
-          navigate('/channels/@me', { replace: true })
-        }, 500)
-      }
+      setTimeout(() => {
+        navigate('/channels/@me', { replace: true })
+      }, 500)
     }
   }, [isLogin, navigate])
 

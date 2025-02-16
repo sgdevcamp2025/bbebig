@@ -114,7 +114,7 @@ const serviceService = () => {
     try {
       const response = await axiosInstance.get<
         CommonResponseType<GetChannelIdListInServerResponseSchema>
-      >(`${SERVER_PATH}/${data.serverId}/list/channels`)
+      >(`${SERVER_PATH}/${data.serverId}/list/channel`)
       return response.data
     } catch (error) {
       console.error(error)
