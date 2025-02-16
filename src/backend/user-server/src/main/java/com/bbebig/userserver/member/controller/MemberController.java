@@ -1,8 +1,5 @@
 package com.bbebig.userserver.member.controller;
 
-import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto;
-import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto.MemberGlobalStatusResponseDto;
-import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto.MemberInfoResponseDto;
 import com.bbebig.commonmodule.global.response.code.CommonResponse;
 import com.bbebig.commonmodule.passport.annotation.PassportUser;
 import com.bbebig.commonmodule.proto.PassportProto.Passport;
