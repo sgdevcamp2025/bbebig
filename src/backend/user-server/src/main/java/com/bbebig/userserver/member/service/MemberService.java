@@ -2,6 +2,7 @@ package com.bbebig.userserver.member.service;
 
 import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto;
 import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto.MemberGlobalStatusResponseDto;
+import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto.MemberInfoResponseDto;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.kafka.dto.MemberEventDto;
@@ -141,6 +142,25 @@ public class MemberService {
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         return MemberReadResponseDto.convertToMemberReadResponseDto(member);
+    }
+
+    /**
+     * 멤버 정보 조회 (For Feign Client)
+     */
+    public MemberInfoResponseDto getMemberInfo(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        return MemberInfoResponseDto.builder()
+                .memberId(memberId)
+                .name(member.getName())
+                .nickname(member.getNickname())
+                .email(member.getEmail())
+                .avatarUrl(member.getAvatarUrl())
+                .bannerUrl(member.getBannerUrl())
+                .introduce(member.getIntroduce())
+                .globalStatus(member.getCustomPresenceStatus())
+                .build();
     }
 
     /**
