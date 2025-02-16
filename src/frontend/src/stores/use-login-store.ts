@@ -11,7 +11,8 @@ interface LoginStore {
 
 const getInitialLoginState = () => {
   if (typeof window === 'undefined') return false
-  return !!cookie.getCookie(COOKIE_KEYS.ACCESS_TOKEN)
+  const accessToken = cookie.getCookie(COOKIE_KEYS.ACCESS_TOKEN)
+  return !!accessToken
 }
 
 const useLoginStore = create<LoginStore>()((set) => ({

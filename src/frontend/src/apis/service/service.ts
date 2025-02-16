@@ -1,6 +1,4 @@
-import SERVER_PORT from '@/constants/base-port'
-
-import getAxiosInstance from '../config/axios-instance'
+import axiosInstance from '../config/axios-instance'
 import { CommonResponseType } from '../schema/types/common'
 import type {
   CreateCategoryRequestSchema,
@@ -46,11 +44,9 @@ import type {
   WithdrawServerResponseSchema
 } from '../schema/types/service'
 
-const SERVER_PATH = `/servers`
-const CHANNEL_PATH = `/channels`
-const CATEGORY_PATH = `/categories`
-
-const axiosInstance = getAxiosInstance(SERVER_PORT.SERVICE)
+const SERVER_PATH = `/service-server/servers`
+const CHANNEL_PATH = `/service-server/channels`
+const CATEGORY_PATH = `/service-server/categories`
 
 const serviceService = () => {
   // Server API

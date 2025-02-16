@@ -10,25 +10,25 @@ import ChannelCreateModal from '../channel-create-modal'
 import SettingModal from '../setting-modal'
 
 interface ServerSideBarProps {
-  serverId: number
-  serverName?: string
-  categories?: CategoryInfo[]
+  serverName: string
+  categories: CategoryInfo[]
   selectedChannelId?: string
-  onChannelSelect?: (channelId: number) => void
+  onChannelSelect: (channelId: number) => void
 }
 
 function ServerSideBar({
   serverName,
   categories = [],
-  serverId,
   selectedChannelId,
   onChannelSelect
 }: ServerSideBarProps) {
-  const [serverMenuOpen, setServerMenuOpen] = useState(false)
   const [expandedCategories, setExpandedCategories] = useState<number[]>([])
   const [selectedChannel, setSelectedChannel] = useState<{ id: number; name: string } | null>(null)
+
+  const [serverMenuOpen, setServerMenuOpen] = useState(false)
   const [channelCreateModalOpen, setChannelCreateModalOpen] = useState(false)
   const [categoryCreateModalOpen, setCategoryCreateModalOpen] = useState(false)
+
   const serverMenuRef = useRef<HTMLDivElement>(null)
   const selectCategoryId = useRef<number | null>(null)
 
@@ -86,7 +86,7 @@ function ServerSideBar({
   ] as const
 
   return (
-    <div className='w-60 bg-discord-gray-700 h-screen flex flex-col'>
+    <div className='w-60 bg-discord-gray-700 h-[calc(100%-52px)] flex flex-col'>
       <button
         type='button'
         onClick={handleCloseServerMenu}
@@ -175,7 +175,7 @@ function ServerSideBar({
                 onClick={(e) => {
                   e.stopPropagation()
                   selectCategoryId.current = category.categoryId
-                  setCategoryCreateModalOpen(true)
+                  setChannelCreateModalOpen(true)
                 }}>
                 <Plus className='w-4 h-4 text-discord-font-color-muted' />
               </button>
@@ -246,13 +246,13 @@ function ServerSideBar({
         onClose={() => setSelectedChannel(null)}
       />
       <ChannelCreateModal
+        selectCategoryId={selectCategoryId.current}
         isOpen={channelCreateModalOpen}
         onClose={() => setChannelCreateModalOpen(false)}
       />
       <CategoryCreateModal
         isOpen={categoryCreateModalOpen}
         onClose={() => setCategoryCreateModalOpen(false)}
-        serverId={serverId}
       />
     </div>
   )

@@ -15,37 +15,25 @@ export const PrimaryStatusSidebar: Story = {
   args: {
     channelUserList: [
       {
-        id: '1',
-        name: '김예지',
-        avatarUrl: 'https://via.placeholder.com/150',
-        bannerUrl: 'https://via.placeholder.com/150',
-        customPresenceStatus: 'ONLINE',
-        introduction: '안뇽',
-        introductionEmoji: '👋',
-        email: 'yeji@gmail.com',
-        includeChannelId: [1, 2, 3]
+        memberId: 1,
+        nickname: '김예지',
+        profileImageUrl: 'https://via.placeholder.com/150',
+        joinAt: '2024-01-01',
+        customPresenceStatus: 'ONLINE'
       },
       {
-        id: '2',
-        name: '이지형',
-        avatarUrl: 'https://via.placeholder.com/150',
-        bannerUrl: 'https://via.placeholder.com/150',
-        customPresenceStatus: 'NOT_DISTURB',
-        introduction: '하이루',
-        introductionEmoji: '👋',
-        email: 'jihyung@gmail.com',
-        includeChannelId: [1, 2, 3]
+        memberId: 2,
+        nickname: '이지형',
+        profileImageUrl: 'https://via.placeholder.com/150',
+        joinAt: '2024-01-01',
+        customPresenceStatus: 'NOT_DISTURB'
       },
       {
-        id: '2',
-        name: '이소은',
-        avatarUrl: 'https://via.placeholder.com/150',
-        bannerUrl: 'https://via.placeholder.com/150',
-        customPresenceStatus: 'OFFLINE',
-        introduction: '뇽안',
-        introductionEmoji: '👋',
-        email: 'soeun@gmail.com',
-        includeChannelId: [1, 2, 3]
+        memberId: 3,
+        nickname: '이소은',
+        profileImageUrl: 'https://via.placeholder.com/150',
+        joinAt: '2024-01-01',
+        customPresenceStatus: 'OFFLINE'
       }
     ]
   }

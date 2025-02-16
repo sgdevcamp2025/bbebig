@@ -7,7 +7,8 @@ import { CustomPresenceStatus } from '@/types/user'
 import StatusIcon from '../status-icon'
 
 type Props = {
-  avatarUrl: string
+  name: string
+  avatarUrl: string | null
   statusColor: CSSProperties['color']
   status?: CustomPresenceStatus
 } & Omit<ComponentProps<typeof StatusIcon>, 'status'>
@@ -30,16 +31,20 @@ const statusWrapperSize = cva('rounded-full flex items-center justify-center', {
   }
 })
 
-function Avatar({ avatarUrl, size, statusColor = 'black', status }: Props) {
+function Avatar({ name, avatarUrl, size, statusColor = 'black', status }: Props) {
   return (
     <div
       aria-label='avatar'
       className={cn(avatarSize({ size }), 'relative')}>
-      <img
-        src={avatarUrl}
-        alt='avatar'
-        className={avatarSize({ size })}
-      />
+      {avatarUrl ? (
+        <img
+          src={avatarUrl}
+          alt='avatar'
+          className={avatarSize({ size })}
+        />
+      ) : (
+        <div className={avatarSize({ size })}>{name.slice(0, 2)}</div>
+      )}
       {status ? (
         <div
           className={cn(statusWrapperSize({ size }), 'absolute bottom-0 right-0')}
