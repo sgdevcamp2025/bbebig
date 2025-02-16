@@ -43,6 +43,13 @@ spring:
 
       routes:
         # Auth Server 라우팅
+        - id: auth-server-public
+          uri: lb://auth-server
+          predicates:
+            - Path=/auth-server/auth/login,/auth-server/auth/register,/auth-server/auth/health-check,/auth-server/auth/mobile-login
+          filters:
+            - StripPrefix=1
+
         - id: auth-server
           uri: lb://auth-server
           predicates:
@@ -50,13 +57,6 @@ spring:
           filters:
             - name: PassportFilter
             - StripPrefix=1
-
-        - id: auth-server-public
-          uri: lb://auth-server
-          predicates:
-            - Path=/auth-server/auth/login,/auth-server/auth/register,/auth-server/auth/health-check,/auth-server/auth/mobile-login
-          filters:
-              - StripPrefix=1
 
         # User Server 라우팅
         - id: user-server
