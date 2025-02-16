@@ -18,14 +18,18 @@ spring:
     gateway:
       globalcors:
         cors-configurations:
-          '[/**]': # 모든 요청에 대해 CORS 적용, TODO: 이후 변경
+          '[/**]': # 모든 요청에 대해 CORS 적용
             allowedOrigins:
-              - "http://localhost:5173"
               - "https://dev-fe.d2q3qyb0bos3b9.amplifyapp.com"
+              - "http://localhost:5173"
+              - "http://localhost:5174"
+              - "http://localhost:5175"
+              - "http://localhost:5176"
             allowedMethods:
               - GET
               - POST
               - PUT
+              - PATCH
               - DELETE
               - OPTIONS
             allowedHeaders: "*"
@@ -50,7 +54,7 @@ spring:
         - id: auth-server-public
           uri: lb://auth-server
           predicates:
-            - Path=/auth-server/login,/auth-server/register,/auth-server/health-check
+            - Path=/auth-server/auth/login,/auth-server/auth/register,/auth-server/auth/health-check,/auth-server/auth/mobile-login
           filters:
               - StripPrefix=1
 
