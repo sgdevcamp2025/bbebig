@@ -1,7 +1,6 @@
 package com.bbebig.serviceserver.server.service;
 
 import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto;
-import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto;
 import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto.MemberInfoResponseDto;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
@@ -22,6 +21,7 @@ import com.bbebig.serviceserver.global.kafka.KafkaProducerService;
 import com.bbebig.serviceserver.server.dto.request.ServerCreateRequestDto;
 import com.bbebig.serviceserver.server.dto.request.ServerUpdateRequestDto;
 import com.bbebig.serviceserver.server.dto.response.*;
+import com.bbebig.serviceserver.server.dto.response.ServerReadResponseDto.ServerMemberInfo;
 import com.bbebig.serviceserver.server.dto.response.ServerReadResponseDto.ServerMemberInfoResponseDto;
 import com.bbebig.serviceserver.server.entity.RoleType;
 import com.bbebig.serviceserver.server.entity.Server;
@@ -126,6 +126,7 @@ public class ServerService {
         channelMemberRepository.save(streamChannelMember);
 
         makeServerChannelListCache(server.getId());
+        makeServerMemberListCache(server.getId());
         // 방장이 참여하고 있는 서버 목록 캐시 데이터에 추가
         memberRedisRepository.addMemberServerToSet(memberId, server.getId());
 
@@ -282,7 +283,7 @@ public class ServerService {
      * 만약 Redis 에 캐싱된 데이터가 없다면 캐싱하는 로직을 포함
      */
     @Transactional
-    public CommonServiceServerClientResponseDto.ServerMemberListResponseDto getServerMemberList(Long serverId) {
+    public CommonServiceServerClientResponseDto.ServerMemberListResponseDto getServerMemberIdList(Long serverId) {
         Server server = serverRepository.findById(serverId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
 
@@ -295,6 +296,21 @@ public class ServerService {
                 .serverId(serverId)
                 .ownerId(server.getOwnerId())
                 .memberIdList(serverMemberList.stream().toList())
+                .build();
+    }
+
+    public ServerMemberInfoResponseDto getServerMemberInfo(Long serverId) {
+        List<ServerMember> serverMember = serverMemberRepository.findAllByServerId(serverId);
+        if (serverMember.isEmpty()) {
+            throw new ErrorHandler(ErrorStatus.SERVER_MEMBERS_NOT_FOUND);
+        }
+        return ServerMemberInfoResponseDto.builder()
+                .serverId(serverId)
+                .serverMemberInfoList(
+                        serverMember.stream()
+                                .map(ServerReadResponseDto::convertToServerMemberInfo)
+                                .collect(Collectors.toList())
+                )
                 .build();
     }
 

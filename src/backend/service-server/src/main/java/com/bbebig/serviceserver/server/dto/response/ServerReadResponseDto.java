@@ -23,8 +23,6 @@ public class ServerReadResponseDto {
     private final Long ownerId;
     private final String serverImageUrl;
     private final List<CategoryInfo> categoryInfoList;
-    private final List<ServerMemberInfo> serverMemberInfoList;
-
 
 
     @Data

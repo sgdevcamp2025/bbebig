@@ -5,7 +5,6 @@ import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClient
 import com.bbebig.commonmodule.global.response.code.CommonResponse;
 import com.bbebig.commonmodule.passport.annotation.PassportUser;
 import com.bbebig.commonmodule.proto.PassportProto.Passport;
-import com.bbebig.serviceserver.global.kafka.KafkaProducerService;
 import com.bbebig.serviceserver.server.dto.request.*;
 import com.bbebig.serviceserver.server.dto.response.*;
 import com.bbebig.serviceserver.server.dto.response.ServerReadResponseDto.ServerMemberInfoResponseDto;
@@ -28,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 public class ServerController {
 
     private final ServerService serverService;
-    private final KafkaProducerService kafkaProducerService;
 
     @Operation(summary = "서버 생성", description = "서버를 생성합니다.")
     @ApiResponses(value = {
@@ -129,17 +127,25 @@ public class ServerController {
         return CommonResponse.onSuccess(serverService.getServerChannelList(serverId));
     }
 
-    @Operation(summary = "서버에 속해있는 멤버 목록 조회 (For FeignClient)", description = "서버에 속해있는 멤버 목록을 조회합니다.")
+    @GetMapping("/{serverId}/list/members")
+    public CommonResponse<ServerMemberInfoResponseDto> getServerMemberInfo(
+            @PathVariable Long serverId
+    ) {
+        log.info("[Service] 서버에 속해있는 멤버 목록 조회 요청: serverId = {}", serverId);
+        return CommonResponse.onSuccess(serverService.getServerMemberInfo(serverId));
+    }
+
+    @Operation(summary = "서버에 속해있는 멤버 아이디 조회 (For FeignClient)", description = "서버에 속해있는 멤버 목록을 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "서버에 속해있는 멤버 목록 조회 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "", content = @Content)
     })
-    @GetMapping("/{serverId}/list/member")
+    @GetMapping("/feign/{serverId}/list/members")
     public CommonResponse<CommonServiceServerClientResponseDto.ServerMemberListResponseDto> getServerMemberList(
             @PathVariable Long serverId
     ) {
-        log.info("[Service] 서버에 속해있는 멤버 목록 조회 요청: serverId = {}", serverId);
-        return CommonResponse.onSuccess(serverService.getServerMemberList(serverId));
+        log.info("[Service] 서버에 속해있는 멤버 아이디 목록 조회 요청: serverId = {}", serverId);
+        return CommonResponse.onSuccess(serverService.getServerMemberIdList(serverId));
     }
 
     @Operation(summary = "멤버별로 속해있는 서버 목록 조회 (For FeignClient)", description = "멤버별로 속해있는 서버 목록 조회합니다.")
@@ -147,7 +153,7 @@ public class ServerController {
             @ApiResponse(responseCode = "200", description = "멤버별로 속해있는 서버 목록 조회 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "", content = @Content)
     })
-    @GetMapping("/members/{memberId}/list")
+    @GetMapping("/feign/members/{memberId}/list")
     public CommonResponse<CommonServiceServerClientResponseDto.MemberServerListResponseDto> getMemberServerList(
             @PathVariable Long memberId
     ) {
@@ -155,12 +161,12 @@ public class ServerController {
         return CommonResponse.onSuccess(serverService.getMemberServerList(memberId));
     }
 
-    @Operation(summary = "서버별 채널 마지막 방문 정보 조회", description = "서버별 채널 마지막 방문 정보를 조회합니다.")
+    @Operation(summary = "서버별 채널 마지막 방문 정보 조회 (For FeignClient", description = "서버별 채널 마지막 방문 정보를 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "채널 마지막 방문 정보 조회 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "", content = @Content)
     })
-    @GetMapping("/{serverId}/channels/info/member/{memberId}")
+    @GetMapping("/feign/{serverId}/channels/info/member/{memberId}")
     public CommonResponse<ServerLastInfoResponseDto> getServerLastInfo(
             @PathVariable Long serverId,
             @PathVariable Long memberId
