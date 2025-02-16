@@ -11,7 +11,6 @@ export interface CategoryInfo {
 
 export interface ChannelInfo {
   channelId: number
-  categoryId: number
   position: number
   channelName: string
   channelType: ChannelType

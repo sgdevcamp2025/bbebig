@@ -8,6 +8,7 @@ import {
   GetChannelIdListInServerResponseSchema,
   GetServersResponseSchema
 } from '@/apis/schema/types/service'
+import { GetUserResponseSchema } from '@/apis/schema/types/user'
 import Avatar from '@/components/avatar'
 import LoadingModal from '@/components/loading-modal'
 import ServerIcon from '@/components/server-icon'
@@ -20,17 +21,6 @@ import ProfileCard from './components/profile-card'
 import ProfileStatusButton from './components/profile-status-button'
 import ServerCreateModal from './components/server-create-modal'
 import SettingModal, { SettingModalTabsID } from './components/setting-modal'
-const mockUser = {
-  id: 1,
-  name: '서정우',
-  email: 'test@test.com',
-  customPresenceStatus: 'ONLINE',
-  introduction: '안녕하세요',
-  introductionEmoji: '👋',
-  avatarUrl: '/image/common/default-avatar.png',
-  status: 'ONLINE',
-  statusColor: 'black'
-} as const
 
 const Inner = () => {
   const location = useLocation()
@@ -53,22 +43,42 @@ const Inner = () => {
       servers: [
         {
           serverId: 1,
-          serverName: '서정우의 서버',
+          serverName: '테1 서버',
           serverImageUrl: null
         },
         {
           serverId: 2,
-          serverName: '서정우의 서버2',
+          serverName: '테2 서버2',
           serverImageUrl: null
         },
         {
           serverId: 3,
-          serverName: '서정우의 서버3',
+          serverName: '테3 서버3',
           serverImageUrl: null
         }
       ] as GetServersResponseSchema['servers']
     }
   }
+
+  // TODO: 유저 정보 조회
+  // const { data: userData } = useSuspenseQuery({
+  //   queryKey: ['user', userId],
+  //   queryFn: () => userService.getUser(userId)
+  // })
+
+  const userData = {
+    result: {
+      user: {
+        id: 1,
+        name: '서정우',
+        email: 'seojungwoo@gmail.com',
+        avatarUrl: '/image/common/default-avatar.png',
+        bannerUrl: '/image/common/default-background.png',
+        customPresenceStatus: 'ONLINE',
+        introduce: { text: '안녕하세요', emoji: '👋' }
+      }
+    }
+  } satisfies GetUserResponseSchema
 
   const { muted, toggleAudioInputMute, toggleAudioOutputMute } = useMediaSettingsStore(
     useShallow((state) => ({
@@ -221,22 +231,23 @@ const Inner = () => {
               onClick={handleClickProfile}
               className='flex gap-2 flex-1 hover:bg-gray-80 rounded-md p-1 group'>
               <Avatar
-                avatarUrl={mockUser.avatarUrl}
+                name={userData.result.user.name}
+                avatarUrl={userData.result.user.avatarUrl}
                 size='sm'
-                status={mockUser.status}
-                statusColor={mockUser.statusColor}
+                status={userData.result.user.customPresenceStatus}
+                statusColor={'black'}
               />
               <div className='flex flex-col'>
                 <span className='text-text-normal text-left text-sm font-medium text-white leading-[18px]'>
-                  {mockUser.name}
+                  {userData.result.user.name}
                 </span>
                 <div className='h-[13px] overflow-hidden'>
                   <div className='flex flex-col h-[13px] leading-[13px] group-hover:translate-y-[-100%] transition-all duration-300'>
                     <span className='text-[13px] text-left text-gray-10'>
-                      {statusKo[mockUser.status]} 표시
+                      {statusKo[userData.result.user.customPresenceStatus]} 표시
                     </span>
                     <span className='text-[13px] text-left text-gray-10'>
-                      {mockUser.email.split('@')[0]}
+                      {userData.result.user.email.split('@')[0]}
                     </span>
                   </div>
                 </div>

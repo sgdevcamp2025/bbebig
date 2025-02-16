@@ -66,6 +66,7 @@ function StatusSideBar({ channelUserList }: StatusSideBarProps) {
                   className='flex items-center gap-2 cursor-pointer hover:bg-discord-gray-600 rounded p-1'
                   onClick={(event) => handleClickUser(user, event)}>
                   <Avatar
+                    name={user.nickname}
                     avatarUrl={user.profileImageUrl ?? ''}
                     size='sm'
                     status={user.customPresenceStatus}
@@ -90,6 +91,7 @@ function StatusSideBar({ channelUserList }: StatusSideBarProps) {
                   className='flex items-center gap-2 cursor-pointer hover:bg-discord-gray-600 rounded p-1'
                   onClick={(event) => handleClickUser(user, event)}>
                   <Avatar
+                    name={user.nickname}
                     avatarUrl={user.profileImageUrl ?? ''}
                     size='sm'
                     status={user.customPresenceStatus}

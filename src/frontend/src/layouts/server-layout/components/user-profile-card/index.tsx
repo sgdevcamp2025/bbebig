@@ -67,6 +67,7 @@ export function Inner({ user, onSendFriendRequest, onMoreButtonClick }: InnerPro
       <div className='relative p-4'>
         <div className='flex justify-center items-center absolute top-[-40px]'>
           <Avatar
+            name={user.name}
             status={user.customPresenceStatus}
             avatarUrl={user.avatarUrl}
             size='lg'
