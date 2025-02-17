@@ -1,4 +1,4 @@
-package com.bbebig.commonmodule.clientDto.userServer;
+package com.bbebig.userserver.global.feign.clientDto;
 
 
 import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-public class CommonUserServerResponseDto {
+public class UserFeignResponseDto {
 
 	@Data
 	@Builder

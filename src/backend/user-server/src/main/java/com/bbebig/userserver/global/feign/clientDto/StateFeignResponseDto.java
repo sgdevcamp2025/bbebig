@@ -1,4 +1,4 @@
-package com.bbebig.commonmodule.clientDto.stateServer;
+package com.bbebig.userserver.global.feign.clientDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-public class CommonStateServerClientResponseDto {
+public class StateFeignResponseDto {
 
 	@Data
 	@Builder

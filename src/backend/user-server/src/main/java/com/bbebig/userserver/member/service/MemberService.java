@@ -1,7 +1,5 @@
 package com.bbebig.userserver.member.service;
 
-import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto.MemberGlobalStatusResponseDto;
-import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto.MemberInfoResponseDto;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.kafka.dto.MemberEventDto;
@@ -10,6 +8,7 @@ import com.bbebig.commonmodule.kafka.dto.notification.NotificationEventType;
 import com.bbebig.userserver.friend.entity.Friend;
 import com.bbebig.userserver.friend.entity.FriendStatus;
 import com.bbebig.userserver.friend.repository.FriendRepository;
+import com.bbebig.userserver.global.feign.clientDto.UserFeignResponseDto.*;
 import com.bbebig.userserver.member.dto.request.MemberPresenceUpdateRequestDto;
 import com.bbebig.userserver.member.dto.request.MemberUpdateRequestDto;
 import com.bbebig.userserver.member.dto.response.MemberDeleteResponseDto;

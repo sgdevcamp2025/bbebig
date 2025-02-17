@@ -1,6 +1,5 @@
 package com.bbebig.userserver.global.feign;
 
-import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto;
 import com.bbebig.commonmodule.global.response.code.CommonResponse;
 import com.bbebig.userserver.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static com.bbebig.userserver.global.feign.clientDto.UserFeignResponseDto.*;
 
 @Slf4j
 @RestController
@@ -30,7 +31,7 @@ public class FeignController {
 			@ApiResponse(responseCode = "400", description = "", content = @Content)
 	})
 	@GetMapping("/members/{memberId}")
-	public CommonResponse<CommonUserServerResponseDto.MemberInfoResponseDto> getMemberInfo(
+	public CommonResponse<MemberInfoResponseDto> getMemberInfo(
 			@PathVariable Long memberId
 	) {
 		log.info("[Member] 멤버 정보 조회 요청: memberId = {}", memberId);
@@ -43,7 +44,7 @@ public class FeignController {
 			@ApiResponse(responseCode = "400", description = "", content = @Content)
 	})
 	@GetMapping("/members/{memberId}/global-status")
-	public CommonResponse<CommonUserServerResponseDto.MemberGlobalStatusResponseDto> getMemberGlobalStatus(
+	public CommonResponse<MemberGlobalStatusResponseDto> getMemberGlobalStatus(
 			@PathVariable Long memberId
 	) {
 		log.info("[Member] 멤버 전역 상태 조회 요청: memberId = {}", memberId);
