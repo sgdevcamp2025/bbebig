@@ -15,7 +15,7 @@ public class MemberRedisKeys {
 	private static final String MEMBER_SERVER_LIST_KEY_SUFFIX = ":serverList";
 	private static final String MEMBER_FRIEND_LIST_KEY_SUFFIX = ":friendList";
 
-	private static final String CHANNEL_LAST_INFO_KEY_SUFFIX = ":channelLastInfo";
+	private static final String SERVER_LAST_INFO_KEY_SUFFIX = ":serverLastInfo";
 
 
 	/**
@@ -72,21 +72,19 @@ public class MemberRedisKeys {
 	}
 
 	/**
-	 * Key pattern: "member:{memberId}:channelLastInfo"
-	 * Type: Hash
-	 * Field: serverId (Long)
-	 * Value: JSON (ServerChannelLastInfo)
-	 * TTL: 3일 (72시간)
+	 * Key pattern: "member:{memberId}:serverLastInfo"
+	 * Type: String
+	 * Value: JSON (예: ServerLastInfo)
+	 * TTL: none (만료 없이 유지. 추후에 설정)
 	 * Used by: State Server, Service Server, Push Server
 	 *
-	 * 예시 Key: member:100:channelLastInfo
-	 * 해당 Hash는 멤버가 참여한 채널의 마지막 정보를 저장.
+	 * 예시 Key: member:100:serverLastInfo
+	 * 해당 String은 멤버의 마지막 서버 정보를 JSON 형태로 저장.
+	 * ex) SET member:100:serverLastInfo
 	 *
-	 * @param memberId 멤버 ID
-	 * @return "member:{memberId}:channelLastInfo"
 	 */
-	public static String getChannelLastInfoKey(Long memberId) {
-		return MEMBER_KEY_PREFIX + memberId + CHANNEL_LAST_INFO_KEY_SUFFIX;
+	public static String getServerLastInfoKey(Long serverId) {
+		return MEMBER_KEY_PREFIX + serverId + SERVER_LAST_INFO_KEY_SUFFIX;
 	}
 
 	/**

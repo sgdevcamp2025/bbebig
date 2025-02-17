@@ -340,6 +340,7 @@ public class ServerService {
                 .build();
     }
 
+    @Transactional
     public ServerLastInfo getServerLastInfo(Long memberId, Long serverId) {
         Server server = serverRepository.findById(serverId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
@@ -347,8 +348,8 @@ public class ServerService {
         ServerMember serverMember = serverMemberRepository.findByMemberIdAndServer(memberId, server)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_MEMBERS_NOT_FOUND));
 
-        if (memberRedisRepository.existServerChannelLastInfo(memberId, serverId)) {
-            return memberRedisRepository.getServerChannelLastInfo(memberId, serverId);
+        if (memberRedisRepository.existsServerLastInfo(memberId, serverId)) {
+            return memberRedisRepository.getServerLastInfo(memberId, serverId);
         }
 
         ServerChannelListResponseDto serverChannelList = getServerChannelList(serverId);
@@ -365,7 +366,7 @@ public class ServerService {
                 .build();
 
         // 레디스에 캐싱
-        memberRedisRepository.saveServerChannelLastInfo(memberId, serverId, lastInfo);
+        memberRedisRepository.saveServerLastInfo(memberId, serverId, lastInfo);
 
         return lastInfo;
     }
