@@ -1,82 +1,84 @@
 package com.bbebig.searchserver.global.repository;
 
 import com.bbebig.commonmodule.redis.domain.ServerMemberStatus;
-import com.bbebig.commonmodule.redis.repository.ServerRedisRepository;
 import com.bbebig.commonmodule.redis.util.ServerRedisKeys;
 import com.bbebig.searchserver.domain.history.domain.ChannelChatMessage;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SetOperations;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class ServerRedisRepositoryImpl implements ServerRedisRepository {
+public class ServerRedisRepositoryImpl implements com.bbebig.commonmodule.redis.repository.ServerRedisRepository {
 
-	private final RedisTemplate<String, Object> redisTemplate;
+	// Long (Set) 전용
+	private final RedisTemplate<String, Long> redisSetTemplate;
+	private SetOperations<String, Long> setOperations;
 
-	private static final int MAX_CACHE_SIZE = 300;
+	// ServerMemberStatus (Hash) 전용
+	private final RedisTemplate<String, ServerMemberStatus> redisServerStatusTemplate;
+	private HashOperations<String, Long, ServerMemberStatus> hashOperations;
 
-	// TODO : ConvertToLong 이 잘 작동하는지, 문제 생긴다면 이 부분일 가능성이 높으니 체크하기
+	// ChannelChatMessage (List) 전용
+	private final RedisTemplate<String, ChannelChatMessage> redisChannelChatMessageTemplate;
+	private ListOperations<String, ChannelChatMessage> listOperations;
+
+	private static final int MAX_CACHE_SIZE = 100;
+
+	@PostConstruct
+	public void initRedisOps() {
+		this.setOperations = redisSetTemplate.opsForSet();
+		this.hashOperations = redisServerStatusTemplate.opsForHash();
+		this.listOperations = redisChannelChatMessageTemplate.opsForList();
+	}
 
 	/**
-	 * 서버에 참여하고 있는 멤버 목록을 Hash 구조로 저장
+	 * 서버에 참여하고 있는 멤버 목록을 Set 구조로 저장
 	 * ex) server:{serverId}:serverMemberList => Set<MemberId>
 	 */
 	@Override
 	public void saveServerMemberSet(Long serverId, List<Long> memberIdList) {
 		String key = ServerRedisKeys.getServerMemberListKey(serverId);
-		redisTemplate.opsForSet().add(key, memberIdList.toArray());
+		setOperations.add(key, memberIdList.toArray(new Long[0]));
 	}
 
-
-	// 서버에 참여중인 멤버 목록에 멤버 추가
 	@Override
 	public void addServerMemberToSet(Long serverId, Long memberId) {
 		String key = ServerRedisKeys.getServerMemberListKey(serverId);
-		redisTemplate.opsForSet().add(key, memberId);
+		setOperations.add(key, memberId);
 	}
 
-	// 서버에 참여중인 멤버 목록에서 멤버 삭제
 	@Override
 	public void removeServerMemberFromSet(Long serverId, Long memberId) {
 		String key = ServerRedisKeys.getServerMemberListKey(serverId);
-		redisTemplate.opsForSet().remove(key, memberId);
+		setOperations.remove(key, memberId);
 	}
 
-	// 서버별 멤버 목록이 존재하는지 확인
 	@Override
 	public boolean existsServerMemberList(Long serverId) {
 		String key = ServerRedisKeys.getServerMemberListKey(serverId);
-		return Boolean.TRUE.equals(redisTemplate.hasKey(key));
+		return Boolean.TRUE.equals(redisSetTemplate.hasKey(key));
 	}
 
-	// 서버에 참여중인 멤버 목록 반환
 	@Override
 	public Set<Long> getServerMemberList(Long serverId) {
 		String key = ServerRedisKeys.getServerMemberListKey(serverId);
-		Set<Object> memberSet = redisTemplate.opsForSet().members(key);
-		if (memberSet == null) {
-			return Set.of();
-		}
-		return memberSet.stream()
-				.map(this::convertToLong)
-				.filter(Objects::nonNull)
-				.collect(Collectors.toSet());
+		return setOperations.members(key);
 	}
 
-	// 서버 삭제에 따른 서버별 멤버 목록 삭제
 	@Override
 	public void deleteServerMemberList(Long serverId) {
 		String key = ServerRedisKeys.getServerMemberListKey(serverId);
-		redisTemplate.delete(key);
+		redisSetTemplate.delete(key);
 	}
 
 	/**
@@ -86,159 +88,121 @@ public class ServerRedisRepositoryImpl implements ServerRedisRepository {
 	@Override
 	public void saveServerMemberPresenceStatus(Long serverId, Long memberId, ServerMemberStatus status) {
 		String key = ServerRedisKeys.getServerMemberPresenceStatusKey(serverId);
-		redisTemplate.opsForHash().put(key, memberId, status);
+		hashOperations.put(key, memberId, status);
 	}
 
-	// 서버별 멤버 상태 정보 삭제
 	@Override
 	public void removeServerMemberPresenceStatus(Long serverId, Long memberId) {
 		String key = ServerRedisKeys.getServerMemberPresenceStatusKey(serverId);
-		redisTemplate.opsForHash().delete(key, memberId);
+		hashOperations.delete(key, memberId);
 	}
 
-	// 서버별 멤버 상태 정보 조회
 	@Override
 	public boolean existsServerMemberPresenceStatus(Long serverId) {
 		String key = ServerRedisKeys.getServerMemberPresenceStatusKey(serverId);
-		return Boolean.TRUE.equals(redisTemplate.hasKey(key));
+		return Boolean.TRUE.equals(redisServerStatusTemplate.hasKey(key));
 	}
 
-	// 서버별 멤버 상태 정보 조회
 	@Override
 	public ServerMemberStatus getServerMemberStatus(Long serverId, Long memberId) {
 		String key = ServerRedisKeys.getServerMemberPresenceStatusKey(serverId);
-		Object obj = redisTemplate.opsForHash().get(key, memberId);
-		if (obj instanceof ServerMemberStatus) {
-			return (ServerMemberStatus) obj;
-		}
-		return null;
+		return hashOperations.get(key, memberId);
 	}
 
-	// 서버별 모든 멤버 상태 정보 조회
 	@Override
 	public List<ServerMemberStatus> getAllServerMemberStatus(Long serverId) {
 		String key = ServerRedisKeys.getServerMemberPresenceStatusKey(serverId);
-		List<Object> statusList = redisTemplate.opsForHash().values(key);
-		return statusList.stream()
-				.filter(obj -> obj instanceof ServerMemberStatus)
-				.map(obj -> (ServerMemberStatus) obj)
-				.collect(Collectors.toList());
+		return hashOperations.values(key);
 	}
 
-	// 서버 삭제에 따른 서버별  멤버 상태 정보 삭제
 	@Override
 	public void deleteServerMemberStatus(Long serverId) {
 		String key = ServerRedisKeys.getServerMemberPresenceStatusKey(serverId);
-		redisTemplate.delete(key);
+		redisServerStatusTemplate.delete(key);
 	}
 
 	/**
-	 * 서버별 채널 목록을 Set 구조로 저장
-	 * ex) serverChannel:{serverId}:channelList => Set<ChannelId>
+	 * 서버에 참여하고 있는 채널 목록을 Set 구조로 저장
+	 * ex) server:{serverId}:channelList => Set<ChannelId>
 	 */
 	@Override
 	public void saveServerChannelSet(Long serverId, List<Long> channelIdList) {
 		String key = ServerRedisKeys.getServerChannelListKey(serverId);
-		redisTemplate.opsForSet().add(key, channelIdList.toArray());
+		setOperations.add(key, channelIdList.toArray(new Long[0]));
 	}
 
 	@Override
 	public void addServerChannelToSet(Long serverId, Long channelId) {
 		String key = ServerRedisKeys.getServerChannelListKey(serverId);
-		redisTemplate.opsForSet().add(key, channelId);
+		setOperations.add(key, channelId);
 	}
 
 	@Override
 	public void removeServerChannelFromSet(Long serverId, Long channelId) {
 		String key = ServerRedisKeys.getServerChannelListKey(serverId);
-		redisTemplate.opsForSet().remove(key, channelId);
+		setOperations.remove(key, channelId);
 	}
 
 	@Override
 	public boolean existsServerChannelList(Long serverId) {
 		String key = ServerRedisKeys.getServerChannelListKey(serverId);
-		return Boolean.TRUE.equals(redisTemplate.hasKey(key));
+		return Boolean.TRUE.equals(redisSetTemplate.hasKey(key));
 	}
 
 	@Override
 	public Set<Long> getServerChannelList(Long serverId) {
 		String key = ServerRedisKeys.getServerChannelListKey(serverId);
-		Set<Object> channelSet = redisTemplate.opsForSet().members(key);
-		if (channelSet == null) {
-			return Set.of();
-		}
-		return channelSet.stream()
-				.map(this::convertToLong)
-				.filter(Objects::nonNull)
-				.collect(Collectors.toSet());
+		return setOperations.members(key);
 	}
 
 	@Override
 	public void deleteServerChannelList(Long serverId) {
 		String key = ServerRedisKeys.getServerChannelListKey(serverId);
-		redisTemplate.delete(key);
+		redisSetTemplate.delete(key);
 	}
 
 	/**
-	 * 채널 메시지를 List 구조로 저장 (최대 300)
+	 * 채널 메시지를 List 구조로 저장 (최대 100)
 	 * ex) channelMessage:{channelId}:messageList => List<ChannelChatMessage>
 	 */
-	public void saveChannelMessage(Long serverId, ChannelChatMessage message) {
-		String key = ServerRedisKeys.getChannelMessageListKey(serverId);
-		redisTemplate.opsForList().leftPush(key, message);
-
-		Long size = redisTemplate.opsForList().size(key);
+	public void saveChannelMessage(Long channelId, ChannelChatMessage message) {
+		String key = ServerRedisKeys.getChannelMessageListKey(channelId);
+		listOperations.leftPush(key, message);
+		Long size = listOperations.size(key);
 		if (size != null && size > MAX_CACHE_SIZE) {
-			redisTemplate.opsForList().trim(key, 0, MAX_CACHE_SIZE - 1);
+			listOperations.trim(key, 0, MAX_CACHE_SIZE - 1);
 		}
 	}
 
 	public void saveChannelMessages(Long channelId, List<ChannelChatMessage> messages) {
 		String key = ServerRedisKeys.getChannelMessageListKey(channelId);
-		redisTemplate.opsForList().leftPushAll(key, messages);
-	}
-
-	public List<ChannelChatMessage> getChannelMessages(Long channelId) {
-		String key = ServerRedisKeys.getChannelMessageListKey(channelId);
-		List<Object> objs = redisTemplate.opsForList().range(key, 0, -1);
-		if (objs == null || objs.isEmpty()) {
-			return new ArrayList<>();
+		listOperations.leftPushAll(key, messages);
+		Long size = listOperations.size(key);
+		if (size != null && size > MAX_CACHE_SIZE) {
+			listOperations.trim(key, 0, MAX_CACHE_SIZE - 1);
 		}
-		return objs.stream()
-				.filter(Objects::nonNull)
-				.map(obj -> (ChannelChatMessage) obj)
-				.collect(Collectors.toList());
 	}
 
-	public boolean existsChannelMessageList(Long channelId) {
+	public List<ChannelChatMessage> getChannelMessageList(Long channelId) {
 		String key = ServerRedisKeys.getChannelMessageListKey(channelId);
-		return Boolean.TRUE.equals(redisTemplate.hasKey(key));
-	}
-
-	public long getUnreadCount(Long channelId, Long lastReadMessageId) {
-		List<ChannelChatMessage> cachedMessageList = getChannelMessages(channelId);
-		return cachedMessageList.stream()
-				.filter(msg -> msg.getId() != null && msg.getId() > lastReadMessageId)
-				.count();
+		return listOperations.range(key, 0, -1);
 	}
 
 	public void deleteChannelMessageList(Long channelId) {
 		String key = ServerRedisKeys.getChannelMessageListKey(channelId);
-		redisTemplate.delete(key);
+		redisChannelChatMessageTemplate.delete(key);
 	}
 
-	// 객체를 Long으로 변환 (내부 메서드)
-	@Override
-	public Long convertToLong(Object obj) {
-		try {
-			if (obj instanceof Long) {
-				return (Long) obj;
-			}
-			return Long.valueOf(obj.toString());
-		} catch (NumberFormatException e) {
-			log.error("convertToLong: 변환 실패, obj={}", obj, e);
-			return null;
-		}
+	public boolean existsChannelMessageList(Long channelId) {
+		String key = ServerRedisKeys.getChannelMessageListKey(channelId);
+		return Boolean.TRUE.equals(redisChannelChatMessageTemplate.hasKey(key));
+	}
+
+	public long getUnreadCount(Long channelId, Long lastReadMessageId) {
+		List<ChannelChatMessage> cachedMessageList = getChannelMessageList(channelId);
+		return cachedMessageList.stream()
+				.filter(msg -> msg.getId() != null && msg.getId() > lastReadMessageId)
+				.count();
 	}
 
 }

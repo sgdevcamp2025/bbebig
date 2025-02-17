@@ -1,5 +1,6 @@
 package com.bbebig.commonmodule.redis.config;
 
+import com.bbebig.commonmodule.redis.domain.ChannelChatMessageDto;
 import com.bbebig.commonmodule.redis.domain.MemberPresenceStatus;
 import com.bbebig.commonmodule.redis.domain.ServerLastInfo;
 import com.bbebig.commonmodule.redis.domain.ServerMemberStatus;

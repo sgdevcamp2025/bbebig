@@ -274,7 +274,7 @@ public class HistoryService {
 		if (!serverRedisRepository.existsChannelMessageList(channelId)) {
 			cacheChannelMessage(channelId);
 		}
-		return serverRedisRepository.getChannelMessages(channelId);
+		return serverRedisRepository.getChannelMessageList(channelId);
 	}
 
 	private void cacheChannelMessage(Long channelId) {
