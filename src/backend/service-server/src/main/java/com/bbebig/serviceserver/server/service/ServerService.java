@@ -1,5 +1,7 @@
 package com.bbebig.serviceserver.server.service;
 
+import com.bbebig.commonmodule.clientDto.ServiceFeignResponseDto.*;
+import com.bbebig.commonmodule.clientDto.UserFeignResponseDto.*;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerActionEventDto;
@@ -15,7 +17,6 @@ import com.bbebig.serviceserver.channel.entity.ChannelType;
 import com.bbebig.serviceserver.channel.repository.ChannelMemberRepository;
 import com.bbebig.serviceserver.channel.repository.ChannelRepository;
 import com.bbebig.serviceserver.global.client.MemberClient;
-import com.bbebig.serviceserver.global.feign.clientDto.UserFeignResponseDto.*;
 import com.bbebig.serviceserver.global.kafka.KafkaProducerService;
 import com.bbebig.serviceserver.server.dto.request.ServerCreateRequestDto;
 import com.bbebig.serviceserver.server.dto.request.ServerUpdateRequestDto;
@@ -36,7 +37,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.bbebig.serviceserver.global.feign.clientDto.ServiceFeignResponseDto.*;
 
 @Service
 @RequiredArgsConstructor

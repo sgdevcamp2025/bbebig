@@ -1,4 +1,4 @@
-package com.bbebig.serviceserver.global.feign.clientDto;
+package com.bbebig.commonmodule.clientDto;
 
 
 import com.bbebig.commonmodule.kafka.dto.model.PresenceType;

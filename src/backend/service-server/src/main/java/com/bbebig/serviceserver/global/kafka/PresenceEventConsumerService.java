@@ -1,9 +1,10 @@
 package com.bbebig.serviceserver.global.kafka;
 
+import com.bbebig.commonmodule.clientDto.ServiceFeignResponseDto;
+import com.bbebig.commonmodule.clientDto.ServiceFeignResponseDto.MemberServerListResponseDto;
 import com.bbebig.commonmodule.kafka.dto.PresenceEventDto;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerEventType;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerMemberPresenceEventDto;
-import com.bbebig.serviceserver.global.feign.clientDto.ServiceFeignResponseDto.MemberServerListResponseDto;
 import com.bbebig.serviceserver.server.service.ServerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
