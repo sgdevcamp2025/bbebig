@@ -31,11 +31,11 @@ public class FeignController {
 			@ApiResponse(responseCode = "400", description = "", content = @Content)
 	})
 	@GetMapping("/members/{memberId}")
-	public CommonResponse<MemberInfoResponseDto> getMemberInfo(
+	public MemberInfoResponseDto getMemberInfo(
 			@PathVariable Long memberId
 	) {
 		log.info("[Member] 멤버 정보 조회 요청: memberId = {}", memberId);
-		return CommonResponse.onSuccess(memberService.getMemberInfo(memberId));
+		return memberService.getMemberInfo(memberId);
 	}
 
 	@Operation(summary = "멤버 전역 상태 조회 (For Feign Client)", description = "멤버 전역 상태를 조회합니다. (For Feign Client)")
@@ -44,10 +44,10 @@ public class FeignController {
 			@ApiResponse(responseCode = "400", description = "", content = @Content)
 	})
 	@GetMapping("/members/{memberId}/global-status")
-	public CommonResponse<MemberGlobalStatusResponseDto> getMemberGlobalStatus(
+	public MemberGlobalStatusResponseDto getMemberGlobalStatus(
 			@PathVariable Long memberId
 	) {
 		log.info("[Member] 멤버 전역 상태 조회 요청: memberId = {}", memberId);
-		return CommonResponse.onSuccess(memberService.getMemberGlobalStatus(memberId));
+		return memberService.getMemberGlobalStatus(memberId);
 	}
 }
