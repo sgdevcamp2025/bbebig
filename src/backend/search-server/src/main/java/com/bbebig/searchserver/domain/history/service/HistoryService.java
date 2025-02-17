@@ -1,5 +1,6 @@
 package com.bbebig.searchserver.domain.history.service;
 
+import com.bbebig.commonmodule.clientDto.ServiceFeignResponseDto.*;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.kafka.dto.ChatMessageDto;
@@ -28,7 +29,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto.*;
 import static com.bbebig.searchserver.domain.history.dto.HistoryResponseDto.*;
 
 @Slf4j
