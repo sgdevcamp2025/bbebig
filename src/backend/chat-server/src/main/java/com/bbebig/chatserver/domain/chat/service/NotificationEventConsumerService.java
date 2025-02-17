@@ -34,6 +34,7 @@ public class NotificationEventConsumerService {
 			}
 		} else {
 			log.error("[Chat] NotificationEventConsumerService: 알려지지 않은 알림 이벤트 타입 수신. NotificationEventDto: {}", notificationEventDto);
+			return;
 		}
 
 
