@@ -2,7 +2,7 @@ import axios from 'axios'
 
 import { SERVER_URL } from '@/constants/env'
 
-import { errorInterceptor, requestInterceptor, responseInterceptor } from './axios-helper'
+import { checkAndSetToken, handleApiError, handleTokenError } from './intercepter'
 
 const axiosInstance = axios.create({
   headers: {
@@ -12,8 +12,10 @@ const axiosInstance = axios.create({
   withCredentials: true
 })
 
-axiosInstance.interceptors.request.use(requestInterceptor)
+axiosInstance.interceptors.request.use(checkAndSetToken, handleApiError)
 
-axiosInstance.interceptors.response.use(responseInterceptor, errorInterceptor)
+axiosInstance.interceptors.response.use((response) => response, handleTokenError)
+
+axiosInstance.interceptors.response.use((response) => response, handleApiError)
 
 export default axiosInstance

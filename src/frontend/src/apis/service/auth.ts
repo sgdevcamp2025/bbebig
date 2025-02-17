@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react'
 import { AxiosRequestConfig } from 'axios'
 
 import { COOKIE_KEYS } from '@/constants/keys'
@@ -5,7 +6,6 @@ import cookie from '@/utils/cookie'
 
 import axiosInstance from '../config/axios-instance'
 import { LoginResponseSchema, LoginSchema, RegisterSchema } from '../schema/types/auth'
-import * as Sentry from '@sentry/react'
 
 const BASE_PATH = `/auth-server/auth`
 
@@ -49,10 +49,20 @@ const authService = () => {
     }
   }
 
+  const refreshToken = async () => {
+    try {
+      const response = await axiosInstance.post(`${BASE_PATH}/refresh`)
+      return response.data
+    } catch (error) {
+      Sentry.captureException(error)
+      throw error
+    }
+  }
   return {
     login,
     register,
-    logout
+    logout,
+    refreshToken
   }
 }
 
