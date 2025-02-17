@@ -23,6 +23,7 @@ public class ServerReadResponseDto {
     private final Long ownerId;
     private final String serverImageUrl;
     private final List<CategoryInfo> categoryInfoList;
+    private final List<ChannelInfo> channelInfoList;
 
 
     @Data
@@ -31,7 +32,6 @@ public class ServerReadResponseDto {
         private Long categoryId;
         private String categoryName;
         private int position;
-        private List<ChannelInfo> channelInfoList;
     }
 
     @Data
@@ -67,15 +67,14 @@ public class ServerReadResponseDto {
                                                                         Map<Long, List<ChannelMember>> channelMemberMap) {
         List<CategoryInfo> categoryInfoList = new ArrayList<>();
 
+        List<ChannelInfo> channelInfoList = new ArrayList<>();
+        for (Channel channel : channelList) {
+            ChannelInfo channelInfo = convertToChannelInfo(channel, channelMemberMap.get(channel.getId()).stream().map(channelMember -> channelMember.getServerMember().getMemberId()).toList());
+            channelInfoList.add(channelInfo);
+        }
+
         for (Category category : categoryList) {
-            List<ChannelInfo> channelInfoList = new ArrayList<>();
-            for (Channel channel : channelList) {
-                if (channel.getCategory().getId().equals(category.getId())) {
-                    ChannelInfo channelInfo = convertToChannelInfo(channel, channelMemberMap.get(channel.getId()).stream().map(channelMember -> channelMember.getServerMember().getMemberId()).toList());
-                    channelInfoList.add(channelInfo);
-                }
-            }
-            CategoryInfo categoryInfo = convertToCategoryInfo(category, channelInfoList);
+            CategoryInfo categoryInfo = convertToCategoryInfo(category);
             categoryInfoList.add(categoryInfo);
         }
 
@@ -85,6 +84,7 @@ public class ServerReadResponseDto {
                 .ownerId(server.getOwnerId())
                 .serverImageUrl(server.getServerImageUrl())
                 .categoryInfoList(categoryInfoList)
+                .channelInfoList(channelInfoList)
                 .build();
     }
 
@@ -100,12 +100,11 @@ public class ServerReadResponseDto {
                 .build();
     }
 
-    public static CategoryInfo convertToCategoryInfo(Category category, List<ChannelInfo> channelInfoList) {
+    public static CategoryInfo convertToCategoryInfo(Category category) {
         return CategoryInfo.builder()
                 .categoryId(category.getId())
                 .categoryName(category.getName())
                 .position(category.getPosition())
-                .channelInfoList(channelInfoList)
                 .build();
     }
 
