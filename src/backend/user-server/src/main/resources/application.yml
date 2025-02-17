@@ -33,14 +33,15 @@ spring:
 
     consumer:
       group-id:
-        channel-chat-event: "${spring.application.name}-channelChatEventGroup"
-        dm-chat-event: "${spring.application.name}-dmChatEventGroup"
-        notification-event: "${spring.application.name}-notificationEventGroup"
-        server-event: "${spring.application.name}-serverEventGroup"
-        channel-event: "${spring.application.name}-channelEventGroup"
-        connection-event: "${spring.application.name}-connectionEventGroup"
-        presence-event: "${spring.application.name}-presenceEventGroup"
-        member-event: "${spring.application.name}-memberEventGroup"
+        channel-chat-event: "${spring.application.name}-channelChatEventGroup-${INSTANCE_ID}"
+        dm-chat-event: "${spring.application.name}-dmChatEventGroup-${INSTANCE_ID}"
+        notification-event: "${spring.application.name}-notificationEventGroup-${INSTANCE_ID}"
+        server-event: "${spring.application.name}-serverEventGroup-${INSTANCE_ID}"
+        channel-event: "${spring.application.name}-channelEventGroup-${INSTANCE_ID}"
+        connection-event: "${spring.application.name}-connectionEventGroup-${INSTANCE_ID}"
+        presence-event: "${spring.application.name}-presenceEventGroup-${INSTANCE_ID}"
+        member-event: "${spring.application.name}-memberEventGroup-${INSTANCE_ID}"
+
 
       enable-auto-commit: true
       auto-offset-reset: latest
@@ -70,6 +71,8 @@ logging:
     org:
       springframework:
         jdbc: DEBUG # 운영 시에 WARN 변경
+    org.apache.kafka: WARN
+    org.springframework.kafka: WARN
 
 eureka:
   client:

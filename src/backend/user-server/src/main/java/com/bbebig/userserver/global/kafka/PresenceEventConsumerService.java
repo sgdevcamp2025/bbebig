@@ -1,6 +1,5 @@
 package com.bbebig.userserver.global.kafka;
 
-import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto;
 import com.bbebig.commonmodule.kafka.dto.PresenceEventDto;
 import com.bbebig.commonmodule.kafka.dto.notification.FriendPresenceEventDto;
 import com.bbebig.userserver.friend.service.FriendService;

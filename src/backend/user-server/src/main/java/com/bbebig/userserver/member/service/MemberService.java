@@ -1,8 +1,7 @@
 package com.bbebig.userserver.member.service;
 
-import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto;
-import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto.MemberGlobalStatusResponseDto;
-import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto.MemberInfoResponseDto;
+import com.bbebig.commonmodule.clientDto.UserFeignResponseDto;
+import com.bbebig.commonmodule.clientDto.UserFeignResponseDto.*;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.kafka.dto.MemberEventDto;
@@ -20,11 +19,13 @@ import com.bbebig.userserver.member.dto.response.MemberUpdateResponseDto;
 import com.bbebig.userserver.member.entity.Member;
 import com.bbebig.userserver.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -150,7 +151,9 @@ public class MemberService {
     public MemberInfoResponseDto getMemberInfo(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
+        // 개발용 로그
+        log.info("[Member] Feign 에서 요청 받은 멤버 정보 = memberId = {}, name = {}, nickname = {}, email = {}, avatarUrl = {}, bannerUrl = {}, introduce = {}, globalStatus = {}",
+                memberId, member.getName(), member.getNickname(), member.getEmail(), member.getAvatarUrl(), member.getBannerUrl(), member.getIntroduce(), member.getCustomPresenceStatus());
         return MemberInfoResponseDto.builder()
                 .memberId(memberId)
                 .name(member.getName())

@@ -4,12 +4,13 @@ import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @Builder
-public class MemberPresenceStatus {
+public class MemberPresenceStatus implements Serializable {
 
 	private Long memberId;
 

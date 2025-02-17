@@ -1,4 +1,4 @@
-package com.bbebig.stateserver.repository;
+package com.bbebig.serviceserver.server.repository;
 
 import com.bbebig.commonmodule.redis.repository.DmRedisRepository;
 import com.bbebig.commonmodule.redis.util.DmRedisKeys;

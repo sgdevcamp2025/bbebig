@@ -208,6 +208,9 @@ public class FriendService {
                             ? friend.getToMember().getId() : friend.getFromMember().getId();
                 })
                 .toList();
+        if (friendIdList.isEmpty()) {
+            return List.of();
+        }
         memberRedisRepository.saveMemberFriendSet(memberId, friendIdList);
         return friendIdList;
     }

@@ -53,8 +53,8 @@ public class ChannelEventConsumerService {
 		channelMember.updateLastInfo(channelEventDto.getLastReadMessageId(), channelEventDto.getEventTime());
 		channelMemberRepository.save(channelMember);
 
-		if (memberRedisRepositoryImpl.existServerChannelLastInfo(memberId, channelEventDto.getServerId())) {
-			ServerLastInfo serverChannelLastInfo = memberRedisRepositoryImpl.getServerChannelLastInfo(memberId, channelEventDto.getServerId());
+		if (memberRedisRepositoryImpl.existsServerLastInfo(memberId, channelEventDto.getServerId())) {
+			ServerLastInfo serverChannelLastInfo = memberRedisRepositoryImpl.getServerLastInfo(memberId, channelEventDto.getServerId());
 			if (!serverChannelLastInfo.existChannelLastInfo(channelId)) {
 				serverChannelLastInfo.addChannelLastInfo(
 						ChannelLastInfo.builder()
@@ -66,7 +66,7 @@ public class ChannelEventConsumerService {
 				log.error("[State] ChannelEventConsumerService: 채널 정보가 없어서 업데이트 실패. memberId: {}, channelId: {}", memberId, channelId);
 			} else {
 				serverChannelLastInfo.updateChannelLastInfo(channelId, channelEventDto.getLastReadMessageId(), channelEventDto.getEventTime());
-				memberRedisRepositoryImpl.saveServerChannelLastInfo(memberId, channelEventDto.getServerId(), serverChannelLastInfo);
+				memberRedisRepositoryImpl.saveServerLastInfo(memberId, channelEventDto.getServerId(), serverChannelLastInfo);
 			}
 		} else {
 			channelService.getChannelLastInfo(memberId, channelEventDto.getServerId());

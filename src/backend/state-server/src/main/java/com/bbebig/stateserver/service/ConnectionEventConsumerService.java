@@ -1,6 +1,7 @@
 package com.bbebig.stateserver.service;
 
-import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto.MemberGlobalStatusResponseDto;
+import com.bbebig.commonmodule.clientDto.UserFeignResponseDto;
+import com.bbebig.commonmodule.clientDto.UserFeignResponseDto.MemberGlobalStatusResponseDto;
 import com.bbebig.commonmodule.kafka.dto.ConnectionEventDto;
 import com.bbebig.commonmodule.kafka.dto.PresenceEventDto;
 import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
