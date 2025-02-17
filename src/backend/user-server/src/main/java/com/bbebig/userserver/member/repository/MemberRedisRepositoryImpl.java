@@ -137,6 +137,10 @@ public class MemberRedisRepositoryImpl implements MemberRedisRepository {
 	 */
 	public void saveMemberFriendSet(Long memberId, List<Long> friendIdList) {
 		String key = MemberRedisKeys.getMemberFriendListKey(memberId);
+		if (friendIdList == null || friendIdList.isEmpty()) {
+			log.warn("saveMemberFriendSet: 저장할 친구 목록이 비어 있음. memberId={}", memberId);
+			return; // 빈 값이면 저장 로직 실행하지 않음
+		}
 		redisTemplate.opsForSet().add(key, friendIdList.toArray());
 	}
 

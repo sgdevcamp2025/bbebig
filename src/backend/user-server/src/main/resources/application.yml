@@ -70,6 +70,7 @@ logging:
     org:
       springframework:
         jdbc: DEBUG # 운영 시에 WARN 변경
+    org.apache.kafka.clients.producer: WARN
 
 eureka:
   client:
