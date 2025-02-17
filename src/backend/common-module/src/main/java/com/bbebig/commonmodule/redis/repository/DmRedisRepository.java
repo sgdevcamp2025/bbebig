@@ -36,6 +36,4 @@ public interface DmRedisRepository {
 	 */
 	public void deleteDmMemberList(Long channelId);
 
-	Long convertToLong(Object obj);
-
 }
