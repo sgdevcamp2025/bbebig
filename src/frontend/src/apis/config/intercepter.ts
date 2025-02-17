@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react'
 import type { AxiosError, InternalAxiosRequestConfig } from 'axios'
 import toast from 'react-hot-toast'
 
@@ -7,7 +8,6 @@ import { COOKIE_KEYS } from '@/constants/keys'
 import cookie from '@/utils/cookie'
 
 import axiosInstance from './axios-instance'
-
 export const checkAndSetToken = (
   config: InternalAxiosRequestConfig & { useAuth?: boolean }
 ): InternalAxiosRequestConfig => {
@@ -25,6 +25,7 @@ export const checkAndSetToken = (
 }
 
 export async function handleApiError(error: AxiosError) {
+  Sentry.captureException(error)
   const originalRequest = error.config
 
   if (!error.response || !originalRequest) {

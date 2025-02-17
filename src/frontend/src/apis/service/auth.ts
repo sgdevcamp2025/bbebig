@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/react'
 import { AxiosRequestConfig } from 'axios'
 
 import { COOKIE_KEYS } from '@/constants/keys'
@@ -15,49 +14,30 @@ export interface CustomAxiosRequestConfig extends AxiosRequestConfig {
 
 const authService = () => {
   const login = async (data: LoginSchema) => {
-    try {
-      const res = await axiosInstance.post<LoginResponseSchema>(`${BASE_PATH}/login`, data, {
-        useAuth: false
-      } as CustomAxiosRequestConfig)
-      const accessToken = res.data.result.accessToken
-      cookie.setCookie(COOKIE_KEYS.ACCESS_TOKEN, accessToken)
-    } catch (error) {
-      Sentry.captureException(error)
-      throw error
-    }
+    const res = await axiosInstance.post<LoginResponseSchema>(`${BASE_PATH}/login`, data, {
+      useAuth: false
+    } as CustomAxiosRequestConfig)
+    const accessToken = res.data.result.accessToken
+    cookie.setCookie(COOKIE_KEYS.ACCESS_TOKEN, accessToken)
   }
 
   const register = async (data: RegisterSchema) => {
-    try {
-      const response = await axiosInstance.post(`${BASE_PATH}/register`, data, {
-        useAuth: false
-      } as CustomAxiosRequestConfig)
-      return response.data
-    } catch (error) {
-      Sentry.captureException(error)
-      throw error
-    }
+    const response = await axiosInstance.post(`${BASE_PATH}/register`, data, {
+      useAuth: false
+    } as CustomAxiosRequestConfig)
+    return response.data
   }
 
   const logout = async () => {
-    try {
-      await axiosInstance.post(`${BASE_PATH}/logout`)
-      cookie.deleteCookie(COOKIE_KEYS.ACCESS_TOKEN)
-    } catch (error) {
-      Sentry.captureException(error)
-      throw error
-    }
+    await axiosInstance.post(`${BASE_PATH}/logout`)
+    cookie.deleteCookie(COOKIE_KEYS.ACCESS_TOKEN)
   }
 
   const refreshToken = async () => {
-    try {
-      const response = await axiosInstance.post(`${BASE_PATH}/refresh`)
-      return response.data
-    } catch (error) {
-      Sentry.captureException(error)
-      throw error
-    }
+    const response = await axiosInstance.post(`${BASE_PATH}/refresh`)
+    return response.data
   }
+
   return {
     login,
     register,
