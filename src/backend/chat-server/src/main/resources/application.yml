@@ -52,7 +52,7 @@ eureka:
 
 snowflake:
 #  worker-id: ${snowflake.worker-id:${random.value}}
-    worker-id: 1
+    worker-id: ${INSTANCE_ID}
 
 eas:
   passport:

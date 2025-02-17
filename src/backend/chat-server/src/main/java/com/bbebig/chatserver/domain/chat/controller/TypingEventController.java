@@ -15,7 +15,7 @@ public class TypingEventController {
 
 	private final TypingEventRedisPublisher redisPublisher;
 
-	@MessageMapping("/typing")
+	@MessageMapping("/channel/typing")
 	public void sendTypingEvent(@Payload TypingEventDto typingEventDto) {
 		// Redis Pub/Sub 채널로 이벤트 발행
 		redisPublisher.publishTypingEvent(typingEventDto);
