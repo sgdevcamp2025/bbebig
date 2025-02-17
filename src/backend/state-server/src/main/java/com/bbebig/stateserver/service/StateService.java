@@ -1,6 +1,5 @@
 package com.bbebig.stateserver.service;
 
-import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto;
 import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
 import com.bbebig.commonmodule.redis.domain.MemberPresenceStatus;
 import com.bbebig.commonmodule.redis.domain.ServerMemberStatus;
@@ -15,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
+
+import static com.bbebig.commonmodule.clientDto.ServiceFeignResponseDto.*;
 
 @Slf4j
 @Service
@@ -70,7 +71,7 @@ public class StateService {
 	public void makeServerMemberPresenceStatus(Long serverId) {
 		Set<Long> serverMemberList = serverRedisRepositoryImpl.getServerMemberList(serverId);
 		if (serverMemberList.isEmpty()) {
-			CommonServiceServerClientResponseDto.ServerMemberListResponseDto responseDto = serviceClient.getServerMemberList(serverId);
+			ServerMemberListResponseDto responseDto = serviceClient.getServerMemberList(serverId);
 			if (responseDto.getMemberIdList().isEmpty()) {
 				log.error("[State] StateService: 서버 멤버 정보 없음. serverId: {}", serverId);
 				return;
