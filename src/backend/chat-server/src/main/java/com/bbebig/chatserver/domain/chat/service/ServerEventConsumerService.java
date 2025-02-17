@@ -32,6 +32,7 @@ public class ServerEventConsumerService {
 			messagingTemplate.convertAndSend("/topic/server/" + serverEventDto.getServerId(), serverEventDto);
 		} else {
 			log.error("[Chat] ServerEventConsumerService: 알려지지 않은 서버 이벤트 타입 수신. ServerEventDto: {}", serverEventDto);
+			return;
 		}
 
 	}
