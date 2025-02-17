@@ -72,3 +72,8 @@ eas:
 auth:
   server:
     url: ${AUTH_SERVER_URL}
+
+logging:
+  level:
+    org.apache.kafka: WARN
+    org.springframework.kafka: WARN
