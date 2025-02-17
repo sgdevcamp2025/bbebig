@@ -3,6 +3,7 @@ package com.bbebig.serviceserver.channel.service;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerChannelEventDto;
+import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerEventType;
 import com.bbebig.commonmodule.redis.domain.ChannelLastInfo;
 import com.bbebig.serviceserver.category.entity.Category;
 import com.bbebig.serviceserver.category.repository.CategoryRepository;
@@ -98,6 +99,7 @@ public class ChannelService {
         // Kafka로 데이터 발행
         ServerChannelEventDto serverChannelEventDto = ServerChannelEventDto.builder()
                 .serverId(server.getId())
+                .type(ServerEventType.SERVER_CHANNEL)
                 .categoryId(category != null ? category.getId() : null)
                 .channelId(channel.getId())
                 .channelName(channel.getName())
@@ -135,6 +137,7 @@ public class ChannelService {
         Server server = channel.getServer();
         ServerChannelEventDto serverChannelEventDto = ServerChannelEventDto.builder()
                 .serverId(server.getId())
+                .type(ServerEventType.SERVER_CHANNEL)
                 .categoryId(channel.getCategory() != null ? channel.getCategory().getId() : null)
                 .channelId(channel.getId())
                 .channelName(channel.getName())
@@ -168,6 +171,7 @@ public class ChannelService {
         Server server = channel.getServer();
         ServerChannelEventDto serverChannelEventDto = ServerChannelEventDto.builder()
                 .serverId(server.getId())
+                .type(ServerEventType.SERVER_CHANNEL)
                 .categoryId(channel.getCategory() != null ? channel.getCategory().getId() : null)
                 .channelId(channel.getId())
                 .channelType(channel.getChannelType().toString())

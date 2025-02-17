@@ -420,6 +420,8 @@ public class ServerService {
 
         // 카프카 이벤트 발행
         ServerMemberActionEventDto serverMemberActionEventDto = ServerMemberActionEventDto.builder()
+                .serverId(serverId)
+                .type(ServerEventType.SERVER_MEMBER_ACTION)
                 .memberId(memberId)
                 .nickname(memberInfo.getNickname())
                 .avatarUrl(memberInfo.getAvatarUrl())
@@ -452,6 +454,8 @@ public class ServerService {
 
         // 카프카 이벤트 발행
         ServerMemberActionEventDto serverMemberActionEventDto = ServerMemberActionEventDto.builder()
+                .serverId(serverId)
+                .type(ServerEventType.SERVER_MEMBER_ACTION)
                 .memberId(memberId)
                 .nickname(serverMember.getMemberNickname())
                 .status("LEAVE")
