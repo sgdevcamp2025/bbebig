@@ -31,8 +31,7 @@ import com.bbebig.serviceserver.server.repository.ServerMemberRepository;
 import com.bbebig.serviceserver.server.repository.ServerRedisRepositoryImpl;
 import com.bbebig.serviceserver.server.repository.ServerRepository;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,9 +40,9 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ServerService {
 
-    private static final Logger log = LoggerFactory.getLogger(ServerService.class);
     private final ServerRepository serverRepository;
     private final ServerMemberRepository serverMemberRepository;
     private final CategoryRepository categoryRepository;
@@ -252,7 +251,7 @@ public class ServerService {
      * 만약 Redis 에 캐싱된 데이터가 없다면 캐싱하는 로직을 포함
      */
     @Transactional
-    public CommonServiceServerClientResponseDto.ServerChannelListResponseDto getServerChannelList(Long serverId) {
+    public ServerChannelListResponseDto getServerChannelList(Long serverId) {
         serverRepository.findById(serverId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
 
@@ -261,7 +260,7 @@ public class ServerService {
             List<Long> channelList = makeServerChannelListCache(serverId);
             serverChannelList.addAll(channelList);
         }
-        return CommonServiceServerClientResponseDto.ServerChannelListResponseDto.builder()
+        return ServerChannelListResponseDto.builder()
                 .serverId(serverId)
                 .channelIdList(serverChannelList.stream().toList())
                 .build();
@@ -273,7 +272,7 @@ public class ServerService {
      * 만약 Redis 에 캐싱된 데이터가 없다면 캐싱하는 로직을 포함
      */
     @Transactional
-    public CommonServiceServerClientResponseDto.ServerMemberListResponseDto getServerMemberIdList(Long serverId) {
+    public ServerMemberListResponseDto getServerMemberIdList(Long serverId) {
         Server server = serverRepository.findById(serverId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
 
@@ -282,7 +281,7 @@ public class ServerService {
             List<Long> channelList = makeServerMemberListCache(serverId);
             serverMemberList.addAll(channelList);
         }
-        return CommonServiceServerClientResponseDto.ServerMemberListResponseDto.builder()
+        return ServerMemberListResponseDto.builder()
                 .serverId(serverId)
                 .ownerId(server.getOwnerId())
                 .memberIdList(serverMemberList.stream().toList())
@@ -310,13 +309,13 @@ public class ServerService {
      * 만약 Redis 에 캐싱된 데이터가 없다면 캐싱하는 로직을 포함
      */
     @Transactional
-    public CommonServiceServerClientResponseDto.MemberServerListResponseDto getMemberServerList(Long memberId) {
+    public MemberServerListResponseDto getMemberServerList(Long memberId) {
         Set<Long> memberServerList = memberRedisRepository.getMemberServerList(memberId);
         if (memberServerList.isEmpty()) {
             List<Long> channelList = makeMemberServerListCache(memberId);
             memberServerList.addAll(channelList);
         }
-        return CommonServiceServerClientResponseDto.MemberServerListResponseDto.builder()
+        return MemberServerListResponseDto.builder()
                 .memberId(memberId)
                 .serverIdList(memberServerList.stream().toList())
                 .build();
@@ -324,14 +323,14 @@ public class ServerService {
 
     // 서버 별 채널 마지막 방문 정보 조회
     // GET /servers/{serverId}/channels/info/member/{memberId}
-    public CommonServiceServerClientResponseDto.ServerLastInfoResponseDto getServerChannelLastInfoForApi(Long memberId, Long serverId) {
+    public ServerLastInfoResponseDto getServerChannelLastInfoForApi(Long memberId, Long serverId) {
         ServerLastInfo lastInfo = getServerLastInfo(memberId, serverId);
         List<ChannelLastInfo> channelLastInfoList = lastInfo.getChannelLastInfoList();
-        return CommonServiceServerClientResponseDto.ServerLastInfoResponseDto.builder()
+        return ServerLastInfoResponseDto.builder()
                 .serverId(serverId)
                 .channelInfoList(
                         channelLastInfoList.stream()
-                                .map(channelLastInfo -> CommonServiceServerClientResponseDto.ChannelLastInfoResponseDto.builder()
+                                .map(channelLastInfo -> ChannelLastInfoResponseDto.builder()
                                         .channelId(channelLastInfo.getChannelId())
                                         .lastReadMessageId(channelLastInfo.getLastReadMessageId())
                                         .lastAccessAt(channelLastInfo.getLastAccessAt())
@@ -341,6 +340,7 @@ public class ServerService {
                 .build();
     }
 
+    @Transactional
     public ServerLastInfo getServerLastInfo(Long memberId, Long serverId) {
         Server server = serverRepository.findById(serverId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
@@ -348,11 +348,11 @@ public class ServerService {
         ServerMember serverMember = serverMemberRepository.findByMemberIdAndServer(memberId, server)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_MEMBERS_NOT_FOUND));
 
-        if (memberRedisRepository.existServerChannelLastInfo(memberId, serverId)) {
-            return memberRedisRepository.getServerChannelLastInfo(memberId, serverId);
+        if (memberRedisRepository.existsServerLastInfo(memberId, serverId)) {
+            return memberRedisRepository.getServerLastInfo(memberId, serverId);
         }
 
-        CommonServiceServerClientResponseDto.ServerChannelListResponseDto serverChannelList = getServerChannelList(serverId);
+        ServerChannelListResponseDto serverChannelList = getServerChannelList(serverId);
         List<Long> channelIdList = serverChannelList.getChannelIdList();
 
         List<ChannelLastInfo> result = new ArrayList<>();
@@ -366,7 +366,7 @@ public class ServerService {
                 .build();
 
         // 레디스에 캐싱
-        memberRedisRepository.saveServerChannelLastInfo(memberId, serverId, lastInfo);
+        memberRedisRepository.saveServerLastInfo(memberId, serverId, lastInfo);
 
         return lastInfo;
     }
