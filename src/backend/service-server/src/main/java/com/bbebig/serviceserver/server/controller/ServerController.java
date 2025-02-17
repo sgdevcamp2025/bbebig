@@ -59,7 +59,7 @@ public class ServerController {
             @ApiResponse(responseCode = "200", description = "서버 정보 조회 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "", content = @Content)
     })
-    @GetMapping("/{serverId}/members/info")
+    @GetMapping("/{serverId}/members")
     public CommonResponse<ServerMemberInfoResponseDto> getServerMemberInfo(
             @Parameter(hidden = true) @PassportUser Passport passport,
             @PathVariable Long serverId
