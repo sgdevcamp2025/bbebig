@@ -31,6 +31,7 @@ import com.bbebig.serviceserver.server.repository.ServerMemberRepository;
 import com.bbebig.serviceserver.server.repository.ServerRedisRepositoryImpl;
 import com.bbebig.serviceserver.server.repository.ServerRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +40,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ServerService {
 
     private final ServerRepository serverRepository;
@@ -67,6 +69,8 @@ public class ServerService {
 
 
         MemberInfoResponseDto memberInfo = memberClient.getMemberInfo(memberId);
+        // 개발용 로그
+        log.info("[Service] ServerService : 채널 생성시 memberInfo: {}", memberInfo);
         ServerMember serverMember = ServerMember.builder()
                 .server(server)
                 .memberId(memberId)
