@@ -9,13 +9,9 @@ export interface GetUserRequestSchema {
   memberId: number
 }
 
-export interface GetUserResponseSchema {
-  user: User
-}
+export interface GetUserResponseSchema extends User {}
 
-export interface GetUserSelfResponseSchema {
-  user: User
-}
+export interface GetUserSelfResponseSchema extends User {}
 
 export interface UpdateUserRequestSchema {
   name: string

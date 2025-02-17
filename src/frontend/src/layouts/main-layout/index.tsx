@@ -35,7 +35,7 @@ const Inner = () => {
     queryFn: serviceService.getServers
   })
 
-  const { data: userData } = useSuspenseQuery({
+  const { data: selfUser } = useSuspenseQuery({
     queryKey: ['user', 'self'],
     queryFn: userService.getUserSelf
   })
@@ -53,9 +53,9 @@ const Inner = () => {
 
   const handleClickServer = async (serverId: number) => {
     const {
-      result: { channelIdList }
-    } = await serviceService.getChannelListInServer({ serverId })
-    const firstChannelId = channelIdList[0]
+      result: { channelInfoList }
+    } = await serviceService.getServersList({ serverId: serverId.toString() })
+    const firstChannelId = channelInfoList[0].channelId
     navigate(`/channels/${serverId}/${firstChannelId}`)
   }
 
@@ -190,23 +190,23 @@ const Inner = () => {
               onClick={handleClickProfile}
               className='flex gap-2 flex-1 hover:bg-gray-80 rounded-md p-1 group'>
               <Avatar
-                name={userData.result.user.name}
-                avatarUrl={userData.result.user.avatarUrl}
+                name={selfUser.result.name}
+                avatarUrl={selfUser.result.avatarUrl}
                 size='sm'
-                status={userData.result.user.customPresenceStatus}
+                status={selfUser.result.customPresenceStatus}
                 statusColor={'black'}
               />
               <div className='flex flex-col'>
                 <span className='text-text-normal text-left text-sm font-medium text-white leading-[18px]'>
-                  {userData.result.user.name}
+                  {selfUser.result.name}
                 </span>
                 <div className='h-[13px] overflow-hidden'>
                   <div className='flex flex-col h-[13px] leading-[13px] group-hover:translate-y-[-100%] transition-all duration-300'>
                     <span className='text-[13px] text-left text-gray-10'>
-                      {statusKo[userData.result.user.customPresenceStatus]} 표시
+                      {statusKo[selfUser.result.customPresenceStatus]} 표시
                     </span>
                     <span className='text-[13px] text-left text-gray-10'>
-                      {userData.result.user.email.split('@')[0]}
+                      {selfUser.result.email.split('@')[0]}
                     </span>
                   </div>
                 </div>

@@ -39,15 +39,15 @@ export interface GetServerListResponseSchema {
     categoryId: number
     categoryName: string
     position: number
-    channelInfoList: {
-      channelId: number
-      categoryId: number
-      position: number
-      channelName: string
-      channelType: ChannelType
-      privateStatus: boolean
-      channelMemberList: number[]
-    }[]
+  }[]
+  channelInfoList: {
+    channelId: number
+    categoryId: number
+    position: number
+    channelName: string
+    channelType: ChannelType
+    privateStatus: boolean
+    channelMemberList: number[]
   }[]
 }
 

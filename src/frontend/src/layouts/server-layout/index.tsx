@@ -26,7 +26,7 @@ function ServerLayout() {
   })
 
   const navigate = useNavigate()
-  console.log(serverMemebersData.result.serverMemberInfoList, 'serverMemebersData')
+
   const currentChannelUsers = serverData.result.categoryInfoList.flatMap((category) =>
     category.channelInfoList.flatMap((channel) =>
       channel.channelMemberList
