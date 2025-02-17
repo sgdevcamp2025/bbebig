@@ -108,8 +108,6 @@ spring:
           uri: lb://chat-server
           predicates:
             - Path=/ws-chat/**
-          filters:
-            - StripPrefix=1
 
         # 푸시 서버(Push Server)
         - id: push-server
