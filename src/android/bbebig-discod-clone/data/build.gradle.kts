@@ -9,6 +9,12 @@ android {
 }
 
 dependencies {
+    // coroutine bundle
     implementation(libs.bundles.coroutine)
+    // retrofit bundle
     implementation(libs.bundles.network)
+    // data store preferences
+    implementation(libs.androidx.datastore.preferences)
+    // encrypted shared preferences
+    implementation(libs.androidx.security.crypto)
 }
