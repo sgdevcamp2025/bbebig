@@ -65,7 +65,7 @@ export interface GetServerMemebersRequestSchema {
 
 export interface GetServerMemebersResponseSchema {
   serverId: number
-  serverMemberList: {
+  serverMemberInfoList: {
     memberId: number
     nickname: string
     avatarUrl: string | null
@@ -306,6 +306,15 @@ export interface GetChannelUserListRequestSchema {
 
 export interface GetChannelUserListResponseSchema {
   channelUserList: ChannelUser[]
+}
+
+export interface GetChannelListInServerRequestSchema {
+  serverId: number
+}
+
+export interface GetChannelListInServerResponseSchema {
+  serverId: number
+  channelIdList: number[]
 }
 
 export type ZCreateChannelRequestSchema = z.infer<typeof createChannelRequestSchema>

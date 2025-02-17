@@ -17,6 +17,8 @@ import type {
   GetCategoriesResponseSchema,
   GetChannelLastVisitInfoWithMemberIdRequestSchema,
   GetChannelLastVisitInfoWithMemberIdResponseSchema,
+  GetChannelListInServerRequestSchema,
+  GetChannelListInServerResponseSchema,
   GetChannelListRequestSchema,
   GetChannelListResponseSchema,
   GetServerListRequestSchema,
@@ -39,6 +41,7 @@ import type {
 const SERVER_PATH = `/service-server/servers`
 const CHANNEL_PATH = `/service-server/channels`
 const CATEGORY_PATH = `/service-server/categories`
+const FEIGN_PATH = `/service-server/feign/servers`
 
 const serviceService = () => {
   // Server API
@@ -172,6 +175,13 @@ const serviceService = () => {
     return response.data
   }
 
+  const getChannelListInServer = async (data: GetChannelListInServerRequestSchema) => {
+    const response = await axiosInstance.get<
+      CommonResponseType<GetChannelListInServerResponseSchema>
+    >(`${FEIGN_PATH}/${data.serverId}/list/channel`)
+    return response.data
+  }
+
   return {
     getServers,
     getServersList,
@@ -189,7 +199,8 @@ const serviceService = () => {
     deleteCategory,
     getCategories,
     createCategory,
-    updateCategory
+    updateCategory,
+    getChannelListInServer
   }
 }
 
