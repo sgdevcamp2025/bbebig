@@ -1,4 +1,4 @@
-package com.bbebig.commonmodule.clientDto.serviceServer;
+package com.bbebig.serviceserver.global.feign.clientDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class CommonServiceServerClientResponseDto {
+public class ServiceFeignResponseDto {
 
 	@Data
 	@Builder

@@ -1,6 +1,6 @@
 package com.bbebig.serviceserver.global.client;
 
-import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto.MemberInfoResponseDto;
+import com.bbebig.serviceserver.global.feign.clientDto.UserFeignResponseDto.MemberInfoResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
