@@ -162,21 +162,6 @@ public class ServerService {
     }
 
     /**
-     * 서버 멤버 목록 조회
-     */
-    public ServerMemberInfoResponseDto getMemberInfoList(Long serverId) {
-        List<ServerMember> serverMembers = serverMemberRepository.findAllByServerId(serverId);
-        return ServerMemberInfoResponseDto.builder()
-                .serverId(serverId)
-                .serverMemberInfoList(
-                        serverMembers.stream()
-                                .map(ServerReadResponseDto::convertToServerMemberInfo)
-                                .collect(Collectors.toList())
-                )
-                .build();
-    }
-
-    /**
      * 멤버가 속한 서버 목록 조회
      */
     @Transactional(readOnly = true)

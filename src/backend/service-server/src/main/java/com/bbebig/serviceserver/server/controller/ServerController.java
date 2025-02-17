@@ -65,7 +65,7 @@ public class ServerController {
             @PathVariable Long serverId
     ) {
         log.info("[Service] 서버 멤버 정보 조회 요청: memberId = {}, serverId = {}", passport.getMemberId(), serverId);
-        return CommonResponse.onSuccess(serverService.getMemberInfoList(serverId));
+        return CommonResponse.onSuccess(serverService.getServerMemberInfo(serverId));
     }
 
 
@@ -110,14 +110,6 @@ public class ServerController {
     ) {
         log.info("[Service] 서버 삭제 요청: memberId = {}, serverId = {}", passport.getMemberId(), serverId);
         return CommonResponse.onSuccess(serverService.deleteServer(passport.getMemberId(), serverId));
-    }
-
-    @GetMapping("/{serverId}/list/members")
-    public CommonResponse<ServerMemberInfoResponseDto> getServerMemberInfo(
-            @PathVariable Long serverId
-    ) {
-        log.info("[Service] 서버에 속해있는 멤버 목록 조회 요청: serverId = {}", serverId);
-        return CommonResponse.onSuccess(serverService.getServerMemberInfo(serverId));
     }
 
     @Operation(summary = "서버 참여", description = "서버를 참여합니다.")
