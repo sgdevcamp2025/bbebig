@@ -4,7 +4,8 @@ import { Suspense, useEffect, useState } from 'react'
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
 import { useShallow } from 'zustand/shallow'
 
-import { GetUserResponseSchema } from '@/apis/schema/types/user'
+import serviceService from '@/apis/service/service'
+import userService from '@/apis/service/user'
 import Avatar from '@/components/avatar'
 import LoadingModal from '@/components/loading-modal'
 import ServerIcon from '@/components/server-icon'
@@ -17,7 +18,6 @@ import ProfileCard from './components/profile-card'
 import ProfileStatusButton from './components/profile-status-button'
 import ServerCreateModal from './components/server-create-modal'
 import SettingModal, { SettingModalTabsID } from './components/setting-modal'
-import serviceService from '@/apis/service/service'
 
 const Inner = () => {
   const location = useLocation()
@@ -35,25 +35,10 @@ const Inner = () => {
     queryFn: serviceService.getServers
   })
 
-  // TODO: 유저 정보 조회
-  // const { data: userData } = useSuspenseQuery({
-  //   queryKey: ['user', userId],
-  //   queryFn: () => userService.getUser(userId)
-  // })
-
-  const userData = {
-    result: {
-      user: {
-        id: 1,
-        name: '서정우',
-        email: 'seojungwoo@gmail.com',
-        avatarUrl: '/image/common/default-avatar.png',
-        bannerUrl: '/image/common/default-background.png',
-        customPresenceStatus: 'ONLINE',
-        introduce: { text: '안녕하세요', emoji: '👋' }
-      }
-    }
-  } satisfies GetUserResponseSchema
+  const { data: userData } = useSuspenseQuery({
+    queryKey: ['user', 'self'],
+    queryFn: userService.getUserSelf
+  })
 
   const { muted, toggleAudioInputMute, toggleAudioOutputMute } = useMediaSettingsStore(
     useShallow((state) => ({
@@ -69,7 +54,7 @@ const Inner = () => {
   const handleClickServer = async (serverId: number) => {
     const {
       result: { channelIdList }
-    } = await serviceService.getChannelIdListInServer({ serverId })
+    } = await serviceService.getChannelListInServer({ serverId })
     const firstChannelId = channelIdList[0]
     navigate(`/channels/${serverId}/${firstChannelId}`)
   }

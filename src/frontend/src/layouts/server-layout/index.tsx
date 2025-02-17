@@ -26,12 +26,12 @@ function ServerLayout() {
   })
 
   const navigate = useNavigate()
-
+  console.log(serverMemebersData.result.serverMemberInfoList, 'serverMemebersData')
   const currentChannelUsers = serverData.result.categoryInfoList.flatMap((category) =>
     category.channelInfoList.flatMap((channel) =>
       channel.channelMemberList
         .map((memberId) =>
-          serverMemebersData.result.serverMemberList.find((user) => user.memberId === memberId)
+          serverMemebersData.result.serverMemberInfoList.find((user) => user.memberId === memberId)
         )
         .filter((user): user is NonNullable<typeof user> => Boolean(user))
     )

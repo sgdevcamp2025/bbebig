@@ -23,8 +23,8 @@ import {
   UpdateUserResponseSchema
 } from '../schema/types/user'
 
-const MEMBER_PATH = '/members'
-const FRIEND_PATH = '/friends'
+const MEMBER_PATH = '/user-server/members'
+const FRIEND_PATH = '/user-server/friends'
 
 const userService = () => {
   const deleteMember = async () => {
@@ -128,4 +128,4 @@ const userService = () => {
   }
 }
 
-export default userService
+export default userService()
