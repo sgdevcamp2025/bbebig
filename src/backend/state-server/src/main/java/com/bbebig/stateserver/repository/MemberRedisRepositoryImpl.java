@@ -1,11 +1,14 @@
 package com.bbebig.stateserver.repository;
 
 import com.bbebig.commonmodule.redis.domain.MemberPresenceStatus;
+import com.bbebig.commonmodule.redis.domain.ServerLastInfo;
 import com.bbebig.commonmodule.redis.repository.MemberRedisRepository;
 import com.bbebig.commonmodule.redis.util.MemberRedisKeys;
+import com.bbebig.commonmodule.redis.util.MemberRedisTTL;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -13,6 +16,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Repository
@@ -21,14 +25,17 @@ public class MemberRedisRepositoryImpl implements MemberRedisRepository {
 
 	private final RedisTemplate<String, Long> redisSetTemplate;
 	private final RedisTemplate<String, MemberPresenceStatus> redisMemberStatusTemplate;
+	private final RedisTemplate<String, ServerLastInfo> redisServerLastInfoTemplate;
 
 	private SetOperations<String, Long> setOperations;
 	private ValueOperations<String, MemberPresenceStatus> valueOperations;
+	private HashOperations<String, Long, ServerLastInfo> serverLastInfoValueOperations;
 
 	@PostConstruct
 	public void initRedisOps() {
 		this.setOperations = redisSetTemplate.opsForSet();
 		this.valueOperations = redisMemberStatusTemplate.opsForValue();
+		this.serverLastInfoValueOperations = redisServerLastInfoTemplate.opsForHash();
 	}
 
 	/**
@@ -124,4 +131,46 @@ public class MemberRedisRepositoryImpl implements MemberRedisRepository {
 		String key = MemberRedisKeys.getMemberStatusKey(memberId);
 		return valueOperations.get(key);
 	}
+
+	/**
+	 * 개별 유저의 최근 서버 채널 정보를 저장
+	 * ex) member:{memberId}:serverLastInfo => ServerLastInfo
+	 */
+	public void saveServerLastInfo(Long memberId, Long serverId, ServerLastInfo lastInfo) {
+		String key = MemberRedisKeys.getServerLastInfoKey(memberId);
+		serverLastInfoValueOperations.put(key, serverId, lastInfo);
+		serverLastInfoValueOperations.getOperations().expire(key, MemberRedisTTL.SERVER_LAST_INFO_TTL, TimeUnit.SECONDS);
+	}
+
+	// 개별 유저의 최근 서버 채널 정보 조회
+	public ServerLastInfo getServerLastInfo(Long memberId, Long serverId) {
+		String key = MemberRedisKeys.getServerLastInfoKey(memberId);
+		return serverLastInfoValueOperations.get(key, serverId);
+	}
+
+
+	// 개별 유저의 최근 서버 채널 정보 삭제
+	public void deleteServerLastInfo(Long memberId, Long serverId) {
+		String key = MemberRedisKeys.getServerLastInfoKey(memberId);
+		serverLastInfoValueOperations.delete(key, serverId);
+	}
+
+	// 개별 유저의 최근 서버 채널 정보 전체 삭제
+	public void deleteAllServerLastInfo(Long memberId) {
+		String key = MemberRedisKeys.getServerLastInfoKey(memberId);
+		redisServerLastInfoTemplate.delete(key);
+	}
+
+	// 개별 유저의 최근 서버 채널 정보 전체 조회
+	public List<ServerLastInfo> getAllServerLastInfo(Long memberId) {
+		String key = MemberRedisKeys.getServerLastInfoKey(memberId);
+		return serverLastInfoValueOperations.values(key);
+	}
+
+	// 개별 유저의 최근 서버 채널 정보가 존재하는지 확인
+	public boolean existsServerLastInfo(Long memberId) {
+		String key = MemberRedisKeys.getServerLastInfoKey(memberId);
+		return Boolean.TRUE.equals(redisServerLastInfoTemplate.hasKey(key));
+	}
+
 }

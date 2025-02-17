@@ -1,7 +1,5 @@
 package com.bbebig.serviceserver.channel.controller;
 
-import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto;
-import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto.ServerLastInfoResponseDto;
 import com.bbebig.commonmodule.global.response.code.CommonResponse;
 import com.bbebig.commonmodule.passport.annotation.PassportUser;
 import com.bbebig.commonmodule.proto.PassportProto.Passport;

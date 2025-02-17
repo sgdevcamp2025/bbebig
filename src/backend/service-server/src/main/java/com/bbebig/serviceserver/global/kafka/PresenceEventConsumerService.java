@@ -1,5 +1,7 @@
 package com.bbebig.serviceserver.global.kafka;
 
+import com.bbebig.commonmodule.clientDto.ServiceFeignResponseDto;
+import com.bbebig.commonmodule.clientDto.ServiceFeignResponseDto.MemberServerListResponseDto;
 import com.bbebig.commonmodule.kafka.dto.PresenceEventDto;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerEventType;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerMemberPresenceEventDto;
@@ -9,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
-import static com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto.*;
 
 @Slf4j
 @Service
