@@ -23,6 +23,8 @@ public class RedisConfig {
 		redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
 		redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
 
+		redisTemplate.afterPropertiesSet();
+
 		return redisTemplate;
 	}
 }

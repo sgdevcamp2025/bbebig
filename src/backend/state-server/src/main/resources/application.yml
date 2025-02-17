@@ -61,3 +61,7 @@ eas:
 auth:
   server:
     url: ${AUTH_SERVER_URL}
+
+logging:
+  level:
+    org.apache.kafka.clients.producer: WARN
