@@ -64,4 +64,5 @@ auth:
 
 logging:
   level:
-    org.apache.kafka.clients.producer: WARN
+    org.apache.kafka: WARN
+    org.springframework.kafka: WARN
