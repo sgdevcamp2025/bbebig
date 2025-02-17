@@ -152,7 +152,8 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
         // 개발용 로그
-        log.info("[Member] Feign에서 요청 받은 멤버 정보 = {}", member.toString());
+        log.info("[Member] Feign 에서 요청 받은 멤버 정보 = memberId = {}, name = {}, nickname = {}, email = {}, avatarUrl = {}, bannerUrl = {}, introduce = {}, globalStatus = {}",
+                memberId, member.getName(), member.getNickname(), member.getEmail(), member.getAvatarUrl(), member.getBannerUrl(), member.getIntroduce(), member.getCustomPresenceStatus());
         return MemberInfoResponseDto.builder()
                 .memberId(memberId)
                 .name(member.getName())
