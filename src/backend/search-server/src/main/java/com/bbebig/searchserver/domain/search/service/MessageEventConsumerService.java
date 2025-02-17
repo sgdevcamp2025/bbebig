@@ -45,6 +45,7 @@ public class MessageEventConsumerService {
 				break;
 			default:
 				log.warn("[Chat] MessageEventConsumerService: 처리할 수 없는 메시지 타입. ChatMessageDto: {}", chatMessageDto);
+				return;
 		}
 	}
 
@@ -75,6 +76,7 @@ public class MessageEventConsumerService {
 				break;
 			default:
 				log.warn("[Chat] MessageEventConsumerService: 처리할 수 없는 메시지 타입. ChatMessageDto: {}", chatMessageDto);
+				return;
 		}
 	}
 }
