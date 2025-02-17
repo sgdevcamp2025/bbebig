@@ -1,7 +1,9 @@
 package com.bbebig.commonmodule.clientDto.serviceServer;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,6 +12,8 @@ public class CommonServiceServerClientResponseDto {
 
 	@Data
 	@Builder
+	@NoArgsConstructor
+	@AllArgsConstructor
 	public static class ServerMemberListResponseDto {
 		private Long serverId;
 		private Long ownerId;
@@ -18,6 +22,8 @@ public class CommonServiceServerClientResponseDto {
 
 	@Data
 	@Builder
+	@NoArgsConstructor
+	@AllArgsConstructor
 	public static class ServerChannelListResponseDto {
 		private Long serverId;
 		private List<Long> channelIdList;
@@ -25,6 +31,8 @@ public class CommonServiceServerClientResponseDto {
 
 	@Data
 	@Builder
+	@NoArgsConstructor
+	@AllArgsConstructor
 	public static class MemberServerListResponseDto {
 		private Long memberId;
 		private List<Long> serverIdList;
@@ -32,6 +40,8 @@ public class CommonServiceServerClientResponseDto {
 
 	@Data
 	@Builder
+	@NoArgsConstructor
+	@AllArgsConstructor
 	public static class DmMemberListResponseDto {
 		private Long memberId;
 		private List<Long> dmMemberIdList;
@@ -39,6 +49,8 @@ public class CommonServiceServerClientResponseDto {
 
 	@Data
 	@Builder
+	@NoArgsConstructor
+	@AllArgsConstructor
 	public static class ServerLastInfoResponseDto {
 		private Long serverId;
 		private List<ChannelLastInfoResponseDto> channelInfoList;
@@ -46,6 +58,8 @@ public class CommonServiceServerClientResponseDto {
 
 	@Data
 	@Builder
+	@NoArgsConstructor
+	@AllArgsConstructor
 	public static class ChannelLastInfoResponseDto {
 		private Long channelId;
 		private Long lastReadMessageId;
