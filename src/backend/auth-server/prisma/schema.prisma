@@ -24,6 +24,7 @@ model member {
 enum member_status {
   ONLINE
   OFFLINE
-  NOT_DISTURB
+  AWAY
+  DND
   INVISIBLE
 }

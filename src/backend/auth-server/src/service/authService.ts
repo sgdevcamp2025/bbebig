@@ -33,6 +33,7 @@ function authService() {
         name,
         nickname,
         birthdate: new Date(birthdate),
+        custom_presence_status: 'ONLINE',
       },
     });
 
