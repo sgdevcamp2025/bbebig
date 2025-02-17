@@ -86,15 +86,4 @@ public class ChannelController {
         log.info("[Service] 채널 정보 조회 요청: memberId = {}, channelId = {}", passport.getMemberId(), channelId);
         return CommonResponse.onSuccess(channelService.readChannel(channelId));
     }
-
-    @Operation(summary = "채널 마지막 방문 정보 조회", description = "채널 마지막 방문 정보를 조회합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "채널 마지막 방문 정보 조회 성공", useReturnTypeSchema = true),
-            @ApiResponse(responseCode = "400", description = "", content = @Content)
-    })
-    @GetMapping("/{channelId}/lastInfo/member/{memberId}")
-    public CommonResponse<ChannelLastInfo> getChannelLastInfo(@PathVariable Long channelId, @PathVariable Long memberId) {
-        log.info("[Service] 채널 마지막 방문 정보 조회 요청: channelId = {}, memberId = {}", channelId, memberId);
-        return CommonResponse.onSuccess(channelService.getChannelLastInfo(channelId, memberId));
-    }
 }
