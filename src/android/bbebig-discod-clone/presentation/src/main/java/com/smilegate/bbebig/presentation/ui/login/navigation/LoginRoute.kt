@@ -1,10 +1,12 @@
 package com.smilegate.bbebig.presentation.ui.login.navigation
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.smilegate.bbebig.presentation.ui.login.LoginScreen
@@ -21,8 +23,9 @@ fun LoginRoute(
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
+    val context = LocalContext.current
     LoginScreen(
+        uiState = uiState,
         modifier = modifier,
         onClickLoginConfirm = { email, password ->
             Log.d("LoginRoute", "onClickLoginConfirm: $email, $password")
@@ -36,6 +39,17 @@ fun LoginRoute(
             when (sideEffect) {
                 is LoginSideEffect.NavigateToHome -> navigateToHome()
                 is LoginSideEffect.NavigateToBack -> onBackClick()
+                is LoginSideEffect.ShowLoginFailToast -> Toast.makeText(
+                    context,
+                    "Login Fail",
+                    Toast.LENGTH_SHORT,
+                ).show()
+
+                LoginSideEffect.ShowLoginInfoSaveFailToast -> Toast.makeText(
+                    context,
+                    "Login Info Save Fail",
+                    Toast.LENGTH_SHORT,
+                ).show()
             }
         }
     }
