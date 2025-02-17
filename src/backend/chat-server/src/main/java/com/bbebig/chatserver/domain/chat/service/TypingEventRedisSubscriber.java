@@ -24,6 +24,7 @@ public class TypingEventRedisSubscriber {
 			messagingTemplate.convertAndSend("/topic/channel/" + dto.getChannelId(), dto);
 		} catch (Exception e) {
 			log.error("[Chat] TypingEventRedisSubscriber: 타이핑 이벤트 파싱 실패. message = {}", e.getMessage());
+			return;
 		}
 	}
 }

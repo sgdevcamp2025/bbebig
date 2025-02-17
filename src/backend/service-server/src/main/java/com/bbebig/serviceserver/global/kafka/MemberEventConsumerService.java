@@ -45,7 +45,8 @@ public class MemberEventConsumerService {
 					.type(ServerEventType.SERVER_MEMBER_ACTION)
 					.memberId(memberId)
 					.nickname(memberEventDto.getNickname())
-					.profileImageUrl(memberEventDto.getProfileImageUrl())
+					.avatarUrl(memberEventDto.getAvatarUrl())
+					.bannerUrl(memberEventDto.getBannerUrl())
 					.status("UPDATE")
 					.build();
 			kafkaProducerService.sendServerEvent(actionEventDto);
@@ -60,7 +61,8 @@ public class MemberEventConsumerService {
 					.type(ServerEventType.SERVER_MEMBER_ACTION)
 					.memberId(memberId)
 					.nickname(memberEventDto.getNickname())
-					.profileImageUrl(memberEventDto.getProfileImageUrl())
+					.avatarUrl(memberEventDto.getAvatarUrl())
+					.bannerUrl(memberEventDto.getBannerUrl())
 					.status("DELETE")
 					.build();
 			kafkaProducerService.sendServerEvent(actionEventDto);

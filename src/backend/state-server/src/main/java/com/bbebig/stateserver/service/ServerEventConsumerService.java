@@ -55,6 +55,7 @@ public class ServerEventConsumerService {
 			if (!serverEventDto.getType().equals(ServerEventType.SERVER_CATEGORY)) {
 				log.error("[State] ServerEventConsumerService: 서버 이벤트 타입이 잘못되었습니다. serverEventDto: {}", serverEventDto);
 			}
+			return;
 		}
 
 	}

@@ -96,5 +96,4 @@ public class MemberController {
         return CommonResponse.onSuccess(memberService.readMember(memberId));
     }
 
-
 }

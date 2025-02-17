@@ -24,6 +24,7 @@ public class TypingEventRedisPublisher {
 			log.info("[Chat] TypingEventRedisPublisher: 타이핑 이벤트 발행. senderId = {}, channelId = {}, serverId = {}", typingEventDto.getMemberId(), typingEventDto.getChannelId(), typingEventDto.getServerId());
 		} catch (Exception e) {
 			log.error("[Chat] TypingEventRedisPublisher: 타이핑 이벤트 파싱 실패. message = {}", e.getMessage());
+			return;
 		}
 	}
 }

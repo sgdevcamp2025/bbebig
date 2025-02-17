@@ -1,6 +1,7 @@
 package com.bbebig.serviceserver.global.kafka;
 
 import com.bbebig.commonmodule.kafka.dto.PresenceEventDto;
+import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerEventType;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerMemberPresenceEventDto;
 import com.bbebig.serviceserver.server.service.ServerService;
 import lombok.RequiredArgsConstructor;
@@ -39,8 +40,9 @@ public class PresenceEventConsumerService {
 		}
 		memberServerList.getServerIdList().forEach(serverId -> {
 			ServerMemberPresenceEventDto serverMemberPresenceEventDto = ServerMemberPresenceEventDto.builder()
-					.memberId(memberId)
 					.serverId(serverId)
+					.type(ServerEventType.SERVER_MEMBER_PRESENCE)
+					.memberId(memberId)
 					.globalStatus(presenceEventDto.getGlobalStatus())
 					.actualStatus(presenceEventDto.getActualStatus())
 					.build();
