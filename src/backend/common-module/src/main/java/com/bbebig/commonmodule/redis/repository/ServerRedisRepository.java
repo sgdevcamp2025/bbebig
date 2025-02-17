@@ -99,7 +99,5 @@ public interface ServerRedisRepository {
 	 * 서버 삭제에 따른 서버별 채널 목록 삭제
 	 */
 	void deleteServerChannelList(Long serverId);
-
-
-	Long convertToLong(Object obj);
+	
 }

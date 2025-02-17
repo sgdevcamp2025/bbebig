@@ -69,7 +69,4 @@ public interface MemberRedisRepository {
 	 * 개별 유저 presence 상태 정보 조회
 	 */
 	MemberPresenceStatus getMemberPresenceStatus(Long memberId);
-
-
-	Long convertToLong(Object obj);
 }
