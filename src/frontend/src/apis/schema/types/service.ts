@@ -3,10 +3,13 @@ import { z } from 'zod'
 import { ChannelType, ChannelUser } from '@/types/server'
 import { CustomPresenceStatus } from '@/types/user'
 
-import { createCategoryResponseSchema } from '../server'
-import { createCategoryRequestSchema } from '../server'
-import { createChannelResponseSchema } from '../server'
-import { createChannelRequestSchema } from '../server'
+import {
+  createCategoryRequestSchema,
+  createCategoryResponseSchema,
+  createChannelRequestSchema,
+  createChannelResponseSchema
+} from '../server'
+
 export interface DeleteServerRequestSchema {
   serverId: number
 }
@@ -46,13 +49,6 @@ export interface GetServerListResponseSchema {
       channelMemberList: number[]
     }[]
   }[]
-  serverMemberList: {
-    memberId: number
-    customPresenceStatus: CustomPresenceStatus
-    nickname: string
-    profileImageUrl: string | null
-    joinAt: string
-  }[]
 }
 
 export interface GetServersResponseSchema {
@@ -60,6 +56,22 @@ export interface GetServersResponseSchema {
     serverId: number
     serverName: string
     serverImageUrl: string | null
+  }[]
+}
+
+export interface GetServerMemebersRequestSchema {
+  serverId: number
+}
+
+export interface GetServerMemebersResponseSchema {
+  serverId: number
+  serverMemberList: {
+    memberId: number
+    nickname: string
+    avatarUrl: string | null
+    bannerUrl: string | null
+    joinAt: string
+    customPresenceStatus: CustomPresenceStatus
   }[]
 }
 

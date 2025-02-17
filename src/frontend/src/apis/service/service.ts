@@ -19,10 +19,10 @@ import type {
   GetChannelLastVisitInfoWithMemberIdResponseSchema,
   GetChannelListRequestSchema,
   GetChannelListResponseSchema,
-  GetMemberIdListInServerRequestSchema,
-  GetMemberIdListInServerResponseSchema,
   GetServerListRequestSchema,
   GetServerListResponseSchema,
+  GetServerMemebersRequestSchema,
+  GetServerMemebersResponseSchema,
   GetServersResponseSchema,
   ParticipateServerRequestSchema,
   ParticipateServerResponseSchema,
@@ -70,10 +70,10 @@ const serviceService = () => {
     return response.data
   }
 
-  const getServerMemebers = async (data: GetMemberIdListInServerRequestSchema) => {
-    const response = await axiosInstance.get<
-      CommonResponseType<GetMemberIdListInServerResponseSchema>
-    >(`${SERVER_PATH}/${data.serverId}/members`)
+  const getServerMemebers = async (data: GetServerMemebersRequestSchema) => {
+    const response = await axiosInstance.get<CommonResponseType<GetServerMemebersResponseSchema>>(
+      `${SERVER_PATH}/${data.serverId}/members`
+    )
     return response.data
   }
 

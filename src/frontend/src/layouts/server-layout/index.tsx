@@ -1,11 +1,11 @@
+import { useSuspenseQuery } from '@tanstack/react-query'
 import { Outlet, useNavigate, useParams } from 'react-router'
 
+import serviceService from '@/apis/service/service'
 import useStatusBarStore from '@/stores/use-status-bar-store'
 
 import ServerSidebar from './components/server-side-bar'
 import StatusSideBar from './components/status-side-bar'
-import { useSuspenseQuery } from '@tanstack/react-query'
-import serviceService from '@/apis/service/service'
 
 function ServerLayout() {
   const { serverId, channelId } = useParams<{ serverId: string; channelId: string }>()
@@ -20,7 +20,10 @@ function ServerLayout() {
     queryFn: () => serviceService.getServersList({ serverId })
   })
 
-  console.log(serverData)
+  const { data: serverMemebersData } = useSuspenseQuery({
+    queryKey: ['serverMemebersData', serverId],
+    queryFn: () => serviceService.getServerMemebers({ serverId: Number(serverId) })
+  })
 
   const navigate = useNavigate()
 
@@ -28,7 +31,7 @@ function ServerLayout() {
     category.channelInfoList.flatMap((channel) =>
       channel.channelMemberList
         .map((memberId) =>
-          serverData.result.serverMemberList?.find((user) => user.memberId === memberId)
+          serverMemebersData.result.serverMemberList.find((user) => user.memberId === memberId)
         )
         .filter((user): user is NonNullable<typeof user> => Boolean(user))
     )
