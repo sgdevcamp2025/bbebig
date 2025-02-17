@@ -40,6 +40,7 @@ public class NotificationEventConsumerService {
 					eventDto.getType().equals(NotificationEventType.FRIEND_PRESENCE))
 			) {
 				log.error("[State] NotificationEventConsumerService: 알림 이벤트 타입이 잘못되었습니다. eventDto: {}", eventDto);
+				return;
 			}
 
 		}
