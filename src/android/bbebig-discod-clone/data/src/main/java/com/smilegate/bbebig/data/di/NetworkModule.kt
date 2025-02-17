@@ -35,7 +35,7 @@ object NetworkModule {
     @Provides
     @AuthBaseUrl
     fun provideAuthBaseUrl(): String {
-        return "http://43.203.136.82:9000"
+        return "http://43.203.136.82:8080"
     }
 
     @Singleton
