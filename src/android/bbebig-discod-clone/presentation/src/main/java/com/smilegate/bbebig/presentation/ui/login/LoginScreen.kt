@@ -16,16 +16,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.smilegate.bbebig.presentation.component.DiscordLoadingCircular
 import com.smilegate.bbebig.presentation.component.DiscordRoundButton
 import com.smilegate.bbebig.presentation.component.DiscordTextField
 import com.smilegate.bbebig.presentation.component.DiscordTopBar
 import com.smilegate.bbebig.presentation.theme.Blue70
 import com.smilegate.bbebig.presentation.theme.Gray20
+import com.smilegate.bbebig.presentation.ui.login.mvi.LoginUiState
 import com.smilegate.devcamp.presentation.R
 
 @Composable
 fun LoginScreen(
     modifier: Modifier,
+    uiState: LoginUiState,
     onClickLoginConfirm: (String, String) -> Unit,
     onBackClick: () -> Unit,
 ) {
@@ -53,6 +56,10 @@ fun LoginScreen(
             modifier = Modifier.padding(top = 8.dp),
             onClickLoginConfirm = onClickLoginConfirm,
         )
+    }
+
+    if (uiState.isLoading) {
+        DiscordLoadingCircular(modifier = Modifier.fillMaxSize())
     }
 }
 
@@ -118,5 +125,6 @@ private fun LoginScreenPreview() {
         modifier = Modifier.fillMaxSize(),
         onBackClick = {},
         onClickLoginConfirm = { _, _ -> },
+        uiState = LoginUiState.init(),
     )
 }
