@@ -29,7 +29,7 @@ const CHANNEL_TYPE_ITEMS = [
     id: '1',
     label: '텍스트',
     description: '메시지, 이미지, GIF, 이모지, 의견, 농담을 전송하세요',
-    value: 'TEXT',
+    value: 'CHAT',
     icon: (
       <img
         src='/icon/channel/type-text.svg'
@@ -66,7 +66,7 @@ export function Inner({ serverId, isOpen, onClose, categoryInfo, selectCategoryI
   } = useForm<ZCreateChannelRequestSchema>({
     defaultValues: {
       serverId: String(serverId),
-      categoryId: undefined,
+      categoryId: null,
       channelType: '',
       channelName: '',
       privateStatus: false,
@@ -79,7 +79,7 @@ export function Inner({ serverId, isOpen, onClose, categoryInfo, selectCategoryI
     mutationFn: (data: ZCreateChannelRequestSchema) => {
       return serviceService.createChannel({
         serverId: Number(data.serverId),
-        categoryId: selectCategoryId ? selectCategoryId : undefined,
+        categoryId: selectCategoryId,
         channelType: data.channelType as ChannelType,
         channelName: data.channelName,
         privateStatus: data.privateStatus,

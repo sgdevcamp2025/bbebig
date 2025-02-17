@@ -40,7 +40,7 @@ function StatusIcon({
     )
   }
 
-  if (status === 'OFFLINE') {
+  if (status === 'AWAY') {
     return (
       <svg
         className={`${statusIconSize({ size })} -scale-x-100 `}
@@ -51,7 +51,7 @@ function StatusIcon({
     )
   }
 
-  if (status === 'NOT_DISTURB') {
+  if (status === 'DND') {
     return (
       <div
         className={cn(statusIconSize({ size }), 'bg-[#f23f43] flex items-center justify-center')}
@@ -68,7 +68,7 @@ function StatusIcon({
     )
   }
 
-  if (status === 'INVISIBLE') {
+  if (status === 'INVISIBLE' || status === 'OFFLINE') {
     return (
       <div
         className={cn(

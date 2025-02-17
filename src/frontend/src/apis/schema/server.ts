@@ -4,7 +4,7 @@ import { commonResponseSchema } from './common'
 
 const createChannelRequestSchema = z.object({
   serverId: z.string(),
-  categoryId: z.string().optional(),
+  categoryId: z.string().nullable(),
   channelType: z.string(),
   channelName: z.string().min(1, { message: '채널 이름은 최소 1글자 이상이어야 합니다.' }),
   privateStatus: z.boolean(),

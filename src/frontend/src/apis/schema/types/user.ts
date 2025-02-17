@@ -11,7 +11,13 @@ export interface GetUserRequestSchema {
 
 export interface GetUserResponseSchema extends User {}
 
-export interface GetUserSelfResponseSchema extends User {}
+export interface GetUserSelfResponseSchema {
+  name: string
+  email: string
+  customPresenceStatus: CustomPresenceStatus
+  avatarUrl: string | null
+  bannerUrl: string | null
+}
 
 export interface UpdateUserRequestSchema {
   name: string

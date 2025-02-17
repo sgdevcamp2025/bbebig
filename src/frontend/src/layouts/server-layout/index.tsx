@@ -27,27 +27,28 @@ function ServerLayout() {
 
   const navigate = useNavigate()
 
-  const currentChannelUsers = serverData.result.categoryInfoList.flatMap((category) =>
-    category.channelInfoList.flatMap((channel) =>
-      channel.channelMemberList
-        .map((memberId) =>
-          serverMemebersData.result.serverMemberInfoList.find((user) => user.memberId === memberId)
-        )
-        .filter((user): user is NonNullable<typeof user> => Boolean(user))
-    )
-  )
+  const currentChannelUsers = serverMemebersData.result.serverMemberInfoList.map((member) => ({
+    memberId: member.memberId,
+    name: member.nickname,
+    avatarUrl: member.avatarUrl
+  }))
 
   const handleChannelSelect = (selectedChannelId: number) => {
     navigate(`/channels/${serverId}/${selectedChannelId}`)
   }
 
-  const { serverName, categoryInfoList } = serverData.result
+  const { serverName, categoryInfoList, channelInfoList } = serverData.result
+
+  const categories = categoryInfoList.map((category) => ({
+    ...category,
+    channelInfoList: channelInfoList.filter((channel) => channel.categoryId === category.categoryId)
+  }))
 
   return (
     <div className='flex h-screen w-full'>
       <ServerSidebar
         serverName={serverName}
-        categories={categoryInfoList}
+        categories={categories}
         onChannelSelect={handleChannelSelect}
         selectedChannelId={channelId}
       />

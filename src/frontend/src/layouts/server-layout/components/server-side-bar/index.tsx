@@ -196,7 +196,7 @@ function ServerSideBar({
                     )}>
                     <span className='mr-1'>
                       <img
-                        src={`/icon/channel/type-${channel.channelType.toLocaleLowerCase()}.svg`}
+                        src={`/icon/channel/type-${channel.channelType === 'VOICE' ? 'voice' : 'text'}.svg`}
                         className='w-[15px] h-[15px]'
                       />
                     </span>

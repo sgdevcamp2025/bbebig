@@ -27,7 +27,7 @@ export const PrimaryServerSidebar: Story = {
           {
             channelId: 1,
             channelName: '채널 이름',
-            channelType: 'TEXT',
+            channelType: 'CHAT',
             privateStatus: true,
             position: 1
           }
@@ -55,7 +55,7 @@ export const PrimaryServerSidebar: Story = {
           {
             channelId: 3,
             channelName: '채널 이름',
-            channelType: 'TEXT',
+            channelType: 'CHAT',
             privateStatus: true,
             position: 1
           }

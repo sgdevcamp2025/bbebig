@@ -18,6 +18,8 @@ import ProfileCard from './components/profile-card'
 import ProfileStatusButton from './components/profile-status-button'
 import ServerCreateModal from './components/server-create-modal'
 import SettingModal, { SettingModalTabsID } from './components/setting-modal'
+import LoadingIcon from '@/components/loading-icon'
+import useGetSelfUser from '@/hooks/queries/useGetSelfUser'
 
 const Inner = () => {
   const location = useLocation()
@@ -35,10 +37,7 @@ const Inner = () => {
     queryFn: serviceService.getServers
   })
 
-  const { data: selfUser } = useSuspenseQuery({
-    queryKey: ['user', 'self'],
-    queryFn: userService.getUserSelf
-  })
+  const { result: selfUser } = useGetSelfUser()
 
   const { muted, toggleAudioInputMute, toggleAudioOutputMute } = useMediaSettingsStore(
     useShallow((state) => ({
@@ -179,7 +178,14 @@ const Inner = () => {
                 onClick={handleClickProfile}
               />
               <div className='fixed z-[2001] left-[33px] bottom-[46px]'>
-                <ProfileCard onEditProfile={handleClickEditProfileSettingModal} />
+                <Suspense
+                  fallback={
+                    <div className='top-[-70px] left-[122px] absolute flex justify-center items-center h-fit bg-black-90 p-2 rounded-[8px] border-black-90 border-[4px]'>
+                      <LoadingIcon />
+                    </div>
+                  }>
+                  <ProfileCard onEditProfile={handleClickEditProfileSettingModal} />
+                </Suspense>
               </div>
             </div>
           )}
@@ -190,23 +196,24 @@ const Inner = () => {
               onClick={handleClickProfile}
               className='flex gap-2 flex-1 hover:bg-gray-80 rounded-md p-1 group'>
               <Avatar
-                name={selfUser.result.name}
-                avatarUrl={selfUser.result.avatarUrl}
+                name={selfUser.name}
+                avatarUrl={selfUser.avatarUrl}
                 size='sm'
-                status={selfUser.result.customPresenceStatus}
+                status={selfUser.customPresenceStatus}
+                defaultBackgroundColor='bg-gray-60'
                 statusColor={'black'}
               />
               <div className='flex flex-col'>
                 <span className='text-text-normal text-left text-sm font-medium text-white leading-[18px]'>
-                  {selfUser.result.name}
+                  {selfUser.name}
                 </span>
                 <div className='h-[13px] overflow-hidden'>
                   <div className='flex flex-col h-[13px] leading-[13px] group-hover:translate-y-[-100%] transition-all duration-300'>
                     <span className='text-[13px] text-left text-gray-10'>
-                      {statusKo[selfUser.result.customPresenceStatus]} 표시
+                      {statusKo[selfUser.customPresenceStatus]} 표시
                     </span>
                     <span className='text-[13px] text-left text-gray-10'>
-                      {selfUser.result.email.split('@')[0]}
+                      {selfUser.email.split('@')[0]}
                     </span>
                   </div>
                 </div>

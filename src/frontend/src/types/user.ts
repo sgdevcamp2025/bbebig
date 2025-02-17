@@ -11,6 +11,6 @@ interface User {
   customPresenceStatus: CustomPresenceStatus
 }
 
-type CustomPresenceStatus = 'ONLINE' | 'AWAY' | 'DND' | 'INVISIBLE'
+type CustomPresenceStatus = 'ONLINE' | 'AWAY' | 'DND' | 'INVISIBLE' | 'OFFLINE'
 
 export { type CustomPresenceStatus, type User }
