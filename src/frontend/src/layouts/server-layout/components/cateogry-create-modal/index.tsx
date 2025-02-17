@@ -1,11 +1,10 @@
-import { useMutation } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { useParams } from 'react-router'
 
 import { ZCreateCategoryRequestSchema } from '@/apis/schema/types/service'
-import serviceService from '@/apis/service/service'
 import CustomButton from '@/components/custom-button'
 import CustomModal from '@/components/custom-modal'
+import { useCreateCategory } from '@/hooks/queries/server/useCreateCategory'
 import { cn } from '@/libs/cn'
 interface InnerProps {
   serverId: number
@@ -25,16 +24,11 @@ export function Inner({ isOpen, onClose, serverId }: InnerProps) {
     }
   })
 
-  const { mutate: createCategory } = useMutation({
-    mutationFn: (data: Omit<ZCreateCategoryRequestSchema, 'serverId'>) =>
-      serviceService.createCategory({
-        serverId,
-        categoryName: data.categoryName
-      })
-  })
+  const createCategory = useCreateCategory()
 
   const handleCreateCategory = (data: ZCreateCategoryRequestSchema) => {
     createCategory({
+      serverId: String(serverId),
       categoryName: data.categoryName
     })
 

@@ -181,7 +181,7 @@ export interface GetChannelLastVisitInfoWithMemberIdResponseSchema {
 
 export interface CreateChannelRequestSchema {
   serverId: number
-  categoryId: number | undefined
+  categoryId: number | null
   channelType: ChannelType
   channelName: string
   privateStatus: boolean
@@ -238,7 +238,7 @@ export interface GetChannelLastVisitInfoWithMemberIdResponseSchema {
 
 export interface CreateChannelRequestSchema {
   serverId: number
-  categoryId: number | undefined
+  categoryId: number | null
   channelType: ChannelType
   channelName: string
   privateStatus: boolean

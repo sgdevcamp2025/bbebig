@@ -9,7 +9,7 @@ import userService from '@/apis/service/user'
 import Avatar from '@/components/avatar'
 import StatusIcon from '@/components/status-icon'
 import { statusKo } from '@/constants/status'
-import useGetSelfUser from '@/hooks/queries/useGetSelfUser'
+import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
 import useClickOutside from '@/hooks/use-click-outside'
 import useLoginStore from '@/stores/use-login-store'
 import { CustomPresenceStatus } from '@/types/user'
@@ -224,7 +224,7 @@ interface ProfileCardProps {
 }
 
 function ProfileCard({ onEditProfile }: ProfileCardProps) {
-  const { result: mySelfData } = useGetSelfUser()
+  const mySelfData = useGetSelfUser()
 
   return (
     <div className='p-4'>

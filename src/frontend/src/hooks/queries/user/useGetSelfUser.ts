@@ -14,7 +14,7 @@ function useGetSelfUser(
     queryFn: userService.getUserSelf
   })
 
-  return data
+  return data.result
 }
 
 export default useGetSelfUser

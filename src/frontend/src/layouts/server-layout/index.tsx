@@ -1,7 +1,7 @@
-import { useSuspenseQuery } from '@tanstack/react-query'
 import { Outlet, useNavigate, useParams } from 'react-router'
 
-import serviceService from '@/apis/service/service'
+import { useGetServerInfo } from '@/hooks/queries/server/useGetServerInfo'
+import useGetServerMember from '@/hooks/queries/server/useGetServerMember'
 import useStatusBarStore from '@/stores/use-status-bar-store'
 
 import ServerSidebar from './components/server-side-bar'
@@ -11,21 +11,15 @@ function ServerLayout() {
   const { serverId, channelId } = useParams<{ serverId: string; channelId: string }>()
   const { isStatusBarOpen } = useStatusBarStore()
 
-  if (!serverId) {
-    throw new Error('serverId is required')
+  const navigate = useNavigate()
+
+  if (!serverId || !channelId) {
+    throw new Error('serverId or channelId is required')
   }
 
-  const { data: serverData } = useSuspenseQuery({
-    queryKey: ['serverData', serverId],
-    queryFn: () => serviceService.getServersList({ serverId })
-  })
+  const serverData = useGetServerInfo(serverId)
 
-  const { data: serverMemebersData } = useSuspenseQuery({
-    queryKey: ['serverMemebersData', serverId],
-    queryFn: () => serviceService.getServerMemebers({ serverId: Number(serverId) })
-  })
-
-  const navigate = useNavigate()
+  const serverMemebersData = useGetServerMember(serverId)
 
   const currentChannelUsers = serverMemebersData.result.serverMemberInfoList.map((member) => ({
     memberId: member.memberId,
@@ -37,7 +31,7 @@ function ServerLayout() {
     navigate(`/channels/${serverId}/${selectedChannelId}`)
   }
 
-  const { serverName, categoryInfoList, channelInfoList } = serverData.result
+  const { serverName, categoryInfoList, channelInfoList } = serverData
 
   const categories = categoryInfoList.map((category) => ({
     ...category,

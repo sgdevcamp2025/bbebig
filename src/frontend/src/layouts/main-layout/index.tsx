@@ -1,25 +1,23 @@
-import { QueryClientProvider, useSuspenseQuery } from '@tanstack/react-query'
 import { PlusIcon } from 'lucide-react'
 import { Suspense, useEffect, useState } from 'react'
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
 import { useShallow } from 'zustand/shallow'
 
 import serviceService from '@/apis/service/service'
-import userService from '@/apis/service/user'
 import Avatar from '@/components/avatar'
+import LoadingIcon from '@/components/loading-icon'
 import LoadingModal from '@/components/loading-modal'
 import ServerIcon from '@/components/server-icon'
 import { statusKo } from '@/constants/status'
+import { useGetServer } from '@/hooks/queries/server/useGetServer'
+import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
 import { cn } from '@/libs/cn'
-import queryClient from '@/libs/query-client'
 import useMediaSettingsStore from '@/stores/use-media-setting.store'
 
 import ProfileCard from './components/profile-card'
 import ProfileStatusButton from './components/profile-status-button'
 import ServerCreateModal from './components/server-create-modal'
 import SettingModal, { SettingModalTabsID } from './components/setting-modal'
-import LoadingIcon from '@/components/loading-icon'
-import useGetSelfUser from '@/hooks/queries/useGetSelfUser'
 
 const Inner = () => {
   const location = useLocation()
@@ -32,12 +30,8 @@ const Inner = () => {
     }
   }, [serverId, navigate])
 
-  const { data: myChannelList } = useSuspenseQuery({
-    queryKey: ['servers'],
-    queryFn: serviceService.getServers
-  })
-
-  const { result: selfUser } = useGetSelfUser()
+  const myChannelList = useGetServer()
+  const selfUser = useGetSelfUser()
 
   const { muted, toggleAudioInputMute, toggleAudioOutputMute } = useMediaSettingsStore(
     useShallow((state) => ({
@@ -104,7 +98,7 @@ const Inner = () => {
     location.pathname.split('/')[1] === 'channels' ? location.pathname.split('/')[2] : null
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <>
       <div className='flex'>
         <nav className='bg-black-80 h-full min-h-screen w-[72px] pt-[12px]'>
           <ul className='w-[72px] flex flex-col gap-2'>
@@ -141,7 +135,7 @@ const Inner = () => {
             <div className='w-full flex justify-center'>
               <div className='h-[2px] w-8 rounded-[1px] bg-gray-80' />
             </div>
-            {myChannelList.result.servers.map((server) => (
+            {myChannelList.servers.map((server) => (
               <li key={server.serverId}>
                 <ServerIcon
                   imageUrl={server.serverImageUrl}
@@ -253,7 +247,7 @@ const Inner = () => {
         isOpen={isServerCreateModalOpen}
         onClose={handleClickServerCreateModalClose}
       />
-    </QueryClientProvider>
+    </>
   )
 }
 
