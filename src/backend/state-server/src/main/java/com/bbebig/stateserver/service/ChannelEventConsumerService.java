@@ -32,6 +32,7 @@ public class ChannelEventConsumerService {
 			MemberPresenceStatus memberPresenceStatus = handleLeaveEvent(channelEventDto);
 		} else {
 			log.error("[State] ChannelEventConsumerService: 채널 이벤트 타입이 잘못되었습니다. channelEventDto: {}", channelEventDto);
+			return;
 		}
 	}
 

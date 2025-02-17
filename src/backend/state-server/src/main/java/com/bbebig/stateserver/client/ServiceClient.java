@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "service-server")
 public interface ServiceClient {
 
-	@GetMapping("/feign/servers/{serverId}/list/member")
+	@GetMapping("/feign/servers/{serverId}/list/members")
 	ServerMemberListResponseDto getServerMemberList(@PathVariable(value = "serverId") Long serverId);
 
 	@GetMapping("/feign/servers/{serverId}/list/channel")
