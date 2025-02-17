@@ -1,4 +1,4 @@
-package com.bbebig.userserver.global.feign.clientDto;
+package com.bbebig.commonmodule.clientDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
