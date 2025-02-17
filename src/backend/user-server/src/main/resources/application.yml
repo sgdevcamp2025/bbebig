@@ -71,7 +71,8 @@ logging:
     org:
       springframework:
         jdbc: DEBUG # 운영 시에 WARN 변경
-    org.apache.kafka.clients.producer: WARN
+    org.apache.kafka: WARN
+    org.springframework.kafka: WARN
 
 eureka:
   client:
