@@ -1,14 +1,19 @@
 package com.bbebig.commonmodule.redis.domain;
 
 import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class DeviceInfo {
+@NoArgsConstructor
+@AllArgsConstructor
+public class DeviceInfo implements Serializable {
 
 //	private String deviceId;
 

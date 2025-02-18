@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SignalMessage {
 
-    private MessageType messageType;    // OFFER, ANSWER, CANDIDATE, JOIN_CHANNEL, LEAVE_CHANNEL
+    private MessageType messageType;
     private String channelId;           // 체날 ID
     private String senderId;            // 보낸 사람 ID
     private String receiverId;          // 받는 사람 ID
