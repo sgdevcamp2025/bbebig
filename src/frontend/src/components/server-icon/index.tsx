@@ -25,14 +25,14 @@ function ServerIcon({ imageUrl, imageSize = 48, label, isActive, hasAlarm, ...pr
       {...props}>
       <div
         className={cn(
-          'absolute top-1/2 translate-y-[-50%] left-[-4px] w-2 h-10 rounded-r-[4px] overflow-hidden transition-all duration-300 bg-white',
+          'absolute top-1/2 translate-y-[-50%] left-[-4px] w-2 h-10  rounded-r-[4px] overflow-hidden transition-all duration-300 bg-white',
           !isActive && (isFocused ? 'h-5' : hasAlarm ? 'h-2' : 'h-0')
         )}
       />
       <div className='flex items-center justify-center'>
         <div
           className={cn(
-            'w-[48px] h-[48px] flex items-center justify-center bg-brand-10 overflow-hidden transition-all duration-300 hover:rounded-[14px]',
+            'w-[48px] h-[48px] flex items-center justify-center hover:bg-brand bg-brand-10 overflow-hidden transition-all duration-300 hover:rounded-[14px]',
             isActive
               ? 'rounded-[14px] bg-brand text-text-normal'
               : 'rounded-[48px] text-text-white',
