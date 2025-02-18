@@ -23,7 +23,7 @@ public class DirectSignalController {
     public void onDirectSignal(@Payload SignalMessage message,
                                @Header("simpSessionId") String sessionId) {
 
-        log.info("[Stream] 채널 타입: Direct, 메시지 타입: {}, 보낸 사람 ID: {}, 받는 사람 ID: {}",
+        log.info("[Signal] 채널 타입: Direct, 메시지 타입: {}, 보낸 사람 ID: {}, 받는 사람 ID: {}",
                 message.getMessageType(), sessionId, message.getReceiverId());
 
         directSignalService.processDirectSignal(message, sessionId);

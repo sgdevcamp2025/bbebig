@@ -44,7 +44,7 @@ public class ChannelManager {
         String channelId = sessionChannelMap.get(sessionId);
 
         if (channelId == null) {
-            log.error("[Stream] 채널 타입: Group, 세션 ID: {}, 상세: 채널 ID가 존재하지 않습니다.", sessionId);
+            log.error("[Signal] 채널 타입: Group, 세션 ID: {}, 상세: 채널 ID가 존재하지 않습니다.", sessionId);
             throw new ErrorHandler(ErrorStatus.GROUP_STREAM_CHANNEL_NOT_FOUND);
         }
 
