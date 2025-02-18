@@ -8,12 +8,12 @@ import { CustomPresenceStatus } from '@/types/user'
 
 function PendingFriends() {
   const friendPendingList = useGetFriendPendingList()
-
+  console.log(friendPendingList)
   const [searchValue, setSearchValue] = useState('')
 
-  const filteredFriends = friendPendingList.filter((friend) =>
-    friend.name.toLowerCase().includes(searchValue.toLowerCase())
-  )
+  const filteredFriends = Array.isArray(friendPendingList)
+    ? friendPendingList.filter((friend) => new RegExp(searchValue, 'i').test(friend.friendName))
+    : []
 
   const responsePendingFriends = filteredFriends.filter(
     (friend: { friendStatus: string }) => friend.friendStatus === 'RESPONSE_PENDING'
@@ -50,7 +50,7 @@ function PendingFriends() {
                 <UserListItem
                   key={friend.id}
                   id={friend.id}
-                  avatarUrl={friend.avatarUrl}
+                  avatarUrl={friend.avatarUrl ?? '/image/common/default-avatar.png'}
                   name={friend.name}
                   status={friend.status.toString() as CustomPresenceStatus}
                   description={statusKo[friend.status.toString() as CustomPresenceStatus]}
@@ -72,7 +72,7 @@ function PendingFriends() {
                 <UserListItem
                   key={friend.id}
                   id={friend.id}
-                  avatarUrl={friend.avatarUrl}
+                  avatarUrl={friend.avatarUrl ?? '/image/common/default-avatar.png'}
                   name={friend.name}
                   status={friend.status.toString() as CustomPresenceStatus}
                   description={statusKo[friend.status.toString() as CustomPresenceStatus]}
