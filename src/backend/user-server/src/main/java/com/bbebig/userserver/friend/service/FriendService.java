@@ -2,6 +2,9 @@ package com.bbebig.userserver.friend.service;
 
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
+import com.bbebig.commonmodule.kafka.dto.notification.FriendActionEventDto;
+import com.bbebig.commonmodule.kafka.dto.notification.FriendRequestEventDto;
+import com.bbebig.commonmodule.kafka.dto.notification.NotificationEventType;
 import com.bbebig.userserver.friend.dto.response.*;
 import com.bbebig.userserver.friend.entity.Friend;
 import com.bbebig.userserver.friend.entity.FriendStatus;
@@ -10,6 +13,7 @@ import com.bbebig.userserver.member.entity.Member;
 import com.bbebig.userserver.member.repository.MemberRedisRepositoryImpl;
 import com.bbebig.userserver.member.repository.MemberRepository;
 import com.bbebig.userserver.friend.dto.request.FriendCreateRequestDto;
+import com.bbebig.userserver.member.service.KafkaProducerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +29,7 @@ public class FriendService {
     private final MemberRepository memberRepository;
 
     private final MemberRedisRepositoryImpl memberRedisRepository;
+    private final KafkaProducerService kafkaProducerService;
 
     /**
      * 친구 요청 (생성)
@@ -64,6 +69,16 @@ public class FriendService {
 
         friendRepository.save(friend);
 
+        FriendRequestEventDto friendRequestEventDto = FriendRequestEventDto.builder()
+                .memberId(toMember.getId())
+                .type(NotificationEventType.FRIEND_REQUEST)
+                .friendMemberId(fromMember.getId())
+                .friendAvatarUrl(fromMember.getAvatarUrl())
+                .friendBannerUrl(fromMember.getBannerUrl())
+                .friendNickName(fromMember.getNickname())
+                .status("SEND")
+                .build();
+        kafkaProducerService.sendNotificationEvent(friendRequestEventDto);
 
         return FriendCreateResponseDto.convertToFriendCreateResponseDto(friend);
     }
@@ -142,7 +157,33 @@ public class FriendService {
             } else {
                 makeMemberFriendListCache(member.getId());
             }
+
+            FriendActionEventDto friendActionEventDto = FriendActionEventDto.builder()
+                    .memberId(friendMember.getId())
+                    .type(NotificationEventType.FRIEND_ACTION)
+                    .friendMemberId(member.getId())
+                    .friendAvatarUrl(member.getAvatarUrl())
+                    .friendBannerUrl(member.getBannerUrl())
+                    .friendNickName(member.getNickname())
+                    .status("ADD")
+                    .build();
+
+            FriendActionEventDto myActionEventDto = FriendActionEventDto.builder()
+                    .memberId(member.getId())
+                    .type(NotificationEventType.FRIEND_ACTION)
+                    .friendMemberId(friendMember.getId())
+                    .friendAvatarUrl(friendMember.getAvatarUrl())
+                    .friendBannerUrl(friendMember.getBannerUrl())
+                    .friendNickName(friendMember.getNickname())
+                    .status("ADD")
+                    .build();
+
+            kafkaProducerService.sendNotificationEvent(friendActionEventDto);
+            kafkaProducerService.sendNotificationEvent(myActionEventDto);
+
         }
+
+        // TODO: 친구 요청 거절 로직
 
 
         return FriendUpdateResponseDto.convertToFriendUpdateResponseDto(friend);
@@ -168,6 +209,24 @@ public class FriendService {
         memberRedisRepository.removeMemberFriendFromSet(friend.getFromMember().getId(), friend.getToMember().getId());
         memberRedisRepository.removeMemberFriendFromSet(friend.getToMember().getId(), friend.getFromMember().getId());
 
+        FriendActionEventDto friendActionEventDto = FriendActionEventDto.builder()
+                .memberId(friend.getFromMember().getId())
+                .type(NotificationEventType.FRIEND_ACTION)
+                .friendMemberId(friend.getToMember().getId())
+                .status("DELETE")
+                .build();
+
+        FriendActionEventDto myActionEventDto = FriendActionEventDto.builder()
+                .memberId(friend.getToMember().getId())
+                .type(NotificationEventType.FRIEND_ACTION)
+                .friendMemberId(friend.getFromMember().getId())
+                .status("DELETE")
+                .build();
+
+        kafkaProducerService.sendNotificationEvent(friendActionEventDto);
+        kafkaProducerService.sendNotificationEvent(myActionEventDto);
+
+
         return FriendDeleteResponseDto.convertToFriendDeleteResponseDto(friend);
     }
 
@@ -188,6 +247,23 @@ public class FriendService {
         }
 
         friendRepository.delete(friend);
+
+        FriendRequestEventDto friendRequestEventDto = FriendRequestEventDto.builder()
+                .memberId(friend.getToMember().getId())
+                .type(NotificationEventType.FRIEND_REQUEST)
+                .friendMemberId(memberId)
+                .status("CANCEL")
+                .build();
+
+        FriendRequestEventDto myRequestEventDto = FriendRequestEventDto.builder()
+                .memberId(memberId)
+                .type(NotificationEventType.FRIEND_REQUEST)
+                .friendMemberId(friend.getToMember().getId())
+                .status("CANCEL")
+                .build();
+
+        kafkaProducerService.sendNotificationEvent(friendRequestEventDto);
+        kafkaProducerService.sendNotificationEvent(myRequestEventDto);
 
         return FriendDeleteResponseDto.convertToFriendDeleteResponseDto(friend);
     }
