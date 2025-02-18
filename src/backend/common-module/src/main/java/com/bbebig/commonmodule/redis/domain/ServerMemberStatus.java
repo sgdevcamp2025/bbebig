@@ -1,11 +1,15 @@
 package com.bbebig.commonmodule.redis.domain;
 
 import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ServerMemberStatus {
 
 	private Long memberId;
