@@ -12,6 +12,7 @@ export interface GetUserRequestSchema {
 export interface GetUserResponseSchema extends User {}
 
 export interface GetUserSelfResponseSchema {
+  id: number
   name: string
   email: string
   customPresenceStatus: CustomPresenceStatus
