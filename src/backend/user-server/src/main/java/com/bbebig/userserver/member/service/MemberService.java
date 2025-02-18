@@ -68,7 +68,7 @@ public class MemberService {
         // Kafka로 이벤트 발행
         MemberEventDto memberEventDto = MemberEventDto.builder()
                 .memberId(memberId)
-                .type("DELETE")
+                .type("UPDATE")
                 .nickname(member.getNickname())
                 .avatarUrl(member.getAvatarUrl())
                 .bannerUrl(member.getBannerUrl())
