@@ -12,8 +12,8 @@ interface UserListItemProps {
   status: CustomPresenceStatus
   statusColor?: string
   iconType: 'default' | 'request' | 'response'
-  handleNavigateToDM: (id: number) => void
-  handleDMIconClick: (e: React.MouseEvent<HTMLButtonElement>, id: number) => void
+  handleNavigateToDM?: (id: number) => void
+  handleDMIconClick?: (e: React.MouseEvent<HTMLButtonElement>, id: number) => void
 }
 
 const ICON_PATH = {
@@ -36,7 +36,7 @@ export function Inner({
   return (
     <div
       className='group flex items-center justify-between p-2 hover:bg-discord-gray-500 rounded cursor-pointer'
-      onClick={() => handleNavigateToDM(id)}>
+      onClick={() => handleNavigateToDM?.(id)}>
       <div className='flex items-center gap-3'>
         <Avatar
           name={name}
