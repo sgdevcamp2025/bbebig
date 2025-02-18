@@ -27,7 +27,7 @@ export const Primary: Story = {
         value: 'TEXT',
         icon: (
           <img
-            src='/icon/channel/type-text.svg'
+            src='/icon/channel/type-chat.svg'
             alt='텍스트'
             width={20}
             height={20}
