@@ -1,12 +1,11 @@
 import { CSSProperties, useState } from 'react'
 
 import AvatarCard from '@/components/avatar-card'
+import ChatArea from '@/components/chat-area'
 import CustomButton from '@/components/custom-button'
 import useUserStatus from '@/hooks/store/use-user-status'
 import { cn } from '@/libs/cn'
 import { User } from '@/types/user'
-
-import ChatArea from './chat-area'
 
 interface Props {
   channelId: number
@@ -89,8 +88,8 @@ function VideoComponent({ channelId, serverName, channelName }: Props) {
                 <li key={user.id}>
                   <AvatarCard
                     name={user.name}
-                    avatarUrl={user.avatarUrl}
-                    backgroundUrl={user.bannerUrl}
+                    avatarUrl={user.avatarUrl ?? '/image/common/default-avatar.png'}
+                    backgroundUrl={user.bannerUrl ?? '/image/common/default-background.png'}
                     backgroundColor={user.backgroundColor}
                     size={userList.length > 3 ? 'sm' : isInVoiceChannel ? 'md' : 'sm'}
                     micStatus={user.micStatus}

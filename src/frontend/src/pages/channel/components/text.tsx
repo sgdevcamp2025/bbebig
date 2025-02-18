@@ -1,4 +1,4 @@
-import ChatArea from './chat-area'
+import ChatArea from '@/components/chat-area'
 
 interface Props {
   channelId: number

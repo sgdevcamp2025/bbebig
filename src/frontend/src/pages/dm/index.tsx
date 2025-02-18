@@ -1,10 +1,10 @@
 import { ChangeEvent, useState } from 'react'
 import { useParams } from 'react-router'
 
+import ChatArea from '@/components/chat-area'
 import CommonHeader from '@/components/common-header'
 import { Friend } from '@/types/friend'
 
-import DmArea from './components/dm-area'
 import DmHeader from './components/dm-header'
 const DUMMY_FRIENDS: Friend[] = [
   {
@@ -54,7 +54,7 @@ function DmPage() {
         }}>
         <DmHeader friend={selectedFriend} />
       </CommonHeader>
-      <DmArea friend={selectedFriend} />
+      <ChatArea friend={selectedFriend} />
     </div>
   )
 }
