@@ -39,7 +39,7 @@ public class MeshGroupSignalService implements GroupSignalStrategy {
                 handleGroupSignal(message, sessionId);
                 break;
             default:
-                log.error("[Stream] 채널 타입: Group, 메시지 타입: {}, 상세: 지원되지 않는 메시지 타입입니다.", message.getMessageType());
+                log.error("[Signal] 채널 타입: Group, 메시지 타입: {}, 상세: 지원되지 않는 메시지 타입입니다.", message.getMessageType());
                 throw new ErrorHandler(ErrorStatus.GROUP_STREAM_INVALID_SIGNAL);
         }
     }
@@ -132,7 +132,7 @@ public class MeshGroupSignalService implements GroupSignalStrategy {
         String channelId = channelManager.getChannelIdBySessionId(sessionId);
 
         if (channelId == null) {
-            log.error("[Stream] 채널 타입: Group, 상세: 채널 ID가 누락되었습니다.");
+            log.error("[Signal] 채널 타입: Group, 상세: 채널 ID가 누락되었습니다.");
             throw new ErrorHandler(ErrorStatus.GROUP_STREAM_SESSION_NOT_FOUND);
         }
 

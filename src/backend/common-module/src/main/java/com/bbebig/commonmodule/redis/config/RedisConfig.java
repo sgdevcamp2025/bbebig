@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -25,7 +26,6 @@ public class RedisConfig {
 		redisTemplate.setConnectionFactory(connectionFactory);
 
 		ObjectMapper objectMapper = createObjectMapper();
-
 		redisTemplate.setKeySerializer(new StringRedisSerializer());
 		redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer(objectMapper));
 
@@ -90,6 +90,7 @@ public class RedisConfig {
 				ObjectMapper.DefaultTyping.NON_FINAL,
 				JsonTypeInfo.As.PROPERTY
 		);
+		objectMapper.registerModule(new JavaTimeModule());
 		return objectMapper;
 	}
 }

@@ -40,6 +40,7 @@ public class StateService {
 	// GET /state/member/{memberId}
 	public MemberStatusResponseDto checkMemberState(Long memberId) {
 		MemberPresenceStatus memberPresenceStatus = memberRedisRepositoryImpl.getMemberPresenceStatus(memberId);
+		log.info("[State] StateService: 사용자 상태 확인. memberId: {}, memberPresenceStatus: {}", memberId, memberPresenceStatus);
 		if (memberPresenceStatus == null) {
 			MemberGlobalStatusResponseDto memberGlobalStatus = memberClient.getMemberGlobalStatus(memberId);
 			if (memberGlobalStatus == null) {
