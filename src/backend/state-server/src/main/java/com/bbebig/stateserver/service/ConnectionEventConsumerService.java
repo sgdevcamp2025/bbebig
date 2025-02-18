@@ -135,6 +135,7 @@ public class ConnectionEventConsumerService {
 	}
 
 	private MemberGlobalStatusResponseDto checkMemberState(Long memberId) {
+		log.info("[State] ConnectionEventConsumerService: Feign 으로 멤버 상태 정보 조회. memberId: {}", memberId);
 		if (memberId == null || memberId <= 0) {
 			log.error("[State] 유효하지 않은 memberId 요청: {}", memberId);
 			throw new IllegalArgumentException("유효하지 않은 멤버 ID: " + memberId);
