@@ -10,6 +10,7 @@ import com.bbebig.commonmodule.redis.domain.MemberPresenceStatus;
 import com.bbebig.stateserver.client.MemberClient;
 import com.bbebig.stateserver.dto.DtoConverter;
 import com.bbebig.stateserver.repository.MemberRedisRepositoryImpl;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -29,7 +30,7 @@ public class ConnectionEventConsumerService {
 	private final MemberClient memberClient;
 
 	@KafkaListener(topics = "${spring.kafka.topic.connection-event}", groupId = "${spring.kafka.consumer.group-id.connection-event}", containerFactory = "connectionEventListener")
-	public void consumeForChannelChatEvent(ConnectionEventDto connectionEventDto) {
+	public void consumeForConnectionEvent(ConnectionEventDto connectionEventDto) {
 		if (connectionEventDto == null) {
 			log.error("[State] ConnectionEventConsumerService: 연결 이벤트 정보 없음");
 			return;
@@ -69,12 +70,18 @@ public class ConnectionEventConsumerService {
 
 	// 연결 이벤트를 처리하여, 상태 정보를 레디스에 저장
 	private MemberPresenceStatus handleConnectionEvent(ConnectionEventDto connectionEventDto) {
+		// 개발용 로그
+		log.info("[State] ConnectionEventConsumerService: 연결 이벤트 처리. memberId: {}", connectionEventDto.getMemberId());
 		MemberPresenceStatus memberPresenceStatus = memberRedisRepositoryImpl.getMemberPresenceStatus(connectionEventDto.getMemberId());
 		if (memberPresenceStatus == null) {
-			MemberGlobalStatusResponseDto memberGlobalStatus = memberClient.getMemberGlobalStatus(connectionEventDto.getMemberId());
+			MemberGlobalStatusResponseDto responseDto = checkMemberState(connectionEventDto.getMemberId());
+			if (responseDto == null) {
+				log.error("[State] ConnectionEventConsumerService: 멤버 상태 정보 없음");
+				return null;
+			}
 			memberPresenceStatus = MemberPresenceStatus.builder()
 					.memberId(connectionEventDto.getMemberId())
-					.globalStatus(memberGlobalStatus.getGlobalStatus())
+					.globalStatus(responseDto.getGlobalStatus())
 					.actualStatus(PresenceType.ONLINE)
 					.lastActivityTime(LocalDateTime.now())
 					.devices(new ArrayList<>())
@@ -125,6 +132,20 @@ public class ConnectionEventConsumerService {
 
 		memberRedisRepositoryImpl.saveMemberPresenceStatus(connectionEventDto.getMemberId(), memberPresenceStatus);
 		return memberPresenceStatus;
+	}
+
+	private MemberGlobalStatusResponseDto checkMemberState(Long memberId) {
+		if (memberId == null || memberId <= 0) {
+			log.error("[State] 유효하지 않은 memberId 요청: {}", memberId);
+			throw new IllegalArgumentException("유효하지 않은 멤버 ID: " + memberId);
+		}
+		try {
+			return memberClient.getMemberGlobalStatus(memberId);
+		} catch (FeignException e) {
+			log.error("[State] 멤버 ID({})에 대한 정보를 찾을 수 없음", memberId);
+			log.error("[State] FeignException: {}", e.getMessage());
+			return null; // 또는 적절한 기본값 반환
+		}
 	}
 
 }
