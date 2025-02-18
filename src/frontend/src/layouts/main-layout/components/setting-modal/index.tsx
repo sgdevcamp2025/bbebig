@@ -66,6 +66,10 @@ function SettingModal({ itemId, isOpen, onClose }: Props) {
     setCurrentItemId(itemId)
   }
 
+  const handleProfileEditClick = () => {
+    setCurrentItemId(SettingModalTabsID.myProfile)
+  }
+
   return (
     <Modal
       isOpen={isOpen}
@@ -106,7 +110,9 @@ function SettingModal({ itemId, isOpen, onClose }: Props) {
           <div className='flex flex-[1_1_800px] bg-brand-10'>
             <div className='max-w-[740px] w-full relative'>
               <div className='overflow-y-auto h-full'>
-                {currentItemId === SettingModalTabsID.myAccount && <MyAccount />}
+                {currentItemId === SettingModalTabsID.myAccount && (
+                  <MyAccount onProfileEditClick={handleProfileEditClick} />
+                )}
                 {currentItemId === SettingModalTabsID.myProfile && <MyProfile />}
                 {currentItemId === SettingModalTabsID.voiceSetting && <VoiceSetting />}
                 {currentItemId === SettingModalTabsID.alarmSetting && <AlarmSetting />}

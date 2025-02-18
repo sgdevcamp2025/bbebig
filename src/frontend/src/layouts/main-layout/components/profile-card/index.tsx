@@ -22,6 +22,7 @@ interface Props {
   avatarUrl: string | null
   bannerUrl: string | null
   onEditProfile: () => void
+  isPreview?: boolean
 }
 
 const statusMenuItems = [
@@ -55,7 +56,8 @@ export function Content({
   customPresenceStatus,
   avatarUrl,
   bannerUrl,
-  onEditProfile
+  onEditProfile,
+  isPreview = false
 }: Props) {
   const queryClient = useQueryClient()
   const [isStatusMenuOpen, setIsStatusMenuOpen] = useState(false)
@@ -155,7 +157,7 @@ export function Content({
           className='w-full h-[105px] object-cover'
         />
       ) : (
-        <div className='w-full h-[105px] bg-black-92' />
+        <div className='w-full h-[105px] bg-[#22C55E] rounded-t-[4px]' />
       )}
       <div className='relative p-4'>
         <div className='flex justify-center items-center absolute top-[-40px]'>
@@ -163,7 +165,7 @@ export function Content({
             name={name}
             status={customPresenceStatus}
             avatarUrl={avatarUrl}
-            size='lg'
+            size='md'
             statusColor='black'
             defaultBackgroundColor='black'
           />
@@ -201,17 +203,19 @@ export function Content({
                 </div>
               </div>
             ) : null}
-            <ul className='flex flex-col gap-2'>
-              {menuItems.map((item, index) => (
-                <MenuItem
-                  key={index}
-                  onClick={item.onClick}
-                  icon={item.icon}
-                  text={item.text}
-                  hasChevron={item.hasChevron}
-                />
-              ))}
-            </ul>
+            {!isPreview && (
+              <ul className='flex flex-col gap-2'>
+                {menuItems.map((item, index) => (
+                  <MenuItem
+                    key={index}
+                    onClick={item.onClick}
+                    icon={item.icon}
+                    text={item.text}
+                    hasChevron={item.hasChevron}
+                  />
+                ))}
+              </ul>
+            )}
           </div>
         </div>
       </div>

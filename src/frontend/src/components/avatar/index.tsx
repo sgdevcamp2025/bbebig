@@ -17,7 +17,8 @@ const avatarSize = cva('rounded-full flex items-center justify-center', {
   variants: {
     size: {
       sm: 'h-[32px] min-w-[32px]',
-      lg: 'h-[70px] min-w-[70px]'
+      md: 'h-[80px] min-w-[80px]',
+      lg: 'h-[100px] min-w-[100px]'
     }
   }
 })
@@ -26,7 +27,8 @@ const imageSize = cva('rounded-full', {
   variants: {
     size: {
       sm: 'h-[32px] w-[32px] min-h-[32px] min-w-[32px]',
-      lg: 'h-[70px] w-[70px] min-h-[70px] min-w-[70px]'
+      md: 'h-[70px] w-[70px] min-h-[70px] min-w-[70px]',
+      lg: 'h-[100px] w-[100px] min-h-[100px] min-w-[100px]'
     }
   }
 })
@@ -35,17 +37,18 @@ const statusWrapperSize = cva('rounded-full flex items-center justify-center', {
   variants: {
     size: {
       sm: 'h-[12px] w-[12px] min-h-[12px] min-w-[12px]',
-      lg: 'h-[28px] w-[28px] min-h-[28px] min-w-[28px]'
+      md: 'h-[28px] w-[28px] min-h-[28px] min-w-[28px]',
+      lg: 'h-[32px] w-[32px] min-h-[32px] min-w-[32px]'
     }
   }
 })
 
-function Avatar({ avatarUrl, size, statusColor = 'black', status }: Props) {
+function Avatar({ avatarUrl, size, statusColor = 'black', status, defaultBackgroundColor }: Props) {
   return (
     <div
       aria-label='avatar'
       className={cn(avatarSize({ size }), 'relative')}
-      style={{ backgroundColor: 'black' }}>
+      style={{ backgroundColor: defaultBackgroundColor }}>
       <img
         src={avatarUrl || '/image/common/default-avatar.png'}
         alt='avatar'
