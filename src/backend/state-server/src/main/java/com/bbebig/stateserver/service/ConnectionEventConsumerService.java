@@ -133,18 +133,14 @@ public class ConnectionEventConsumerService {
 	}
 
 	private MemberGlobalStatusResponseDto checkMemberState(Long memberId) {
-		log.info("[State] Feign 호출 전 - memberId: {}", memberId);
 		if (memberId == null || memberId <= 0) {
 			log.error("[State] 유효하지 않은 memberId 요청: {}", memberId);
 			throw new IllegalArgumentException("유효하지 않은 멤버 ID: " + memberId);
 		}
 		try {
-			log.info("[State] Feign 호출 바로 직전 - memberId: {}", memberId);
 			MemberGlobalStatusResponseDto response = memberClient.getMemberGlobalStatus(memberId);
-			log.info("[State] Feign 응답 받음 - memberId: {}, response: {}", memberId, response);
 			return response;
 		} catch (FeignException e) {
-			log.error("[State] 멤버 ID({})에 대한 정보를 찾을 수 없음", memberId);
 			log.error("[State] FeignException: {}", e.getMessage());
 			return null; // 또는 적절한 기본값 반환
 		}
