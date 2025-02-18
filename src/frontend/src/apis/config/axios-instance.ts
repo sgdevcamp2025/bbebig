@@ -2,7 +2,7 @@ import axios from 'axios'
 
 import { SERVER_URL } from '@/constants/env'
 
-import { checkAndSetToken, handleApiError, handleTokenError } from './intercepter'
+import { checkAndSetToken, handleApiError, handleTokenError } from './interceptor'
 
 const axiosInstance = axios.create({
   headers: {

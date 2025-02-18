@@ -1,28 +1,46 @@
-import { useParams } from 'react-router'
+import { useLayoutEffect, useMemo } from 'react'
+import { useNavigate, useParams } from 'react-router'
+
+import { useGetServerInfo } from '@/hooks/queries/server/useGetServerInfo'
 
 import TextComponent from './components/text'
 import VideoComponent from './components/voice'
 
-const CHANNEL_INFO = {
-  type: 'VOICE',
-  serverName: 'test 서버 이름',
-  channelName: 'test 음성 채널'
-}
-
 function ChannelPage() {
-  const data = CHANNEL_INFO
-  const { channelId } = useParams()
+  const { serverId, channelId } = useParams()
+  const navigate = useNavigate()
 
-  if ('TEXT' === data.type) {
+  if (!serverId || !channelId) {
+    throw new Error('serverId or channelId is required')
+  }
+
+  const data = useGetServerInfo(serverId)
+
+  const currentChannel = useMemo(
+    () => data.channelInfoList.find((channel) => channel.channelId === Number(channelId)),
+    [data.channelInfoList, channelId]
+  )
+
+  useLayoutEffect(() => {
+    if (!currentChannel) {
+      navigate(`/channels/${serverId}/${data.channelInfoList[0].channelId}`)
+    }
+  }, [currentChannel, data.channelInfoList, navigate, serverId])
+
+  if (!currentChannel) {
+    return null
+  }
+
+  if (currentChannel.channelType === 'CHAT') {
     return <TextComponent channelId={Number(channelId)} />
   }
 
-  if ('VOICE' === data.type) {
+  if (currentChannel.channelType === 'VOICE') {
     return (
       <VideoComponent
         channelId={Number(channelId)}
         serverName={data.serverName}
-        channelName={data.channelName}
+        channelName={currentChannel.channelName}
       />
     )
   }

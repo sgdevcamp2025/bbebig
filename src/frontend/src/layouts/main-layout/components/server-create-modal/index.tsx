@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form'
 import { CreateServerRequestSchema } from '@/apis/schema/types/service'
 import CustomButton from '@/components/custom-button'
 import CustomModal from '@/components/custom-modal'
-import useCreateServer from '@/hooks/queries/server/useCreateServer'
+import { useCreateServer } from '@/hooks/queries/server/useCreateServer'
 
 type ServerCreateModalProps = {
   isOpen: boolean

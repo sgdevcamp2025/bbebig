@@ -3,7 +3,7 @@ import { useQueryClient } from '@tanstack/react-query'
 
 import serviceService from '@/apis/service/service'
 
-const useCreateServer = () => {
+export const useCreateServer = () => {
   const queryClient = useQueryClient()
   const { mutate: createServer } = useMutation({
     mutationFn: serviceService.createServer,
@@ -14,5 +14,3 @@ const useCreateServer = () => {
 
   return createServer
 }
-
-export default useCreateServer

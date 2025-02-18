@@ -5,7 +5,7 @@ import { GetServerMemebersResponseSchema } from '@/apis/schema/types/service'
 import serviceService from '@/apis/service/service'
 import { UseQueryCustomOptions } from '@/types/common'
 
-const useGetServerMember = (
+export const useGetServerMember = (
   serverId: string,
   config?: UseQueryCustomOptions<CommonResponseType<GetServerMemebersResponseSchema>>
 ) => {
@@ -17,5 +17,3 @@ const useGetServerMember = (
 
   return data
 }
-
-export default useGetServerMember

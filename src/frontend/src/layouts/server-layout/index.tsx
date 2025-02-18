@@ -1,7 +1,7 @@
 import { Outlet, useNavigate, useParams } from 'react-router'
 
 import { useGetServerInfo } from '@/hooks/queries/server/useGetServerInfo'
-import useGetServerMember from '@/hooks/queries/server/useGetServerMember'
+import { useGetServerMember } from '@/hooks/queries/server/useGetServerMember'
 import useStatusBarStore from '@/stores/use-status-bar-store'
 
 import ServerSidebar from './components/server-side-bar'
