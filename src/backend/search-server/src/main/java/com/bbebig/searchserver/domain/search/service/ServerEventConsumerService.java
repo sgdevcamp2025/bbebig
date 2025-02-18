@@ -2,6 +2,8 @@ package com.bbebig.searchserver.domain.search.service;
 
 
 import com.bbebig.commonmodule.kafka.dto.serverEvent.*;
+import com.bbebig.commonmodule.kafka.dto.serverEvent.status.ServerActionStatus;
+import com.bbebig.commonmodule.kafka.dto.serverEvent.status.ServerChannelStatus;
 import com.bbebig.searchserver.global.repository.ServerRedisRepositoryImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,16 +42,15 @@ public class ServerEventConsumerService {
 	private void handleServerActionEvent(ServerActionEventDto eventDto) {
 		Long serverId = eventDto.getServerId();
 		// TODO : 추후 서버 액션 이벤트 처리 로직 추가
-		if (eventDto.getStatus().equals("DELETE")) {
+		if (eventDto.getStatus().equals(ServerActionStatus.DELETE)) {
 		} else {
-
 		}
 
 		log.info("[State] ServerEventConsumerService: 서버 액션 이벤트 처리. eventDto: {}", eventDto);
 	}
 
 	private void handleServerChannelEvent(ServerChannelEventDto eventDto) {
-		if (eventDto.getStatus().equals("DELETE")) {
+		if (eventDto.getStatus().equals(ServerChannelStatus.DELETE)) {
 			serverRedisRepositoryImpl.deleteChannelMessageList(eventDto.getChannelId());
 		}
 		log.info("[State] ServerEventConsumerService: 서버 채널 이벤트 처리. eventDto: {}", eventDto);

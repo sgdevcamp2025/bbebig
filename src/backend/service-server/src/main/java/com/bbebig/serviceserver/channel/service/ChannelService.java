@@ -2,6 +2,7 @@ package com.bbebig.serviceserver.channel.service;
 
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
+import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerChannelEventDto;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerEventType;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.status.ServerChannelStatus;
@@ -102,7 +103,7 @@ public class ChannelService {
                 .categoryId(category != null ? category.getId() : null)
                 .channelId(channel.getId())
                 .channelName(channel.getName())
-                .channelType(channel.getChannelType().toString())
+                .channelType(ChannelType.valueOf(channel.getChannelType().toString()))
                 .order(channel.getPosition())
                 .status(ServerChannelStatus.CREATE)
                 .build();
@@ -140,7 +141,7 @@ public class ChannelService {
                 .categoryId(channel.getCategory() != null ? channel.getCategory().getId() : null)
                 .channelId(channel.getId())
                 .channelName(channel.getName())
-                .channelType(channel.getChannelType().toString())
+                .channelType(ChannelType.valueOf(channel.getChannelType().toString()))
                 .order(channel.getPosition())
                 .status(ServerChannelStatus.UPDATE)
                 .build();
@@ -173,7 +174,7 @@ public class ChannelService {
                 .type(ServerEventType.SERVER_CHANNEL)
                 .categoryId(channel.getCategory() != null ? channel.getCategory().getId() : null)
                 .channelId(channel.getId())
-                .channelType(channel.getChannelType().toString())
+                .channelType(ChannelType.valueOf(channel.getChannelType().toString()))
                 .status(ServerChannelStatus.DELETE)
                 .build();
         kafkaProducerService.sendServerEvent(serverChannelEventDto);

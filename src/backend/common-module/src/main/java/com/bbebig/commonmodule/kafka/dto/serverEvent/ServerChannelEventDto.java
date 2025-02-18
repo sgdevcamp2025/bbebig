@@ -19,7 +19,7 @@ public class ServerChannelEventDto extends ServerEventDto {
 
 	private String channelName;
 
-	private String channelType; // CHAT, VOICE
+	private ChannelType channelType; // CHAT, VOICE
 
 	private int order; // Channel 순서, DELETE 시에는 null
 
@@ -32,7 +32,7 @@ public class ServerChannelEventDto extends ServerEventDto {
 			@JsonProperty("categoryId") Long categoryId,
 			@JsonProperty("channelId") Long channelId,
 			@JsonProperty("channelName") String channelName,
-			@JsonProperty("channelType") String channelType,
+			@JsonProperty("channelType") ChannelType channelType,
 			@JsonProperty("order") int order,
 			@JsonProperty("status") ServerChannelStatus status
 	) {

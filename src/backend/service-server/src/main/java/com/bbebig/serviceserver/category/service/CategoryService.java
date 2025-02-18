@@ -2,6 +2,7 @@ package com.bbebig.serviceserver.category.service;
 
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
+import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerCategoryEventDto;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerChannelEventDto;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerEventType;
@@ -140,7 +141,7 @@ public class CategoryService {
                     .categoryId(null)
                     .channelId(channel.getId())
                     .channelName(channel.getName())
-                    .channelType(channel.getChannelType().toString())
+                    .channelType(ChannelType.valueOf(channel.getChannelType().toString()))
                     .status(ServerChannelStatus.UPDATE)
                     .build();
         }

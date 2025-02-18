@@ -34,13 +34,13 @@ public class MessageEventConsumerService {
 		log.info("[Chat] MessageEventConsumerService에서 메시지 이벤트 수신: ChatMessageDto: {}", chatMessageDto);
 
 		switch (chatMessageDto.getType()) {
-			case "MESSAGE_CREATE":
+			case MESSAGE_CREATE:
 				historyService.saveChannelMessage(chatMessageDto);
 				break;
-			case "MESSAGE_UPDATE":
+			case MESSAGE_UPDATE:
 				historyService.updateChannelMessage(chatMessageDto);
 				break;
-			case "MESSAGE_DELETED":
+			case MESSAGE_DELETE:
 				historyService.deleteChannelMessage(chatMessageDto.getId());
 				break;
 			default:
@@ -65,13 +65,13 @@ public class MessageEventConsumerService {
 		}
 
 		switch (chatMessageDto.getType()) {
-			case "MESSAGE_CREATE":
+			case MESSAGE_CREATE:
 				historyService.saveDmMessage(chatMessageDto);
 				break;
-			case "MESSAGE_UPDATE":
+			case MESSAGE_UPDATE:
 				historyService.updateDmMessage(chatMessageDto);
 				break;
-			case "MESSAGE_DELETED":
+			case MESSAGE_DELETE:
 				historyService.deleteDmMessage(chatMessageDto.getId());
 				break;
 			default:
