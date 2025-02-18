@@ -17,7 +17,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop # 운영 시에 none 변경
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -59,9 +59,10 @@ spring:
 
 logging:
   level:
-    org:
-      springframework:
-        jdbc: DEBUG # 운영 시에 WARN 변경
+    org.springframework.jdbc: DEBUG # 운영 시에 WARN 변경
+    org.apache.kafka: WARN
+    org.springframework.kafka: WARN
+
 
 eureka:
   client:

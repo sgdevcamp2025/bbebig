@@ -1,7 +1,9 @@
 package com.bbebig.serviceserver.global.feign;
 
-import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto.*;
+import com.bbebig.commonmodule.clientDto.ServiceFeignResponseDto.*;
 import com.bbebig.commonmodule.global.response.code.CommonResponse;
+import com.bbebig.commonmodule.redis.domain.ChannelLastInfo;
+import com.bbebig.serviceserver.channel.service.ChannelService;
 import com.bbebig.serviceserver.server.service.ServerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
 @Slf4j
 @RestController
 @RequestMapping("/feign")
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class FeignController {
 
 	private final ServerService serverService;
+	private final ChannelService channelService;
 
 	@Operation(summary = "서버에 속해있는 채널 목록 조회 (For FeignClient)", description = "서버에 속해있는 채널 목록을 조회합니다.")
 	@ApiResponses(value = {
@@ -30,11 +34,11 @@ public class FeignController {
 			@ApiResponse(responseCode = "400", description = "", content = @Content)
 	})
 	@GetMapping("/servers/{serverId}/list/channel")
-	public CommonResponse<ServerChannelListResponseDto> getServerChannelList(
+	public ServerChannelListResponseDto getServerChannelList(
 			@PathVariable Long serverId
 	) {
 		log.info("[Service] 서버에 속해있는 채널 목록 조회 요청: serverId = {}", serverId);
-		return CommonResponse.onSuccess(serverService.getServerChannelList(serverId));
+		return serverService.getServerChannelList(serverId);
 	}
 
 	@Operation(summary = "서버에 속해있는 멤버 아이디 조회 (For FeignClient)", description = "서버에 속해있는 멤버 목록을 조회합니다.")
@@ -43,11 +47,11 @@ public class FeignController {
 			@ApiResponse(responseCode = "400", description = "", content = @Content)
 	})
 	@GetMapping("/servers/{serverId}/list/members")
-	public CommonResponse<ServerMemberListResponseDto> getServerMemberList(
+	public ServerMemberListResponseDto getServerMemberList(
 			@PathVariable Long serverId
 	) {
 		log.info("[Service] 서버에 속해있는 멤버 아이디 목록 조회 요청: serverId = {}", serverId);
-		return CommonResponse.onSuccess(serverService.getServerMemberIdList(serverId));
+		return serverService.getServerMemberIdList(serverId);
 	}
 
 	@Operation(summary = "멤버별로 속해있는 서버 목록 조회 (For FeignClient)", description = "멤버별로 속해있는 서버 목록 조회합니다.")
@@ -56,24 +60,35 @@ public class FeignController {
 			@ApiResponse(responseCode = "400", description = "", content = @Content)
 	})
 	@GetMapping("/servers/members/{memberId}/list")
-	public CommonResponse<MemberServerListResponseDto> getMemberServerList(
+	public MemberServerListResponseDto getMemberServerList(
 			@PathVariable Long memberId
 	) {
 		log.info("[Service] 멤버별로 속해있는 서버 목록 조회 요청 (For FeignClient): memberId = {}", memberId);
-		return CommonResponse.onSuccess(serverService.getMemberServerList(memberId));
+		return serverService.getMemberServerList(memberId);
 	}
 
-	@Operation(summary = "서버별 채널 마지막 방문 정보 조회 (For FeignClient", description = "서버별 채널 마지막 방문 정보를 조회합니다.")
+	@Operation(summary = "서버별 채널 마지막 방문 정보 조회 (For FeignClient)", description = "서버별 채널 마지막 방문 정보를 조회합니다.")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "채널 마지막 방문 정보 조회 성공", useReturnTypeSchema = true),
 			@ApiResponse(responseCode = "400", description = "", content = @Content)
 	})
 	@GetMapping("/servers/{serverId}/channels/info/member/{memberId}")
-	public CommonResponse<ServerLastInfoResponseDto> getServerLastInfo(
+	public ServerLastInfoResponseDto getServerLastInfo(
 			@PathVariable Long serverId,
 			@PathVariable Long memberId
 	) {
 		log.info("[Service] 서버별 채널 마지막 방문 정보 조회 요청: serverId = {}, memberId = {}", serverId, memberId);
-		return CommonResponse.onSuccess(serverService.getServerChannelLastInfoForApi(memberId, serverId));
+		return serverService.getServerChannelLastInfoForApi(memberId, serverId);
+	}
+
+	@Operation(summary = "채널 마지막 방문 정보 조회(For FeignClient)", description = "채널 마지막 방문 정보를 조회합니다.")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "채널 마지막 방문 정보 조회 성공", useReturnTypeSchema = true),
+			@ApiResponse(responseCode = "400", description = "", content = @Content)
+	})
+	@GetMapping("/channels/{channelId}/lastInfo/member/{memberId}")
+	public CommonResponse<ChannelLastInfo> getChannelLastInfo(@PathVariable Long channelId, @PathVariable Long memberId) {
+		log.info("[Service] 채널 마지막 방문 정보 조회 요청: channelId = {}, memberId = {}", channelId, memberId);
+		return CommonResponse.onSuccess(channelService.getChannelLastInfo(channelId, memberId));
 	}
 }
