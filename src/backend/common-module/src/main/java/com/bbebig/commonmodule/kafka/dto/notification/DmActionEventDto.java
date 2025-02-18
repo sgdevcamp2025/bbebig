@@ -19,13 +19,13 @@ public class DmActionEventDto extends NotificationEventDto {
 
 	@JsonCreator
 	public DmActionEventDto(
-			@JsonProperty("notificationId") Long notificationId,
-			@JsonProperty("notificationEventType") NotificationEventType notificationEventType,
+			@JsonProperty("memberId") Long memberId,
+			@JsonProperty("type") NotificationEventType type,
 			@JsonProperty("channelId") Long channelId,
 			@JsonProperty("channelName") Long channelName,
 			@JsonProperty("status") String status
 	) {
-		super(notificationId, notificationEventType);
+		super(memberId, type);
 		this.channelId = channelId;
 		this.channelName = channelName;
 		this.status = status;

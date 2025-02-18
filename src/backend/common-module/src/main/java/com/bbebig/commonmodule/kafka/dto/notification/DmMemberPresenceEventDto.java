@@ -20,13 +20,13 @@ public class DmMemberPresenceEventDto extends NotificationEventDto {
 
 	@JsonCreator
 	public DmMemberPresenceEventDto(
-			@JsonProperty("notificationId") Long notificationId,
-			@JsonProperty("notificationEventType") NotificationEventType notificationEventType,
+			@JsonProperty("memberId") Long memberId,
+			@JsonProperty("type") NotificationEventType type,
 			@JsonProperty("targetMemberId") Long targetMemberId,
 			@JsonProperty("channelId") Long channelId,
 			@JsonProperty("globalStatus") PresenceType globalStatus
 	) {
-		super(notificationId, notificationEventType);
+		super(memberId, type);
 		this.targetMemberId = targetMemberId;
 		this.channelId = channelId;
 		this.globalStatus = globalStatus;

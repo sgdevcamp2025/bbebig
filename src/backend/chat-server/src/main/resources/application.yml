@@ -52,7 +52,7 @@ eureka:
 
 snowflake:
 #  worker-id: ${snowflake.worker-id:${random.value}}
-    worker-id: 1
+    worker-id: ${INSTANCE_ID}
 
 eas:
   passport:
@@ -65,3 +65,7 @@ auth:
   server:
     url: ${AUTH_SERVER_URL}
 
+logging:
+  level:
+    org.apache.kafka: WARN
+    org.springframework.kafka: WARN

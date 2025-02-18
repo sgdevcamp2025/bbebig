@@ -7,7 +7,4 @@ import org.springframework.web.bind.annotation.GetMapping;
 @FeignClient(name = "service-server")
 public interface ServiceClient {
 
-	@GetMapping("/service-server/getRoomList")
-	ServiceResponseDto.DmChannelInfoResponseDto getDmChannelInfo(Long channelId);
-
 }
