@@ -2,6 +2,7 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react'
 
 import Avatar from '@/components/avatar'
 import CommonHeader from '@/components/common-header'
+import { useGetChannelInfo } from '@/hooks/queries/channel/useGetChannelInfo'
 import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
 import { cn } from '@/libs/cn'
 import DmAreaHeader from '@/pages/dm/components/dm-area-header'
@@ -25,9 +26,9 @@ function ChatArea({ friend, channelId, isVoice, onClose }: ChatAreaProps) {
   const [searchValue, setSearchValue] = useState('')
   const { isStatusBarOpen, toggleStatusBar } = useStatusBarStore()
   const mySelfData = useGetSelfUser()
+  const channelInfo = useGetChannelInfo(channelId ?? 0)
 
   const chatKey = friend?.friendId ?? channelId
-  console.log(friend?.friendId)
 
   const sendMessage = () => {
     if (!inputRef.current || !chatKey) return
@@ -95,7 +96,9 @@ function ChatArea({ friend, channelId, isVoice, onClose }: ChatAreaProps) {
               src={isVoice ? '/icon/channel/threads.svg' : '/icon/channel/type-chat.svg'}
               alt={isVoice ? '음성 채널' : '텍스트 채널'}
             />
-            <span className='text-discord-font-color-normal font-medium'>채널 {channelId}</span>
+            <span className='text-discord-font-color-normal font-medium'>
+              {channelInfo?.channelName}
+            </span>
           </CommonHeader>
         )}
 
