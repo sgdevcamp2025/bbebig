@@ -54,7 +54,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update # 운영 시에 none 변경
+      ddl-auto: create # 운영 시에 none 변경
     show-sql: true
     properties:
       hibernate:
