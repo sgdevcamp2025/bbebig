@@ -70,8 +70,6 @@ public class ConnectionEventConsumerService {
 
 	// 연결 이벤트를 처리하여, 상태 정보를 레디스에 저장
 	private MemberPresenceStatus handleConnectionEvent(ConnectionEventDto connectionEventDto) {
-		// 개발용 로그
-		log.info("[State] ConnectionEventConsumerService: 연결 이벤트 처리. memberId: {}", connectionEventDto.getMemberId());
 		MemberPresenceStatus memberPresenceStatus = memberRedisRepositoryImpl.getMemberPresenceStatus(connectionEventDto.getMemberId());
 		if (memberPresenceStatus == null) {
 			MemberGlobalStatusResponseDto responseDto = checkMemberState(connectionEventDto.getMemberId());
@@ -135,13 +133,16 @@ public class ConnectionEventConsumerService {
 	}
 
 	private MemberGlobalStatusResponseDto checkMemberState(Long memberId) {
-		log.info("[State] ConnectionEventConsumerService: Feign 으로 멤버 상태 정보 조회. memberId: {}", memberId);
+		log.info("[State] Feign 호출 전 - memberId: {}", memberId);
 		if (memberId == null || memberId <= 0) {
 			log.error("[State] 유효하지 않은 memberId 요청: {}", memberId);
 			throw new IllegalArgumentException("유효하지 않은 멤버 ID: " + memberId);
 		}
 		try {
-			return memberClient.getMemberGlobalStatus(memberId);
+			log.info("[State] Feign 호출 바로 직전 - memberId: {}", memberId);
+			MemberGlobalStatusResponseDto response = memberClient.getMemberGlobalStatus(memberId);
+			log.info("[State] Feign 응답 받음 - memberId: {}, response: {}", memberId, response);
+			return response;
 		} catch (FeignException e) {
 			log.error("[State] 멤버 ID({})에 대한 정보를 찾을 수 없음", memberId);
 			log.error("[State] FeignException: {}", e.getMessage());
