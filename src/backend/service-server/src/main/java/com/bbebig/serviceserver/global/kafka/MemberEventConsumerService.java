@@ -2,6 +2,7 @@ package com.bbebig.serviceserver.global.kafka;
 
 
 import com.bbebig.commonmodule.kafka.dto.MemberEventDto;
+import com.bbebig.commonmodule.kafka.dto.model.MemberEventType;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerEventType;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerMemberActionEventDto;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.status.ServerMemberActionStatus;
@@ -27,12 +28,12 @@ public class MemberEventConsumerService {
 		}
 		// 개발용 로그
 		log.info("[State] MemberEventConsumerService: 멤버 이벤트 수신. dto: {}", memberEventDto);
-		if (memberEventDto.getType().equals("UPDATE")) {
+		if (memberEventDto.getType().equals(MemberEventType.MEMBER_UPDATE)) {
 			handleUpdateEvent(memberEventDto);
-		} else if (memberEventDto.getType().equals("DELETE")) {
+		} else if (memberEventDto.getType().equals(MemberEventType.MEMBER_DELETE)) {
 			handleDeleteEvent(memberEventDto);
 		} else {
-			if (!memberEventDto.getType().equals("CREATE")) {
+			if (!memberEventDto.getType().equals(MemberEventType.MEMBER_CREATE)) {
 				log.error("[State] MemberEventConsumerService: 멤버 이벤트 타입이 잘못되었습니다. memberEventDto: {}", memberEventDto);
 			}
 		}

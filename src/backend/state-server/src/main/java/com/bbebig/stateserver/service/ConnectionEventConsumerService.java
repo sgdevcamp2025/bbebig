@@ -3,6 +3,7 @@ package com.bbebig.stateserver.service;
 import com.bbebig.commonmodule.clientDto.UserFeignResponseDto.MemberGlobalStatusResponseDto;
 import com.bbebig.commonmodule.kafka.dto.ConnectionEventDto;
 import com.bbebig.commonmodule.kafka.dto.PresenceEventDto;
+import com.bbebig.commonmodule.kafka.dto.model.ConnectionEventType;
 import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
 import com.bbebig.commonmodule.redis.domain.DeviceInfo;
 import com.bbebig.commonmodule.redis.domain.MemberPresenceStatus;
@@ -38,13 +39,13 @@ public class ConnectionEventConsumerService {
 		log.info("[State] ConnectionEventConsumerService: 연결 이벤트 수신. memberId: {}, type: {}", connectionEventDto.getMemberId(), connectionEventDto.getType());
 
 		// 연결 이벤트인지, 연결 끊어짐 이벤트인지 확인
-		if (connectionEventDto.getType().equals("CONNECT")) {
+		if (connectionEventDto.getType().equals(ConnectionEventType.CONNECT)) {
 			MemberPresenceStatus memberPresenceStatus = handleConnectionEvent(connectionEventDto);
 
 			PresenceEventDto presenceEventDto = DtoConverter.convertMemberPresenceStatusToPresenceEventDto(memberPresenceStatus);
 
 			kafkaProducerService.sendPresenceEvent(presenceEventDto);
-		} else if (connectionEventDto.getType().equals("DISCONNECT")) {
+		} else if (connectionEventDto.getType().equals(ConnectionEventType.DISCONNECT)) {
 			MemberPresenceStatus memberPresenceStatus = handleDisconnectionEvent(connectionEventDto);
 
 			PresenceEventDto presenceEventDto;

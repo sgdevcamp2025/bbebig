@@ -4,6 +4,7 @@ package com.bbebig.serviceserver.global.kafka;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.kafka.dto.ChannelEventDto;
+import com.bbebig.commonmodule.kafka.dto.model.ChannelEventType;
 import com.bbebig.commonmodule.redis.domain.ChannelLastInfo;
 import com.bbebig.commonmodule.redis.domain.ServerLastInfo;
 import com.bbebig.serviceserver.channel.entity.ChannelMember;
@@ -35,7 +36,7 @@ public class ChannelEventConsumerService {
 
 		// 개발용 로그
 		log.info("[State] ChannelEventConsumerService: 채널 이벤트 수신. memberId: {}, type: {}, dto: {}", channelEventDto.getMemberId(), channelEventDto.getType(), channelEventDto);
-		if (channelEventDto.getType().equals("ENTER") || channelEventDto.getType().equals("LEAVE")) {
+		if (channelEventDto.getType().equals(ChannelEventType.CHANNEL_ENTER) || channelEventDto.getType().equals(ChannelEventType.CHANNEL_LEAVE)) {
 			handleChannelEvent(channelEventDto);
 		} else {
 			log.error("[State] ChannelEventConsumerService: 채널 이벤트 타입이 잘못되었습니다. channelEventDto: {}", channelEventDto);
