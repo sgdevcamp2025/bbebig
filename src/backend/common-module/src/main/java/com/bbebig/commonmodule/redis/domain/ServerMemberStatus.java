@@ -6,11 +6,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ServerMemberStatus {
+public class ServerMemberStatus implements Serializable {
 
 	private Long memberId;
 	private PresenceType actualStatus;            // "ONLINE", "OFFLINE", "DND", ...
