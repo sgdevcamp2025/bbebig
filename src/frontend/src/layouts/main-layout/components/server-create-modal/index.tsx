@@ -1,13 +1,12 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Camera } from 'lucide-react'
 import { Plus } from 'lucide-react'
 import { ComponentProps } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { CreateServerRequestSchema } from '@/apis/schema/types/service'
-import serviceService from '@/apis/service/service'
 import CustomButton from '@/components/custom-button'
 import CustomModal from '@/components/custom-modal'
+import { useCreateServer } from '@/hooks/queries/server/useCreateServer'
 
 type ServerCreateModalProps = {
   isOpen: boolean
@@ -15,14 +14,7 @@ type ServerCreateModalProps = {
 } & ComponentProps<typeof CustomModal>
 
 function ServerCreateModal({ isOpen, onClose, ...args }: ServerCreateModalProps) {
-  const queryClient = useQueryClient()
-
-  const { mutate: createServer } = useMutation({
-    mutationFn: serviceService.createServer,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['servers'] })
-    }
-  })
+  const createServer = useCreateServer()
 
   const {
     register,

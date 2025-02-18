@@ -1,20 +1,18 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 
 import { createChannelRequestSchema } from '@/apis/schema/server'
 import { ZCreateChannelRequestSchema } from '@/apis/schema/types/service'
-import serviceService from '@/apis/service/service'
 import CustomButton from '@/components/custom-button'
 import CustomModal from '@/components/custom-modal'
 import CustomRadio, { RadioItem } from '@/components/custom-radio'
+import { useCreateChannel } from '@/hooks/queries/server/useCreateChannel'
 import { cn } from '@/libs/cn'
-import { ChannelType } from '@/types/server'
 
 interface InnerProps {
-  selectCategoryId: number | null
+  selectCategoryId: number
   serverId: number
   categoryInfo?: {
     id: string
@@ -29,7 +27,7 @@ const CHANNEL_TYPE_ITEMS = [
     id: '1',
     label: '텍스트',
     description: '메시지, 이미지, GIF, 이모지, 의견, 농담을 전송하세요',
-    value: 'TEXT',
+    value: 'CHAT',
     icon: (
       <img
         src='/icon/channel/type-text.svg'
@@ -66,7 +64,7 @@ export function Inner({ serverId, isOpen, onClose, categoryInfo, selectCategoryI
   } = useForm<ZCreateChannelRequestSchema>({
     defaultValues: {
       serverId: String(serverId),
-      categoryId: undefined,
+      categoryId: -1,
       channelType: '',
       channelName: '',
       privateStatus: false,
@@ -75,31 +73,20 @@ export function Inner({ serverId, isOpen, onClose, categoryInfo, selectCategoryI
     resolver: zodResolver(createChannelRequestSchema)
   })
 
-  const { mutate: createChannel } = useMutation({
-    mutationFn: (data: ZCreateChannelRequestSchema) => {
-      return serviceService.createChannel({
-        serverId: Number(data.serverId),
-        categoryId: selectCategoryId ? selectCategoryId : undefined,
-        channelType: data.channelType as ChannelType,
-        channelName: data.channelName,
-        privateStatus: data.privateStatus,
-        memberIds: data.memberIds.map(Number)
-      })
-    }
-  })
+  const createChannel = useCreateChannel()
 
   const handleCreateChannel = (data: ZCreateChannelRequestSchema) => {
     createChannel({
       channelName: data.channelName,
       channelType: selectedChannelType.value,
       privateStatus: false,
-      memberIds: [],
+      memberIds: [null],
       serverId: String(serverId),
-      categoryId: data.categoryId ? String(data.categoryId) : undefined
+      categoryId: selectCategoryId
     })
 
     if (selectCategoryId) {
-      selectCategoryId = null
+      selectCategoryId = -1
     }
 
     setSelectedChannelType(CHANNEL_TYPE_ITEMS[0])
@@ -179,7 +166,6 @@ type Props = Omit<InnerProps, 'serverId'>
 
 function ChannelCreateModal({ isOpen, onClose, categoryInfo, selectCategoryId }: Props) {
   const { serverId } = useParams<{ serverId: string }>()
-  console.log('serverId', serverId)
 
   if (!serverId) {
     throw new Error('serverId is required')

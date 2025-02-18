@@ -1,50 +1,48 @@
 import { Outlet, useNavigate, useParams } from 'react-router'
 
+import { useGetServerInfo } from '@/hooks/queries/server/useGetServerInfo'
+import { useGetServerMember } from '@/hooks/queries/server/useGetServerMember'
 import useStatusBarStore from '@/stores/use-status-bar-store'
 
 import ServerSidebar from './components/server-side-bar'
 import StatusSideBar from './components/status-side-bar'
-import { useSuspenseQuery } from '@tanstack/react-query'
-import serviceService from '@/apis/service/service'
 
 function ServerLayout() {
   const { serverId, channelId } = useParams<{ serverId: string; channelId: string }>()
   const { isStatusBarOpen } = useStatusBarStore()
 
-  if (!serverId) {
-    throw new Error('serverId is required')
-  }
-
-  const { data: serverData } = useSuspenseQuery({
-    queryKey: ['serverData', serverId],
-    queryFn: () => serviceService.getServersList({ serverId })
-  })
-
-  console.log(serverData)
-
   const navigate = useNavigate()
 
-  const currentChannelUsers = serverData.result.categoryInfoList.flatMap((category) =>
-    category.channelInfoList.flatMap((channel) =>
-      channel.channelMemberList
-        .map((memberId) =>
-          serverData.result.serverMemberList?.find((user) => user.memberId === memberId)
-        )
-        .filter((user): user is NonNullable<typeof user> => Boolean(user))
-    )
-  )
+  if (!serverId || !channelId) {
+    throw new Error('serverId or channelId is required')
+  }
+
+  const serverData = useGetServerInfo(serverId)
+
+  const serverMemebersData = useGetServerMember(serverId)
+
+  const currentChannelUsers = serverMemebersData.result.serverMemberInfoList.map((member) => ({
+    memberId: member.memberId,
+    name: member.nickname,
+    avatarUrl: member.avatarUrl
+  }))
 
   const handleChannelSelect = (selectedChannelId: number) => {
     navigate(`/channels/${serverId}/${selectedChannelId}`)
   }
 
-  const { serverName, categoryInfoList } = serverData.result
+  const { serverName, categoryInfoList, channelInfoList } = serverData
+
+  const categories = categoryInfoList.map((category) => ({
+    ...category,
+    channelInfoList: channelInfoList.filter((channel) => channel.categoryId === category.categoryId)
+  }))
 
   return (
     <div className='flex h-screen w-full'>
       <ServerSidebar
         serverName={serverName}
-        categories={categoryInfoList}
+        categories={categories}
         onChannelSelect={handleChannelSelect}
         selectedChannelId={channelId}
       />

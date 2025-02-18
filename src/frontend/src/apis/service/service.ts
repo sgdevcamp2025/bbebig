@@ -1,6 +1,5 @@
 import axiosInstance from '../config/axios-instance'
 import { CommonResponseType } from '../schema/types/common'
-import * as Sentry from '@sentry/react'
 import type {
   CreateCategoryRequestSchema,
   CreateCategoryResponseSchema,
@@ -16,22 +15,16 @@ import type {
   DeleteServerResponseSchema,
   GetCategoriesRequestSchema,
   GetCategoriesResponseSchema,
-  GetChannelIdListInServerRequestSchema,
-  GetChannelIdListInServerResponseSchema,
   GetChannelLastVisitInfoWithMemberIdRequestSchema,
   GetChannelLastVisitInfoWithMemberIdResponseSchema,
+  GetChannelListInServerRequestSchema,
+  GetChannelListInServerResponseSchema,
   GetChannelListRequestSchema,
   GetChannelListResponseSchema,
-  GetChannelUserListRequestSchema,
-  GetChannelUserListResponseSchema,
-  GetMemberIdListInServerRequestSchema,
-  GetMemberIdListInServerResponseSchema,
-  GetMemberInfoLastVisitChannelRequestSchema,
-  GetMemberInfoLastVisitChannelResponseSchema,
-  GetServerIdListWithMemberIdRequestSchema,
-  GetServerIdListWithMemberIdResponseSchema,
   GetServerListRequestSchema,
   GetServerListResponseSchema,
+  GetServerMemebersRequestSchema,
+  GetServerMemebersResponseSchema,
   GetServersResponseSchema,
   ParticipateServerRequestSchema,
   ParticipateServerResponseSchema,
@@ -48,271 +41,145 @@ import type {
 const SERVER_PATH = `/service-server/servers`
 const CHANNEL_PATH = `/service-server/channels`
 const CATEGORY_PATH = `/service-server/categories`
+const FEIGN_PATH = `/service-server/feign/servers`
 
 const serviceService = () => {
   // Server API
   const deleteServer = async (data: DeleteServerRequestSchema) => {
-    try {
-      const response = await axiosInstance.delete<CommonResponseType<DeleteServerResponseSchema>>(
-        `${SERVER_PATH}/${data.serverId}`
-      )
-      return response.data
-    } catch (error) {
-      Sentry.captureException(error)
-      throw error
-    }
+    const response = await axiosInstance.delete<CommonResponseType<DeleteServerResponseSchema>>(
+      `${SERVER_PATH}/${data.serverId}`
+    )
+    return response.data
   }
 
   const withDrawServer = async (data: WithdrawServerRequestSchema) => {
-    try {
-      const response = await axiosInstance.delete<CommonResponseType<WithdrawServerResponseSchema>>(
-        `${SERVER_PATH}/${data.serverId}`
-      )
-      return response.data
-    } catch (error) {
-      Sentry.captureException(error)
-      throw error
-    }
+    const response = await axiosInstance.delete<CommonResponseType<WithdrawServerResponseSchema>>(
+      `${SERVER_PATH}/${data.serverId}`
+    )
+    return response.data
   }
 
   const getServersList = async (data: GetServerListRequestSchema) => {
-    try {
-      const response = await axiosInstance.get<CommonResponseType<GetServerListResponseSchema>>(
-        `${SERVER_PATH}/${data.serverId}`
-      )
-      return response.data
-    } catch (error) {
-      Sentry.captureException(error)
-      throw error
-    }
+    const response = await axiosInstance.get<CommonResponseType<GetServerListResponseSchema>>(
+      `${SERVER_PATH}/${data.serverId}`
+    )
+    return response.data
   }
 
   const getServers = async () => {
-    try {
-      const response = await axiosInstance.get<CommonResponseType<GetServersResponseSchema>>(
-        `${SERVER_PATH}`
-      )
-      return response.data
-    } catch (error) {
-      Sentry.captureException(error)
-      throw error
-    }
+    const response = await axiosInstance.get<CommonResponseType<GetServersResponseSchema>>(
+      `${SERVER_PATH}`
+    )
+    return response.data
   }
 
-  const getMemberIdListInServer = async (data: GetMemberIdListInServerRequestSchema) => {
-    try {
-      const response = await axiosInstance.get<
-        CommonResponseType<GetMemberIdListInServerResponseSchema>
-      >(`${SERVER_PATH}/${data.serverId}/list/members`)
-      return response.data
-    } catch (error) {
-      Sentry.captureException(error)
-      throw error
-    }
-  }
-
-  const getChannelIdListInServer = async (data: GetChannelIdListInServerRequestSchema) => {
-    try {
-      const response = await axiosInstance.get<
-        CommonResponseType<GetChannelIdListInServerResponseSchema>
-      >(`${SERVER_PATH}/${data.serverId}/list/channel`)
-      return response.data
-    } catch (error) {
-      Sentry.captureException(error)
-      throw error
-    }
-  }
-
-  const getMemberInfoLastVisitChannel = async (
-    data: GetMemberInfoLastVisitChannelRequestSchema
-  ) => {
-    try {
-      const response = await axiosInstance.get<
-        CommonResponseType<GetMemberInfoLastVisitChannelResponseSchema>
-      >(`${SERVER_PATH}/${data.serverId}/channels/info/member/${data.memberId}`)
-      return response.data
-    } catch (error) {
-      Sentry.captureException(error)
-      throw error
-    }
-  }
-
-  const getServerIdListWithMemberId = async (data: GetServerIdListWithMemberIdRequestSchema) => {
-    try {
-      const response = await axiosInstance.get<
-        CommonResponseType<GetServerIdListWithMemberIdResponseSchema>
-      >(`${SERVER_PATH}/${data.memberId}/list/servers`)
-      return response.data
-    } catch (error) {
-      Sentry.captureException(error)
-      throw error
-    }
+  const getServerMemebers = async (data: GetServerMemebersRequestSchema) => {
+    const response = await axiosInstance.get<CommonResponseType<GetServerMemebersResponseSchema>>(
+      `${SERVER_PATH}/${data.serverId}/members`
+    )
+    return response.data
   }
 
   const createServer = async (data: CreateServerRequestSchema) => {
-    try {
-      const response = await axiosInstance.post<CommonResponseType<CreateServerResponseSchema>>(
-        `${SERVER_PATH}`,
-        data
-      )
-      return response.data
-    } catch (error) {
-      Sentry.captureException(error)
-      throw error
-    }
+    const response = await axiosInstance.post<CommonResponseType<CreateServerResponseSchema>>(
+      `${SERVER_PATH}`,
+      data
+    )
+    return response.data
   }
 
   const participateServer = async (data: ParticipateServerRequestSchema) => {
-    try {
-      const response = await axiosInstance.post<
-        CommonResponseType<ParticipateServerResponseSchema>
-      >(`${SERVER_PATH}/${data.serverId}/participate`, data)
-      return response.data
-    } catch (error) {
-      Sentry.captureException(error)
-      throw error
-    }
+    const response = await axiosInstance.post<CommonResponseType<ParticipateServerResponseSchema>>(
+      `${SERVER_PATH}/${data.serverId}/participate`,
+      data
+    )
+    return response.data
   }
 
   const updateServer = async (data: UpdateServerRequestSchema) => {
-    try {
-      const response = await axiosInstance.put<CommonResponseType<UpdateServerResponseSchema>>(
-        `${SERVER_PATH}/${data.serverId}`,
-        data
-      )
-      return response.data
-    } catch (error) {
-      Sentry.captureException(error)
-      throw error
-    }
+    const response = await axiosInstance.put<CommonResponseType<UpdateServerResponseSchema>>(
+      `${SERVER_PATH}/${data.serverId}`,
+      data
+    )
+    return response.data
   }
 
   // Channel API
   const deleteChannel = async (data: DeleteChannelRequestSchema) => {
-    try {
-      const response = await axiosInstance.delete<CommonResponseType<DeleteChannelResponseSchema>>(
-        `${CHANNEL_PATH}/${data.channelId}`
-      )
-      return response.data
-    } catch (error) {
-      Sentry.captureException(error)
-      throw error
-    }
+    const response = await axiosInstance.delete<CommonResponseType<DeleteChannelResponseSchema>>(
+      `${CHANNEL_PATH}/${data.channelId}`
+    )
+    return response.data
   }
 
   const getChannelList = async (data: GetChannelListRequestSchema) => {
-    try {
-      const response = await axiosInstance.get<CommonResponseType<GetChannelListResponseSchema>>(
-        `${CHANNEL_PATH}/${data.channelId}`
-      )
-      return response.data
-    } catch (error) {
-      Sentry.captureException(error)
-      throw error
-    }
+    const response = await axiosInstance.get<CommonResponseType<GetChannelListResponseSchema>>(
+      `${CHANNEL_PATH}/${data.channelId}`
+    )
+    return response.data
   }
 
   const getChannelLastVisitInfoWithMemberId = async (
     data: GetChannelLastVisitInfoWithMemberIdRequestSchema
   ) => {
-    try {
-      const response = await axiosInstance.get<
-        CommonResponseType<GetChannelLastVisitInfoWithMemberIdResponseSchema>
-      >(`${CHANNEL_PATH}/${data.channelId}/lastInfo/member/${data.memberId}`)
-      return response.data
-    } catch (error) {
-      Sentry.captureException(error)
-      throw error
-    }
+    const response = await axiosInstance.get<
+      CommonResponseType<GetChannelLastVisitInfoWithMemberIdResponseSchema>
+    >(`${CHANNEL_PATH}/${data.channelId}/lastInfo/member/${data.memberId}`)
+    return response.data
   }
 
   const createChannel = async (data: CreateChannelRequestSchema) => {
-    try {
-      const response = await axiosInstance.post<CommonResponseType<CreateChannelResponseSchema>>(
-        `${CHANNEL_PATH}`,
-        data
-      )
-      return response.data
-    } catch (error) {
-      Sentry.captureException(error)
-      throw error
-    }
+    const response = await axiosInstance.post<CommonResponseType<CreateChannelResponseSchema>>(
+      `${CHANNEL_PATH}`,
+      data
+    )
+    return response.data
   }
 
   const updateChannel = async (data: UpdateChannelRequestSchema) => {
-    try {
-      const response = await axiosInstance.put<CommonResponseType<UpdateChannelResponseSchema>>(
-        `${CHANNEL_PATH}/${data.channelId}`,
-        data
-      )
-      return response.data
-    } catch (error) {
-      Sentry.captureException(error)
-      throw error
-    }
+    const response = await axiosInstance.put<CommonResponseType<UpdateChannelResponseSchema>>(
+      `${CHANNEL_PATH}/${data.channelId}`,
+      data
+    )
+    return response.data
   }
 
   // Category API
   const deleteCategory = async (data: DeleteCategoryRequestSchema) => {
-    try {
-      const response = await axiosInstance.delete<CommonResponseType<DeleteCategoryResponseSchema>>(
-        `${CATEGORY_PATH}/${data.categoryId}`
-      )
-      return response.data
-    } catch (error) {
-      Sentry.captureException(error)
-      throw error
-    }
+    const response = await axiosInstance.delete<CommonResponseType<DeleteCategoryResponseSchema>>(
+      `${CATEGORY_PATH}/${data.categoryId}`
+    )
+    return response.data
   }
 
   const getCategories = async (data: GetCategoriesRequestSchema) => {
-    try {
-      const response = await axiosInstance.get<CommonResponseType<GetCategoriesResponseSchema>>(
-        `${CATEGORY_PATH}/${data.categoryId}`
-      )
-      return response.data
-    } catch (error) {
-      Sentry.captureException(error)
-      throw error
-    }
+    const response = await axiosInstance.get<CommonResponseType<GetCategoriesResponseSchema>>(
+      `${CATEGORY_PATH}/${data.categoryId}`
+    )
+    return response.data
   }
 
   const createCategory = async (data: CreateCategoryRequestSchema) => {
-    try {
-      const response = await axiosInstance.post<CommonResponseType<CreateCategoryResponseSchema>>(
-        `${CATEGORY_PATH}`,
-        data
-      )
-      return response.data
-    } catch (error) {
-      Sentry.captureException(error)
-      throw error
-    }
+    const response = await axiosInstance.post<CommonResponseType<CreateCategoryResponseSchema>>(
+      `${CATEGORY_PATH}`,
+      data
+    )
+    return response.data
   }
 
   const updateCategory = async (data: UpdateCategoryRequestSchema) => {
-    try {
-      const response = await axiosInstance.put<CommonResponseType<UpdateCategoryResponseSchema>>(
-        `${CATEGORY_PATH}/${data.categoryId}`,
-        data
-      )
-      return response.data
-    } catch (error) {
-      Sentry.captureException(error)
-      throw error
-    }
+    const response = await axiosInstance.put<CommonResponseType<UpdateCategoryResponseSchema>>(
+      `${CATEGORY_PATH}/${data.categoryId}`,
+      data
+    )
+    return response.data
   }
 
-  const getChannelUserList = async (data: GetChannelUserListRequestSchema) => {
-    try {
-      const response = await axiosInstance.get<
-        CommonResponseType<GetChannelUserListResponseSchema>
-      >(`${CHANNEL_PATH}/${data.channelId}/list/users`)
-      return response.data
-    } catch (error) {
-      Sentry.captureException(error)
-      throw error
-    }
+  const getChannelListInServer = async (data: GetChannelListInServerRequestSchema) => {
+    const response = await axiosInstance.get<
+      CommonResponseType<GetChannelListInServerResponseSchema>
+    >(`${FEIGN_PATH}/${data.serverId}/list/channel`)
+    return response.data
   }
 
   return {
@@ -320,15 +187,12 @@ const serviceService = () => {
     getServersList,
     deleteServer,
     withDrawServer,
-    getMemberIdListInServer,
-    getChannelIdListInServer,
-    getMemberInfoLastVisitChannel,
-    getServerIdListWithMemberId,
     createServer,
     participateServer,
     updateServer,
     deleteChannel,
     getChannelList,
+    getServerMemebers,
     getChannelLastVisitInfoWithMemberId,
     createChannel,
     updateChannel,
@@ -336,7 +200,7 @@ const serviceService = () => {
     getCategories,
     createCategory,
     updateCategory,
-    getChannelUserList
+    getChannelListInServer
   }
 }
 

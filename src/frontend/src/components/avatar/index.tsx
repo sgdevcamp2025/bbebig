@@ -13,11 +13,20 @@ type Props = {
   status?: CustomPresenceStatus
 } & Omit<ComponentProps<typeof StatusIcon>, 'status'>
 
-const avatarSize = cva('rounded-full', {
+const avatarSize = cva('rounded-full flex items-center justify-center', {
   variants: {
     size: {
-      sm: 'h-8 w-8',
-      lg: 'h-20 w-20'
+      sm: 'h-[32px] min-w-[32px]',
+      lg: 'h-[70px] min-w-[70px]'
+    }
+  }
+})
+
+const imageSize = cva('rounded-full', {
+  variants: {
+    size: {
+      sm: 'h-[32px] w-[32px] min-h-[32px] min-w-[32px]',
+      lg: 'h-[70px] w-[70px] min-h-[70px] min-w-[70px]'
     }
   }
 })
@@ -25,26 +34,23 @@ const avatarSize = cva('rounded-full', {
 const statusWrapperSize = cva('rounded-full flex items-center justify-center', {
   variants: {
     size: {
-      sm: 'h-[12px] w-[12px]',
-      lg: 'h-[28px] w-[28px]'
+      sm: 'h-[12px] w-[12px] min-h-[12px] min-w-[12px]',
+      lg: 'h-[28px] w-[28px] min-h-[28px] min-w-[28px]'
     }
   }
 })
 
-function Avatar({ name, avatarUrl, size, statusColor = 'black', status }: Props) {
+function Avatar({ avatarUrl, size, statusColor = 'black', status }: Props) {
   return (
     <div
       aria-label='avatar'
-      className={cn(avatarSize({ size }), 'relative')}>
-      {avatarUrl ? (
-        <img
-          src={avatarUrl}
-          alt='avatar'
-          className={avatarSize({ size })}
-        />
-      ) : (
-        <div className={avatarSize({ size })}>{name.slice(0, 2)}</div>
-      )}
+      className={cn(avatarSize({ size }), 'relative')}
+      style={{ backgroundColor: 'black' }}>
+      <img
+        src={avatarUrl || '/image/common/default-avatar.png'}
+        alt='avatar'
+        className={imageSize({ size })}
+      />
       {status ? (
         <div
           className={cn(statusWrapperSize({ size }), 'absolute bottom-0 right-0')}
