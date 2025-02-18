@@ -1,12 +1,14 @@
 package com.bbebig.serviceserver.server.service;
 
-import com.bbebig.commonmodule.clientDto.serviceServer.CommonServiceServerClientResponseDto;
-import com.bbebig.commonmodule.clientDto.userServer.CommonUserServerResponseDto.MemberInfoResponseDto;
+import com.bbebig.commonmodule.clientDto.ServiceFeignResponseDto.*;
+import com.bbebig.commonmodule.clientDto.UserFeignResponseDto.*;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerActionEventDto;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerEventType;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerMemberActionEventDto;
+import com.bbebig.commonmodule.kafka.dto.serverEvent.status.ServerActionStatus;
+import com.bbebig.commonmodule.kafka.dto.serverEvent.status.ServerMemberActionStatus;
 import com.bbebig.commonmodule.redis.domain.ChannelLastInfo;
 import com.bbebig.commonmodule.redis.domain.ServerLastInfo;
 import com.bbebig.serviceserver.category.entity.Category;
@@ -21,7 +23,6 @@ import com.bbebig.serviceserver.global.kafka.KafkaProducerService;
 import com.bbebig.serviceserver.server.dto.request.ServerCreateRequestDto;
 import com.bbebig.serviceserver.server.dto.request.ServerUpdateRequestDto;
 import com.bbebig.serviceserver.server.dto.response.*;
-import com.bbebig.serviceserver.server.dto.response.ServerReadResponseDto.ServerMemberInfo;
 import com.bbebig.serviceserver.server.dto.response.ServerReadResponseDto.ServerMemberInfoResponseDto;
 import com.bbebig.serviceserver.server.entity.RoleType;
 import com.bbebig.serviceserver.server.entity.Server;
@@ -140,7 +141,7 @@ public class ServerService {
                 .type(ServerEventType.SERVER_ACTION)
                 .serverName(server.getName())
                 .profileImageUrl(server.getServerImageUrl())
-                .status("CREATE")
+                .status(ServerActionStatus.CREATE)
                 .build();
         kafkaProducerService.sendServerEvent(serverActionEventDto);
 
@@ -198,7 +199,7 @@ public class ServerService {
                 .type(ServerEventType.SERVER_ACTION)
                 .serverName(server.getName())
                 .profileImageUrl(server.getServerImageUrl())
-                .status("UPDATE")
+                .status(ServerActionStatus.UPDATE)
                 .build();
         kafkaProducerService.sendServerEvent(serverActionEventDto);
 
@@ -238,7 +239,7 @@ public class ServerService {
                 .type(ServerEventType.SERVER_ACTION)
                 .serverName(server.getName())
                 .profileImageUrl(server.getServerImageUrl())
-                .status("DELETE")
+                .status(ServerActionStatus.DELETE)
                 .build();
         kafkaProducerService.sendServerEvent(serverActionEventDto);
 
@@ -431,7 +432,7 @@ public class ServerService {
                 .nickname(memberInfo.getNickname())
                 .avatarUrl(memberInfo.getAvatarUrl())
                 .bannerUrl(memberInfo.getBannerUrl())
-                .status("JOIN")
+                .status(ServerMemberActionStatus.JOIN)
                 .build();
         kafkaProducerService.sendServerEvent(serverMemberActionEventDto);
 
@@ -463,7 +464,7 @@ public class ServerService {
                 .type(ServerEventType.SERVER_MEMBER_ACTION)
                 .memberId(memberId)
                 .nickname(serverMember.getMemberNickname())
-                .status("LEAVE")
+                .status(ServerMemberActionStatus.LEAVE)
                 .build();
         kafkaProducerService.sendServerEvent(serverMemberActionEventDto);
 

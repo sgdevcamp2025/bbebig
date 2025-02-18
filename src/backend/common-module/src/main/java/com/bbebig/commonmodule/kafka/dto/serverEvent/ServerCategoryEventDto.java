@@ -1,5 +1,6 @@
 package com.bbebig.commonmodule.kafka.dto.serverEvent;
 
+import com.bbebig.commonmodule.kafka.dto.serverEvent.status.ServerCategoryStatus;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -11,24 +12,24 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper=false)
 public class ServerCategoryEventDto extends ServerEventDto{
 
-	Long categoryId;
+	private Long categoryId;
 
-	String categoryName;
+	private String categoryName;
 
-	int order; // Category 순서, DELETE 시에는 null
+	private int order; // Category 순서, DELETE 시에는 null
 
-	String status; // CREATE, UPDATE, DELETE
+	private ServerCategoryStatus status; // CREATE, UPDATE, DELETE
 
 	@JsonCreator
 	public ServerCategoryEventDto(
 			@JsonProperty("serverId") Long serverId,
-			@JsonProperty("serverEventType") ServerEventType serverEventType,
+			@JsonProperty("type") ServerEventType type,
 			@JsonProperty("categoryId") Long categoryId,
 			@JsonProperty("categoryName") String categoryName,
 			@JsonProperty("order") int order,
-			@JsonProperty("status") String status
+			@JsonProperty("status") ServerCategoryStatus status
 	) {
-		super(serverId, serverEventType);
+		super(serverId, type);
 		this.categoryId = categoryId;
 		this.categoryName = categoryName;
 		this.order = order;

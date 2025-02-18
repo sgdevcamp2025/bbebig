@@ -3,6 +3,7 @@ package com.bbebig.stateserver.service;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.kafka.dto.MemberEventDto;
+import com.bbebig.commonmodule.kafka.dto.model.MemberEventType;
 import com.bbebig.stateserver.repository.MemberRedisRepositoryImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,13 +28,13 @@ public class MemberEventConsumerService {
 		// 개발용 로그
 		log.info("[State] MemberEventConsumerService: 멤버 이벤트 수신. memberId: {}, type: {}", memberEventDto.getMemberId(), memberEventDto.getType());
 
-		if (memberEventDto.getType().equals("DELETE")) {
+		if (memberEventDto.getType().equals(MemberEventType.MEMBER_DELETE)) {
 			memberRedisRepositoryImpl.deleteMemberPresenceStatus(memberEventDto.getMemberId());
-		} else if (memberEventDto.getType().equals("PRESENCE_UPDATE")) {
+		} else if (memberEventDto.getType().equals(MemberEventType.MEMBER_PRESENCE_UPDATE)) {
 			stateService.updateMemberPresenceStatus(memberEventDto.getMemberId(), memberEventDto.getGlobalStatus());
 		}
 		else {
-			if (!memberEventDto.getType().equals("CREATE")) {
+			if (!memberEventDto.getType().equals(MemberEventType.MEMBER_CREATE)) {
 				throw new ErrorHandler(ErrorStatus.INVALID_SERVER_EVENT_TYPE);
 			}
 			return;

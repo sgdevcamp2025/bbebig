@@ -1,6 +1,7 @@
 package com.bbebig.stateserver.service;
 
 import com.bbebig.commonmodule.kafka.dto.ChannelEventDto;
+import com.bbebig.commonmodule.kafka.dto.model.ChannelEventType;
 import com.bbebig.commonmodule.redis.domain.DeviceInfo;
 import com.bbebig.commonmodule.redis.domain.MemberPresenceStatus;
 import com.bbebig.stateserver.repository.MemberRedisRepositoryImpl;
@@ -25,10 +26,10 @@ public class ChannelEventConsumerService {
 			return;
 		}
 
-		if (channelEventDto.getType().equals("JOIN")) {
+		if (channelEventDto.getType().equals(ChannelEventType.CHANNEL_ENTER)) {
 			MemberPresenceStatus memberPresenceStatus = handleJoinEvent(channelEventDto);
 
-		} else if (channelEventDto.getType().equals("LEAVE")) {
+		} else if (channelEventDto.getType().equals(ChannelEventType.CHANNEL_LEAVE)) {
 			MemberPresenceStatus memberPresenceStatus = handleLeaveEvent(channelEventDto);
 		} else {
 			log.error("[State] ChannelEventConsumerService: 채널 이벤트 타입이 잘못되었습니다. channelEventDto: {}", channelEventDto);

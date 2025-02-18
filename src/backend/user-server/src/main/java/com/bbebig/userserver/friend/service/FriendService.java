@@ -3,8 +3,8 @@ package com.bbebig.userserver.friend.service;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.kafka.dto.notification.FriendActionEventDto;
-import com.bbebig.commonmodule.kafka.dto.notification.FriendRequestEventDto;
 import com.bbebig.commonmodule.kafka.dto.notification.NotificationEventType;
+import com.bbebig.commonmodule.kafka.dto.notification.status.FriendActionStatus;
 import com.bbebig.userserver.friend.dto.response.*;
 import com.bbebig.userserver.friend.entity.Friend;
 import com.bbebig.userserver.friend.entity.FriendStatus;
@@ -69,16 +69,29 @@ public class FriendService {
 
         friendRepository.save(friend);
 
-        FriendRequestEventDto friendRequestEventDto = FriendRequestEventDto.builder()
+        FriendActionEventDto pendingDto = FriendActionEventDto.builder()
+                .memberId(fromMember.getId())
+                .type(NotificationEventType.FRIEND_ACTION)
+                .friendId(friend.getId())
+                .friendMemberId(toMember.getId())
+                .friendNickName(toMember.getNickname())
+                .friendAvatarUrl(toMember.getAvatarUrl())
+                .friendBannerUrl(toMember.getBannerUrl())
+                .status(FriendActionStatus.PENDING)
+                .build();
+
+        FriendActionEventDto receiveDto = FriendActionEventDto.builder()
                 .memberId(toMember.getId())
-                .type(NotificationEventType.FRIEND_REQUEST)
+                .type(NotificationEventType.FRIEND_ACTION)
+                .friendId(friend.getId())
                 .friendMemberId(fromMember.getId())
+                .friendNickName(fromMember.getNickname())
                 .friendAvatarUrl(fromMember.getAvatarUrl())
                 .friendBannerUrl(fromMember.getBannerUrl())
-                .friendNickName(fromMember.getNickname())
-                .status("SEND")
+                .status(FriendActionStatus.RECEIVE)
                 .build();
-        kafkaProducerService.sendNotificationEvent(friendRequestEventDto);
+        kafkaProducerService.sendNotificationEvent(pendingDto);
+        kafkaProducerService.sendNotificationEvent(receiveDto);
 
         return FriendCreateResponseDto.convertToFriendCreateResponseDto(friend);
     }
@@ -161,21 +174,23 @@ public class FriendService {
             FriendActionEventDto friendActionEventDto = FriendActionEventDto.builder()
                     .memberId(friendMember.getId())
                     .type(NotificationEventType.FRIEND_ACTION)
+                    .friendId(friend.getId())
                     .friendMemberId(member.getId())
                     .friendAvatarUrl(member.getAvatarUrl())
                     .friendBannerUrl(member.getBannerUrl())
                     .friendNickName(member.getNickname())
-                    .status("ADD")
+                    .status(FriendActionStatus.ACCEPT)
                     .build();
 
             FriendActionEventDto myActionEventDto = FriendActionEventDto.builder()
                     .memberId(member.getId())
+                    .friendId(friend.getId())
                     .type(NotificationEventType.FRIEND_ACTION)
                     .friendMemberId(friendMember.getId())
                     .friendAvatarUrl(friendMember.getAvatarUrl())
                     .friendBannerUrl(friendMember.getBannerUrl())
                     .friendNickName(friendMember.getNickname())
-                    .status("ADD")
+                    .status(FriendActionStatus.ACCEPT)
                     .build();
 
             kafkaProducerService.sendNotificationEvent(friendActionEventDto);
@@ -212,15 +227,17 @@ public class FriendService {
         FriendActionEventDto friendActionEventDto = FriendActionEventDto.builder()
                 .memberId(friend.getFromMember().getId())
                 .type(NotificationEventType.FRIEND_ACTION)
+                .friendId(friend.getId())
                 .friendMemberId(friend.getToMember().getId())
-                .status("DELETE")
+                .status(FriendActionStatus.DELETE)
                 .build();
 
         FriendActionEventDto myActionEventDto = FriendActionEventDto.builder()
                 .memberId(friend.getToMember().getId())
                 .type(NotificationEventType.FRIEND_ACTION)
+                .friendId(friend.getId())
                 .friendMemberId(friend.getFromMember().getId())
-                .status("DELETE")
+                .status(FriendActionStatus.DELETE)
                 .build();
 
         kafkaProducerService.sendNotificationEvent(friendActionEventDto);
@@ -248,18 +265,20 @@ public class FriendService {
 
         friendRepository.delete(friend);
 
-        FriendRequestEventDto friendRequestEventDto = FriendRequestEventDto.builder()
+        FriendActionEventDto friendRequestEventDto = FriendActionEventDto.builder()
                 .memberId(friend.getToMember().getId())
-                .type(NotificationEventType.FRIEND_REQUEST)
+                .type(NotificationEventType.FRIEND_ACTION)
+                .friendId(friend.getId())
                 .friendMemberId(memberId)
-                .status("CANCEL")
+                .status(FriendActionStatus.CANCEL)
                 .build();
 
-        FriendRequestEventDto myRequestEventDto = FriendRequestEventDto.builder()
+        FriendActionEventDto myRequestEventDto = FriendActionEventDto.builder()
                 .memberId(memberId)
-                .type(NotificationEventType.FRIEND_REQUEST)
+                .type(NotificationEventType.FRIEND_ACTION)
+                .friendId(friend.getId())
                 .friendMemberId(friend.getToMember().getId())
-                .status("CANCEL")
+                .status(FriendActionStatus.CANCEL)
                 .build();
 
         kafkaProducerService.sendNotificationEvent(friendRequestEventDto);

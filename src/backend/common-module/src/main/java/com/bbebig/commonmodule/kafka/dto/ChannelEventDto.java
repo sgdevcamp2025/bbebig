@@ -1,5 +1,6 @@
 package com.bbebig.commonmodule.kafka.dto;
 
+import com.bbebig.commonmodule.kafka.dto.model.ChannelEventType;
 import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -17,9 +18,9 @@ public class ChannelEventDto {
 	@NotNull(message = "멤버 ID는 null일 수 없습니다.")
 	private Long memberId;
 
-	// ENTER, LEAVE
+	// CHANNEL_ENTER, CHANNEL_LEAVE
 	@NotNull(message = "타입(type)은 null일 수 없습니다.")
-	private String type;
+	private ChannelEventType type;
 
 	@NotNull(message = "채널 타입은 null일 수 없습니다.")
 	private ChannelType channelType;
@@ -40,7 +41,7 @@ public class ChannelEventDto {
 	@JsonCreator
 	public ChannelEventDto(
 			@JsonProperty("memberId") Long memberId,
-			@JsonProperty("type") String type,
+			@JsonProperty("type") ChannelEventType type,
 			@JsonProperty("channelType") ChannelType channelType,
 			@JsonProperty("sessionId") String sessionId,
 			@JsonProperty("lastReadMessageId") Long lastReadMessageId,

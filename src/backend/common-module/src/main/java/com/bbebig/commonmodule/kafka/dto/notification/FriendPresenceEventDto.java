@@ -14,7 +14,9 @@ public class FriendPresenceEventDto extends NotificationEventDto {
 
 	private Long friendId;
 
-	private PresenceType globalStatus; // ONLINE, OFFLINE, AWAY, BUSY, INVISIBLE
+	private Long friendMemberId;
+
+	private PresenceType globalStatus;
 
 	@JsonCreator
 	public FriendPresenceEventDto(

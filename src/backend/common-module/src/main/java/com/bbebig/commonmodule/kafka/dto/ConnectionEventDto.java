@@ -1,6 +1,7 @@
 package com.bbebig.commonmodule.kafka.dto;
 
 import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
+import com.bbebig.commonmodule.kafka.dto.model.ConnectionEventType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
@@ -13,7 +14,7 @@ public class ConnectionEventDto {
 	private Long memberId;
 
 	// CONNECT, DISCONNECT
-	private String type;
+	private ConnectionEventType type;
 
 	private String socketSessionId;
 
@@ -33,7 +34,7 @@ public class ConnectionEventDto {
 	@JsonCreator
 	public ConnectionEventDto(
 			@JsonProperty("memberId") Long memberId,
-			@JsonProperty("type") String type,
+			@JsonProperty("type") ConnectionEventType type,
 			@JsonProperty("socketSessionId") String socketSessionId,
 			@JsonProperty("connectedServerIp") String connectedServerIp,
 			@JsonProperty("platform") String platform,
