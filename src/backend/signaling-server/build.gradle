@@ -1,74 +1,86 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.4.1'
-	id 'io.spring.dependency-management' version '1.1.7'
-	id 'com.google.protobuf' version '0.9.4'
+    id 'java'
+    id 'org.springframework.boot' version '3.4.1'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'com.google.protobuf' version '0.9.4'
 }
 
 group = 'com.bbebig'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 ext {
-	set('springCloudVersion', "2024.0.0")
+    set('springCloudVersion', "2024.0.0")
 }
 
 dependencies {
-	// 공통 모듈
-	implementation project(":common-module")
+    // 공통 모듈
+    implementation project(":common-module")
 
-	implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
 
-	// Spring Cloud
-	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
-	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    // Spring Cloud
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
 
-	// WebSocket
-	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    // WebSocket
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
-	// Lombok
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 
-	// Dotenv
-	implementation 'io.github.cdimascio:java-dotenv:5.2.2'
+    // Dotenv
+    implementation 'io.github.cdimascio:java-dotenv:5.2.2'
 
-	// Validation
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
+    // Validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-	// Kurento
-	implementation 'org.kurento:kurento-client:6.18.0'
+    // Kurento
+    implementation 'org.kurento:kurento-client:6.18.0'
 
-	// Protobuf
-	implementation 'com.google.protobuf:protobuf-java:3.21.12'
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-	// 테스트
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // Kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+
+    // JSON 처리
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+
+    // OpenFeign
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+    // Protobuf
+    implementation 'com.google.protobuf:protobuf-java:3.21.12'
+
+    // 테스트
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
 
 dependencyManagement {
-	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-	}
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
 }
