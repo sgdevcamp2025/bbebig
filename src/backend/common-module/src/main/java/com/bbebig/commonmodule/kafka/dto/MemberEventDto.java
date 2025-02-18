@@ -1,5 +1,6 @@
 package com.bbebig.commonmodule.kafka.dto;
 
+import com.bbebig.commonmodule.kafka.dto.model.MemberEventType;
 import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,7 +13,7 @@ public class MemberEventDto {
 
 	private Long memberId;
 
-	private String type; // CREATE, UPDATE, DELETE, PRESENCE_UPDATE
+	private MemberEventType type; // MEMBER_CREATE, MEMBER_UPDATE, MEMBER_DELETE, MEMBER_PRESENCE_UPDATE
 
 	private String nickname;
 
@@ -25,7 +26,7 @@ public class MemberEventDto {
 	@JsonCreator
 	public MemberEventDto(
 			@JsonProperty("memberId") Long memberId,
-			@JsonProperty("type") String type,
+			@JsonProperty("type") MemberEventType type,
 			@JsonProperty("nickname") String nickname,
 			@JsonProperty("avatarUrl") String avatarUrl,
 			@JsonProperty("bannerUrl") String bannerUrl,

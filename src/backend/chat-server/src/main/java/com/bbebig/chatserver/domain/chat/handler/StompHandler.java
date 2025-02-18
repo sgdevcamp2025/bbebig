@@ -7,6 +7,7 @@ import com.bbebig.chatserver.domain.chat.service.KafkaProducerService;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.kafka.dto.ConnectionEventDto;
 import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
+import com.bbebig.commonmodule.kafka.dto.model.ConnectionEventType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -86,7 +87,7 @@ public class StompHandler implements ChannelInterceptor {
 
 			ConnectionEventDto connectionEventDto = ConnectionEventDto.builder()
 					.memberId(memberId)
-					.type("CONNECT")
+					.type(ConnectionEventType.CONNECT)
 					.socketSessionId(sessionId)
 					.connectedServerIp(serverIp + ":" + serverPort)
 					.platform(platform)
@@ -110,7 +111,7 @@ public class StompHandler implements ChannelInterceptor {
 
 			ConnectionEventDto connectionEventDto = ConnectionEventDto.builder()
 					.memberId(memberId)
-					.type("DISCONNECT")
+					.type(ConnectionEventType.DISCONNECT)
 					.socketSessionId(sessionId)
 					.connectedServerIp(serverIp + ":" + serverPort)
 					.platform(platform)

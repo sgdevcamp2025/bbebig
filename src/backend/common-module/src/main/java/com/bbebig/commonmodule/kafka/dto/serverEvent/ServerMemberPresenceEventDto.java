@@ -14,9 +14,9 @@ public class ServerMemberPresenceEventDto extends ServerEventDto {
 
 	private Long memberId;
 
-	private PresenceType actualStatus; // ONLINE, OFFLINE, AWAY, BUSY, INVISIBLE
+	private PresenceType actualStatus;
 
-	private PresenceType globalStatus; // ONLINE, OFFLINE, AWAY, BUSY, INVISIBLE
+	private PresenceType globalStatus;
 
 	@JsonCreator
 	public ServerMemberPresenceEventDto(

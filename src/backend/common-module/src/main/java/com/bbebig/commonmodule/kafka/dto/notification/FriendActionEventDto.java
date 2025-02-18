@@ -1,5 +1,6 @@
 package com.bbebig.commonmodule.kafka.dto.notification;
 
+import com.bbebig.commonmodule.kafka.dto.notification.status.FriendActionStatus;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -11,9 +12,11 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper=false)
 public class FriendActionEventDto extends NotificationEventDto {
 
+	private Long friendId;
+
 	private Long friendMemberId;
 
-	private String status; // ADD, DELETE, UPDATE
+	private FriendActionStatus status;
 
 	private String friendNickName;
 
@@ -26,7 +29,7 @@ public class FriendActionEventDto extends NotificationEventDto {
 			@JsonProperty("memberId") Long memberId,
 			@JsonProperty("type") NotificationEventType type,
 			@JsonProperty("friendMemberId") Long friendMemberId,
-			@JsonProperty("status") String status,
+			@JsonProperty("status") FriendActionStatus status,
 			@JsonProperty("friendNickName") String friendNickName,
 			@JsonProperty("friendAvatarUrl") String friendAvatarUrl,
 			@JsonProperty("friendBannerUrl") String friendBannerUrl

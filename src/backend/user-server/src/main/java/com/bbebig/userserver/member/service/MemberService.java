@@ -5,8 +5,10 @@ import com.bbebig.commonmodule.clientDto.UserFeignResponseDto.*;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.kafka.dto.MemberEventDto;
+import com.bbebig.commonmodule.kafka.dto.model.MemberEventType;
 import com.bbebig.commonmodule.kafka.dto.notification.FriendActionEventDto;
 import com.bbebig.commonmodule.kafka.dto.notification.NotificationEventType;
+import com.bbebig.commonmodule.kafka.dto.notification.status.FriendActionStatus;
 import com.bbebig.userserver.friend.entity.Friend;
 import com.bbebig.userserver.friend.entity.FriendStatus;
 import com.bbebig.userserver.friend.repository.FriendRepository;
@@ -60,7 +62,7 @@ public class MemberService {
                     .friendNickName(friendMember.getNickname())
                     .friendAvatarUrl(friendMember.getAvatarUrl())
                     .friendBannerUrl(friendMember.getBannerUrl())
-                    .status("UPDATE")
+                    .status(FriendActionStatus.UPDATE)
                     .build();
             kafkaProducerService.sendNotificationEvent(friendActionEventDto);
         }
@@ -68,7 +70,7 @@ public class MemberService {
         // Kafka로 이벤트 발행
         MemberEventDto memberEventDto = MemberEventDto.builder()
                 .memberId(memberId)
-                .type("UPDATE")
+                .type(MemberEventType.MEMBER_UPDATE)
                 .nickname(member.getNickname())
                 .avatarUrl(member.getAvatarUrl())
                 .bannerUrl(member.getBannerUrl())
@@ -90,7 +92,7 @@ public class MemberService {
 
         MemberEventDto memberEventDto = MemberEventDto.builder()
                 .memberId(memberId)
-                .type("PRESENCE_UPDATE")
+                .type(MemberEventType.MEMBER_PRESENCE_UPDATE)
                 .globalStatus(member.getCustomPresenceStatus())
                 .build();
         kafkaProducerService.sendMemberEvent(memberEventDto);
@@ -108,28 +110,24 @@ public class MemberService {
 
         List<Friend> friendList = friendRepository.findFriendsByMemberIdAndStatus(memberId, FriendStatus.ACCEPTED);
         for (Friend friend : friendList) {
+            friendRepository.deleteAllByFromMemberOrToMember(friend.getFromMember(), friend.getToMember());
             // 친구 관계 삭제 이벤트 발행
             FriendActionEventDto friendActionEventDto = FriendActionEventDto.builder()
                     .memberId(memberId)
                     .type(NotificationEventType.FRIEND_ACTION)
                     .friendMemberId(friend.getToMember().getId() == memberId ? friend.getFromMember().getId() : friend.getToMember().getId())
-                    .status("DELETE")
+                    .status(FriendActionStatus.DELETE)
                     .build();
             kafkaProducerService.sendNotificationEvent(friendActionEventDto);
         }
-
-        friendRepository.deleteAllByFromMemberOrToMember(member, member);
-
         memberRepository.delete(member);
 
         // Kafka로 이벤트 발행
         MemberEventDto memberEventDto = MemberEventDto.builder()
                 .memberId(memberId)
-                .type("DELETE")
+                .type(MemberEventType.MEMBER_DELETE)
                 .build();
         kafkaProducerService.sendMemberEvent(memberEventDto);
-
-
 
         return MemberDeleteResponseDto.convertToMemberDeleteResponseDto(member);
     }

@@ -43,7 +43,6 @@ public class NotificationEventDeserializer implements Deserializer<NotificationE
 				case FRIEND_ACTION -> objectMapper.treeToValue(jsonNode, FriendActionEventDto.class);
 				case DM_MEMBER_ACTION -> objectMapper.treeToValue(jsonNode, DmMemberActionEventDto.class);
 				case SERVER_UNREAD -> objectMapper.treeToValue(jsonNode, ServerUnreadEventDto.class);
-				case FRIEND_REQUEST -> objectMapper.treeToValue(jsonNode, FriendRequestEventDto.class);
 			};
 		} catch (Exception e) {
 			logger.error("Kafka 역직렬화 실패 - 토픽: {}, 에러: {}", topic, e.getMessage(), e);

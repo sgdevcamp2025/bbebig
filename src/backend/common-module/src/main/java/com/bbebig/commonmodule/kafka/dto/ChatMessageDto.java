@@ -1,6 +1,7 @@
 package com.bbebig.commonmodule.kafka.dto;
 
 import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
+import com.bbebig.commonmodule.kafka.dto.model.MessageEventType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -26,7 +27,7 @@ public class ChatMessageDto {
 	private MessageType messageType;
 
 	@NotEmpty(message = "타입(type)은 비어 있을 수 없습니다.")
-	private String type; // MESSAGE_CREATE, MESSAGE_UPDATE, MESSAGE_DELETE
+	private MessageEventType type; // MESSAGE_CREATE, MESSAGE_UPDATE, MESSAGE_DELETE
 
 	// 채널 관련 필드
 	private Long serverId;
@@ -59,7 +60,7 @@ public class ChatMessageDto {
 			@JsonProperty("id") Long id,
 			@JsonProperty("channelType") ChannelType channelType,
 			@JsonProperty("messageType") MessageType messageType,
-			@JsonProperty("type") String type,
+			@JsonProperty("type") MessageEventType type,
 			@JsonProperty("serverId") Long serverId,
 			@JsonProperty("channelId") Long channelId,
 			@JsonProperty("sendMemberId") Long sendMemberId,
