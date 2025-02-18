@@ -6,7 +6,7 @@ import { CustomPresenceStatus } from '@/types/user'
 
 interface Props {
   status: CustomPresenceStatus
-  size: 'sm' | 'lg'
+  size: 'sm' | 'md' | 'lg'
   defaultBackgroundColor?: CSSProperties['color']
   hover?: boolean
   haveHoverAction?: boolean
@@ -17,6 +17,7 @@ const statusIconSize = cva('rounded-full', {
   variants: {
     size: {
       sm: 'h-[8px] w-[8px]',
+      md: 'h-[18px] w-[18px]',
       lg: 'h-[18px] w-[18px]'
     }
   }

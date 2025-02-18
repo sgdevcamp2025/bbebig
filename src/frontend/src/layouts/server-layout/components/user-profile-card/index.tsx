@@ -70,7 +70,7 @@ export function Inner({ user, onSendFriendRequest, onMoreButtonClick }: InnerPro
             name={user.name}
             status={user.customPresenceStatus}
             avatarUrl={user.avatarUrl}
-            size='lg'
+            size='md'
             statusColor='black'
             defaultBackgroundColor='black'
           />
