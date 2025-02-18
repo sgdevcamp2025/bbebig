@@ -40,6 +40,8 @@ public class StompHandler implements ChannelInterceptor {
 		StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(message);
 		String sessionId = headerAccessor.getSessionId(); // STOMP 세션 ID
 
+		log.info("[Chat] StompHandler Pre send: sessionId={}, command={}", sessionId, headerAccessor.getCommand());
+
 		// CONNECT 요청
 		if (StompCommand.CONNECT == headerAccessor.getCommand()) {
 			Long memberId = Long.parseLong(Objects.requireNonNull(headerAccessor.getFirstNativeHeader("MemberId")));
@@ -68,10 +70,7 @@ public class StompHandler implements ChannelInterceptor {
 			log.info("[Chat] StompHandler Pre send: CONNECT - memberId={}, sessionId={}", memberId, sessionId);
 
 		}
-		return MessageBuilder
-				.withPayload(message.getPayload())
-				.setHeader("sessionId", sessionId)
-				.build();
+		return message;
 	}
 
 	@Override
@@ -95,8 +94,10 @@ public class StompHandler implements ChannelInterceptor {
 
 		StompCommand command = headerAccessor.getCommand();
 
+		log.info("[Chat] StompHandler Post send: sessionId={}, command={}", sessionId, command);
+
 		if (command == null) {
-			log.error("[Chat] StompHandler: command 정보 없음");
+			log.error("[Chat] StompHandler: postSend - command 정보 없음. 전체 헤더 정보: {}", headerAccessor.toMap());
 			return;
 		}
 		if (StompCommand.CONNECT.equals(command)) {
