@@ -4,7 +4,7 @@ import jakarta.inject.Qualifier
 
 @Retention(AnnotationRetention.BINARY)
 @Qualifier
-annotation class AuthBaseUrl
+annotation class BaseUrl
 
 @Retention(AnnotationRetention.BINARY)
 @Qualifier
@@ -17,3 +17,11 @@ annotation class AuthRetrofit
 @Retention(AnnotationRetention.BINARY)
 @Qualifier
 annotation class AuthOkHttpClient
+
+@Retention(AnnotationRetention.BINARY)
+@Qualifier
+annotation class DefaultOkHttpClient
+
+@Retention(AnnotationRetention.BINARY)
+@Qualifier
+annotation class ServerRetrofit

@@ -2,9 +2,12 @@ package com.smilegate.bbebig.data.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.smilegate.bbebig.data.api.AuthApiService
-import com.smilegate.bbebig.data.di.qulifier.AuthBaseUrl
+import com.smilegate.bbebig.data.api.ServerApiService
 import com.smilegate.bbebig.data.di.qulifier.AuthOkHttpClient
 import com.smilegate.bbebig.data.di.qulifier.AuthRetrofit
+import com.smilegate.bbebig.data.di.qulifier.BaseUrl
+import com.smilegate.bbebig.data.di.qulifier.DefaultOkHttpClient
+import com.smilegate.bbebig.data.di.qulifier.ServerRetrofit
 import com.smilegate.bbebig.data.di.qulifier.TimeOutPolicy
 import com.smilegate.bbebig.data.interceptor.AuthInterceptor
 import dagger.Module
@@ -33,8 +36,8 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    @AuthBaseUrl
-    fun provideAuthBaseUrl(): String {
+    @BaseUrl
+    fun provideBaseUrl(): String {
         return "http://43.203.136.82:8080"
     }
 
@@ -78,6 +81,7 @@ object NetworkModule {
 
     @Singleton
     @Provides
+    @DefaultOkHttpClient
     fun provideOkHttpClient(
         authInterceptor: AuthInterceptor,
         httpLoggingInterceptor: HttpLoggingInterceptor,
@@ -100,7 +104,22 @@ object NetworkModule {
     fun provideAuthRetrofit(
         @AuthOkHttpClient okHttpClient: OkHttpClient,
         json: Json,
-        @AuthBaseUrl baseUrl: String,
+        @BaseUrl baseUrl: String,
+    ): Retrofit = Retrofit.Builder()
+        .baseUrl(baseUrl)
+        .client(okHttpClient)
+        .addConverterFactory(
+            json.asConverterFactory("application/json".toMediaType()),
+        )
+        .build()
+
+    @Singleton
+    @Provides
+    @ServerRetrofit
+    fun provideServerRetrofit(
+        @DefaultOkHttpClient okHttpClient: OkHttpClient,
+        json: Json,
+        @BaseUrl baseUrl: String,
     ): Retrofit = Retrofit.Builder()
         .baseUrl(baseUrl)
         .client(okHttpClient)
@@ -114,4 +133,10 @@ object NetworkModule {
     fun provideAuthService(
         @AuthRetrofit retrofit: Retrofit,
     ): AuthApiService = retrofit.create()
+
+    @Singleton
+    @Provides
+    fun provideServerService(
+        @ServerRetrofit retrofit: Retrofit,
+    ): ServerApiService = retrofit.create()
 }

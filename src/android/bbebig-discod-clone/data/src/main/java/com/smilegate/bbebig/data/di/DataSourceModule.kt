@@ -4,6 +4,8 @@ import com.smilegate.bbebig.data.datasource.AuthDataSource
 import com.smilegate.bbebig.data.datasource.AuthDataSourceImpl
 import com.smilegate.bbebig.data.datasource.LocalDataSource
 import com.smilegate.bbebig.data.datasource.LocalDataSourceImpl
+import com.smilegate.bbebig.data.datasource.ServerDataSource
+import com.smilegate.bbebig.data.datasource.ServerDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -21,4 +23,8 @@ interface DataSourceModule {
     @Binds
     @Singleton
     fun bindLocalDataSource(localDataSourceImpl: LocalDataSourceImpl): LocalDataSource
+
+    @Binds
+    @Singleton
+    fun bindServerDataSource(serverDataSourceImpl: ServerDataSourceImpl): ServerDataSource
 }
