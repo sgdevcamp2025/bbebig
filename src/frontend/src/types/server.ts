@@ -1,6 +1,6 @@
 import { User } from './user'
 
-export type ChannelType = 'TEXT' | 'VOICE'
+export type ChannelType = 'CHAT' | 'VOICE'
 
 export interface CategoryInfo {
   categoryId: number

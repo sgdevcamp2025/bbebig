@@ -1,16 +1,16 @@
 interface User {
   id: number
   name: string
+  nickname: string
   email: string
-  avatarUrl: string
-  bannerUrl: string
+  birthdate: string
+  avatarUrl: string | null
+  bannerUrl: string | null
+  introduce: string | null
+  lastAccessAt: string
   customPresenceStatus: CustomPresenceStatus
-  introduce: {
-    text: string
-    emoji: string
-  }
 }
 
-type CustomPresenceStatus = 'ONLINE' | 'OFFLINE' | 'NOT_DISTURB' | 'INVISIBLE'
+type CustomPresenceStatus = 'ONLINE' | 'AWAY' | 'DND' | 'INVISIBLE' | 'OFFLINE'
 
 export { type CustomPresenceStatus, type User }

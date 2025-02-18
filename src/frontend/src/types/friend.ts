@@ -1,11 +1,12 @@
-import { CustomPresenceStatus } from './user'
-
 export interface Friend {
-  id: number
-  avatarUrl: string
-  name: string
-  status: CustomPresenceStatus
-  friendStatus?: FriendStatus
+  friendId: number
+  friendMemberId: number
+  friendName: string
+  friendNickname: string
+  friendAvatarUrl: string
+  friendBannerUrl: string
+  friendIntroduce: string
+  friendEmail: string
 }
 
-type FriendStatus = 'RESPONSE_PENDING' | 'REQUEST_PENDING' | 'DECLINED' | 'ACCEPTED' | 'DELETED'
+export type FriendStatus = 'PENDING' | 'DECLINED' | 'ACCEPTED'

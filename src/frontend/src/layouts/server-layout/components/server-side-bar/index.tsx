@@ -30,7 +30,7 @@ function ServerSideBar({
   const [categoryCreateModalOpen, setCategoryCreateModalOpen] = useState(false)
 
   const serverMenuRef = useRef<HTMLDivElement>(null)
-  const selectCategoryId = useRef<number | null>(null)
+  const selectCategoryId = useRef<number>(-1)
 
   const toggleCategory = (categoryId: number) => {
     setExpandedCategories((prev) =>
@@ -71,7 +71,7 @@ function ServerSideBar({
       color: 'text-gray-10',
       onClick: () => {
         setChannelCreateModalOpen(true)
-        selectCategoryId.current = null
+        selectCategoryId.current = -1
       }
     },
     {
@@ -80,7 +80,7 @@ function ServerSideBar({
       color: 'text-gray-10',
       onClick: () => {
         setCategoryCreateModalOpen(true)
-        selectCategoryId.current = null
+        selectCategoryId.current = -1
       }
     }
   ] as const
@@ -196,7 +196,7 @@ function ServerSideBar({
                     )}>
                     <span className='mr-1'>
                       <img
-                        src={`/icon/channel/type-${channel.channelType.toLocaleLowerCase()}.svg`}
+                        src={`/icon/channel/type-${channel.channelType === 'VOICE' ? 'voice' : 'text'}.svg`}
                         className='w-[15px] h-[15px]'
                       />
                     </span>

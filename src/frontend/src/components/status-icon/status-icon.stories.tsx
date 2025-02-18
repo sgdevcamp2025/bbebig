@@ -12,7 +12,7 @@ const meta = {
   argTypes: {
     status: {
       control: 'select',
-      options: ['ONLINE', 'OFFLINE', 'NOT_DISTURB', 'INVISIBLE']
+      options: ['ONLINE', 'OFFLINE', 'DND', 'INVISIBLE', 'AWAY']
     },
     size: {
       control: 'select',

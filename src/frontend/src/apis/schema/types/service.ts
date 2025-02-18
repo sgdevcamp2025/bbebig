@@ -3,10 +3,13 @@ import { z } from 'zod'
 import { ChannelType, ChannelUser } from '@/types/server'
 import { CustomPresenceStatus } from '@/types/user'
 
-import { createCategoryResponseSchema } from '../server'
-import { createCategoryRequestSchema } from '../server'
-import { createChannelResponseSchema } from '../server'
-import { createChannelRequestSchema } from '../server'
+import {
+  createCategoryRequestSchema,
+  createCategoryResponseSchema,
+  createChannelRequestSchema,
+  createChannelResponseSchema
+} from '../server'
+
 export interface DeleteServerRequestSchema {
   serverId: number
 }
@@ -36,22 +39,15 @@ export interface GetServerListResponseSchema {
     categoryId: number
     categoryName: string
     position: number
-    channelInfoList: {
-      channelId: number
-      categoryId: number
-      position: number
-      channelName: string
-      channelType: ChannelType
-      privateStatus: boolean
-      channelMemberList: number[]
-    }[]
   }[]
-  serverMemberList: {
-    memberId: number
-    customPresenceStatus: CustomPresenceStatus
-    nickname: string
-    profileImageUrl: string | null
-    joinAt: string
+  channelInfoList: {
+    channelId: number
+    categoryId: number
+    position: number
+    channelName: string
+    channelType: ChannelType
+    privateStatus: boolean
+    channelMemberList: number[]
   }[]
 }
 
@@ -60,6 +56,22 @@ export interface GetServersResponseSchema {
     serverId: number
     serverName: string
     serverImageUrl: string | null
+  }[]
+}
+
+export interface GetServerMemebersRequestSchema {
+  serverId: number
+}
+
+export interface GetServerMemebersResponseSchema {
+  serverId: number
+  serverMemberInfoList: {
+    memberId: number
+    nickname: string
+    avatarUrl: string | null
+    bannerUrl: string | null
+    joinAt: string
+    customPresenceStatus: CustomPresenceStatus
   }[]
 }
 
@@ -169,7 +181,7 @@ export interface GetChannelLastVisitInfoWithMemberIdResponseSchema {
 
 export interface CreateChannelRequestSchema {
   serverId: number
-  categoryId: number | undefined
+  categoryId: number | null
   channelType: ChannelType
   channelName: string
   privateStatus: boolean
@@ -226,7 +238,7 @@ export interface GetChannelLastVisitInfoWithMemberIdResponseSchema {
 
 export interface CreateChannelRequestSchema {
   serverId: number
-  categoryId: number | undefined
+  categoryId: number | null
   channelType: ChannelType
   channelName: string
   privateStatus: boolean
@@ -294,6 +306,15 @@ export interface GetChannelUserListRequestSchema {
 
 export interface GetChannelUserListResponseSchema {
   channelUserList: ChannelUser[]
+}
+
+export interface GetChannelListInServerRequestSchema {
+  serverId: number
+}
+
+export interface GetChannelListInServerResponseSchema {
+  serverId: number
+  channelIdList: number[]
 }
 
 export type ZCreateChannelRequestSchema = z.infer<typeof createChannelRequestSchema>
