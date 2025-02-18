@@ -132,6 +132,12 @@ public class MemberRedisRepositoryImpl implements MemberRedisRepository {
 		return valueOperations.get(key);
 	}
 
+	// 개별 유저 presence 상태 정보 삭제
+	public void deleteMemberPresenceStatus(Long memberId) {
+		String key = MemberRedisKeys.getMemberStatusKey(memberId);
+		redisMemberStatusTemplate.delete(key);
+	}
+
 	/**
 	 * 개별 유저의 최근 서버 채널 정보를 저장
 	 * ex) member:{memberId}:serverLastInfo => ServerLastInfo

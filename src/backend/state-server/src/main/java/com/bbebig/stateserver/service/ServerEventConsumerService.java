@@ -27,6 +27,7 @@ public class ServerEventConsumerService {
 			return;
 		}
 
+		// TODO: 서버멤버 존재 이벤트 처리 방식 고민. 멤버 온라인 이벤트 발행 시점에 같이 처리할지 고민.
 		if (serverEventDto.getType().equals(ServerEventType.SERVER_MEMBER_PRESENCE)) {
 			ServerMemberPresenceEventDto eventDto = (ServerMemberPresenceEventDto) serverEventDto;
 
@@ -38,7 +39,11 @@ public class ServerEventConsumerService {
 					.actualStatus(eventDto.getActualStatus())
 					.build();
 
-			serverRedisRepositoryImpl.saveServerMemberPresenceStatus(serverId, eventDto.getMemberId(), status);
+			if (!serverRedisRepositoryImpl.existsServerMemberPresenceStatus(serverId)) {
+				stateService.makeServerMemberPresenceStatus(serverId);
+			} else {
+				serverRedisRepositoryImpl.saveServerMemberPresenceStatus(serverId, eventDto.getMemberId(), status);
+			}
 
 		} else if (serverEventDto.getType().equals(ServerEventType.SERVER_MEMBER_ACTION)) {
 			ServerMemberActionEventDto eventDto = (ServerMemberActionEventDto) serverEventDto;

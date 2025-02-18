@@ -55,7 +55,10 @@ public enum ErrorStatus implements BaseErrorCode {
     CHANNEL_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "SERVICE412", "채널에 속한 멤버를 찾을 수 없습니다."),
 
     //STATE
-    MEMBER_SERVER_LIST_CACHE_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "STATE01", "멤버가 참여중인 서버 목록 캐시에 실패했습니다."),
+    MEMBER_SERVER_LIST_CACHE_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "STATE401", "멤버가 참여중인 서버 목록 캐시에 실패했습니다."),
+    MEMBER_ACTUAL_STATE_NOT_FOUND(HttpStatus.NOT_FOUND, "STATE402", "멤버의 실제 상태를 찾을 수 없습니다."),
+    MEMBER_GLOBAL_STATE_NOT_FOUND(HttpStatus.NOT_FOUND, "STATE403", "멤버의 전역 상태를 찾을 수 없습니다."),
+    MEMBER_PRESENCE_STATE_NOT_FOUND(HttpStatus.NOT_FOUND, "STATE404", "멤버의 접속 상태를 찾을 수 없습니다."),
 
     // SEARCH
     SERVER_LAST_INFO_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH401", "서버별 마지막 방문 정보를 받아오는데에 실패했습니다."),

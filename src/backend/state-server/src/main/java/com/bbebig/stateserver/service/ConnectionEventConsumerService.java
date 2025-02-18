@@ -1,6 +1,5 @@
 package com.bbebig.stateserver.service;
 
-import com.bbebig.commonmodule.clientDto.UserFeignResponseDto;
 import com.bbebig.commonmodule.clientDto.UserFeignResponseDto.MemberGlobalStatusResponseDto;
 import com.bbebig.commonmodule.kafka.dto.ConnectionEventDto;
 import com.bbebig.commonmodule.kafka.dto.PresenceEventDto;
@@ -100,6 +99,9 @@ public class ConnectionEventConsumerService {
 		memberPresenceStatus.getDevices().add(deviceInfo);
 
 		memberRedisRepositoryImpl.saveMemberPresenceStatus(connectionEventDto.getMemberId(), memberPresenceStatus);
+
+
+
 		return memberPresenceStatus;
 	}
 
