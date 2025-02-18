@@ -1,5 +1,5 @@
 import { ChevronDown, CirclePlus, FolderPlus, Plus, Settings, UserRoundPlus, X } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import useClickOutside from '@/hooks/use-click-outside'
 import { cn } from '@/libs/cn'
@@ -22,7 +22,9 @@ function ServerSideBar({
   selectedChannelId,
   onChannelSelect
 }: ServerSideBarProps) {
-  const [expandedCategories, setExpandedCategories] = useState<number[]>([])
+  const [expandedCategories, setExpandedCategories] = useState<number[]>(
+    categories.map((category) => category.categoryId)
+  )
   const [selectedChannel, setSelectedChannel] = useState<{ id: number; name: string } | null>(null)
 
   const [serverMenuOpen, setServerMenuOpen] = useState(false)
@@ -30,7 +32,7 @@ function ServerSideBar({
   const [categoryCreateModalOpen, setCategoryCreateModalOpen] = useState(false)
 
   const serverMenuRef = useRef<HTMLDivElement>(null)
-  const selectCategoryId = useRef<number>(-1)
+  const selectCategoryId = useRef<number | null>(null)
 
   const toggleCategory = (categoryId: number) => {
     setExpandedCategories((prev) =>
@@ -45,6 +47,10 @@ function ServerSideBar({
   const handleCloseServerMenu = () => {
     setServerMenuOpen((prev) => !prev)
   }
+
+  useEffect(() => {
+    setExpandedCategories(categories.map((category) => category.categoryId))
+  }, [categories])
 
   useClickOutside(serverMenuRef, () => setServerMenuOpen(false))
 
@@ -153,18 +159,7 @@ function ServerSideBar({
                     'mr-1.5 transition-transform text-discord-font-color-muted',
                     expandedCategories.includes(category.categoryId) ? 'rotate-0' : '-rotate-90'
                   )}>
-                  <svg
-                    width='9'
-                    height='9'
-                    viewBox='0 0 9 9'
-                    fill='none'>
-                    <path
-                      fillRule='evenodd'
-                      clipRule='evenodd'
-                      d='M0.768198 2.13313C0.592462 1.95562 0.307538 1.95562 0.131802 2.13313C-0.043934 2.31064 -0.043934 2.59845 0.131802 2.77596L4.1818 6.86687C4.35754 7.04438 4.64246 7.04438 4.8182 6.86687L8.8682 2.77596C9.04393 2.59845 9.04393 2.31064 8.8682 2.13313C8.69246 1.95562 8.40754 1.95562 8.2318 2.13313L4.5 5.90263L0.768198 2.13313Z'
-                      fill='currentColor'
-                    />
-                  </svg>
+                  <ChevronDown className='w-4 h-4 text-discord-font-color-muted' />
                 </span>
                 <span className='text-xs font-semibold text-discord-font-color-muted uppercase'>
                   {category.categoryName}
@@ -196,7 +191,7 @@ function ServerSideBar({
                     )}>
                     <span className='mr-1'>
                       <img
-                        src={`/icon/channel/type-${channel.channelType === 'VOICE' ? 'voice' : 'text'}.svg`}
+                        src={`/icon/channel/type-${channel.channelType.toLocaleLowerCase()}.svg`}
                         className='w-[15px] h-[15px]'
                       />
                     </span>
@@ -246,7 +241,7 @@ function ServerSideBar({
         onClose={() => setSelectedChannel(null)}
       />
       <ChannelCreateModal
-        selectCategoryId={selectCategoryId.current}
+        selectCategoryId={selectCategoryId.current ?? -1}
         isOpen={channelCreateModalOpen}
         onClose={() => setChannelCreateModalOpen(false)}
       />
