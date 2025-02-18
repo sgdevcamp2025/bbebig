@@ -6,31 +6,44 @@ import CommonHeader from '@/components/common-header'
 import { Friend } from '@/types/friend'
 
 import DmHeader from './components/dm-header'
+
 const DUMMY_FRIENDS: Friend[] = [
   {
-    id: 1,
-    avatarUrl: '/image/common/default-avatar.png',
-    name: '이지형',
-    status: 'ONLINE'
+    friendId: 1,
+    friendMemberId: 1,
+    friendName: '이지형',
+    friendNickname: '지형',
+    friendAvatarUrl: '/image/common/default-avatar.png',
+    friendBannerUrl: '/image/common/default-banner.png',
+    friendIntroduce: '안녕하세요',
+    friendEmail: 'test@test.com'
   },
   {
-    id: 2,
-    avatarUrl: '/image/common/default-avatar.png',
-    name: '김예지',
-    status: 'OFFLINE'
+    friendId: 2,
+    friendMemberId: 2,
+    friendName: '김예지',
+    friendNickname: '예지',
+    friendAvatarUrl: '/image/common/default-avatar.png',
+    friendBannerUrl: '/image/common/default-banner.png',
+    friendIntroduce: '안녕하세요',
+    friendEmail: 'test@test.com'
   },
   {
-    id: 3,
-    avatarUrl: '/image/common/default-avatar.png',
-    name: '서정우',
-    status: 'OFFLINE'
+    friendId: 3,
+    friendMemberId: 3,
+    friendName: '서정우',
+    friendNickname: '정우',
+    friendAvatarUrl: '/image/common/default-avatar.png',
+    friendBannerUrl: '/image/common/default-banner.png',
+    friendIntroduce: '안녕하세요',
+    friendEmail: 'test@test.com'
   }
 ]
 
 function DmPage() {
   const { friendId } = useParams()
   const [searchValue, setSearchValue] = useState('')
-  const selectedFriend = DUMMY_FRIENDS.find((friend) => friend.id === Number(friendId))
+  const selectedFriend = DUMMY_FRIENDS.find((friend) => friend.friendId === Number(friendId))
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value)
   }

@@ -12,6 +12,7 @@ import { statusKo } from '@/constants/status'
 import { useGetServer } from '@/hooks/queries/server/useGetServer'
 import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
 import { cn } from '@/libs/cn'
+import { useChatStompStore } from '@/stores/use-chatting-stomp-store'
 import useMediaSettingsStore from '@/stores/use-media-setting.store'
 
 import ProfileCard from './components/profile-card'
@@ -20,6 +21,8 @@ import ServerCreateModal from './components/server-create-modal'
 import SettingModal, { SettingModalTabsID } from './components/setting-modal'
 
 const Inner = () => {
+  const { connect, isConnected, disconnect } = useChatStompStore()
+
   const location = useLocation()
   const navigate = useNavigate()
   const { serverId } = useParams<{ serverId: string }>()
@@ -29,6 +32,16 @@ const Inner = () => {
       navigate('/channels/@me', { replace: true })
     }
   }, [serverId, navigate])
+
+  useEffect(() => {
+    if (!isConnected) {
+      connect()
+    }
+
+    return () => {
+      disconnect()
+    }
+  }, [isConnected, connect, disconnect])
 
   const myChannelList = useGetServer()
   const selfUser = useGetSelfUser()
