@@ -25,8 +25,8 @@ public class DmMemberActionEventDto extends NotificationEventDto {
 
 	@JsonCreator
 	public DmMemberActionEventDto(
-			@JsonProperty("notificationId") Long notificationId,
-			@JsonProperty("notificationEventType") NotificationEventType notificationEventType,
+			@JsonProperty("memberId") Long memberId,
+			@JsonProperty("type") NotificationEventType type,
 			@JsonProperty("targetMemberId") Long targetMemberId,
 			@JsonProperty("channelId") Long channelId,
 			@JsonProperty("channelType") String channelType,
@@ -34,7 +34,7 @@ public class DmMemberActionEventDto extends NotificationEventDto {
 			@JsonProperty("targetMemberProfileImageUrl") String targetMemberProfileImageUrl,
 			@JsonProperty("status") String status
 	) {
-		super(notificationId, notificationEventType);
+		super(memberId, type);
 		this.targetMemberId = targetMemberId;
 		this.channelId = channelId;
 		this.channelType = channelType;
