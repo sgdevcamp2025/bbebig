@@ -1,8 +1,13 @@
 package com.bbebig.stateserver.service;
 
+import com.bbebig.commonmodule.clientDto.UserFeignResponseDto.MemberGlobalStatusResponseDto;
+import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
+import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
+import com.bbebig.commonmodule.kafka.dto.PresenceEventDto;
 import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
 import com.bbebig.commonmodule.redis.domain.MemberPresenceStatus;
 import com.bbebig.commonmodule.redis.domain.ServerMemberStatus;
+import com.bbebig.stateserver.client.MemberClient;
 import com.bbebig.stateserver.client.ServiceClient;
 import com.bbebig.stateserver.dto.StateResponseDto.*;
 import com.bbebig.stateserver.repository.DmRedisRepositoryImpl;
@@ -22,20 +27,30 @@ import static com.bbebig.commonmodule.clientDto.ServiceFeignResponseDto.*;
 @RequiredArgsConstructor
 public class StateService {
 
+	private final KafkaProducerService kafkaProducerService;
+
 	private final MemberRedisRepositoryImpl memberRedisRepositoryImpl;
 	private final ServerRedisRepositoryImpl serverRedisRepositoryImpl;
 	private final DmRedisRepositoryImpl dmRedisRepositoryImpl;
 
 	private final ServiceClient serviceClient;
+	private final MemberClient memberClient;
 
 	// 사용자 상태 확인
 	// GET /state/member/{memberId}
 	public MemberStatusResponseDto checkMemberState(Long memberId) {
 		MemberPresenceStatus memberPresenceStatus = memberRedisRepositoryImpl.getMemberPresenceStatus(memberId);
 		if (memberPresenceStatus == null) {
-			// TODO : 추후 유저 서버에서 조회해서 가져오고 예외처리 하는 로직 추가
-			log.error("[State] StateService: 사용자 상태 정보 없음. memberId: {}", memberId);
-			return null;
+			MemberGlobalStatusResponseDto memberGlobalStatus = memberClient.getMemberGlobalStatus(memberId);
+			if (memberGlobalStatus == null) {
+				throw new ErrorHandler(ErrorStatus.MEMBER_GLOBAL_STATE_NOT_FOUND);
+			}
+			// TODO: 사용자 상태 정보가 없을 경우, 실제 상태 처리하는 로직 구현
+			return MemberStatusResponseDto.builder()
+					.memberId(memberId)
+					.globalStatus(memberGlobalStatus.getGlobalStatus().toString())
+					.actualStatus(PresenceType.OFFLINE.toString())
+					.build();
 		}
 		return MemberStatusResponseDto.builder()
 				.memberId(memberId)
@@ -88,5 +103,23 @@ public class StateService {
 					.build();
 			serverRedisRepositoryImpl.saveServerMemberPresenceStatus(serverId, memberId, status);
 		}
+	}
+
+	// 개별 유저의 상태를 업데이트
+	public void updateMemberPresenceStatus(Long memberId, PresenceType globalStatus) {
+		MemberPresenceStatus memberPresenceStatus = memberRedisRepositoryImpl.getMemberPresenceStatus(memberId);
+		if (memberPresenceStatus == null) {
+			throw new ErrorHandler(ErrorStatus.MEMBER_PRESENCE_STATE_NOT_FOUND);
+		}
+		memberPresenceStatus.setGlobalStatus(globalStatus);
+		memberRedisRepositoryImpl.saveMemberPresenceStatus(memberId, memberPresenceStatus);
+
+		PresenceEventDto presenceEventDto = PresenceEventDto.builder()
+				.memberId(memberId)
+				.globalStatus(globalStatus)
+				.actualStatus(memberPresenceStatus.getActualStatus())
+				.lastActivityTime(memberPresenceStatus.getLastActivityTime())
+				.build();
+		kafkaProducerService.sendPresenceEvent(presenceEventDto);
 	}
 }
