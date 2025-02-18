@@ -40,17 +40,18 @@ spring:
       enable-auto-commit: true
       auto-offset-reset: latest
 
-logging:
-  level:
-    org.apache.kafka: WARN
-    org.springframework.kafka: WARN
-
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
       defaultZone: http://discovery-server:8761/eureka
+  instance:
+    instance-id: ${spring.cloud.client.ip-address}:${spring.application.instance_id:${random.value}}
+
+snowflake:
+  #  worker-id: ${snowflake.worker-id:${random.value}}
+  worker-id: ${INSTANCE_ID}
 
 eas:
   passport:
@@ -66,3 +67,8 @@ auth:
 kurento:
   ws:
     url: ${KURENTO_WS_URL}
+
+logging:
+  level:
+    org.apache.kafka: WARN
+    org.springframework.kafka: WARN
