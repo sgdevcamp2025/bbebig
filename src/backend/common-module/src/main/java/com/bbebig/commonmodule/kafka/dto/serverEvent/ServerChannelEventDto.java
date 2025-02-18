@@ -1,6 +1,7 @@
 package com.bbebig.commonmodule.kafka.dto.serverEvent;
 
 import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
+import com.bbebig.commonmodule.kafka.dto.serverEvent.status.ServerChannelStatus;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -12,30 +13,30 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper=false)
 public class ServerChannelEventDto extends ServerEventDto {
 
-	Long categoryId;
+	private Long categoryId;
 
-	Long channelId;
+	private Long channelId;
 
-	String channelName;
+	private String channelName;
 
-	String channelType; // CHAT, VOICE
+	private String channelType; // CHAT, VOICE
 
-	int order; // Channel 순서, DELETE 시에는 null
+	private int order; // Channel 순서, DELETE 시에는 null
 
-	String status; // CREATE, UPDATE, DELETE
+	private ServerChannelStatus status; // CREATE, UPDATE, DELETE
 
 	@JsonCreator
 	public ServerChannelEventDto(
 			@JsonProperty("serverId") Long serverId,
-			@JsonProperty("serverEventType") ServerEventType serverEventType,
+			@JsonProperty("type") ServerEventType type,
 			@JsonProperty("categoryId") Long categoryId,
 			@JsonProperty("channelId") Long channelId,
 			@JsonProperty("channelName") String channelName,
 			@JsonProperty("channelType") String channelType,
 			@JsonProperty("order") int order,
-			@JsonProperty("status") String status
+			@JsonProperty("status") ServerChannelStatus status
 	) {
-		super(serverId, serverEventType);
+		super(serverId, type);
 		this.categoryId = categoryId;
 		this.channelId = channelId;
 		this.channelName = channelName;

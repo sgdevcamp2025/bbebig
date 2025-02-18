@@ -5,6 +5,8 @@ import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerCategoryEventDto;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerChannelEventDto;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerEventType;
+import com.bbebig.commonmodule.kafka.dto.serverEvent.status.ServerCategoryStatus;
+import com.bbebig.commonmodule.kafka.dto.serverEvent.status.ServerChannelStatus;
 import com.bbebig.serviceserver.category.dto.request.CategoryCreateRequestDto;
 import com.bbebig.serviceserver.category.dto.request.CategoryUpdateRequestDto;
 import com.bbebig.serviceserver.category.dto.response.CategoryCreateResponseDto;
@@ -65,7 +67,7 @@ public class CategoryService {
                 .categoryId(category.getId())
                 .categoryName(category.getName())
                 .order(category.getPosition())
-                .status("CREATE")
+                .status(ServerCategoryStatus.CREATE)
                 .build();
 
         kafkaProducerService.sendServerEvent(serverCategoryEventDto);
@@ -94,7 +96,7 @@ public class CategoryService {
                 .categoryId(category.getId())
                 .categoryName(category.getName())
                 .order(category.getPosition())
-                .status("UPDATE")
+                .status(ServerCategoryStatus.UPDATE)
                 .build();
         kafkaProducerService.sendServerEvent(serverCategoryEventDto);
 
@@ -127,7 +129,7 @@ public class CategoryService {
                 .serverId(server.getId())
                 .type(ServerEventType.SERVER_CATEGORY)
                 .categoryId(category.getId())
-                .status("DELETE")
+                .status(ServerCategoryStatus.DELETE)
                 .build();
         kafkaProducerService.sendServerEvent(serverCategoryEventDto);
 
@@ -139,7 +141,7 @@ public class CategoryService {
                     .channelId(channel.getId())
                     .channelName(channel.getName())
                     .channelType(channel.getChannelType().toString())
-                    .status("UPDATE")
+                    .status(ServerChannelStatus.UPDATE)
                     .build();
         }
 

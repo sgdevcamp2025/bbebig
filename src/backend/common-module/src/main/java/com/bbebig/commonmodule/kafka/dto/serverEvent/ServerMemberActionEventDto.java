@@ -1,5 +1,6 @@
 package com.bbebig.commonmodule.kafka.dto.serverEvent;
 
+import com.bbebig.commonmodule.kafka.dto.serverEvent.status.ServerMemberActionStatus;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -19,19 +20,19 @@ public class ServerMemberActionEventDto extends ServerEventDto {
 
 	private String bannerUrl;
 
-	private String status; // JOIN, LEAVE, UPDATE
+	private ServerMemberActionStatus status; // JOIN, LEAVE, UPDATE
 
 	@JsonCreator
 	public ServerMemberActionEventDto(
 			@JsonProperty("serverId") Long serverId,
-			@JsonProperty("serverEventType") ServerEventType serverEventType,
+			@JsonProperty("type") ServerEventType type,
 			@JsonProperty("memberId") Long memberId,
 			@JsonProperty("nickname") String nickname,
 			@JsonProperty("avatarUrl") String avatarUrl,
 			@JsonProperty("bannerUrl") String bannerUrl,
-			@JsonProperty("status") String status
+			@JsonProperty("status") ServerMemberActionStatus status
 	) {
-		super(serverId, serverEventType);
+		super(serverId, type);
 		this.memberId = memberId;
 		this.nickname = nickname;
 		this.avatarUrl = avatarUrl;

@@ -4,6 +4,7 @@ package com.bbebig.serviceserver.global.kafka;
 import com.bbebig.commonmodule.kafka.dto.MemberEventDto;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerEventType;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerMemberActionEventDto;
+import com.bbebig.commonmodule.kafka.dto.serverEvent.status.ServerMemberActionStatus;
 import com.bbebig.serviceserver.server.service.ServerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +48,7 @@ public class MemberEventConsumerService {
 					.nickname(memberEventDto.getNickname())
 					.avatarUrl(memberEventDto.getAvatarUrl())
 					.bannerUrl(memberEventDto.getBannerUrl())
-					.status("UPDATE")
+					.status(ServerMemberActionStatus.UPDATE)
 					.build();
 			kafkaProducerService.sendServerEvent(actionEventDto);
 		});
@@ -63,7 +64,7 @@ public class MemberEventConsumerService {
 					.nickname(memberEventDto.getNickname())
 					.avatarUrl(memberEventDto.getAvatarUrl())
 					.bannerUrl(memberEventDto.getBannerUrl())
-					.status("DELETE")
+					.status(ServerMemberActionStatus.LEAVE)
 					.build();
 			kafkaProducerService.sendServerEvent(actionEventDto);
 
