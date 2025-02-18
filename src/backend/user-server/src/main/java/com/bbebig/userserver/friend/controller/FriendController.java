@@ -5,6 +5,8 @@ import com.bbebig.commonmodule.passport.annotation.PassportUser;
 import com.bbebig.commonmodule.proto.PassportProto.Passport;
 import com.bbebig.userserver.friend.dto.request.FriendCreateRequestDto;
 import com.bbebig.userserver.friend.dto.response.*;
+import com.bbebig.userserver.friend.dto.response.FriendResponseDto.FriendListResponseDto;
+import com.bbebig.userserver.friend.dto.response.FriendResponseDto.PendingFriendListResponseDto;
 import com.bbebig.userserver.friend.service.FriendService;
 import com.bbebig.userserver.friend.entity.FriendStatus;
 import io.swagger.v3.oas.annotations.Operation;
@@ -48,20 +50,20 @@ public class FriendController {
             @ApiResponse(responseCode = "400", description = "", content = @Content)
     })
     @GetMapping("/pending")
-    public CommonResponse<List<FriendListResponseDto>> getPendingFriends(
+    public CommonResponse<PendingFriendListResponseDto> getPendingFriends(
             @Parameter(hidden = true) @PassportUser Passport passport
     ) {
         log.info("[Member] 요청 대기 중인 친구 조회 요청: memberId = {}", passport.getMemberId());
         return CommonResponse.onSuccess(friendService.getPendingFriends(passport.getMemberId()));
     }
 
-    @Operation(summary = "요청 수락한 친구 조회", description = "요청 수락한 친구 조회합니다.")
+    @Operation(summary = "친구 목록 조회", description = "전체 친구 목록을 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "요청 수락한 친구 조회 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "", content = @Content)
     })
-    @GetMapping("/accepted")
-    public CommonResponse<List<FriendListResponseDto>> getAcceptedFriends(
+    @GetMapping
+    public CommonResponse<FriendListResponseDto> getAcceptedFriends(
             @Parameter(hidden = true) @PassportUser Passport passport
     ) {
         log.info("[Member] 요청 수락한 친구 조회 요청: memberId = {}", passport.getMemberId());

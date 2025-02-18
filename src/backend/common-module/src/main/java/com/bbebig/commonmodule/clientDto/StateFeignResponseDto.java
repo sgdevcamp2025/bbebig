@@ -1,5 +1,6 @@
 package com.bbebig.commonmodule.clientDto;
 
+import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,5 +28,24 @@ public class StateFeignResponseDto {
 		private Long memberId;
 		private Long dmMemberId;
 		List<Long> dmChannelIdList;
+	}
+
+	@Data
+	@Builder
+	@NoArgsConstructor
+	@AllArgsConstructor
+	public static class ServerMemberPresenceResponseDto {
+		private Long serverId;
+		private List<MemberPresenceStatusDto> memberPresenceStatusList;
+	}
+
+	@Data
+	@Builder
+	@NoArgsConstructor
+	@AllArgsConstructor
+	public static class MemberPresenceStatusDto {
+		private Long memberId;
+		private PresenceType globalStatus;
+		private PresenceType actualStatus;
 	}
 }
