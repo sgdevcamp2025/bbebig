@@ -15,6 +15,25 @@ public class SignalMessage {
     private String channelId;           // 체날 ID
     private String senderId;            // 보낸 사람 ID
     private String receiverId;          // 받는 사람 ID
-    private Object sdp;                 // SDP
-    private Object candidate;           // ICE candidate
+    private Sdp sdp;                    // SDP
+    private Candidate candidate;        // ICE candidate
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class Sdp {
+        private String type;  // "offer" 또는 "answer"
+        private String sdp;   // SDP 문자열
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class Candidate {
+        private String candidate;  // ICE Candidate 문자열
+        private Integer sdpMLineIndex;
+        private String sdpMid;
+    }
 }

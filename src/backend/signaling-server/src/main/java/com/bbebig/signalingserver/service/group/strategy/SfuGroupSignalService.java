@@ -41,10 +41,12 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
                 break;
             case OFFER:
                 handleOffer(message, sessionId);
+                // OFFER 이후 바로 CANDIDATE가 들어올 수 있으므로 break 없이 진행
             case CANDIDATE:
                 handleCandidate(message, sessionId);
                 break;
             case ANSWER:
+                // SFU 입장에선 브라우저->서버 ANSWER는 일반적으로 사용하지 않으므로 처리 X
                 break;
             default:
                 log.error("[Signal] 채널 타입: Group, 메시지 타입: {}, 상세: 지원되지 않는 메시지 타입입니다.", message.getMessageType());
@@ -130,7 +132,7 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
         kurentoManager.removeEndpoint(message.getChannelId(), sessionId);
         channelManager.leaveChannel(sessionId);
 
-        // 남아있는 인원이 0이면 채널 close
+        // 채널 내 인원이 0이면 채널 종료
         if (channelManager.getParticipants(message.getChannelId()).isEmpty()) {
             kurentoManager.closeChannel(message.getChannelId());
         }
@@ -151,6 +153,7 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
      * 브라우저에서 온 SDP Offer -> Kurento로 넘기고 -> SDP Answer 만들어서 브라우저에게 전달
      */
     private void handleOffer(SignalMessage message, String sessionId) {
+        // 1) WebRtcEndpoint 조회
         WebRtcEndpoint endpoint = kurentoManager.getEndpoint(message.getChannelId(), sessionId);
         if (endpoint == null) {
             log.error("[Signal] 채널 타입: Group, 채널 ID: {}, 세션 ID: {}, 상세: Offer 처리 실패 - 엔드포인트를 찾을 수 없습니다.",
@@ -158,19 +161,30 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
             throw new ErrorHandler(ErrorStatus.GROUP_STREAM_ENDPOINT_NOT_FOUND);
         }
 
-        String sdpOffer = (String) message.getSdp(); // 브라우저에서 보내온 SDP
-        String sdpAnswer = endpoint.processAnswer(sdpOffer);
+        // 2) 브라우저에서 전달한 Offer SDP 추출
+        if (message.getSdp() == null || message.getSdp().getSdp() == null) {
+            log.error("[Signal] 채널 타입: Group, 세션 ID: {}, 상세: Offer 처리 실패 - Sdp가 null입니다.", sessionId);
+            return;
+        }
+        String offerSdp = message.getSdp().getSdp();
+
+        // 3) Kurento에 Offer 적용 -> Answer 생성
+        //    (주의: 일반적으로 client "offer" => server calls processOffer(offerSdp))
+        String sdpAnswer = endpoint.processOffer(offerSdp);
 
         // ICE Candidate 수집 시작
         endpoint.gatherCandidates();
 
-        // 생성된 SDP Answer를 클라이언트에게 전송
+        // 5) 브라우저로 ANSWER 메시지 전송
         SignalMessage answerMessage = SignalMessage.builder()
                 .messageType(MessageType.ANSWER)
                 .channelId(message.getChannelId())
                 .senderId("SFU_SERVER")
                 .receiverId(sessionId)
-                .sdp(sdpAnswer)
+                .sdp(SignalMessage.Sdp.builder()
+                        .type("answer")
+                        .sdp(sdpAnswer)
+                        .build())
                 .build();
 
         messagingTemplate.convertAndSendToUser(
@@ -191,20 +205,23 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
             return;
         }
 
-        if (message.getCandidate() instanceof Map) {
-            @SuppressWarnings("unchecked")
-            Map<String, Object> candidateMap = (Map<String, Object>) message.getCandidate();
-            String candidateStr = (String) candidateMap.get("candidate");
-            String sdpMid = (String) candidateMap.get("sdpMid");
-            int sdpMLineIndex = (int) candidateMap.get("sdpMLineIndex");
-
-            IceCandidate kc = new IceCandidate(candidateStr, sdpMid, sdpMLineIndex);
-            endpoint.addIceCandidate(kc);
-
-            log.info("[Signal] 채널 타입: Group, 세션 ID: {}, ICE Candidate 등록 완료: {}", sessionId, candidateStr);
-        } else {
-            log.error("[Signal] 채널 타입: Group, 세션 ID: {}, candidate 형식이 Map이 아닙니다: {}",
-                    sessionId, message.getCandidate());
+        // 브라우저가 보낸 Candidate 필드
+        SignalMessage.Candidate candidateObj = message.getCandidate();
+        if (candidateObj == null || candidateObj.getCandidate() == null) {
+            log.error("[Signal]] 채널 타입: Group, 세션: {}, 상세: Candidate 처리 실패 - candidate 객체가 null입니다.", sessionId);
+            return;
         }
+
+        // Kurento IceCandidate로 변환
+        String candidate = candidateObj.getCandidate();
+        String sdpMid = candidateObj.getSdpMid();
+        Integer sdpMLineIndex = candidateObj.getSdpMLineIndex();
+
+        IceCandidate kc = new IceCandidate(candidate, sdpMid, sdpMLineIndex);
+        endpoint.addIceCandidate(kc);
+
+        log.info("[Signal] 채널 타입: Group, 세션 ID: {}, 채널 ID: {}, candidate: {}, 상세: ICE Candidate 등록 완료",
+                sessionId, message.getChannelId(), candidate);
+
     }
 }

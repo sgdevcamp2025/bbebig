@@ -140,7 +140,7 @@ public class MeshGroupSignalService implements GroupSignalStrategy {
                 .messageType(message.getMessageType())
                 .senderId(sessionId)
                 .sdp(message.getSdp())
-                .candidate(message.getMessageType())
+                .candidate(message.getCandidate())
                 .build();
 
         messagingTemplate.convertAndSend(

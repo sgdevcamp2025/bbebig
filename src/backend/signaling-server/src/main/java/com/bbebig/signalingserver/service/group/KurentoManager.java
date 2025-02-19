@@ -56,23 +56,23 @@ public class KurentoManager {
         webRtcEndpoint.setStunServerAddress("stun.l.google.com");
         webRtcEndpoint.setStunServerPort(19302);
 
-
         // (2) 서버 -> 클라이언트 ICE Candidate 전송을 위한 이벤트 리스너
         webRtcEndpoint.addOnIceCandidateListener(event -> {
             IceCandidate candidate = event.getCandidate();
 
-            Map<String, Object> candidateMap = Map.of(
-                    "candidate", candidate.getCandidate(),
-                    "sdpMid", candidate.getSdpMid(),
-                    "sdpMLineIndex", candidate.getSdpMLineIndex()
-            );
+            // SignalMessage 내부의 Candidate 클래스로 변환
+            SignalMessage.Candidate candidateObj = SignalMessage.Candidate.builder()
+                    .candidate(candidate.getCandidate())
+                    .sdpMid(candidate.getSdpMid())
+                    .sdpMLineIndex(candidate.getSdpMLineIndex())
+                    .build();
 
             SignalMessage candidateMessage = SignalMessage.builder()
                     .messageType(MessageType.CANDIDATE)
                     .channelId(channelId)
                     .senderId("SFU_SERVER")
                     .receiverId(sessionId)
-                    .candidate(candidateMap)
+                    .candidate(candidateObj)
                     .build();
 
             messagingTemplate.convertAndSendToUser(
