@@ -40,7 +40,7 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
                 break;
             case OFFER:
                 handleOffer(message);
-                // OFFER 이후 바로 CANDIDATE가 들어올 수 있으므로 break 없이 진행
+                break;
             case CANDIDATE:
                 handleCandidate(message);
                 break;
@@ -220,7 +220,7 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
         // 브라우저가 보낸 Candidate 필드
         SignalMessage.Candidate candidate = message.getCandidate();
         if (candidate == null || candidate.getCandidate() == null) {
-            log.error("[Signal]] 채널 타입: Group, 유저 ID: {}, 상세: Candidate 처리 실패 - candidate 객체가 null입니다.",
+            log.error("[Signal] 채널 타입: Group, 유저 ID: {}, 상세: Candidate 처리 실패 - candidate 객체가 null입니다.",
                     memberId);
             return;
         }
