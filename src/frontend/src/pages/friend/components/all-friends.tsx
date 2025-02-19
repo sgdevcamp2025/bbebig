@@ -1,35 +1,17 @@
 import { ChangeEvent, useState } from 'react'
 
 import SearchInput from '@/components/search-input'
-import UserListItem from '@/components/user-list-item'
+import UserListItemLink from '@/components/user-list-item'
 import { statusKo } from '@/constants/status'
-import { Friend } from '@/types/friend'
-
-const DUMMY_FRIENDS: Friend[] = [
-  {
-    id: 1,
-    avatarUrl: '/image/common/default-avatar.png',
-    name: '이지형',
-    status: 'ONLINE'
-  },
-  {
-    id: 2,
-    avatarUrl: '/image/common/default-avatar.png',
-    name: '김예지',
-    status: 'OFFLINE'
-  },
-  {
-    id: 3,
-    avatarUrl: '/image/common/default-avatar.png',
-    name: '서정우',
-    status: 'OFFLINE'
-  }
-]
+import useGetFriendList from '@/hooks/queries/user/useGetFriendList'
+import { CustomPresenceStatus } from '@/types/user'
 
 function AllFriends() {
+  const { friends = [] } = useGetFriendList()
   const [searchValue, setSearchValue] = useState('')
-  const filteredFriends = DUMMY_FRIENDS.filter((friend) =>
-    friend.name.toLowerCase().includes(searchValue.toLowerCase())
+
+  const filteredFriends = friends.filter((friend) =>
+    friend.memberName.toLowerCase().includes(searchValue.toLowerCase())
   )
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
@@ -58,13 +40,13 @@ function AllFriends() {
           </div>
         )}
         {filteredFriends.map((friend) => (
-          <UserListItem
-            key={friend.id}
-            id={friend.id}
-            avatarUrl={friend.avatarUrl}
-            name={friend.name}
-            status={friend.status}
-            description={statusKo[friend.status]}
+          <UserListItemLink
+            key={friend.friendId}
+            id={friend.memberId}
+            avatarUrl={friend.memberAvatarUrl ?? '/image/common/default-avatar.png'}
+            name={friend.memberName}
+            status={friend.actualStatus as CustomPresenceStatus}
+            description={statusKo[friend.actualStatus as CustomPresenceStatus]}
             statusColor='black'
             iconType='default'
           />

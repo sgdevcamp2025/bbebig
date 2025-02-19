@@ -73,6 +73,24 @@ export interface GetFriendAcceptedListResponseSchema {
   friendEmail: string
 }
 
+export interface GetFriendListResponseSchema {
+  memberId: number
+  friendsCount: number
+  friends: {
+    friendId: number
+    memberId: number
+    memberName: string
+    memberNickname: string
+    memberAvatarUrl: string | null
+    memberBannerUrl: string | null
+    memberIntroduce: string | null
+    memberEmail: string
+    actualStatus: string
+    globalStatus: string
+    createdAt: string | null
+  }[]
+}
+
 export interface DeclineFriendRequestSchema {
   friendId: number
 }

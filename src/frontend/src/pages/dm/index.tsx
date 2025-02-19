@@ -1,11 +1,14 @@
-import { ChangeEvent, useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { ChangeEvent, Suspense, useState } from 'react'
 import { useParams } from 'react-router'
 
 import ChatArea from '@/components/chat-area'
 import CommonHeader from '@/components/common-header'
+import LoadingIcon from '@/components/loading-icon'
 import { Friend } from '@/types/friend'
 
 import DmHeader from './components/dm-header'
+<<<<<<< HEAD
 
 const DUMMY_FRIENDS: Friend[] = [
   {
@@ -39,11 +42,22 @@ const DUMMY_FRIENDS: Friend[] = [
     friendEmail: 'test@test.com'
   }
 ]
+=======
+>>>>>>> dev/fe
 
 function DmPage() {
-  const { friendId } = useParams()
+  const { friendId } = useParams<{ friendId: string }>()
   const [searchValue, setSearchValue] = useState('')
+<<<<<<< HEAD
   const selectedFriend = DUMMY_FRIENDS.find((friend) => friend.friendId === Number(friendId))
+=======
+  const queryClient = useQueryClient()
+
+  const friendData = queryClient.getQueryData<{ result: { friends: Friend[] } }>(['friend', 'list'])
+
+  const selectedFriend = friendData?.result.friends.find((f) => f.memberId === Number(friendId))
+
+>>>>>>> dev/fe
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value)
   }
@@ -67,7 +81,13 @@ function DmPage() {
         }}>
         <DmHeader friend={selectedFriend} />
       </CommonHeader>
+<<<<<<< HEAD
       <ChatArea friend={selectedFriend} />
+=======
+      <Suspense fallback={<LoadingIcon />}>
+        <DmArea friend={selectedFriend} />
+      </Suspense>
+>>>>>>> dev/fe
     </div>
   )
 }
