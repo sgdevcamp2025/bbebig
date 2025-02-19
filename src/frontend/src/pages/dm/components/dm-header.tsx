@@ -10,11 +10,13 @@ function DmHeader({ friend }: DmHeaderProps) {
     <div className='flex h-12 items-center gap-2 '>
       <Avatar
         statusColor='black'
-        avatarUrl={friend.avatarUrl}
-        status={friend.status}
+        avatarUrl={friend.memberAvatarUrl}
         size='sm'
+        name={friend.memberNickname}
       />
-      <span className='text-discord-font-color-normal text-base font-semibold'>{friend.name}</span>
+      <span className='text-discord-font-color-normal text-base font-semibold'>
+        {friend.memberName}
+      </span>
     </div>
   )
 }
