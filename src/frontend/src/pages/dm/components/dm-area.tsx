@@ -3,24 +3,13 @@ import { useEffect, useRef, useState } from 'react'
 import Avatar from '@/components/avatar'
 import { Friend } from '@/types/friend'
 import { Message } from '@/types/message'
-import { User } from '@/types/user'
+import { CustomPresenceStatus } from '@/types/user'
 import timeHelper from '@/utils/format-time'
 
 import DmAreaHeader from './dm-area-header'
 
 interface DmPageProps {
   friend: Friend
-}
-
-const DUMMY_USER: User = {
-  id: '1',
-  avatarUrl: '/image/homepage/background-art.png',
-  name: '이소은',
-  email: 'soeun@gmail.com',
-  bannerUrl: '/image/common/default-background.png',
-  customPresenceStatus: 'ONLINE',
-  introduction: '안녕하세요',
-  introductionEmoji: '👋'
 }
 
 function DmArea({ friend }: DmPageProps) {
@@ -33,7 +22,7 @@ function DmArea({ friend }: DmPageProps) {
   const handleScroll = () => {
     if (!containerRef.current) return
 
-    if (!messages[friend.id]?.length) {
+    if (!messages[friend.memberId]?.length) {
       setShowTopHeader(true)
       return
     }
@@ -43,7 +32,7 @@ function DmArea({ friend }: DmPageProps) {
   }
 
   const sendMessage = () => {
-    if (!inputRef.current || !friend.id) return
+    if (!inputRef.current || !friend.memberId) return
     const text = inputRef.current.value.trim()
     if (!text) return
 
@@ -58,7 +47,7 @@ function DmArea({ friend }: DmPageProps) {
 
     setMessages((prev) => ({
       ...prev,
-      [friend.id]: [...(prev[friend.id] || []), newMessage]
+      [friend.memberId]: [...(prev[friend.memberId] || []), newMessage]
     }))
 
     inputRef.current.value = ''
@@ -89,7 +78,7 @@ function DmArea({ friend }: DmPageProps) {
           className='flex-1 overflow-y-auto'>
           <div
             className={`transition-opacity duration-200 ${
-              showTopHeader || !messages[friend.id]?.length
+              showTopHeader || !messages[friend.memberId]?.length
                 ? 'opacity-100'
                 : 'opacity-0 h-0 overflow-hidden'
             }`}>
@@ -97,13 +86,13 @@ function DmArea({ friend }: DmPageProps) {
           </div>
 
           <div className='flex flex-col justify-end min-h-full p-4'>
-            {friend.id &&
-              messages[friend.id]?.map((msg) => {
+            {friend.memberId &&
+              messages[friend.memberId]?.map((msg) => {
                 const { isToday, ampm, hour12, minutes, year, month, day } = timeHelper(
                   msg.createdAt.toISOString()
                 )
 
-                const isMyMessage = msg.memberId === DUMMY_USER.id
+                const isMyMessage = msg.memberId === friend.memberId.toString()
 
                 return (
                   <div
@@ -111,14 +100,15 @@ function DmArea({ friend }: DmPageProps) {
                     className='flex items-start gap-3 mb-4'>
                     <Avatar
                       size='sm'
-                      avatarUrl={isMyMessage ? DUMMY_USER.avatarUrl : friend.avatarUrl}
+                      avatarUrl={isMyMessage ? friend.memberAvatarUrl : friend.memberAvatarUrl}
                       statusColor='black'
-                      status={isMyMessage ? DUMMY_USER.customPresenceStatus : friend.status}
+                      status={friend.actualStatus as CustomPresenceStatus}
+                      name={isMyMessage ? friend.memberName : friend.memberName}
                     />
 
                     <div className='flex-1'>
                       <div className='text-sm font-bold text-discord-font-color-normal'>
-                        {isMyMessage ? DUMMY_USER.name : friend.name}
+                        {isMyMessage ? friend.memberName : friend.memberName}
                         <span className='ml-2 text-xs text-gray-400'>
                           {isToday
                             ? `오늘 ${ampm} ${hour12}:${minutes}`

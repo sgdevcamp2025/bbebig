@@ -13,6 +13,7 @@ import {
   DeleteFriendResponseSchema,
   DeleteMemberResponseSchema,
   GetFriendAcceptedListResponseSchema,
+  GetFriendListResponseSchema,
   GetFriendPendingListResponseSchema,
   GetUserRequestSchema,
   GetUserResponseSchema,
@@ -91,6 +92,13 @@ const userService = () => {
     return response.data
   }
 
+  const getFriendList = async () => {
+    const response = await axiosInstance.get<CommonResponseType<GetFriendListResponseSchema>>(
+      `${FRIEND_PATH}`
+    )
+    return response.data
+  }
+
   const declineFriend = async (data: DeclineFriendRequestSchema) => {
     const response = await axiosInstance.delete<CommonResponseType<DeclineFriendResponseSchema>>(
       `${FRIEND_PATH}/${data.friendId}/decline`
@@ -121,6 +129,7 @@ const userService = () => {
     deleteFriend,
     getFriendPendingList,
     getFriendAcceptedList,
+    getFriendList,
     declineFriend,
     acceptFriend,
     deleteFriendInRequestList,
