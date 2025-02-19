@@ -1,37 +1,28 @@
 package com.bbebig.signalingserver.service.group;
 
-import com.bbebig.signalingserver.domain.MessageType;
-import com.bbebig.signalingserver.domain.Path;
-import com.bbebig.signalingserver.domain.SignalMessage;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import org.kurento.client.IceCandidate;
+import lombok.extern.slf4j.Slf4j;
 import org.kurento.client.KurentoClient;
 import org.kurento.client.MediaPipeline;
 import org.kurento.client.WebRtcEndpoint;
-import org.kurento.client.WebRtcEndpoint.Builder;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class KurentoManager {
 
     private final KurentoClient kurentoClient;
-    private final SimpMessagingTemplate messagingTemplate;
 
     // channelId -> MediaPipeline
     private final Map<String, MediaPipeline> pipelines = new ConcurrentHashMap<>();
 
-    // channelId -> (sessionId -> WebRtcEndpoint)
+    // channelId -> (memberId -> WebRtcEndpoint)
     private final Map<String, Map<String, WebRtcEndpoint>> endpoints = new ConcurrentHashMap<>();
 
-    public KurentoManager(
-            @Value("${kurento.ws.url}") String kurentoWsUrl,
-            SimpMessagingTemplate messagingTemplate
-    ) {
+    public KurentoManager(@Value("${kurento.ws.url}") String kurentoWsUrl) {
         this.kurentoClient = KurentoClient.create(kurentoWsUrl);
-        this.messagingTemplate = messagingTemplate;
     }
 
     /**
@@ -46,63 +37,47 @@ public class KurentoManager {
     }
 
     /**
-     * 채널에 참여하는 사용자(sessionId)용 WebRtcEndpoint 생성
+     * 채널에 참여하는 사용자(memberId)용 WebRtcEndpoint 생성
      */
-    public synchronized void createEndpoint(String channelId, String sessionId) {
+    public synchronized void createEndpoint(String channelId, String memberId) {
+        log.info("[KurentoManager] 채널 ID: {}, 사용자 ID: {} -> WebRtcEndpoint 생성 시작", channelId, memberId);
+
         MediaPipeline pipeline = getOrCreatePipeline(channelId);
-        WebRtcEndpoint webRtcEndpoint = new Builder(pipeline).build();
+        log.info("[KurentoManager] 채널 ID: {}, 기존 Pipeline 존재 여부: {}", channelId, pipelines.containsKey(channelId));
+
+        WebRtcEndpoint webRtcEndpoint = new WebRtcEndpoint.Builder(pipeline).build();
+        log.info("[KurentoManager] 채널 ID: {}, 사용자 ID: {} -> WebRtcEndpoint 생성 완료", channelId, memberId);
 
         // (1) 구글 STUN 설정
         webRtcEndpoint.setStunServerAddress("stun.l.google.com");
         webRtcEndpoint.setStunServerPort(19302);
+        log.info("[KurentoManager] 채널 ID: {}, 사용자 ID: {} -> STUN 서버 설정 완료 ({}:{})",
+                channelId, memberId, "stun.l.google.com", 19302);
 
-        // (2) 서버 -> 클라이언트 ICE Candidate 전송을 위한 이벤트 리스너
-        webRtcEndpoint.addOnIceCandidateListener(event -> {
-            IceCandidate candidate = event.getCandidate();
-
-            // SignalMessage 내부의 Candidate 클래스로 변환
-            SignalMessage.Candidate candidateObj = SignalMessage.Candidate.builder()
-                    .candidate(candidate.getCandidate())
-                    .sdpMid(candidate.getSdpMid())
-                    .sdpMLineIndex(candidate.getSdpMLineIndex())
-                    .build();
-
-            SignalMessage candidateMessage = SignalMessage.builder()
-                    .messageType(MessageType.CANDIDATE)
-                    .channelId(channelId)
-                    .senderId("SFU_SERVER")
-                    .receiverId(sessionId)
-                    .candidate(candidateObj)
-                    .build();
-
-            messagingTemplate.convertAndSendToUser(
-                    sessionId,
-                    Path.directSubPath,
-                    candidateMessage
-            );
-        });
-
-        // (3) endpoints 저장
+        // (2) endpoints 저장
         endpoints.putIfAbsent(channelId, new ConcurrentHashMap<>());
-        endpoints.get(channelId).put(sessionId, webRtcEndpoint);
+        endpoints.get(channelId).put(memberId, webRtcEndpoint);
+        log.info("[KurentoManager] 채널 ID: {}, 사용자 ID: {} -> WebRtcEndpoint 저장 완료", channelId, memberId);
+
+        log.info("[KurentoManager] 현재 채널({})의 참가자 수: {}", channelId, endpoints.get(channelId).size());
     }
 
     /**
-     * 특정 사용자(sessionId)의 WebRtcEndpoint 조회
+     * 특정 사용자(memberId)의 WebRtcEndpoint 조회
      */
-    public synchronized WebRtcEndpoint getEndpoint(String channelId, String sessionId) {
+    public synchronized WebRtcEndpoint getEndpoint(String channelId, String memberId) {
         if (!endpoints.containsKey(channelId)) {
             return null;
         }
-        return endpoints.get(channelId).get(sessionId);
+        return endpoints.get(channelId).get(memberId);
     }
 
     /**
      * 채널에서 해당 사용자의 WebRtcEndpoint 해제
      */
-    public synchronized void removeEndpoint(String channelId, String sessionId) {
+    public synchronized void removeEndpoint(String channelId, String memberId) {
         if (endpoints.containsKey(channelId)) {
-            WebRtcEndpoint endpoint = endpoints.get(channelId).remove(sessionId);
+            WebRtcEndpoint endpoint = endpoints.get(channelId).remove(memberId);
             // WebRtcEndpoint 리소스 해제
             if (endpoint != null) {
                 endpoint.release();

@@ -48,13 +48,13 @@ public class MeshGroupSignalService implements GroupSignalStrategy {
      * 채널 입장
      */
     private void handleJoinChannel(SignalMessage message, String sessionId) {
-        boolean joinStatus = channelManager.joinChannel(message.getChannelId(), sessionId);
+        boolean joinStatus = channelManager.joinChannel(message.getChannelId(), message.getSenderId());
 
         // 최대 인원 초과로 인해 join 실패
         if (!joinStatus) {
             SignalMessage fullMessage = SignalMessage.builder().
                     messageType(MessageType.CHANNEL_FULL)
-                    .senderId(sessionId)
+                    .senderId(message.getSenderId())
                     .build();
 
             messagingTemplate.convertAndSendToUser(
@@ -81,7 +81,7 @@ public class MeshGroupSignalService implements GroupSignalStrategy {
         SignalMessage allUsersMessage = SignalMessage.builder()
                 .messageType(MessageType.EXIST_USERS)
                 .channelId(message.getChannelId())
-                .senderId(sessionId)
+                .senderId(message.getSenderId())
                 .build();
 
         messagingTemplate.convertAndSendToUser(
@@ -98,7 +98,7 @@ public class MeshGroupSignalService implements GroupSignalStrategy {
         SignalMessage userJoinedMessage = SignalMessage.builder()
                 .messageType(MessageType.USER_JOINED)
                 .channelId(message.getChannelId())
-                .senderId(sessionId)
+                .senderId(message.getSenderId())
                 .build();
 
         messagingTemplate.convertAndSend(
@@ -111,12 +111,12 @@ public class MeshGroupSignalService implements GroupSignalStrategy {
      * 채널 퇴장
      */
     private void handleLeaveChannel(SignalMessage message, String sessionId) {
-        channelManager.leaveChannel(sessionId);
+        channelManager.leaveChannel(message.getSenderId());
 
         SignalMessage userLeftMessage = SignalMessage.builder()
                 .messageType(MessageType.USER_LEFT)
                 .channelId(message.getChannelId())
-                .senderId(sessionId)
+                .senderId(message.getSenderId())
                 .build();
 
         messagingTemplate.convertAndSend(
@@ -129,7 +129,7 @@ public class MeshGroupSignalService implements GroupSignalStrategy {
      * 그룹 offer/answer/candidate 전달
      */
     private void handleGroupSignal(SignalMessage message, String sessionId) {
-        String channelId = channelManager.getChannelIdBySessionId(sessionId);
+        String channelId = channelManager.getChannelIdByMemberId(message.getSenderId());
 
         if (channelId == null) {
             log.error("[Signal] 채널 타입: Group, 상세: 채널 ID가 누락되었습니다.");
@@ -138,7 +138,7 @@ public class MeshGroupSignalService implements GroupSignalStrategy {
 
         SignalMessage groupMessage = SignalMessage.builder()
                 .messageType(message.getMessageType())
-                .senderId(sessionId)
+                .senderId(message.getSenderId())
                 .sdp(message.getSdp())
                 .candidate(message.getCandidate())
                 .build();
