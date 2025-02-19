@@ -30,19 +30,19 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
      * 그룹 시그널링 처리
      */
     @Override
-    public void processGroupSignal(SignalMessage message, String sessionId) {
+    public void processGroupSignal(SignalMessage message) {
         switch (message.getMessageType()) {
             case JOIN_CHANNEL:
-                handleJoinChannel(message, sessionId);
+                handleJoinChannel(message);
                 break;
             case LEAVE_CHANNEL:
                 handleLeaveChannel(message);
                 break;
             case OFFER:
-                handleOffer(message, sessionId);
+                handleOffer(message);
                 // OFFER 이후 바로 CANDIDATE가 들어올 수 있으므로 break 없이 진행
             case CANDIDATE:
-                handleCandidate(message, sessionId);
+                handleCandidate(message);
                 break;
             default:
                 log.error("[Signal] 채널 타입: Group, 메시지 타입: {}, 상세: 지원되지 않는 메시지 타입입니다.", message.getMessageType());
@@ -53,7 +53,7 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
     /**
      * 채널 입장
      */
-    private void handleJoinChannel(SignalMessage message, String sessionId) {
+    private void handleJoinChannel(SignalMessage message) {
         String memberId = message.getSenderId();
         String channelId = message.getChannelId();
 
@@ -67,9 +67,8 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
                     .senderId(memberId)
                     .build();
 
-            messagingTemplate.convertAndSendToUser(
-                    sessionId,
-                    Path.directSubPath,
+            messagingTemplate.convertAndSend(
+                    Path.directSubPath + memberId,
                     fullMessage
             );
         }
@@ -82,7 +81,7 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
 //        List<String> otherUsers = new ArrayList<>(participants);
 
         // (2) 본인에게 기존 멤버 정보 안내 (필요 시 ID 목록 추가)
-        notifyExistUsers(message, sessionId);
+        notifyExistUsers(message);
 
         // (3) 방 전체에 새 사용자의 입장 알림
         notifyUserJoined(message);
@@ -91,7 +90,7 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
     /**
      * 본인에게 기존 멤버 정보를 전달
      */
-    private void notifyExistUsers(SignalMessage message, String sessionId) {
+    private void notifyExistUsers(SignalMessage message) {
         // TODO: 기존 유저 ID 추가
         SignalMessage allUsersMessage = SignalMessage.builder()
                 .messageType(MessageType.EXIST_USERS)
@@ -99,9 +98,8 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
                 .senderId(message.getSenderId())
                 .build();
 
-        messagingTemplate.convertAndSendToUser(
-                sessionId,
-                Path.directSubPath,
+        messagingTemplate.convertAndSend(
+                Path.directSubPath + message.getSenderId(),
                 allUsersMessage
         );
     }
@@ -153,7 +151,7 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
     /**
      * 브라우저에서 온 SDP Offer -> Kurento로 넘기고 -> SDP Answer 만들어서 브라우저에게 전달
      */
-    private void handleOffer(SignalMessage message, String sessionId) {
+    private void handleOffer(SignalMessage message) {
         String memberId = message.getSenderId();
         String channelId = message.getChannelId();
 
@@ -190,9 +188,8 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
                         .build())
                 .build();
 
-        messagingTemplate.convertAndSendToUser(
-                sessionId,
-                Path.directSubPath,
+        messagingTemplate.convertAndSend(
+                Path.directSubPath + memberId,
                 answerMessage
         );
 
@@ -203,7 +200,7 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
     /**
      * 브라우저가 보낸 ICE candidate -> Kurento endpoint에 등록
      */
-    private void handleCandidate(SignalMessage message, String sessionId) {
+    private void handleCandidate(SignalMessage message) {
         String memberId = message.getSenderId();
         String channelId = message.getChannelId();
 

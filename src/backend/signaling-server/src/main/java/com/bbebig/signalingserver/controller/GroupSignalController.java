@@ -26,6 +26,6 @@ public class GroupSignalController {
         log.info("[Signal] 채널 타입: Group, 메시지 타입: {}, 보낸 사람 세션 ID: {}, 채널 ID: {}",
                 message.getMessageType(), sessionId, message.getChannelId());
 
-        groupSignalService.processGroupSignal(message, sessionId);
+        groupSignalService.processGroupSignal(message);
     }
 }

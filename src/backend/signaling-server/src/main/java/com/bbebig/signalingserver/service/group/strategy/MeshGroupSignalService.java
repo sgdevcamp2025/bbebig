@@ -25,18 +25,18 @@ public class MeshGroupSignalService implements GroupSignalStrategy {
      * 그룹 시그널링 처리
      */
     @Override
-    public void processGroupSignal(SignalMessage message, String sessionId) {
+    public void processGroupSignal(SignalMessage message) {
         switch (message.getMessageType()) {
             case JOIN_CHANNEL:
-                handleJoinChannel(message, sessionId);
+                handleJoinChannel(message);
                 break;
             case LEAVE_CHANNEL:
-                handleLeaveChannel(message, sessionId);
+                handleLeaveChannel(message);
                 break;
             case OFFER:
             case ANSWER:
             case CANDIDATE:
-                handleGroupSignal(message, sessionId);
+                handleGroupSignal(message);
                 break;
             default:
                 log.error("[Signal] 채널 타입: Group, 메시지 타입: {}, 상세: 지원되지 않는 메시지 타입입니다.", message.getMessageType());
@@ -47,7 +47,7 @@ public class MeshGroupSignalService implements GroupSignalStrategy {
     /**
      * 채널 입장
      */
-    private void handleJoinChannel(SignalMessage message, String sessionId) {
+    private void handleJoinChannel(SignalMessage message) {
         boolean joinStatus = channelManager.joinChannel(message.getChannelId(), message.getSenderId());
 
         // 최대 인원 초과로 인해 join 실패
@@ -57,9 +57,8 @@ public class MeshGroupSignalService implements GroupSignalStrategy {
                     .senderId(message.getSenderId())
                     .build();
 
-            messagingTemplate.convertAndSendToUser(
-                    sessionId,
-                    Path.directSubPath,
+            messagingTemplate.convertAndSend(
+                    Path.directSubPath + message.getSenderId(),
                     fullMessage
             );
         }
@@ -67,16 +66,16 @@ public class MeshGroupSignalService implements GroupSignalStrategy {
 //        // 나를 제외한 기존 멤버 목록
 //        Set<String> participants = channelManager.getParticipants(message.getChannelId());
 //        List<String> otherUsers = new ArrayList<>(participants);
-//        otherUsers.remove(sessionId);
+//        otherUsers.remove(memberId);
 
-        notifyExistUsers(message, sessionId);
-        notifyUserJoined(message, sessionId);
+        notifyExistUsers(message);
+        notifyUserJoined(message);
     }
 
     /**
      * 본인에게 기존 멤버 정보를 전달
      */
-    private void notifyExistUsers(SignalMessage message, String sessionId) {
+    private void notifyExistUsers(SignalMessage message) {
         // TODO: 기존 유저 ID 추가
         SignalMessage allUsersMessage = SignalMessage.builder()
                 .messageType(MessageType.EXIST_USERS)
@@ -84,9 +83,8 @@ public class MeshGroupSignalService implements GroupSignalStrategy {
                 .senderId(message.getSenderId())
                 .build();
 
-        messagingTemplate.convertAndSendToUser(
-                sessionId,
-                Path.directSubPath,
+        messagingTemplate.convertAndSend(
+                Path.directSubPath + message.getSenderId(),
                 allUsersMessage
         );
     }
@@ -94,7 +92,7 @@ public class MeshGroupSignalService implements GroupSignalStrategy {
     /**
      * 방 전체에 새로운 사용자의 입장을 알림
      */
-    private void notifyUserJoined(SignalMessage message, String sessionId) {
+    private void notifyUserJoined(SignalMessage message) {
         SignalMessage userJoinedMessage = SignalMessage.builder()
                 .messageType(MessageType.USER_JOINED)
                 .channelId(message.getChannelId())
@@ -110,7 +108,7 @@ public class MeshGroupSignalService implements GroupSignalStrategy {
     /**
      * 채널 퇴장
      */
-    private void handleLeaveChannel(SignalMessage message, String sessionId) {
+    private void handleLeaveChannel(SignalMessage message) {
         channelManager.leaveChannel(message.getSenderId());
 
         SignalMessage userLeftMessage = SignalMessage.builder()
@@ -128,7 +126,7 @@ public class MeshGroupSignalService implements GroupSignalStrategy {
     /**
      * 그룹 offer/answer/candidate 전달
      */
-    private void handleGroupSignal(SignalMessage message, String sessionId) {
+    private void handleGroupSignal(SignalMessage message) {
         String channelId = channelManager.getChannelIdByMemberId(message.getSenderId());
 
         if (channelId == null) {
