@@ -1,34 +1,46 @@
-import { reactRouter } from '@react-router/dev/vite'
 import { sentryVitePlugin } from '@sentry/vite-plugin'
+import react from '@vitejs/plugin-react'
 import autoprefixer from 'autoprefixer'
-import { reactRouterDevTools } from 'react-router-devtools'
+import { resolve } from 'path'
 import tailwindcss from 'tailwindcss'
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
-// https://vite.dev/config/
-export default defineConfig({
-  css: {
-    postcss: {
-      plugins: [autoprefixer, tailwindcss]
-    }
-  },
-  plugins: [
-    reactRouterDevTools(),
-    reactRouter(),
-    tsconfigPaths(),
-    sentryVitePlugin({
-      org: 'bbebig-ck',
-      project: 'bissgcode',
-      sourcemaps: {
-        assets: './build/client/**',
-        ignore: ['node_modules', 'dist', 'build'],
-        filesToDeleteAfterUpload: './build/client/**'
+
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '')
+  return {
+    base: '/',
+    css: {
+      postcss: {
+        plugins: [autoprefixer, tailwindcss]
       }
-    })
-  ],
-  build: {
-    cssMinify: true,
-    ssr: true,
-    sourcemap: true
+    },
+    plugins: [
+      react(),
+      tsconfigPaths(),
+      sentryVitePlugin({
+        org: 'bbebig',
+        project: 'bbebig',
+        telemetry: false,
+        authToken: env.VITE_SENTRY_AUTH_TOKEN,
+        sourcemaps: {
+          assets: './build/client/**',
+          ignore: ['node_modules', 'dist', 'build'],
+          filesToDeleteAfterUpload: './build/client/**'
+        }
+      })
+    ],
+    build: {
+      outDir: 'build/client',
+      emptyOutDir: true,
+      cssMinify: true,
+      ssr: false,
+      sourcemap: true
+    },
+    resolve: {
+      alias: {
+        '@': resolve(__dirname, './src')
+      }
+    }
   }
 })

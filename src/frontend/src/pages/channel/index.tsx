@@ -1,5 +1,5 @@
 import { useLayoutEffect, useMemo } from 'react'
-import { useNavigate, useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import { useGetServerInfo } from '@/hooks/queries/server/useGetServerInfo'
 

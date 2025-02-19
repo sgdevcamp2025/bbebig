@@ -1,4 +1,4 @@
-import { Outlet, useNavigate, useParams } from 'react-router'
+import { Outlet, useNavigate, useParams } from 'react-router-dom'
 
 import { useGetServerInfo } from '@/hooks/queries/server/useGetServerInfo'
 import { useGetServerMember } from '@/hooks/queries/server/useGetServerMember'

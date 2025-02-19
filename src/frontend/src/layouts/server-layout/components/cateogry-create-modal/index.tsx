@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form'
-import { useParams } from 'react-router'
+import { useParams } from 'react-router-dom'
 
 import { ZCreateCategoryRequestSchema } from '@/apis/schema/types/service'
 import CustomButton from '@/components/custom-button'
