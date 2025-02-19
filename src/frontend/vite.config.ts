@@ -35,7 +35,27 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: true,
       cssMinify: true,
       ssr: false,
-      sourcemap: true
+      sourcemap: true,
+      chunkSizeWarningLimit: 500,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+
+            layout: [
+              './src/layouts/root-layout',
+              './src/layouts/auth',
+              './src/layouts/main-layout',
+              './src/layouts/server-layout',
+              './src/layouts/dm-layout'
+            ],
+
+            pages: ['./src/pages/landing', './src/pages/auth/login', './src/pages/auth/register'],
+
+            'channel-pages': ['./src/pages/channel', './src/pages/friend', './src/pages/dm']
+          }
+        }
+      }
     },
     resolve: {
       alias: {
