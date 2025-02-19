@@ -102,6 +102,9 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
                 Path.directSubPath + message.getSenderId(),
                 allUsersMessage
         );
+
+        log.info("[Signal] EXIST_USERS 메시지 전송 - 대상 경로: {}, 메시지: {}",
+                Path.directSubPath + message.getSenderId(), allUsersMessage);
     }
 
     /**
@@ -118,6 +121,9 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
                 Path.groupSubPath + message.getChannelId(),
                 userJoinedMessage
         );
+
+        log.info("[Signal] USER_JOINED 메시지 전송 - 대상 경로: {}, 메시지: {}",
+                Path.groupSubPath + message.getChannelId(), userJoinedMessage);
     }
 
     /**
