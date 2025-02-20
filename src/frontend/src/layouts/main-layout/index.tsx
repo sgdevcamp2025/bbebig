@@ -12,7 +12,7 @@ import { statusKo } from '@/constants/status'
 import { useGetServer } from '@/hooks/queries/server/useGetServer'
 import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
 import { cn } from '@/libs/cn'
-import useMediaSettingsStore from '@/stores/use-media-setting.store'
+import { useMediaSettingsStore } from '@/stores/use-media-setting.store'
 
 import ProfileCard from './components/profile-card'
 import ProfileStatusButton from './components/profile-status-button'

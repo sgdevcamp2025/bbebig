@@ -9,7 +9,7 @@ interface Props {
   onProfileEditClick: () => void
 }
 
-function MyAccount({ onProfileEditClick }: Props) {
+export function MyAccount({ onProfileEditClick }: Props) {
   const [isEmailShown, setIsEmailShown] = useState(false)
   const myInfo = useGetSelfUser()
   return (
@@ -100,5 +100,3 @@ function MyAccount({ onProfileEditClick }: Props) {
     </section>
   )
 }
-
-export default MyAccount

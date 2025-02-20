@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useShallow } from 'zustand/shallow'
 
 import CustomButton from '@/components/custom-button'
 import SelectBox from '@/components/select-box'
 import VolumeSlider from '@/components/volume-slider'
-import useGetMediaDevices from '@/hooks/use-get-media-devices'
+import { useGetMediaDevices } from '@/hooks/use-get-media-devices'
 import useMediaControl from '@/hooks/use-media-control'
-import useMediaSettingsStore from '@/stores/use-media-setting.store'
+import { useMediaSettingsStore } from '@/stores/use-media-setting.store'
 import { AudioDevice } from '@/types/media'
 
 interface VoiceSetting {
@@ -16,14 +16,22 @@ interface VoiceSetting {
   OUTPUT_PERCENTAGE: number
 }
 
-function VoiceSetting() {
-  const [isShowVideoTest, setIsShowVideoTest] = useState(false)
-  const [isShowAudioTest, setIsShowAudioTest] = useState(false)
+const CURRENT_VALUE = (devices: AudioDevice[], value: string) => {
+  return devices.find((device) => device.value === value) || devices[0]
+}
 
-  const { devices: UserDevices } = useGetMediaDevices()
+export function VoiceSetting() {
+  const [state, setState] = useState({
+    isShowVideoTest: false,
+    isShowAudioTest: false
+  })
+
+  const { videoRef, startStream, stopStream } = useMediaControl()
+
+  const { devices, initializeDevices } = useGetMediaDevices()
 
   const {
-    devices,
+    devices: settingDevices,
     volume,
     setOutputVolume,
     setInputVolume,
@@ -42,64 +50,65 @@ function VoiceSetting() {
     }))
   )
 
-  const selectOptions = useMemo(
-    () => [
-      {
-        label: '녹음 장치',
-        options: UserDevices.audioDevices,
-        value: UserDevices.audioDevices.find((device) => device.value === devices.audioInput),
-        onChange: (value: AudioDevice) => setInputDevice(value.value),
-        perceantageLabel: '입력 음량',
-        perceantageValue: volume.input,
-        onChangePerceantage: setInputVolume
-      },
-      {
-        label: '출력 장치',
-        options: UserDevices.outputDevices,
-        value: UserDevices.outputDevices.find((device) => device.value === devices.audioOutput),
-        onChange: (value: AudioDevice) => setOutputDevice(value.value),
-        perceantageLabel: '출력 음량',
-        perceantageValue: volume.output,
-        onChangePerceantage: setOutputVolume
+  useEffect(
+    function setDefaultDevices() {
+      initializeDevices()
+      return () => {
+        stopStream({ audio: true, video: true })
       }
-    ],
-    [
-      UserDevices.audioDevices,
-      UserDevices.outputDevices,
-      devices.audioInput,
-      devices.audioOutput,
-      setInputDevice,
-      setInputVolume,
-      setOutputDevice,
-      setOutputVolume,
-      volume.input,
-      volume.output
-    ]
+    },
+    [initializeDevices, stopStream]
   )
 
-  const { videoRef, startStream, stopStream } = useMediaControl()
-
-  const handleVideoTest = useCallback(() => {
-    setIsShowVideoTest((prev) => {
-      const newState = !prev
-      if (newState) {
-        startStream()
-      } else {
-        stopStream()
-      }
-      return newState
-    })
-  }, [startStream, stopStream])
-
-  const handleAudioTest = useCallback(() => {
-    setIsShowAudioTest((prev) => !prev)
-  }, [])
-
-  useEffect(() => {
-    return () => {
-      stopStream()
+  const selectOptions = [
+    {
+      label: '녹음 장치',
+      options: devices.audioDevices,
+      value: CURRENT_VALUE(devices.audioDevices, settingDevices.audioInput || ''),
+      onChange: (value: AudioDevice) => setInputDevice(value.value),
+      perceantageLabel: '입력 음량',
+      perceantageValue: volume.input,
+      onChangePerceantage: setInputVolume
+    },
+    {
+      label: '출력 장치',
+      options: devices.outputDevices,
+      value: CURRENT_VALUE(devices.outputDevices, settingDevices.audioOutput || ''),
+      onChange: (value: AudioDevice) => setOutputDevice(value.value),
+      perceantageLabel: '출력 음량',
+      perceantageValue: volume.output,
+      onChangePerceantage: setOutputVolume
     }
-  }, [stopStream])
+  ]
+
+  const handleAudioTest = (newState: boolean) => () => {
+    if (newState) {
+      setState((prev) => ({
+        ...prev,
+        isShowAudioTest: true
+      }))
+      startStream({ audio: true })
+    } else {
+      setState((prev) => ({
+        ...prev,
+        isShowAudioTest: false
+      }))
+      stopStream({ audio: true })
+    }
+  }
+
+  const handleVideoTest = (newState: boolean) => () => {
+    const streamFn = newState ? startStream : stopStream
+    streamFn({ video: true })
+    setState((prev) => ({
+      ...prev,
+      isShowVideoTest: newState
+    }))
+  }
+
+  const handleChangePerceantage = (value: number, callback: (value: number) => void) => () => {
+    callback(value)
+  }
 
   return (
     <section className='pt-[60px] px-[40px] pb-20 flex flex-col gap-4'>
@@ -107,9 +116,6 @@ function VoiceSetting() {
       <div className='flex flex-col gap-4'>
         <div className='grid grid-cols-2 gap-4'>
           {selectOptions.map((option) => {
-            const currentValue =
-              option.options.find((item) => item.value === option.value?.value) ||
-              UserDevices.audioDevices[0]
             return (
               <div key={option.label}>
                 <div className='mb-5'>
@@ -119,7 +125,7 @@ function VoiceSetting() {
                   <SelectBox
                     key={option.label}
                     options={option.options}
-                    value={currentValue}
+                    value={CURRENT_VALUE(option.options, option.value?.value || '')}
                     onChange={(e) => {
                       option.onChange(e)
                     }}
@@ -134,7 +140,10 @@ function VoiceSetting() {
                     <VolumeSlider
                       label={option.perceantageLabel}
                       value={option.perceantageValue}
-                      onChange={(e) => option.onChangePerceantage(Number(e.target.value))}
+                      onChange={handleChangePerceantage(
+                        option.perceantageValue,
+                        option.onChangePerceantage
+                      )}
                     />
                   </div>
                 </div>
@@ -146,8 +155,8 @@ function VoiceSetting() {
         <div className='flex justify-between gap-4'>
           <CustomButton
             size='small'
-            onClick={handleAudioTest}>
-            {isShowAudioTest ? '테스트 정지하기' : '마이크 테스트'}
+            onClick={handleAudioTest(state.isShowAudioTest)}>
+            {state.isShowAudioTest ? '테스트 정지하기' : '마이크 테스트'}
           </CustomButton>
           <div className='flex items-center gap-2'>
             {Array.from({ length: 42 }).map((_, index) => (
@@ -162,18 +171,15 @@ function VoiceSetting() {
           <h2 className='text-white-100 text-[24px] leading-[30px] font-bold'>영상 설정</h2>
           <SelectBox
             key='video-device'
-            options={UserDevices.videoDevices}
-            value={
-              UserDevices.videoDevices.find((device) => device.value === devices.video) ||
-              UserDevices.videoDevices[0]
-            }
+            options={devices.videoDevices}
+            value={CURRENT_VALUE(devices.videoDevices, settingDevices.video || '')}
             onChange={(e) => {
               setVideoDevice(e.value)
             }}
             forward='bottom'
           />
           <div className='flex justify-between gap-4 bg-gray-20 border-[1px] min-h-[220px] w-full rounded-lg border-black'>
-            {!isShowVideoTest ? (
+            {!state.isShowVideoTest ? (
               <div className='flex flex-col items-center justify-center w-full gap-6'>
                 <img
                   src='/image/setting/camera.svg'
@@ -182,7 +188,7 @@ function VoiceSetting() {
                 />
                 <CustomButton
                   type='button'
-                  onClick={handleVideoTest}
+                  onClick={handleVideoTest(state.isShowVideoTest)}
                   size='small'
                   className='py-[2] px-4 text-[14px] w-fit'>
                   영상 테스트
@@ -208,10 +214,10 @@ function VoiceSetting() {
             를 허용해야 합니다.
           </span>
         </section>
-        {isShowVideoTest && (
+        {state.isShowVideoTest && (
           <CustomButton
             type='button'
-            onClick={handleVideoTest}
+            onClick={handleVideoTest(state.isShowVideoTest)}
             size='small'
             className='py-[2] px-4 text-[14px] w-fit'>
             영상 테스트 중지
@@ -221,5 +227,3 @@ function VoiceSetting() {
     </section>
   )
 }
-
-export default VoiceSetting

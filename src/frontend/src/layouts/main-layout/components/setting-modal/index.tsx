@@ -4,10 +4,10 @@ import CloseButton from '@/components/close-button'
 import Modal from '@/components/modal'
 import { cn } from '@/libs/cn'
 
-import AlarmSetting from './alarm-setting'
-import MyAccount from './my-account'
-import MyProfile from './my-profile'
-import VoiceSetting from './voice-setting'
+import { AlarmSetting } from './alarm-setting'
+import { MyAccount } from './my-account'
+import { MyProfile } from './my-profile'
+import { VoiceSetting } from './voice-setting'
 
 interface Props {
   itemId: number
@@ -62,7 +62,7 @@ function SettingModal({ itemId, isOpen, onClose }: Props) {
     [itemId]
   )
 
-  const handleClickItem = (itemId: number) => {
+  const handleClickItem = (itemId: number) => () => {
     setCurrentItemId(itemId)
   }
 
@@ -96,7 +96,7 @@ function SettingModal({ itemId, isOpen, onClose }: Props) {
                         )}>
                         <button
                           type='button'
-                          onClick={() => handleClickItem(item.id)}
+                          onClick={handleClickItem(item.id)}
                           className='w-full text-left leading-[20px] text-[16px]'>
                           {item.name}
                         </button>
