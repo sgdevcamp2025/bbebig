@@ -52,14 +52,29 @@ export interface DeleteFriendInRequestListResponseSchema {
 }
 
 export interface GetFriendPendingListResponseSchema {
-  friendId: number
-  friendMemberId: number
-  friendName: string
-  friendNickname: string
-  friendAvatarUrl: string
-  friendBannerUrl: string
-  friendIntroduce: string
-  friendEmail: string
+  memberId: number
+  pendingFriendsCount: number
+  receivePendingFriendsCount: number
+  sendPendingFriends: {
+    friendId: number
+    memberId: number
+    memberName: string
+    memberNickname: string
+    memberAvatarUrl: string | null
+    memberBannerUrl: string | null
+    memberIntroduce: string | null
+    memberEmail: string
+  }[]
+  receivePendingFriends: {
+    friendId: number
+    memberId: number
+    memberName: string
+    memberNickname: string
+    memberAvatarUrl: string | null
+    memberBannerUrl: string | null
+    memberIntroduce: string | null
+    memberEmail: string
+  }[]
 }
 
 export interface GetFriendAcceptedListResponseSchema {
