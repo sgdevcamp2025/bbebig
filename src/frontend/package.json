@@ -4,15 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && echo '/* /index.html 200' | cat > build/client/_redirects",
     "dev": "vite dev",
-    "start": "vite preview",
+    "start": "vite",
     "typecheck": "tsc",
     "check": "yarn formatter && yarn lint:fix",
     "lint:fix": "eslint --fix \"src/**/*.{ts,tsx}\"",
     "formatter": "prettier --write \"src/**/*.{ts,tsx}\"",
     "preview": "vite preview",
-    "test": "vitest",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
@@ -80,6 +79,10 @@
     "extends": [
       "plugin:storybook/recommended"
     ]
+  },
+  "engines": {
+    "node": ">=20.11.0",
+    "npm": ">=10.9.0"
   },
   "packageManager": "yarn@4.6.0"
 }

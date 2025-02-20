@@ -26,7 +26,7 @@ export default defineConfig(({ mode }) => {
         sourcemaps: {
           assets: './build/client/**',
           ignore: ['node_modules', 'dist', 'build'],
-          filesToDeleteAfterUpload: './build/client/**'
+          filesToDeleteAfterUpload: './build/client/**/*.map'
         }
       })
     ],
@@ -35,13 +35,17 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: true,
       cssMinify: true,
       ssr: false,
+      spa: true,
       sourcemap: true,
       chunkSizeWarningLimit: 500,
       rollupOptions: {
+        input: {
+          main: resolve(__dirname, 'index.html')
+        },
         output: {
+          dir: 'build/client',
           manualChunks: {
             'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-
             layout: [
               './src/layouts/root-layout',
               './src/layouts/auth',
@@ -49,17 +53,15 @@ export default defineConfig(({ mode }) => {
               './src/layouts/server-layout',
               './src/layouts/dm-layout'
             ],
-
             pages: ['./src/pages/landing', './src/pages/auth/login', './src/pages/auth/register'],
-
             'channel-pages': ['./src/pages/channel', './src/pages/friend', './src/pages/dm']
           }
         }
-      }
-    },
-    resolve: {
-      alias: {
-        '@': resolve(__dirname, './src')
+      },
+      resolve: {
+        alias: {
+          '@': resolve(__dirname, './src')
+        }
       }
     }
   }
