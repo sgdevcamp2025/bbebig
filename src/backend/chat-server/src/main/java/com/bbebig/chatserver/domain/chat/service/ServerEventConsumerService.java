@@ -1,5 +1,8 @@
 package com.bbebig.chatserver.domain.chat.service;
 
+import com.bbebig.chatserver.domain.chat.dto.response.ServerMemberPresenceDto;
+import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
+import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +21,7 @@ public class ServerEventConsumerService {
 	public void consumeForServerEvent(ServerEventDto serverEventDto) {
 		if (serverEventDto == null) {
 			log.error("[Chat] ServerEventConsumerService: 서버 이벤트 정보 없음");
-			return;
+			throw new ErrorHandler(ErrorStatus.KAFKA_CONSUME_NULL_EVENT);
 		}
 
 		// 개발용 로그
@@ -26,13 +29,15 @@ public class ServerEventConsumerService {
 
 		if (serverEventDto instanceof ServerChannelEventDto
 				|| serverEventDto instanceof ServerCategoryEventDto
-				|| serverEventDto instanceof ServerMemberPresenceEventDto
 				|| serverEventDto instanceof ServerMemberActionEventDto
 				|| serverEventDto instanceof ServerActionEventDto) {
 			messagingTemplate.convertAndSend("/topic/server/" + serverEventDto.getServerId(), serverEventDto);
-		} else {
+		} else if(serverEventDto instanceof ServerMemberPresenceEventDto){
+			ServerMemberPresenceDto serverMemberPresenceDto = ServerMemberPresenceDto.convertEventToDto((ServerMemberPresenceEventDto) serverEventDto);
+			messagingTemplate.convertAndSend("/topic/server/" + serverEventDto.getServerId(), serverMemberPresenceDto);
+		}else {
 			log.error("[Chat] ServerEventConsumerService: 알려지지 않은 서버 이벤트 타입 수신. ServerEventDto: {}", serverEventDto);
-			return;
+			throw new ErrorHandler(ErrorStatus.INVALID_SERVER_EVENT_TYPE);
 		}
 
 	}
