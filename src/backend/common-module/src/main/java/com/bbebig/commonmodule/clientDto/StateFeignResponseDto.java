@@ -43,7 +43,6 @@ public class StateFeignResponseDto {
 	@Builder
 	@NoArgsConstructor
 	@AllArgsConstructor
-
 	public static class MemberPresenceResponseDto {
 		private Long memberId;
 		private PresenceType globalStatus;
@@ -52,3 +51,4 @@ public class StateFeignResponseDto {
 	}
 
 
+}
