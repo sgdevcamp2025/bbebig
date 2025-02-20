@@ -23,7 +23,7 @@ public class ServerRedisRepositoryImpl implements ServerRedisRepository {
 	private final RedisTemplate<String, ServerMemberStatus> redisServerStatusTemplate;
 
 	private SetOperations<String, Long> setOperations;
-	private HashOperations<String, Long, ServerMemberStatus> hashOperations;
+	private HashOperations<String, String, ServerMemberStatus> hashOperations;
 
 	@PostConstruct
 	public void initRedisOps() {
@@ -78,13 +78,13 @@ public class ServerRedisRepositoryImpl implements ServerRedisRepository {
 	@Override
 	public void saveServerMemberPresenceStatus(Long serverId, Long memberId, ServerMemberStatus status) {
 		String key = ServerRedisKeys.getServerMemberPresenceStatusKey(serverId);
-		hashOperations.put(key, memberId, status);
+		hashOperations.put(key, memberId.toString(), status);
 	}
 
 	@Override
 	public void removeServerMemberPresenceStatus(Long serverId, Long memberId) {
 		String key = ServerRedisKeys.getServerMemberPresenceStatusKey(serverId);
-		hashOperations.delete(key, memberId);
+		hashOperations.delete(key, memberId.toString());
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class ServerRedisRepositoryImpl implements ServerRedisRepository {
 	@Override
 	public ServerMemberStatus getServerMemberStatus(Long serverId, Long memberId) {
 		String key = ServerRedisKeys.getServerMemberPresenceStatusKey(serverId);
-		return hashOperations.get(key, memberId);
+		return hashOperations.get(key, memberId.toString());
 	}
 
 	@Override

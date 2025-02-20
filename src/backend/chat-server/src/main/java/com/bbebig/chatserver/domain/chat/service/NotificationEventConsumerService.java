@@ -26,8 +26,6 @@ public class NotificationEventConsumerService {
 
 		if (notificationEventDto instanceof FriendActionEventDto
 				|| notificationEventDto instanceof DmMemberActionEventDto
-				|| notificationEventDto instanceof FriendPresenceEventDto
-				|| notificationEventDto instanceof DmMemberPresenceEventDto
 				|| notificationEventDto instanceof DmActionEventDto) {
 			if (sessionManager.isExistMemberId(notificationEventDto.getMemberId())) {
 				messagingTemplate.convertAndSend("/queue/" + notificationEventDto.getMemberId() + "/notification", notificationEventDto);

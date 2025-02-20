@@ -53,6 +53,7 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_PARTICIPATED_CHANNEL_NOT_FOUND(HttpStatus.NOT_FOUND, "SERVICE410", "멤버가 참여중인 채널을 찾을 수 없습니다."),
     SERVER_MEMBER_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "SERVICE411", "멤버가 이미 서버에 참여 중입니다."),
     CHANNEL_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "SERVICE412", "채널에 속한 멤버를 찾을 수 없습니다."),
+    MEMBER_CUSTOM_STATE_GET_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "SERVICE413", "멤버의 커스텀 상태를 받아오는데 실패했습니다."),
 
     //STATE
     MEMBER_SERVER_LIST_CACHE_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "STATE401", "멤버가 참여중인 서버 목록 캐시에 실패했습니다."),
@@ -65,8 +66,11 @@ public enum ErrorStatus implements BaseErrorCode {
     SERVER_LAST_INFO_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH401", "서버별 마지막 방문 정보를 받아오는데에 실패했습니다."),
 
     // 카프카 이벤트 관련
+    KAFKA_CONSUME_NULL_EVENT(HttpStatus.SERVICE_UNAVAILABLE, "KAFKA00", "카프카 이벤트가 null입니다."),
     INVALID_SERVER_EVENT_TYPE(HttpStatus.SERVICE_UNAVAILABLE, "KAFKA01", "유효하지 않은 서버 이벤트 타입입니다."),
     INVALID_NOTIFICATION_EVENT_TYPE(HttpStatus.SERVICE_UNAVAILABLE, "KAFKA02", "유효하지 않은 알림 이벤트 타입입니다."),
+    INVALID_PRESENCE_EVENT_TYPE(HttpStatus.SERVICE_UNAVAILABLE, "KAFKA03", "유효하지 않은 프레즌스 이벤트 타입입니다."),
+    INVALID_MESSAGE_EVENT_TYPE(HttpStatus.SERVICE_UNAVAILABLE, "KAFKA04", "유효하지 않은 메시지 이벤트 타입입니다."),
 
     // MEMBER
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER401", "멤버를 찾을 수 없습니다."),
@@ -77,6 +81,13 @@ public enum ErrorStatus implements BaseErrorCode {
     FRIEND_REQUEST_NOT_PENDING(HttpStatus.BAD_REQUEST, "MEMBER406", "친구 요청 상태가 아닙니다."),
     UNAUTHORIZED_FRIEND_ACTION(HttpStatus.FORBIDDEN, "MEMBER407", "본인의 친구 관계가 아닙니다."),
     FRIEND_REQUEST_SELF(HttpStatus.BAD_REQUEST, "MEMBER408", "자기 자신에게 친구 요청을 보낼 수 없습니다."),
+
+    // SEARCH
+    CANNOT_MODIFY_DELETED_MESSAGE(HttpStatus.BAD_REQUEST, "SEARCH401", "삭제된 메시지는 수정할 수 없습니다."),
+    CHAT_MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH402", "채팅 메시지를 찾을 수 없습니다."),
+    MESSAGE_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "SEARCH403", "이미 삭제된 메시지입니다."),
+    SEARCH_OPTION_INVALID(HttpStatus.BAD_REQUEST, "SEARCH404", "검색 옵션을 확인해주세요."),
+    CHAT_TYPE_INVALID(HttpStatus.BAD_REQUEST, "SEARCH405", "채팅 타입을 확인해주세요."),
     ;
 
     private final HttpStatus httpStatus;

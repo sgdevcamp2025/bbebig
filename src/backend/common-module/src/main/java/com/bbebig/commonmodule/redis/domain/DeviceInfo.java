@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DeviceInfo implements Serializable {
+public class DeviceInfo {
 
 //	private String deviceId;
 

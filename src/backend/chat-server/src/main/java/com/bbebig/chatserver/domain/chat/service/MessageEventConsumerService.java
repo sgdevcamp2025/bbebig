@@ -1,8 +1,10 @@
 package com.bbebig.chatserver.domain.chat.service;
 
 import com.bbebig.chatserver.domain.chat.repository.SessionManager;
+import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
+import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.kafka.dto.ChatMessageDto;
-import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
+import com.bbebig.commonmodule.kafka.dto.model.ChatType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -23,14 +25,14 @@ public class MessageEventConsumerService {
 	public void consumeForChannelChatEvent(ChatMessageDto chatMessageDto) {
 		if (chatMessageDto == null) {
 			log.error("[Chat] MessageEventConsumerService: 채팅 메시지 정보 없음");
-			return;
+			throw new ErrorHandler(ErrorStatus.KAFKA_CONSUME_NULL_EVENT);
 		}
 
 		log.info("[Chat] MessageEventConsumerService: 채팅 메시지 수신. ChatMessageDto: {}", chatMessageDto);
 
-		if (chatMessageDto.getChannelType() != ChannelType.CHANNEL) {
+		if (chatMessageDto.getChatType() != ChatType.CHANNEL) {
 			log.error("[Chat] MessageEventConsumerService: 채널 채팅 메시지가 아닙니다. ChatMessageDto: {}", chatMessageDto);
-			return;
+			throw new ErrorHandler(ErrorStatus.CHAT_TYPE_INVALID);
 		}
 		messagingTemplate.convertAndSend("/topic/server/" + chatMessageDto.getServerId(), chatMessageDto);
 	}
@@ -39,12 +41,12 @@ public class MessageEventConsumerService {
 	public void consumeForDmChatEvent(ChatMessageDto chatMessageDto) {
 		if (chatMessageDto == null) {
 			log.error("[Chat] MessageEventConsumerService: 채팅 메시지 정보 없음");
-			return;
+			throw new ErrorHandler(ErrorStatus.KAFKA_CONSUME_NULL_EVENT);
 		}
 
-		if (chatMessageDto.getChannelType() != ChannelType.DM) {
+		if (chatMessageDto.getChatType() != ChatType.DM) {
 			log.error("[Chat] MessageEventConsumerService: DM 채팅 메시지가 아닙니다. ChatMessageDto: {}", chatMessageDto);
-			return;
+			throw new ErrorHandler(ErrorStatus.CHAT_TYPE_INVALID);
 		}
 
 		// DM 채팅 대상자가 현재 서버에 접속 중인 경우에만 메시지 전송

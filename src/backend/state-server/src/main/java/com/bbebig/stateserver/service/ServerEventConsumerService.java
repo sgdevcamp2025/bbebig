@@ -41,6 +41,7 @@ public class ServerEventConsumerService {
 					.memberId(eventDto.getMemberId())
 					.globalStatus(eventDto.getGlobalStatus())
 					.actualStatus(eventDto.getActualStatus())
+					.customStatus(eventDto.getCustomStatus())
 					.build();
 
 			if (!serverRedisRepositoryImpl.existsServerMemberPresenceStatus(serverId)) {
@@ -85,6 +86,7 @@ public class ServerEventConsumerService {
 					.memberId(eventDto.getMemberId())
 					.globalStatus(memberStatusResponseDto.getGlobalStatus())
 					.actualStatus(memberStatusResponseDto.getActualStatus())
+					.customStatus(memberStatusResponseDto.getCustomStatus())
 					.build();
 			serverRedisRepositoryImpl.saveServerMemberPresenceStatus(serverId, eventDto.getMemberId(), status);
 
