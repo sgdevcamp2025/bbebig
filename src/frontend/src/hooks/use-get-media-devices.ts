@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import { AudioDevice } from '@/types/media'
 
@@ -23,79 +23,82 @@ interface DevicesState {
   videoDevices: AudioDevice[]
 }
 
-// 사용자의 디바이스 정보를 불러올 수 있는 훅
-function useGetMediaDevices() {
+export function useGetMediaDevices() {
   const [devices, setDevices] = useState<DevicesState>({
     audioDevices: [DEFAULT_DEVICES.audioinput],
     outputDevices: [DEFAULT_DEVICES.audiooutput],
     videoDevices: [DEFAULT_DEVICES.videoinput]
   })
 
-  const getMediaDevices = async (): Promise<MediaDeviceInfo[]> => {
+  const getDevicesByType = async (kind: MediaDeviceKind): Promise<AudioDevice[]> => {
     const devices = await navigator.mediaDevices.enumerateDevices()
-
-    return devices
-  }
-
-  const filterDevicesByKind = (
-    devices: MediaDeviceInfo[],
-    kind: MediaDeviceKind
-  ): AudioDevice[] => {
-    return devices
+    const filteredDevices = devices
       .filter((device) => device.kind === kind)
       .map((device) => ({
-        label: device.label,
-        value: device.deviceId
+        label: device.label || DEFAULT_DEVICES[kind].label,
+        value: device.deviceId || DEFAULT_DEVICES[kind].value
       }))
-  }
-
-  const getDevicesByType = async (kind: MediaDeviceKind): Promise<AudioDevice[]> => {
-    const devices = await getMediaDevices()
-    const filteredDevices = filterDevicesByKind(devices, kind)
     return filteredDevices.length ? filteredDevices : [DEFAULT_DEVICES[kind]]
   }
 
-  useEffect(() => {
-    async function initializeDevices() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-          video: true
-        })
-        stream.getTracks().forEach((track) => track.stop())
+  async function initializeDevices() {
+    try {
+      await navigator.mediaDevices.enumerateDevices()
 
-        const [audioDevices, outputDevices, videoDevices] = await Promise.all([
+      // 오디오 권한 요청 시도
+      try {
+        const audioStream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+          video: false
+        })
+
+        // 오디오 장치 정보 업데이트
+        const [audioDevices, outputDevices] = await Promise.all([
           getDevicesByType('audioinput'),
-          getDevicesByType('audiooutput'),
-          getDevicesByType('videoinput')
+          getDevicesByType('audiooutput')
         ])
 
-        setDevices({ audioDevices, outputDevices, videoDevices })
-      } catch (error) {
-        console.error('디바이스 초기화 실패', error)
-        setDevices({
-          audioDevices: [DEFAULT_DEVICES.audioinput],
-          outputDevices: [DEFAULT_DEVICES.audiooutput],
-          videoDevices: [DEFAULT_DEVICES.videoinput]
-        })
-      }
-    }
+        setDevices((prev) => ({
+          ...prev,
+          audioDevices,
+          outputDevices
+        }))
 
-    navigator.mediaDevices.addEventListener('devicechange', () => {
-      initializeDevices()
-    })
-    initializeDevices()
-    return () => {
-      navigator.mediaDevices.removeEventListener('devicechange', initializeDevices)
+        // 스트림 해제
+        audioStream.getTracks().forEach((track) => track.stop())
+      } catch (audioError) {
+        console.log('오디오 권한이 거부됨:', audioError)
+        // 오디오 권한 거부 시 기본값 유지
+      }
+
+      // 비디오 권한 요청 시도
+      try {
+        const videoStream = await navigator.mediaDevices.getUserMedia({
+          audio: false,
+          video: true
+        })
+
+        // 비디오 권한 획득 성공
+        const videoDevices = await getDevicesByType('videoinput')
+        setDevices((prev) => ({
+          ...prev,
+          videoDevices
+        }))
+
+        // 스트림 해제
+        videoStream.getTracks().forEach((track) => track.stop())
+      } catch (videoError) {
+        console.log('비디오 권한이 거부됨:', videoError)
+        // 비디오 권한 거부 시 기본값 유지
+      }
+    } catch (error) {
+      console.error('장치 초기화 실패:', error)
+      // 에러 발생 시 기본값 유지
     }
-  }, [])
+  }
 
   return {
     devices,
-    getAudioDevices: () => getDevicesByType('audioinput'),
-    getOutputDevices: () => getDevicesByType('audiooutput'),
-    getVideoDevices: () => getDevicesByType('videoinput')
+    initializeDevices
   }
 }
-
-export default useGetMediaDevices

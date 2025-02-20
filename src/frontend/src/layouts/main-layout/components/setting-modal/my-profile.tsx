@@ -3,7 +3,7 @@ import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
 
 import { Content as ProfileCard } from '../profile-card'
 
-function MyProfile() {
+export function MyProfile() {
   const myInfo = useGetSelfUser()
   return (
     <section className='pt-[60px] px-[40px] pb-20 flex flex-col gap-4'>
@@ -115,5 +115,3 @@ function MyProfile() {
     </section>
   )
 }
-
-export default MyProfile

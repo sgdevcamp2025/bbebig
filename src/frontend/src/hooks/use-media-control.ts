@@ -1,82 +1,72 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 
-import useMediaSettingsStore from '@/stores/use-media-setting.store'
+import { useMediaSettingsStore } from '@/stores/use-media-setting.store'
 
 function useMediaControl() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
 
-  const { muted, devices } = useMediaSettingsStore(
+  const { muted } = useMediaSettingsStore(
     useShallow((state) => ({
-      muted: state.muted,
-      devices: state.devices
+      muted: state.muted
     }))
   )
 
-  const startStream = useCallback(async () => {
+  const startStream = async (constraint?: MediaStreamConstraints) => {
     try {
-      const permissions = await navigator.mediaDevices.getUserMedia({
-        video: true
-      })
-
-      permissions.getTracks().forEach((track) => track.stop())
-
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          deviceId: devices.video || undefined,
-          width: 1920,
-          height: 1080
-        },
-        audio: {
-          deviceId: devices.audioInput || undefined
-        }
-      })
-
+      const stream = await navigator.mediaDevices.getUserMedia(constraint)
       stream.getTracks().forEach((track) => {
         track.enabled = true
       })
-
       if (videoRef.current) {
         videoRef.current.srcObject = stream
       }
-
       streamRef.current = stream
     } catch (error) {
       console.error('비디오 스트림 시작 실패:', error)
       throw error
     }
-  }, [devices.video])
+  }
 
-  const stopStream = useCallback(() => {
+  const stopStream = ({ audio, video }: { audio?: boolean; video?: boolean }) => {
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop())
+      streamRef.current.getTracks().forEach((track) => {
+        if (audio && track.kind === 'audio') {
+          track.enabled = false
+        }
+        if (video && track.kind === 'video') {
+          track.enabled = false
+        }
+      })
       streamRef.current = null
     }
     if (videoRef.current) {
       videoRef.current.srcObject = null
       videoRef.current.pause()
     }
-  }, [])
+  }
 
-  useEffect(() => {
+  const toggleVideo = () => {
     if (streamRef.current) {
       streamRef.current.getVideoTracks().forEach((track) => {
         track.enabled = !muted.video
       })
     }
-  }, [muted.video])
+  }
 
-  useEffect(() => {
-    return () => {
-      stopStream()
+  const toggleAudio = () => {
+    if (streamRef.current) {
+      streamRef.current.getAudioTracks().forEach((track) => {
+        track.enabled = !muted.audioInput
+      })
     }
-  }, [stopStream])
+  }
 
-  const getStream = (constraint?: MediaStreamConstraints) => {
+  const getStream = () => {
     return navigator.mediaDevices.getUserMedia({
-      video: constraint?.video,
-      audio: constraint?.audio
+      video: true,
+      audio: true
     })
   }
 
@@ -85,7 +75,9 @@ function useMediaControl() {
     streamRef,
     startStream,
     stopStream,
-    getStream
+    getStream,
+    toggleVideo,
+    toggleAudio
   }
 }
 
