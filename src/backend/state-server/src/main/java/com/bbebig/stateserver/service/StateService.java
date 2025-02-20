@@ -42,7 +42,7 @@ public class StateService {
 		MemberPresenceStatus memberPresenceStatus = memberRedisRepositoryImpl.getMemberPresenceStatus(memberId);
 		log.info("[State] StateService: 사용자 상태 확인. memberId: {}, memberPresenceStatus: {}", memberId, memberPresenceStatus);
 		if (memberPresenceStatus == null) {
-			MemberGlobalStatusResponseDto memberGlobalStatus = memberClient.getMemberGlobalStatus(memberId);
+			MemberCustomStatusResponseDto memberGlobalStatus = memberClient.getMemberCustomStatus(memberId);
 			if (memberGlobalStatus == null) {
 				throw new ErrorHandler(ErrorStatus.MEMBER_GLOBAL_STATE_NOT_FOUND);
 			}
@@ -57,6 +57,7 @@ public class StateService {
 				.memberId(memberId)
 				.globalStatus(memberPresenceStatus.getGlobalStatus())
 				.actualStatus(memberPresenceStatus.getActualStatus())
+				.customStatus(memberPresenceStatus.getCustomStatus())
 				.build();
 	}
 
@@ -74,6 +75,7 @@ public class StateService {
 						.memberId(serverMemberStatus.getMemberId())
 						.globalStatus(serverMemberStatus.getGlobalStatus())
 						.actualStatus(serverMemberStatus.getActualStatus())
+						.customStatus(serverMemberStatus.getCustomStatus())
 						.build())
 				.toList();
 
@@ -101,6 +103,7 @@ public class StateService {
 					.memberId(memberId)
 					.globalStatus(memberStatusResponseDto.getGlobalStatus())
 					.actualStatus(memberStatusResponseDto.getActualStatus())
+					.customStatus(memberStatusResponseDto.getCustomStatus())
 					.build();
 			serverRedisRepositoryImpl.saveServerMemberPresenceStatus(serverId, memberId, status);
 		}
@@ -112,13 +115,14 @@ public class StateService {
 		if (memberPresenceStatus == null) {
 			throw new ErrorHandler(ErrorStatus.MEMBER_PRESENCE_STATE_NOT_FOUND);
 		}
-		memberPresenceStatus.setGlobalStatus(globalStatus);
+		memberPresenceStatus.updateCustomStatus(globalStatus);
 		memberRedisRepositoryImpl.saveMemberPresenceStatus(memberId, memberPresenceStatus);
 
 		PresenceEventDto presenceEventDto = PresenceEventDto.builder()
 				.memberId(memberId)
 				.globalStatus(globalStatus)
 				.actualStatus(memberPresenceStatus.getActualStatus())
+				.customStatus(memberPresenceStatus.getCustomStatus())
 				.lastActivityTime(memberPresenceStatus.getLastActivityTime())
 				.build();
 		kafkaProducerService.sendPresenceEvent(presenceEventDto);

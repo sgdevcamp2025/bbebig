@@ -1,10 +1,6 @@
 package com.bbebig.commonmodule.redis.config;
 
-import com.bbebig.commonmodule.redis.domain.ChannelChatMessageDto;
-import com.bbebig.commonmodule.redis.domain.MemberPresenceStatus;
-import com.bbebig.commonmodule.redis.domain.ServerLastInfo;
-import com.bbebig.commonmodule.redis.domain.ServerMemberStatus;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.bbebig.commonmodule.redis.domain.*;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -13,84 +9,112 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.GenericToStringSerializer;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 public class RedisConfig {
 
+	/**
+	 * ObjectMapper를 Bean으로 등록하여 여러 RedisTemplate에서 재사용 가능
+	 */
 	@Bean
-	public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
-		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-		redisTemplate.setConnectionFactory(connectionFactory);
-
-		ObjectMapper objectMapper = createObjectMapper();
-		redisTemplate.setKeySerializer(new StringRedisSerializer());
-		redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer(objectMapper));
-
-		return redisTemplate;
+	public ObjectMapper objectMapper() {
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		objectMapper.registerModule(new JavaTimeModule());
+		return objectMapper;
 	}
 
+	/**
+	 * JSON 직렬화 설정을 가진 RedisSerializer Bean 등록
+	 */
+	@Bean
+	public Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer(ObjectMapper objectMapper) {
+		return new Jackson2JsonRedisSerializer<>(Object.class);
+	}
+
+	/**
+	 * 기본 RedisTemplate (Object 저장용) - 모든 일반 객체 저장 가능
+	 */
+	@Bean
+	public RedisTemplate<String, Object> redisTemplate(
+			RedisConnectionFactory connectionFactory,
+			Jackson2JsonRedisSerializer<Object> serializer) {
+		return createRedisTemplate(connectionFactory, serializer);
+	}
+
+	/**
+	 * Long 타입을 저장하는 RedisTemplate (Set 데이터 저장용)
+	 */
 	@Bean
 	public RedisTemplate<String, Long> redisSetTemplate(RedisConnectionFactory connectionFactory) {
 		RedisTemplate<String, Long> redisTemplate = new RedisTemplate<>();
 		redisTemplate.setConnectionFactory(connectionFactory);
 		redisTemplate.setKeySerializer(new StringRedisSerializer());
-		redisTemplate.setValueSerializer(new GenericToStringSerializer<>(Long.class));
-
+		redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Long.class)); // JSON 직렬화 적용
 		return redisTemplate;
 	}
 
+	/**
+	 * MemberPresenceStatus 전용 RedisTemplate
+	 */
 	@Bean
-	public RedisTemplate<String, MemberPresenceStatus> redisMemberStatusTemplate(RedisConnectionFactory connectionFactory) {
-		RedisTemplate<String, MemberPresenceStatus> redisTemplate = new RedisTemplate<>();
-		redisTemplate.setConnectionFactory(connectionFactory);
-
-		ObjectMapper objectMapper = createObjectMapper();
-
-		redisTemplate.setKeySerializer(new StringRedisSerializer());
-		redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer(objectMapper));
-
-		return redisTemplate;
+	public RedisTemplate<String, MemberPresenceStatus> redisMemberStatusTemplate(
+			RedisConnectionFactory connectionFactory,
+			ObjectMapper objectMapper) {
+		return createTypedRedisTemplate(connectionFactory, objectMapper, MemberPresenceStatus.class);
 	}
 
+	/**
+	 * ServerMemberStatus 전용 RedisTemplate
+	 */
 	@Bean
-	public RedisTemplate<String, ServerMemberStatus> redisServerStatusTemplate(RedisConnectionFactory connectionFactory) {
-		RedisTemplate<String, ServerMemberStatus> redisTemplate = new RedisTemplate<>();
-		redisTemplate.setConnectionFactory(connectionFactory);
-
-		ObjectMapper objectMapper = createObjectMapper();
-
-		redisTemplate.setKeySerializer(new StringRedisSerializer());
-		redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer(objectMapper));
-
-		return redisTemplate;
+	public RedisTemplate<String, ServerMemberStatus> redisServerStatusTemplate(
+			RedisConnectionFactory connectionFactory,
+			ObjectMapper objectMapper) {
+		return createTypedRedisTemplate(connectionFactory, objectMapper, ServerMemberStatus.class);
 	}
 
+	/**
+	 * ServerLastInfo 전용 RedisTemplate
+	 */
 	@Bean
-	public RedisTemplate<String, ServerLastInfo> redisServerLastInfoTemplate(RedisConnectionFactory connectionFactory) {
-		RedisTemplate<String, ServerLastInfo> redisTemplate = new RedisTemplate<>();
+	public RedisTemplate<String, ServerLastInfo> redisServerLastInfoTemplate(
+			RedisConnectionFactory connectionFactory,
+			ObjectMapper objectMapper) {
+		return createTypedRedisTemplate(connectionFactory, objectMapper, ServerLastInfo.class);
+	}
+
+	/**
+	 * 공통 RedisTemplate 생성 메서드 (Object 직렬화)
+	 */
+	private <T> RedisTemplate<String, T> createRedisTemplate(
+			RedisConnectionFactory connectionFactory,
+			Jackson2JsonRedisSerializer<T> serializer) {
+		RedisTemplate<String, T> redisTemplate = new RedisTemplate<>();
 		redisTemplate.setConnectionFactory(connectionFactory);
-
-		ObjectMapper objectMapper = createObjectMapper();
-
 		redisTemplate.setKeySerializer(new StringRedisSerializer());
-		redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer(objectMapper));
-
+		redisTemplate.setValueSerializer(serializer);
+		redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+		redisTemplate.setHashValueSerializer(serializer);
 		return redisTemplate;
 	}
 
-	private ObjectMapper createObjectMapper() {
-		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		objectMapper.activateDefaultTyping(
-				objectMapper.getPolymorphicTypeValidator(),
-				ObjectMapper.DefaultTyping.NON_FINAL,
-				JsonTypeInfo.As.PROPERTY
-		);
-		objectMapper.registerModule(new JavaTimeModule());
-		return objectMapper;
+	/**
+	 * 특정 타입을 위한 RedisTemplate 생성 (제네릭 지원)
+	 */
+	private <T> RedisTemplate<String, T> createTypedRedisTemplate(
+			RedisConnectionFactory connectionFactory,
+			ObjectMapper objectMapper,
+			Class<T> clazz) {
+		RedisTemplate<String, T> redisTemplate = new RedisTemplate<>();
+		redisTemplate.setConnectionFactory(connectionFactory);
+		redisTemplate.setKeySerializer(new StringRedisSerializer());
+		redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(clazz)); // 특정 클래스 타입 직렬화
+		redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+		redisTemplate.setHashValueSerializer(new Jackson2JsonRedisSerializer<>(clazz));
+		return redisTemplate;
 	}
 }

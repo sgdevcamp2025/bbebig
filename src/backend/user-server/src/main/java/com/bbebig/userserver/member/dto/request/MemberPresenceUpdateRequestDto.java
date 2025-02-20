@@ -1,7 +1,6 @@
 package com.bbebig.userserver.member.dto.request;
 
 import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
-import com.bbebig.userserver.member.entity.CustomPresenceStatus;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;

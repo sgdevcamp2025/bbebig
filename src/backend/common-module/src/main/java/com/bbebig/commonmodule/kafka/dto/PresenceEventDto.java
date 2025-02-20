@@ -15,6 +15,7 @@ public class PresenceEventDto {
 	private String type; // MEMBER_PRESENCE_UPDATE
 	private PresenceType globalStatus;
 	private PresenceType actualStatus;
+	private PresenceType customStatus;
 	private LocalDateTime lastActivityTime;
 
 	@JsonCreator
@@ -22,11 +23,13 @@ public class PresenceEventDto {
 							@JsonProperty("type") String type,
 							@JsonProperty("globalStatus") PresenceType globalStatus,
 							@JsonProperty("actualStatus") PresenceType actualStatus,
+							@JsonProperty("customStatus") PresenceType customStatus,
 							@JsonProperty("lastActivityTime") LocalDateTime lastActivityTime) {
 		this.memberId = memberId;
 		this.type = type;
 		this.globalStatus = globalStatus;
 		this.actualStatus = actualStatus;
+		this.customStatus = customStatus;
 		this.lastActivityTime = lastActivityTime;
 	}
 }

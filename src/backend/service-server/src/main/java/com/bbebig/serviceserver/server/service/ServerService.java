@@ -1,13 +1,10 @@
 package com.bbebig.serviceserver.server.service;
 
 import com.bbebig.commonmodule.clientDto.ServiceFeignResponseDto.*;
-import com.bbebig.commonmodule.clientDto.StateFeignResponseDto;
-import com.bbebig.commonmodule.clientDto.StateFeignResponseDto.MemberPresenceResponseDto;
 import com.bbebig.commonmodule.clientDto.StateFeignResponseDto.ServerMemberPresenceResponseDto;
 import com.bbebig.commonmodule.clientDto.UserFeignResponseDto.*;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
-import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerActionEventDto;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerEventType;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerMemberActionEventDto;
@@ -317,6 +314,7 @@ public class ServerService {
                             .memberId(memberPresence.getMemberId())
                             .globalStatus(memberPresence.getGlobalStatus())
                             .actualStatus(memberPresence.getActualStatus())
+                            .globalStatus(memberPresence.getGlobalStatus())
                             .build())
                     .toList();
         }

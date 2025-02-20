@@ -47,6 +47,7 @@ public class StateFeignResponseDto {
 		private Long memberId;
 		private PresenceType globalStatus;
 		private PresenceType actualStatus;
+		private PresenceType customStatus;
 	}
 
 
