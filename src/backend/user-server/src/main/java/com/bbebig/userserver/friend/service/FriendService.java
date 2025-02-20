@@ -2,10 +2,16 @@ package com.bbebig.userserver.friend.service;
 
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
+import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
 import com.bbebig.commonmodule.kafka.dto.notification.FriendActionEventDto;
 import com.bbebig.commonmodule.kafka.dto.notification.NotificationEventType;
 import com.bbebig.commonmodule.kafka.dto.notification.status.FriendActionStatus;
+import com.bbebig.commonmodule.redis.domain.MemberPresenceStatus;
 import com.bbebig.userserver.friend.dto.response.*;
+import com.bbebig.userserver.friend.dto.response.FriendResponseDto.FriendInfoResponseDto;
+import com.bbebig.userserver.friend.dto.response.FriendResponseDto.FriendListResponseDto;
+import com.bbebig.userserver.friend.dto.response.FriendResponseDto.PendingFriendInfoResponseDto;
+import com.bbebig.userserver.friend.dto.response.FriendResponseDto.PendingFriendListResponseDto;
 import com.bbebig.userserver.friend.entity.Friend;
 import com.bbebig.userserver.friend.entity.FriendStatus;
 import com.bbebig.userserver.friend.repository.FriendRepository;
@@ -18,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -100,38 +107,63 @@ public class FriendService {
      * 요청 대기 중인 친구 목록 조회
      */
     @Transactional(readOnly = true)
-    public List<FriendListResponseDto> getPendingFriends(Long memberId) {
+    public PendingFriendListResponseDto getPendingFriends(Long memberId) {
         memberRepository.findById(memberId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         List<Friend> friendList = friendRepository.findFriendsByMemberIdAndStatus(memberId, FriendStatus.PENDING);
+        List<PendingFriendInfoResponseDto> sendPendingFriends = new ArrayList<>();
+        List<PendingFriendInfoResponseDto> receivePendingFriends = new ArrayList<>();
 
-        return friendList.stream()
-                .map(friend -> {
-                    Member friendMember = friend.getFromMember().getId().equals(memberId)
-                            ? friend.getToMember() : friend.getFromMember();
-                    return FriendListResponseDto.convertToFriendListResponseDto(friend, friendMember);
-                })
-                .toList();
+        for (Friend friend : friendList) {
+            if (friend.getFromMember().getId().equals(memberId)) {
+                PendingFriendInfoResponseDto dto = FriendResponseDto.convertToPendingFriendListResponseDto(friend, friend.getToMember());
+                sendPendingFriends.add(dto);
+            } else {
+                PendingFriendInfoResponseDto dto = FriendResponseDto.convertToPendingFriendListResponseDto(friend, friend.getFromMember());
+                receivePendingFriends.add(dto);
+            }
+        }
+        return PendingFriendListResponseDto.builder()
+                .memberId(memberId)
+                .pendingFriendsCount(sendPendingFriends.size())
+                .receivePendingFriendsCount(receivePendingFriends.size())
+                .sendPendingFriends(sendPendingFriends)
+                .receivePendingFriends(receivePendingFriends)
+                .build();
+
     }
 
     /**
      * 요청 수락한 친구 목록 조회
      */
     @Transactional(readOnly = true)
-    public List<FriendListResponseDto> getAcceptedFriends(Long memberId) {
+    public FriendListResponseDto getAcceptedFriends(Long memberId) {
         memberRepository.findById(memberId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         List<Friend> friendList = friendRepository.findFriendsByMemberIdAndStatus(memberId, FriendStatus.ACCEPTED);
-
-        return friendList.stream()
+        List<FriendInfoResponseDto> friends = friendList.stream()
                 .map(friend -> {
                     Member friendMember = friend.getFromMember().getId().equals(memberId)
                             ? friend.getToMember() : friend.getFromMember();
-                    return FriendListResponseDto.convertToFriendListResponseDto(friend, friendMember);
+                    MemberPresenceStatus memberPresenceStatus = memberRedisRepository.getMemberPresenceStatus(friendMember.getId());
+                    if (memberPresenceStatus == null) {
+                        memberPresenceStatus = MemberPresenceStatus.builder()
+                                .memberId(friendMember.getId())
+                                .globalStatus(friendMember.getCustomPresenceStatus())
+                                .actualStatus(PresenceType.OFFLINE)
+                                .build();
+                    }
+                    return FriendResponseDto.convertToFriendListResponseDto(friend, friendMember, memberPresenceStatus);
                 })
                 .toList();
+
+        return FriendListResponseDto.builder()
+                .memberId(memberId)
+                .friendsCount(friends.size())
+                .friends(friends)
+                .build();
     }
 
     /**
