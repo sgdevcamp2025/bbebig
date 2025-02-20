@@ -1,6 +1,8 @@
 package com.bbebig.stateserver.service;
 
-import com.bbebig.commonmodule.clientDto.UserFeignResponseDto.MemberGlobalStatusResponseDto;
+import com.bbebig.commonmodule.clientDto.UserFeignResponseDto.*;
+import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
+import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.kafka.dto.ConnectionEventDto;
 import com.bbebig.commonmodule.kafka.dto.PresenceEventDto;
 import com.bbebig.commonmodule.kafka.dto.model.ConnectionEventType;
@@ -54,10 +56,15 @@ public class ConnectionEventConsumerService {
 			// 연결 끊어짐 이벤트 처리 도중 Redis에 상태 정보가 없는 경우
 			if (memberPresenceStatus == null) {
 				log.error("[State] ConnectionEventConsumerService: 연결 해제 이벤트 처리 도중 Redis에 상태 정보가 없어서 처리 실패. memberId: {}", connectionEventDto.getMemberId());
+				MemberCustomStatusResponseDto responseDto = checkMemberState(connectionEventDto.getMemberId());
+				if (responseDto == null) {
+					throw new ErrorHandler(ErrorStatus.MEMBER_CUSTOM_STATE_GET_FAILURE);
+				}
 				presenceEventDto = PresenceEventDto.builder()
 						.memberId(connectionEventDto.getMemberId())
 						.globalStatus(PresenceType.OFFLINE)
 						.actualStatus(PresenceType.OFFLINE)
+						.customStatus(responseDto.getCustomStatus())
 						.lastActivityTime(LocalDateTime.now())
 						.build();
 			} else {
@@ -72,20 +79,21 @@ public class ConnectionEventConsumerService {
 	private MemberPresenceStatus handleConnectionEvent(ConnectionEventDto connectionEventDto) {
 		MemberPresenceStatus memberPresenceStatus = memberRedisRepositoryImpl.getMemberPresenceStatus(connectionEventDto.getMemberId());
 		if (memberPresenceStatus == null) {
-			MemberGlobalStatusResponseDto responseDto = checkMemberState(connectionEventDto.getMemberId());
+			MemberCustomStatusResponseDto responseDto = checkMemberState(connectionEventDto.getMemberId());
 			if (responseDto == null) {
 				log.error("[State] ConnectionEventConsumerService: 멤버 상태 정보 없음");
 				return null;
 			}
 			memberPresenceStatus = MemberPresenceStatus.builder()
 					.memberId(connectionEventDto.getMemberId())
-					.globalStatus(responseDto.getGlobalStatus())
 					.actualStatus(PresenceType.ONLINE)
+					.globalStatus(responseDto.getCustomStatus())
+					.customStatus(responseDto.getCustomStatus())
 					.lastActivityTime(LocalDateTime.now())
 					.devices(new ArrayList<>())
 					.build();
 		} else {
-			memberPresenceStatus.setActualStatus(PresenceType.ONLINE);
+			memberPresenceStatus.updateActualStatus(PresenceType.ONLINE);
 			memberPresenceStatus.updateLastActivityTime(LocalDateTime.now());
 		}
 
@@ -105,8 +113,6 @@ public class ConnectionEventConsumerService {
 		memberPresenceStatus.getDevices().add(deviceInfo);
 
 		memberRedisRepositoryImpl.saveMemberPresenceStatus(connectionEventDto.getMemberId(), memberPresenceStatus);
-
-
 
 		return memberPresenceStatus;
 	}
@@ -132,13 +138,13 @@ public class ConnectionEventConsumerService {
 		return memberPresenceStatus;
 	}
 
-	private MemberGlobalStatusResponseDto checkMemberState(Long memberId) {
+	private MemberCustomStatusResponseDto checkMemberState(Long memberId) {
 		if (memberId == null || memberId <= 0) {
 			log.error("[State] 유효하지 않은 memberId 요청: {}", memberId);
 			throw new IllegalArgumentException("유효하지 않은 멤버 ID: " + memberId);
 		}
 		try {
-			MemberGlobalStatusResponseDto response = memberClient.getMemberGlobalStatus(memberId);
+			MemberCustomStatusResponseDto response = memberClient.getMemberCustomStatus(memberId);
 			return response;
 		} catch (FeignException e) {
 			log.error("[State] FeignException: {}", e.getMessage());

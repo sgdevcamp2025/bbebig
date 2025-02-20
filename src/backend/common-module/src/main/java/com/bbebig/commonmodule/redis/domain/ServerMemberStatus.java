@@ -15,7 +15,8 @@ import java.io.Serializable;
 public class ServerMemberStatus {
 
 	private Long memberId;
-	private PresenceType actualStatus;            // "ONLINE", "OFFLINE", "DND", ...
-	private PresenceType globalStatus;      // if user is DND or INVISIBLE, etc.
+	private PresenceType actualStatus;
+	private PresenceType globalStatus;
+	private PresenceType customStatus;
 
 }
