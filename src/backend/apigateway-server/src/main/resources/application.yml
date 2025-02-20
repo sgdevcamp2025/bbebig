@@ -20,7 +20,7 @@ spring:
         cors-configurations:
           '[/**]': # 모든 요청에 대해 CORS 적용
             allowedOrigins:
-              - "https://dev-fe.d2q3qyb0bos3b9.amplifyapp.com"
+              - "https://bbebig.netlify.app"
               - "http://localhost:5173"
               - "http://localhost:5174"
               - "http://localhost:5175"
