@@ -63,11 +63,9 @@ public class ServerReadResponseDto {
         private String avatarUrl;
         private String bannerUrl;
         private LocalDateTime joinAt;
-        private PresenceType actualStatus;
         private PresenceType globalStatus;
 
-        public void updateStatus(PresenceType actualStatus, PresenceType globalStatus) {
-            this.actualStatus = actualStatus;
+        public void updateStatus(PresenceType globalStatus) {
             this.globalStatus = globalStatus;
         }
     }
@@ -125,7 +123,6 @@ public class ServerReadResponseDto {
                 .avatarUrl(member.getMemberAvatarImageUrl())
                 .bannerUrl(member.getMemberBannerImageUrl())
                 .joinAt(member.getCreatedAt())
-                .actualStatus(status != null ? status.getActualStatus() : PresenceType.OFFLINE)
                 .globalStatus(status != null ? status.getGlobalStatus() : PresenceType.OFFLINE)
                 .build();
     }

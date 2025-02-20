@@ -2,6 +2,8 @@ package com.bbebig.serviceserver.global.kafka;
 
 import com.bbebig.commonmodule.clientDto.ServiceFeignResponseDto;
 import com.bbebig.commonmodule.clientDto.ServiceFeignResponseDto.MemberServerListResponseDto;
+import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
+import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.kafka.dto.PresenceEventDto;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerEventType;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.ServerMemberPresenceEventDto;
@@ -24,9 +26,8 @@ public class PresenceEventConsumerService {
 	public void consumeForPresenceEvent(PresenceEventDto presenceEventDto) {
 		if (presenceEventDto == null) {
 			log.error("[State] PresenceEventConsumerService: 프레즌스 이벤트 정보 없음");
-			return;
+			throw new ErrorHandler(ErrorStatus.KAFKA_CONSUME_NULL_EVENT);
 		}
-
 		handleEvent(presenceEventDto);
 	}
 
@@ -46,6 +47,7 @@ public class PresenceEventConsumerService {
 					.memberId(memberId)
 					.globalStatus(presenceEventDto.getGlobalStatus())
 					.actualStatus(presenceEventDto.getActualStatus())
+					.customStatus(presenceEventDto.getCustomStatus())
 					.build();
 			kafkaProducerService.sendServerEvent(serverMemberPresenceEventDto);
 		});

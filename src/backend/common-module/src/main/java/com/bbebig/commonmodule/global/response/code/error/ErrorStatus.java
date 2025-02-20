@@ -66,8 +66,10 @@ public enum ErrorStatus implements BaseErrorCode {
     SERVER_LAST_INFO_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH401", "서버별 마지막 방문 정보를 받아오는데에 실패했습니다."),
 
     // 카프카 이벤트 관련
+    KAFKA_CONSUME_NULL_EVENT(HttpStatus.SERVICE_UNAVAILABLE, "KAFKA00", "카프카 이벤트가 null입니다."),
     INVALID_SERVER_EVENT_TYPE(HttpStatus.SERVICE_UNAVAILABLE, "KAFKA01", "유효하지 않은 서버 이벤트 타입입니다."),
     INVALID_NOTIFICATION_EVENT_TYPE(HttpStatus.SERVICE_UNAVAILABLE, "KAFKA02", "유효하지 않은 알림 이벤트 타입입니다."),
+    INVALID_PRESENCE_EVENT_TYPE(HttpStatus.SERVICE_UNAVAILABLE, "KAFKA03", "유효하지 않은 프레즌스 이벤트 타입입니다."),
 
     // MEMBER
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER401", "멤버를 찾을 수 없습니다."),
