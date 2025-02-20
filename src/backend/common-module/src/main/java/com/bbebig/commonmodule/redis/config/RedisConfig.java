@@ -16,27 +16,33 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class RedisConfig {
 
-	/**
-	 * JSON 직렬화 설정을 가진 RedisSerializer Bean 등록
-	 */
-	@Bean
-	public Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer () {
+	private ObjectMapper createRedisObjectMapper() {
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		objectMapper.registerModule(new JavaTimeModule());
+		objectMapper.registerModule(new JavaTimeModule()); // ✅ JavaTimeModule 적용
 
-		// 타입 정보 활성화
+		// 타입 정보 활성화 (Object 직렬화 지원)
 		objectMapper.activateDefaultTyping(
 				objectMapper.getPolymorphicTypeValidator(),
 				ObjectMapper.DefaultTyping.NON_FINAL,
 				JsonTypeInfo.As.PROPERTY
 		);
-		return new Jackson2JsonRedisSerializer<>(Object.class);
+		return objectMapper;
 	}
 
 	/**
-	 * 기본 RedisTemplate (Object 저장용) - 모든 일반 객체 저장 가능
+	 * Redis JSON 직렬화기
+	 * - Redis에서 사용할 `ObjectMapper` 적용
+	 */
+	@Bean
+	public Jackson2JsonRedisSerializer<Object> redisJsonSerializer() {
+		ObjectMapper redisObjectMapper = createRedisObjectMapper();
+		return new Jackson2JsonRedisSerializer<>(redisObjectMapper, Object.class); // ✅ ObjectMapper 적용
+	}
+
+	/**
+	 * 기본 RedisTemplate (Object 저장용)
 	 */
 	@Bean
 	public RedisTemplate<String, Object> redisTemplate(
@@ -50,15 +56,20 @@ public class RedisConfig {
 	 */
 	@Bean
 	public RedisTemplate<String, Long> redisSetTemplate(RedisConnectionFactory connectionFactory) {
+		ObjectMapper redisObjectMapper = createRedisObjectMapper();
+		Jackson2JsonRedisSerializer<Long> serializer = new Jackson2JsonRedisSerializer<>(redisObjectMapper, Long.class); // ✅ ObjectMapper 적용
+
 		RedisTemplate<String, Long> redisTemplate = new RedisTemplate<>();
 		redisTemplate.setConnectionFactory(connectionFactory);
 		redisTemplate.setKeySerializer(new StringRedisSerializer());
-		redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Long.class)); // JSON 직렬화 적용
+		redisTemplate.setValueSerializer(serializer);
+		redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+		redisTemplate.setHashValueSerializer(serializer);
 		return redisTemplate;
 	}
 
 	/**
-	 * MemberPresenceStatus 전용 RedisTemplate
+	 * **MemberPresenceStatus 전용 RedisTemplate**
 	 */
 	@Bean
 	public RedisTemplate<String, MemberPresenceStatus> redisMemberStatusTemplate(
@@ -85,7 +96,7 @@ public class RedisConfig {
 	}
 
 	/**
-	 * 공통 RedisTemplate 생성 메서드 (Object 직렬화)
+	 * 공통 RedisTemplate 생성 메서드
 	 */
 	private <T> RedisTemplate<String, T> createRedisTemplate(
 			RedisConnectionFactory connectionFactory,
@@ -100,17 +111,20 @@ public class RedisConfig {
 	}
 
 	/**
-	 * 특정 타입을 위한 RedisTemplate 생성 (제네릭 지원)
+	 * 특정 타입을 위한 RedisTemplate 생성
 	 */
 	private <T> RedisTemplate<String, T> createTypedRedisTemplate(
 			RedisConnectionFactory connectionFactory,
 			Class<T> clazz) {
+		ObjectMapper redisObjectMapper = createRedisObjectMapper();
+		Jackson2JsonRedisSerializer<T> serializer = new Jackson2JsonRedisSerializer<>(redisObjectMapper, clazz); // ✅ ObjectMapper 적용
+
 		RedisTemplate<String, T> redisTemplate = new RedisTemplate<>();
 		redisTemplate.setConnectionFactory(connectionFactory);
 		redisTemplate.setKeySerializer(new StringRedisSerializer());
-		redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(clazz)); // 특정 클래스 타입 직렬화
+		redisTemplate.setValueSerializer(serializer);
 		redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-		redisTemplate.setHashValueSerializer(new Jackson2JsonRedisSerializer<>(clazz));
+		redisTemplate.setHashValueSerializer(serializer);
 		return redisTemplate;
 	}
 }
