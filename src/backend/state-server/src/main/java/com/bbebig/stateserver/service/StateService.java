@@ -1,6 +1,7 @@
 package com.bbebig.stateserver.service;
 
-import com.bbebig.commonmodule.clientDto.UserFeignResponseDto.MemberGlobalStatusResponseDto;
+import com.bbebig.commonmodule.clientDto.StateFeignResponseDto.*;
+import com.bbebig.commonmodule.clientDto.UserFeignResponseDto.*;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.kafka.dto.PresenceEventDto;
@@ -9,7 +10,6 @@ import com.bbebig.commonmodule.redis.domain.MemberPresenceStatus;
 import com.bbebig.commonmodule.redis.domain.ServerMemberStatus;
 import com.bbebig.stateserver.client.MemberClient;
 import com.bbebig.stateserver.client.ServiceClient;
-import com.bbebig.stateserver.dto.StateResponseDto.*;
 import com.bbebig.stateserver.repository.DmRedisRepositoryImpl;
 import com.bbebig.stateserver.repository.MemberRedisRepositoryImpl;
 import com.bbebig.stateserver.repository.ServerRedisRepositoryImpl;
@@ -38,24 +38,27 @@ public class StateService {
 
 	// 사용자 상태 확인
 	// GET /state/member/{memberId}
-	public MemberStatusResponseDto checkMemberState(Long memberId) {
+	public MemberPresenceResponseDto checkMemberState(Long memberId) {
 		MemberPresenceStatus memberPresenceStatus = memberRedisRepositoryImpl.getMemberPresenceStatus(memberId);
+		log.info("[State] StateService: 사용자 상태 확인. memberId: {}, memberPresenceStatus: {}", memberId, memberPresenceStatus);
 		if (memberPresenceStatus == null) {
-			MemberGlobalStatusResponseDto memberGlobalStatus = memberClient.getMemberGlobalStatus(memberId);
+			MemberCustomStatusResponseDto memberGlobalStatus = memberClient.getMemberCustomStatus(memberId);
 			if (memberGlobalStatus == null) {
 				throw new ErrorHandler(ErrorStatus.MEMBER_GLOBAL_STATE_NOT_FOUND);
 			}
 			// TODO: 사용자 상태 정보가 없을 경우, 실제 상태 처리하는 로직 구현
-			return MemberStatusResponseDto.builder()
+			return MemberPresenceResponseDto.builder()
 					.memberId(memberId)
-					.globalStatus(memberGlobalStatus.getGlobalStatus().toString())
-					.actualStatus(PresenceType.OFFLINE.toString())
+					.customStatus(memberGlobalStatus.getCustomStatus())
+					.globalStatus(memberGlobalStatus.getCustomStatus())
+					.actualStatus(PresenceType.OFFLINE)
 					.build();
 		}
-		return MemberStatusResponseDto.builder()
+		return MemberPresenceResponseDto.builder()
 				.memberId(memberId)
-				.globalStatus(memberPresenceStatus.getGlobalStatus().toString())
-				.actualStatus(memberPresenceStatus.getActualStatus().toString())
+				.globalStatus(memberPresenceStatus.getGlobalStatus())
+				.actualStatus(memberPresenceStatus.getActualStatus())
+				.customStatus(memberPresenceStatus.getCustomStatus())
 				.build();
 	}
 
@@ -68,11 +71,12 @@ public class StateService {
 		}
 
 		List<ServerMemberStatus> allServerMemberStatus = serverRedisRepositoryImpl.getAllServerMemberStatus(serverId);
-		List<MemberPresenceStatusDto> memberStatusResponseDtoList = allServerMemberStatus.stream()
-				.map(serverMemberStatus -> MemberPresenceStatusDto.builder()
+		List<MemberPresenceResponseDto> memberStatusResponseDtoList = allServerMemberStatus.stream()
+				.map(serverMemberStatus -> MemberPresenceResponseDto.builder()
 						.memberId(serverMemberStatus.getMemberId())
-						.globalStatus(serverMemberStatus.getGlobalStatus().toString())
-						.actualStatus(serverMemberStatus.getActualStatus().toString())
+						.globalStatus(serverMemberStatus.getGlobalStatus())
+						.actualStatus(serverMemberStatus.getActualStatus())
+						.customStatus(serverMemberStatus.getCustomStatus())
 						.build())
 				.toList();
 
@@ -95,11 +99,12 @@ public class StateService {
 		}
 
 		for (Long memberId : serverMemberList) {
-			MemberStatusResponseDto memberStatusResponseDto = checkMemberState(memberId);
+			MemberPresenceResponseDto memberStatusResponseDto = checkMemberState(memberId);
 			ServerMemberStatus status = ServerMemberStatus.builder()
 					.memberId(memberId)
-					.globalStatus(PresenceType.valueOf(memberStatusResponseDto.getGlobalStatus()))
-					.actualStatus(PresenceType.valueOf(memberStatusResponseDto.getActualStatus()))
+					.globalStatus(memberStatusResponseDto.getGlobalStatus())
+					.actualStatus(memberStatusResponseDto.getActualStatus())
+					.customStatus(memberStatusResponseDto.getCustomStatus())
 					.build();
 			serverRedisRepositoryImpl.saveServerMemberPresenceStatus(serverId, memberId, status);
 		}
@@ -111,13 +116,14 @@ public class StateService {
 		if (memberPresenceStatus == null) {
 			throw new ErrorHandler(ErrorStatus.MEMBER_PRESENCE_STATE_NOT_FOUND);
 		}
-		memberPresenceStatus.setGlobalStatus(globalStatus);
+		memberPresenceStatus.updateCustomStatus(globalStatus);
 		memberRedisRepositoryImpl.saveMemberPresenceStatus(memberId, memberPresenceStatus);
 
 		PresenceEventDto presenceEventDto = PresenceEventDto.builder()
 				.memberId(memberId)
 				.globalStatus(globalStatus)
 				.actualStatus(memberPresenceStatus.getActualStatus())
+				.customStatus(memberPresenceStatus.getCustomStatus())
 				.lastActivityTime(memberPresenceStatus.getLastActivityTime())
 				.build();
 		kafkaProducerService.sendPresenceEvent(presenceEventDto);

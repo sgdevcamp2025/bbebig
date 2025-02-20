@@ -1,5 +1,5 @@
 package com.bbebig.commonmodule.kafka.dto.model;
 
-public enum ChannelType {
-	CHAT, VOICE
+public enum ChatType {
+	CHANNEL, DM, GROUP
 }

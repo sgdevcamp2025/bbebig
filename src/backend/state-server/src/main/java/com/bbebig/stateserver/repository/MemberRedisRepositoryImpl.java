@@ -29,7 +29,7 @@ public class MemberRedisRepositoryImpl implements MemberRedisRepository {
 
 	private SetOperations<String, Long> setOperations;
 	private ValueOperations<String, MemberPresenceStatus> valueOperations;
-	private HashOperations<String, Long, ServerLastInfo> serverLastInfoValueOperations;
+	private HashOperations<String, String, ServerLastInfo> serverLastInfoValueOperations;
 
 	@PostConstruct
 	public void initRedisOps() {
@@ -144,21 +144,21 @@ public class MemberRedisRepositoryImpl implements MemberRedisRepository {
 	 */
 	public void saveServerLastInfo(Long memberId, Long serverId, ServerLastInfo lastInfo) {
 		String key = MemberRedisKeys.getServerLastInfoKey(memberId);
-		serverLastInfoValueOperations.put(key, serverId, lastInfo);
+		serverLastInfoValueOperations.put(key, serverId.toString(), lastInfo);
 		serverLastInfoValueOperations.getOperations().expire(key, MemberRedisTTL.SERVER_LAST_INFO_TTL, TimeUnit.SECONDS);
 	}
 
 	// 개별 유저의 최근 서버 채널 정보 조회
 	public ServerLastInfo getServerLastInfo(Long memberId, Long serverId) {
 		String key = MemberRedisKeys.getServerLastInfoKey(memberId);
-		return serverLastInfoValueOperations.get(key, serverId);
+		return serverLastInfoValueOperations.get(key, serverId.toString());
 	}
 
 
 	// 개별 유저의 최근 서버 채널 정보 삭제
 	public void deleteServerLastInfo(Long memberId, Long serverId) {
 		String key = MemberRedisKeys.getServerLastInfoKey(memberId);
-		serverLastInfoValueOperations.delete(key, serverId);
+		serverLastInfoValueOperations.delete(key, serverId.toString());
 	}
 
 	// 개별 유저의 최근 서버 채널 정보 전체 삭제

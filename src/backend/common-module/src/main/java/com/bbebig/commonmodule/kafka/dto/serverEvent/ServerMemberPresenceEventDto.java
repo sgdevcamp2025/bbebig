@@ -18,17 +18,21 @@ public class ServerMemberPresenceEventDto extends ServerEventDto {
 
 	private PresenceType globalStatus;
 
+	private PresenceType customStatus;
+
 	@JsonCreator
 	public ServerMemberPresenceEventDto(
 			@JsonProperty("serverId") Long serverId,
 			@JsonProperty("type") ServerEventType type,
 			@JsonProperty("memberId") Long memberId,
 			@JsonProperty("actualStatus") PresenceType actualStatus,
-			@JsonProperty("globalStatus") PresenceType globalStatus
+			@JsonProperty("globalStatus") PresenceType globalStatus,
+			@JsonProperty("customStatus") PresenceType customStatus
 	) {
 		super(serverId, type);
 		this.memberId = memberId;
 		this.actualStatus = actualStatus;
 		this.globalStatus = globalStatus;
+		this.customStatus = customStatus;
 	}
 }
