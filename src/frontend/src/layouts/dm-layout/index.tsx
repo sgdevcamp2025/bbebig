@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router'
+import { Outlet } from 'react-router-dom'
 
 import DmSideBar from './components/dm-side-bar'
 

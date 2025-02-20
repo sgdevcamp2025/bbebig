@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Outlet } from 'react-router'
+import { Outlet } from 'react-router-dom'
 
 import AllFriends from './components/all-friends'
 import FriendHeader from './components/friend-header'

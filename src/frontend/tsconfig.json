@@ -26,5 +26,12 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src", "src/main.tsx", "app/**/*.ts", "app/**/*.tsx"]
+  "include": [
+    "src",
+    "src/main.tsx",
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "vite.config.ts",
+    "src/routes.tsx"
+  ]
 }

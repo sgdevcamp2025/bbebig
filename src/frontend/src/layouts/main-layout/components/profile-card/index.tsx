@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRef, useState } from 'react'
 import { toast } from 'react-hot-toast'
-import { useNavigate } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 
 import { CommonResponseType } from '@/apis/schema/types/common'
 import { GetUserSelfResponseSchema } from '@/apis/schema/types/user'

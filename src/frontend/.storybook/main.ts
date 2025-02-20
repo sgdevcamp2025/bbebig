@@ -12,7 +12,7 @@ const config: StorybookConfig = {
     name: '@storybook/react-vite',
     options: {
       builder: {
-        viteConfigPath: './storybook-with-vite.config.ts'
+        viteConfigPath: './vite.config.ts'
       }
     }
   },

@@ -1,5 +1,3 @@
-import { Link } from 'react-router'
-
 import { discordLogo } from '@/constants/discord-assets-path'
 import useLoginStore from '@/stores/use-login-store'
 
@@ -67,11 +65,11 @@ function Header() {
             ))}
           </ul>
           <div className='flex h-[38px] items-center rounded-full bg-white'>
-            <Link
-              to={isLogin ? '/channels/@me' : '/login'}
+            <a
+              href={isLogin ? '/channels/@me' : '/login'}
               className='px-4 py-[7px] text-[14px] font-semibold leading-6 text-black transition-colors hover:text-brand'>
               {isLogin ? 'Discord 열기' : '로그인'}
-            </Link>
+            </a>
           </div>
         </div>
       </header>

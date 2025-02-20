@@ -19,7 +19,7 @@ function useSignalingWithSFU(roomId: string) {
 
   const senderPcRef = useRef<RTCPeerConnection | null>(null)
   const recivePcRef = useRef<Record<string, RTCPeerConnection>>({})
-  const [pc, setPc] = useState<RTCPeerConnection | null>(null)
+  const [_pc, setPc] = useState<RTCPeerConnection | null>(null)
   const [users, setUsers] = useState<WebRTCUser[]>([])
 
   useEffect(
