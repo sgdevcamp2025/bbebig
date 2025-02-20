@@ -1,12 +1,13 @@
 package com.bbebig.stateserver.service;
 
+import com.bbebig.commonmodule.clientDto.StateFeignResponseDto;
+import com.bbebig.commonmodule.clientDto.StateFeignResponseDto.MemberPresenceResponseDto;
 import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.*;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.status.ServerActionStatus;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.status.ServerChannelStatus;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.status.ServerMemberActionStatus;
 import com.bbebig.commonmodule.redis.domain.ServerMemberStatus;
-import com.bbebig.stateserver.dto.StateResponseDto.MemberStatusResponseDto;
 import com.bbebig.stateserver.repository.MemberRedisRepositoryImpl;
 import com.bbebig.stateserver.repository.ServerRedisRepositoryImpl;
 import lombok.RequiredArgsConstructor;
@@ -74,7 +75,7 @@ public class ServerEventConsumerService {
 
 		if (eventDto.getStatus().equals(ServerMemberActionStatus.JOIN)) {
 			// 멤버 상태 정보를 조회하여 서버별 멤버 상태 정보에 저장
-			MemberStatusResponseDto memberStatusResponseDto = stateService.checkMemberState(eventDto.getMemberId());
+			MemberPresenceResponseDto memberStatusResponseDto = stateService.checkMemberState(eventDto.getMemberId());
 			if (memberStatusResponseDto == null) {
 				log.error("[State] ServerEventConsumerService: 서버 멤버 상태 정보 조회 실패. memberId: {}", eventDto.getMemberId());
 				return;
@@ -82,8 +83,8 @@ public class ServerEventConsumerService {
 
 			ServerMemberStatus status = ServerMemberStatus.builder()
 					.memberId(eventDto.getMemberId())
-					.globalStatus(PresenceType.valueOf(memberStatusResponseDto.getGlobalStatus()))
-					.actualStatus(PresenceType.valueOf(memberStatusResponseDto.getActualStatus()))
+					.globalStatus(memberStatusResponseDto.getGlobalStatus())
+					.actualStatus(memberStatusResponseDto.getActualStatus())
 					.build();
 			serverRedisRepositoryImpl.saveServerMemberPresenceStatus(serverId, eventDto.getMemberId(), status);
 

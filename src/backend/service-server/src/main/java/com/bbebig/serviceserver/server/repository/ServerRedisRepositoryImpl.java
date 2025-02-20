@@ -11,6 +11,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -102,6 +103,9 @@ public class ServerRedisRepositoryImpl implements ServerRedisRepository {
 	@Override
 	public List<ServerMemberStatus> getAllServerMemberStatus(Long serverId) {
 		String key = ServerRedisKeys.getServerMemberPresenceStatusKey(serverId);
+		if (!existsServerMemberPresenceStatus(serverId)) {
+			return new ArrayList<>();
+		}
 		return hashOperations.values(key);
 	}
 
