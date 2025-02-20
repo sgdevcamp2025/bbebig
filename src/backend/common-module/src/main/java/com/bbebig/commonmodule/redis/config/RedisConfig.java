@@ -1,6 +1,7 @@
 package com.bbebig.commonmodule.redis.config;
 
 import com.bbebig.commonmodule.redis.domain.*;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -24,6 +25,14 @@ public class RedisConfig {
 		objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		objectMapper.registerModule(new JavaTimeModule());
+
+		// 타입 정보 활성화
+		objectMapper.activateDefaultTyping(
+				objectMapper.getPolymorphicTypeValidator(),
+				ObjectMapper.DefaultTyping.NON_FINAL,
+				JsonTypeInfo.As.PROPERTY
+		);
+
 		return objectMapper;
 	}
 
