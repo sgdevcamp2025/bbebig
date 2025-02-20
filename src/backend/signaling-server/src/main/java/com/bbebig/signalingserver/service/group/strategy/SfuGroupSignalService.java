@@ -14,6 +14,10 @@ import org.kurento.client.WebRtcEndpoint;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 /**
  * 그룹 스트리밍 시그널링을 처리하는 서비스 (SFU)
  */
@@ -73,15 +77,16 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
             );
         }
 
+
+
         // (1) KurentoManager에서 WebRtcEndpoint 생성
         kurentoManager.createEndpoint(channelId, memberId);
 
-//        // 나를 제외한 기존 멤버 목록
-//        Set<String> participants = channelManager.getParticipants(message.getChannelId());
-//        List<String> otherUsers = new ArrayList<>(participants);
+        // 기존 멤버 목록
+        Set<String> participants = channelManager.getParticipants(message.getChannelId());
 
         // (2) 본인에게 기존 멤버 정보 안내 (필요 시 ID 목록 추가)
-        notifyExistUsers(message);
+        notifyExistUsers(message, participants);
 
         // (3) 방 전체에 새 사용자의 입장 알림
         notifyUserJoined(message);
@@ -90,12 +95,14 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
     /**
      * 본인에게 기존 멤버 정보를 전달
      */
-    private void notifyExistUsers(SignalMessage message) {
-        // TODO: 기존 유저 ID 추가
+    private void notifyExistUsers(SignalMessage message, Set<String> participants) {
         SignalMessage allUsersMessage = SignalMessage.builder()
                 .messageType(MessageType.EXIST_USERS)
                 .channelId(message.getChannelId())
                 .senderId(message.getSenderId())
+                .participants(participants.stream()
+                        .map(Long::parseLong)
+                        .toList())
                 .build();
 
         messagingTemplate.convertAndSend(
