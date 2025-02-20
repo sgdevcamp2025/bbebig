@@ -49,7 +49,8 @@ public class StateService {
 			// TODO: 사용자 상태 정보가 없을 경우, 실제 상태 처리하는 로직 구현
 			return MemberPresenceResponseDto.builder()
 					.memberId(memberId)
-					.globalStatus(memberGlobalStatus.getGlobalStatus())
+					.customStatus(memberGlobalStatus.getCustomStatus())
+					.globalStatus(memberGlobalStatus.getCustomStatus())
 					.actualStatus(PresenceType.OFFLINE)
 					.build();
 		}
