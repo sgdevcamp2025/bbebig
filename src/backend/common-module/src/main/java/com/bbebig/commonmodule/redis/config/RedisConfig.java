@@ -17,10 +17,10 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 public class RedisConfig {
 
 	/**
-	 * ObjectMapper를 Bean으로 등록하여 여러 RedisTemplate에서 재사용 가능
+	 * JSON 직렬화 설정을 가진 RedisSerializer Bean 등록
 	 */
 	@Bean
-	public ObjectMapper objectMapper() {
+	public Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer () {
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -32,15 +32,6 @@ public class RedisConfig {
 				ObjectMapper.DefaultTyping.NON_FINAL,
 				JsonTypeInfo.As.PROPERTY
 		);
-
-		return objectMapper;
-	}
-
-	/**
-	 * JSON 직렬화 설정을 가진 RedisSerializer Bean 등록
-	 */
-	@Bean
-	public Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer(ObjectMapper objectMapper) {
 		return new Jackson2JsonRedisSerializer<>(Object.class);
 	}
 
@@ -71,9 +62,8 @@ public class RedisConfig {
 	 */
 	@Bean
 	public RedisTemplate<String, MemberPresenceStatus> redisMemberStatusTemplate(
-			RedisConnectionFactory connectionFactory,
-			ObjectMapper objectMapper) {
-		return createTypedRedisTemplate(connectionFactory, objectMapper, MemberPresenceStatus.class);
+			RedisConnectionFactory connectionFactory) {
+		return createTypedRedisTemplate(connectionFactory, MemberPresenceStatus.class);
 	}
 
 	/**
@@ -81,9 +71,8 @@ public class RedisConfig {
 	 */
 	@Bean
 	public RedisTemplate<String, ServerMemberStatus> redisServerStatusTemplate(
-			RedisConnectionFactory connectionFactory,
-			ObjectMapper objectMapper) {
-		return createTypedRedisTemplate(connectionFactory, objectMapper, ServerMemberStatus.class);
+			RedisConnectionFactory connectionFactory) {
+		return createTypedRedisTemplate(connectionFactory, ServerMemberStatus.class);
 	}
 
 	/**
@@ -91,9 +80,8 @@ public class RedisConfig {
 	 */
 	@Bean
 	public RedisTemplate<String, ServerLastInfo> redisServerLastInfoTemplate(
-			RedisConnectionFactory connectionFactory,
-			ObjectMapper objectMapper) {
-		return createTypedRedisTemplate(connectionFactory, objectMapper, ServerLastInfo.class);
+			RedisConnectionFactory connectionFactory) {
+		return createTypedRedisTemplate(connectionFactory, ServerLastInfo.class);
 	}
 
 	/**
@@ -116,7 +104,6 @@ public class RedisConfig {
 	 */
 	private <T> RedisTemplate<String, T> createTypedRedisTemplate(
 			RedisConnectionFactory connectionFactory,
-			ObjectMapper objectMapper,
 			Class<T> clazz) {
 		RedisTemplate<String, T> redisTemplate = new RedisTemplate<>();
 		redisTemplate.setConnectionFactory(connectionFactory);
