@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { ChangeEvent, Suspense, useState } from 'react'
-import { useParams } from 'react-router'
+import { useParams } from 'react-router-dom'
 
 import CommonHeader from '@/components/common-header'
 import LoadingIcon from '@/components/loading-icon'

@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 import { useShallow } from 'zustand/shallow'
 
 import { loginRequestSchema } from '@/apis/schema/auth'

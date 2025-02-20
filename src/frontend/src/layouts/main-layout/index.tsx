@@ -1,6 +1,6 @@
 import { PlusIcon } from 'lucide-react'
 import { Suspense, useEffect, useState } from 'react'
-import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
+import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useShallow } from 'zustand/shallow'
 
 import serviceService from '@/apis/service/service'
