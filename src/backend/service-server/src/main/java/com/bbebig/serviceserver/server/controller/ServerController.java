@@ -40,7 +40,7 @@ public class ServerController {
         return CommonResponse.onSuccess(serverService.createServer(passport.getMemberId(), serverCreateRequestDto));
     }
 
-    @Operation(summary = "서버 정보 조회", description = "서버 정보를 조회합니다.")
+    @Operation(summary = "서버 정보 조회", description = "서버와 채널, 카테고리의 정보를 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "서버 정보 조회 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "", content = @Content)
@@ -54,7 +54,7 @@ public class ServerController {
         return CommonResponse.onSuccess(serverService.readServer(serverId));
     }
 
-    @Operation(summary = "서버 정보 조회", description = "서버 정보를 조회합니다.")
+    @Operation(summary = "서버에 속한 멤버 정보 조회", description = "서버 정보를 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "서버 정보 조회 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "", content = @Content)
@@ -70,7 +70,7 @@ public class ServerController {
 
 
 
-    @Operation(summary = "멤버별로 속해있는 서버 목록 조회 (For Client)", description = "멤버별로 속해있는 서버 목록 조회합니다. (For Client)")
+    @Operation(summary = "멤버별로 속해있는 서버 목록 조회", description = "멤버별로 속해있는 서버 목록 조회합니다. (For Client)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "멤버별로 속해있는 서버 목록 조회 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "", content = @Content)
@@ -79,7 +79,7 @@ public class ServerController {
     public CommonResponse<ServerListReadResponseDto> readServerListByPathVariable(
             @Parameter(hidden = true) @PassportUser Passport passport
     ) {
-        log.info("[Service] 멤버별로 속해있는 서버 목록 조회 요청 (For Client): memberId = {}", passport.getMemberId());
+        log.info("[Service] 멤버별로 속해있는 서버 목록 조회 요청: memberId = {}", passport.getMemberId());
         return CommonResponse.onSuccess(serverService.readServerList(passport.getMemberId()));
     }
 

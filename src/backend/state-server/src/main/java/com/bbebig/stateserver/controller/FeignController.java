@@ -1,7 +1,5 @@
 package com.bbebig.stateserver.controller;
 
-import com.bbebig.commonmodule.global.response.code.CommonResponse;
-import com.bbebig.stateserver.dto.StateResponseDto.*;
 import com.bbebig.stateserver.service.StateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -13,15 +11,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import static com.bbebig.commonmodule.clientDto.StateFeignResponseDto.*;
+
 @Slf4j
 @RestController
-@RequestMapping("/state")
+@RequestMapping("/feign/state")
 @RequiredArgsConstructor
-@Tag(name = "서버", description = "서버 관련 API")
-public class StateController {
+@Tag(name = "Feign", description = "상태 관련 Feign API")
+public class FeignController {
 
 	private final StateService stateService;
-
 
 	// 사용자 상태 확인
 	@Operation(summary = "사용자 상태 확인", description = "사용자의 현재 상태와 실제 상태를 확인한다.")
@@ -30,9 +29,9 @@ public class StateController {
 			@ApiResponse(responseCode = "400", description = "", content = @Content)
 	})
 	@GetMapping("/check/member/{memberId}")
-	public CommonResponse<MemberStatusResponseDto> checkMemberState(@PathVariable @Parameter(description = "사용자 ID") Long memberId) {
+	public MemberPresenceResponseDto checkMemberState(@PathVariable @Parameter(description = "사용자 ID") Long memberId) {
 		log.info("[State] Check member state: {}", memberId);
-		return CommonResponse.onSuccess(stateService.checkMemberState(memberId));
+		return stateService.checkMemberState(memberId);
 	}
 
 	// 서버 멤버 상태 확인
@@ -42,9 +41,9 @@ public class StateController {
 			@ApiResponse(responseCode = "400", description = "", content = @Content)
 	})
 	@GetMapping("/check/server/{serverId}/members")
-	public CommonResponse<ServerMemberPresenceResponseDto> checkServerMembersState(@PathVariable @Parameter(description = "서버 ID") Long serverId) {
+	public ServerMemberPresenceResponseDto checkServerMembersState(@PathVariable @Parameter(description = "서버 ID") Long serverId) {
 		log.info("[State] Check server members state: {}", serverId);
-		return CommonResponse.onSuccess(stateService.checkServerMembersState(serverId));
+		return stateService.checkServerMembersState(serverId);
 	}
 
 

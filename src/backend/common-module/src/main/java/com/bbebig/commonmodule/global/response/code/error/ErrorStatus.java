@@ -59,6 +59,7 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_ACTUAL_STATE_NOT_FOUND(HttpStatus.NOT_FOUND, "STATE402", "멤버의 실제 상태를 찾을 수 없습니다."),
     MEMBER_GLOBAL_STATE_NOT_FOUND(HttpStatus.NOT_FOUND, "STATE403", "멤버의 전역 상태를 찾을 수 없습니다."),
     MEMBER_PRESENCE_STATE_NOT_FOUND(HttpStatus.NOT_FOUND, "STATE404", "멤버의 접속 상태를 찾을 수 없습니다."),
+    SERVER_MEMBER_PRESENCE_STATE_NOT_FOUND(HttpStatus.NOT_FOUND, "STATE405", "서버 멤버의 접속 상태를 찾을 수 없습니다."),
 
     // SEARCH
     SERVER_LAST_INFO_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH401", "서버별 마지막 방문 정보를 받아오는데에 실패했습니다."),
