@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ServerLastInfo implements Serializable {
+public class ServerLastInfo {
 
 	private Long serverId;
 

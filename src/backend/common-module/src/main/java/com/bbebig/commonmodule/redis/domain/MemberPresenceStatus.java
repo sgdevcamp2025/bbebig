@@ -14,7 +14,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MemberPresenceStatus implements Serializable {
+public class MemberPresenceStatus {
 
 	private Long memberId;
 

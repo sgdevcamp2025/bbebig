@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ServerMemberStatus implements Serializable {
+public class ServerMemberStatus {
 
 	private Long memberId;
 	private PresenceType actualStatus;            // "ONLINE", "OFFLINE", "DND", ...
