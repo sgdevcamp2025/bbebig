@@ -21,7 +21,7 @@ public class MemberEventDto {
 
 	private String bannerUrl;
 
-	private PresenceType globalStatus; // PRESENCE_UPDATE인 경우에만 사용
+	private PresenceType customStatus; // PRESENCE_UPDATE인 경우에만 사용
 
 	@JsonCreator
 	public MemberEventDto(
@@ -30,14 +30,14 @@ public class MemberEventDto {
 			@JsonProperty("nickname") String nickname,
 			@JsonProperty("avatarUrl") String avatarUrl,
 			@JsonProperty("bannerUrl") String bannerUrl,
-			@JsonProperty("globalStatus") PresenceType globalStatus
+			@JsonProperty("customStatus") PresenceType customStatus
 	) {
 		this.memberId = memberId;
 		this.type = type;
 		this.nickname = nickname;
 		this.avatarUrl = avatarUrl;
 		this.bannerUrl = bannerUrl;
-		this.globalStatus = globalStatus;
+		this.customStatus = customStatus;
 	}
 
 }

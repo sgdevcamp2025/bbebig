@@ -4,7 +4,7 @@ import com.bbebig.commonmodule.clientDto.ServiceFeignResponseDto.*;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.kafka.dto.ChatMessageDto;
-import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
+import com.bbebig.commonmodule.kafka.dto.model.ChatType;
 import com.bbebig.searchserver.domain.history.repository.ChannelChatMessageRepository;
 import com.bbebig.searchserver.domain.history.repository.DmChatMessageRepository;
 import com.bbebig.searchserver.global.client.ServiceClient;
@@ -53,7 +53,7 @@ public class HistoryService {
 		channelChatMessageRepository.save(message);
 		channelChatMessageElasticRepository.save(HistoryDtoConverter.convertDtoToChannelChatMessageElastic(messageDto));
 
-		if (ChannelType.CHANNEL.equals(messageDto.getChannelType())) {
+		if (ChatType.CHANNEL.equals(messageDto.getChatType())) {
 			Long channelId = messageDto.getChannelId();
 			if (serverRedisRepository.existsChannelMessageList(channelId)) {
 				cacheChannelMessage(channelId);
@@ -75,7 +75,7 @@ public class HistoryService {
 		optionalMessage.ifPresentOrElse(chatMessage -> {
 			if (chatMessage.isDeleted()) {
 				log.error("[Search] ChatMessageService : 삭제된 메시지는 수정할 수 없습니다. messageId: {}", messageDto.getId());
-				throw new IllegalStateException("삭제된 메시지는 수정할 수 없습니다.");
+				throw new ErrorHandler(ErrorStatus.CANNOT_MODIFY_DELETED_MESSAGE);
 			}
 
 			chatMessage.updateContent(messageDto.getContent());
@@ -91,7 +91,7 @@ public class HistoryService {
 
 		}, () -> {
 			log.error("[Search] ChatMessageService : 채팅 메시지 정보 없음. messageId: {}", messageDto.getId());
-			throw new IllegalArgumentException("채팅 메시지 정보 없음.");
+			throw new ErrorHandler(ErrorStatus.CHAT_MESSAGE_NOT_FOUND);
 		});
 	}
 
@@ -101,7 +101,7 @@ public class HistoryService {
 		optionalMessage.ifPresentOrElse(chatMessage -> {
 			if (chatMessage.isDeleted()) {
 				log.error("[Search] ChatMessageService : 삭제된 메시지는 수정할 수 없습니다. messageId: {}", messageDto.getId());
-				throw new IllegalStateException("삭제된 메시지는 수정할 수 없습니다.");
+				throw new ErrorHandler(ErrorStatus.CANNOT_MODIFY_DELETED_MESSAGE);
 			}
 
 			chatMessage.updateContent(messageDto.getContent());
@@ -110,7 +110,7 @@ public class HistoryService {
 
 		}, () -> {
 			log.error("[Search] ChatMessageService : 채팅 메시지 정보 없음. messageId: {}", messageDto.getId());
-			throw new IllegalArgumentException("채팅 메시지 정보 없음.");
+			throw new ErrorHandler(ErrorStatus.CHAT_MESSAGE_NOT_FOUND);
 		});
 	}
 
@@ -120,7 +120,7 @@ public class HistoryService {
 		optionalMessage.ifPresentOrElse(chatMessage -> {
 			if (chatMessage.isDeleted()) {
 				log.warn("[Search] ChatMessageService : 이미 삭제된 메시지입니다. messageId: {}", messageId);
-				return;
+				throw new ErrorHandler(ErrorStatus.MESSAGE_ALREADY_DELETED);
 			}
 
 			chatMessage.delete();
@@ -136,7 +136,7 @@ public class HistoryService {
 			log.info("[Search] ChatMessageService : 채널 메시지 삭제 완료. messageId: {}", messageId);
 		}, () -> {
 			log.error("[Search] ChatMessageService : 채널 채팅 메시지를 찾을 수 없습니다. messageId: {}", messageId);
-			throw new IllegalArgumentException("채널 채팅 메시지 정보 없음.");
+			throw new ErrorHandler(ErrorStatus.CHAT_MESSAGE_NOT_FOUND);
 		});
 	}
 
@@ -146,7 +146,7 @@ public class HistoryService {
 		optionalMessage.ifPresentOrElse(chatMessage -> {
 			if (chatMessage.isDeleted()) {
 				log.warn("[Search] ChatMessageService : 이미 삭제된 메시지입니다. messageId: {}", messageId);
-				return;
+				throw new ErrorHandler(ErrorStatus.MESSAGE_ALREADY_DELETED);
 			}
 
 			chatMessage.delete();
@@ -155,7 +155,7 @@ public class HistoryService {
 			log.info("[Search] ChatMessageService : DM 메시지 삭제 완료. messageId: {}", messageId);
 		}, () -> {
 			log.error("[Search]ChatMessageService : DM 채팅 메시지를 찾을 수 없습니다. messageId: {}", messageId);
-			throw new IllegalArgumentException("DM 채팅 메시지 정보 없음.");
+			throw new ErrorHandler(ErrorStatus.CHAT_MESSAGE_NOT_FOUND);
 		});
 	}
 
@@ -210,8 +210,6 @@ public class HistoryService {
 	// 멤버가 참여한 서버별 안읽은 메시지 수 조회
 	// GET /member/{memberId}/unread/server/all
 	public AllServerUnreadCountDto getAllServerUnreadCount(Long memberId) {
-
-		// TODO: 캐싱 할지 여부 판단해서 관리
 		// TODO: 메시지 새로 들어왔을때 어떻게 처리할지 고민
 
 		List<ServerUnreadCountDto> result = new ArrayList<>();
@@ -221,7 +219,7 @@ public class HistoryService {
 				MemberServerListResponseDto memberServerListCacheResponseDto = serviceClient.getMemberServerList(memberId);
 				serverList.addAll(memberServerListCacheResponseDto.getServerIdList());
 			} catch (FeignException e) {
-				log.error("[Search] ChatMessageService: 멤버 서버 목록 조회 중 오류 발생. memberId: {}", memberId);
+				log.error("[Search] ChatMessageService: Feign으로 멤버 서버 목록 조회 중 오류 발생. memberId: {}", memberId);
 			}
 		}
 		for (Long serverId : serverList) {
@@ -288,7 +286,7 @@ public class HistoryService {
 		try {
 			responseDto = serviceClient.getServerLastInfo(serverId, memberId);
 		} catch (FeignException e) {
-			log.error("[Search] ChatMessageService: 서버 정보 조회 중 오류 발생. serverId: {}, memberId: {}", serverId, memberId);
+			log.error("[Search] ChatMessageService: Feign으로 서버 정보 조회 중 오류 발생. serverId: {}, memberId: {}", serverId, memberId);
 		}
 		return responseDto;
 	}

@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @Builder
 @AllArgsConstructor
@@ -17,6 +19,7 @@ public class SignalMessage {
     private String receiverId;          // 받는 사람 ID
     private Sdp sdp;                    // SDP
     private Candidate candidate;        // ICE candidate
+    private List<Long> participants;    // 기존에 참가하고 있는 유저들 (EXIST_USERS에서 사용)
 
     @Getter
     @Builder

@@ -10,6 +10,7 @@ public class DtoConverter {
 				.memberId(memberPresenceStatus.getMemberId())
 				.globalStatus(memberPresenceStatus.getGlobalStatus())
 				.actualStatus(memberPresenceStatus.getActualStatus())
+				.customStatus(memberPresenceStatus.getCustomStatus())
 				.lastActivityTime(memberPresenceStatus.getLastActivityTime())
 				.build();
 	}

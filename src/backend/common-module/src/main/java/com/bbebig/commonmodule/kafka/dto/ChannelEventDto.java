@@ -58,4 +58,8 @@ public class ChannelEventDto {
 		this.channelId = channelId;
 		this.eventTime = eventTime;
 	}
+
+	public void updateSessionId(String sessionId) {
+		this.sessionId = sessionId;
+	}
 }

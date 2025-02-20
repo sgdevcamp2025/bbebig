@@ -1,6 +1,7 @@
 package com.bbebig.serviceserver.server.service;
 
 import com.bbebig.commonmodule.clientDto.ServiceFeignResponseDto.*;
+import com.bbebig.commonmodule.clientDto.StateFeignResponseDto.ServerMemberPresenceResponseDto;
 import com.bbebig.commonmodule.clientDto.UserFeignResponseDto.*;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
@@ -11,6 +12,7 @@ import com.bbebig.commonmodule.kafka.dto.serverEvent.status.ServerActionStatus;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.status.ServerMemberActionStatus;
 import com.bbebig.commonmodule.redis.domain.ChannelLastInfo;
 import com.bbebig.commonmodule.redis.domain.ServerLastInfo;
+import com.bbebig.commonmodule.redis.domain.ServerMemberStatus;
 import com.bbebig.serviceserver.category.entity.Category;
 import com.bbebig.serviceserver.category.repository.CategoryRepository;
 import com.bbebig.serviceserver.channel.entity.Channel;
@@ -19,10 +21,12 @@ import com.bbebig.serviceserver.channel.entity.ChannelType;
 import com.bbebig.serviceserver.channel.repository.ChannelMemberRepository;
 import com.bbebig.serviceserver.channel.repository.ChannelRepository;
 import com.bbebig.serviceserver.global.client.MemberClient;
+import com.bbebig.serviceserver.global.client.StateClient;
 import com.bbebig.serviceserver.global.kafka.KafkaProducerService;
 import com.bbebig.serviceserver.server.dto.request.ServerCreateRequestDto;
 import com.bbebig.serviceserver.server.dto.request.ServerUpdateRequestDto;
 import com.bbebig.serviceserver.server.dto.response.*;
+import com.bbebig.serviceserver.server.dto.response.ServerReadResponseDto.ServerMemberInfo;
 import com.bbebig.serviceserver.server.dto.response.ServerReadResponseDto.ServerMemberInfoResponseDto;
 import com.bbebig.serviceserver.server.entity.RoleType;
 import com.bbebig.serviceserver.server.entity.Server;
@@ -55,6 +59,7 @@ public class ServerService {
     private final KafkaProducerService kafkaProducerService;
 
     private final MemberClient memberClient;
+    private final StateClient stateClient;
 
 
     /**
@@ -289,18 +294,45 @@ public class ServerService {
                 .build();
     }
 
+    // 서버 멤버 정보 조회
+    // GET /servers/{serverId}/members
     public ServerMemberInfoResponseDto getServerMemberInfo(Long serverId) {
-        List<ServerMember> serverMember = serverMemberRepository.findAllByServerId(serverId);
-        if (serverMember.isEmpty()) {
+        List<ServerMember> serverMembers = serverMemberRepository.findAllByServerId(serverId);
+        if (serverMembers.isEmpty()) {
             throw new ErrorHandler(ErrorStatus.SERVER_MEMBERS_NOT_FOUND);
         }
+
+        List<ServerMemberStatus> serverMemberStatus = serverRedisRepository.getAllServerMemberStatus(serverId);
+
+        if (serverMemberStatus.isEmpty()) {
+            ServerMemberPresenceResponseDto responseDto = stateClient.checkServerMemberState(serverId);
+            if (responseDto.getMemberPresenceStatusList().isEmpty()) {
+                throw new ErrorHandler(ErrorStatus.SERVER_MEMBER_PRESENCE_STATE_NOT_FOUND);
+            }
+            serverMemberStatus = responseDto.getMemberPresenceStatusList().stream()
+                    .map(memberPresence -> ServerMemberStatus.builder()
+                            .memberId(memberPresence.getMemberId())
+                            .globalStatus(memberPresence.getGlobalStatus())
+                            .actualStatus(memberPresence.getActualStatus())
+                            .globalStatus(memberPresence.getGlobalStatus())
+                            .build())
+                    .toList();
+        }
+
+        Map<Long, ServerMemberStatus> statusMap = serverMemberStatus.stream()
+                .collect(Collectors.toMap(ServerMemberStatus::getMemberId, status -> status));
+
+        List<ServerMemberInfo> serverMemberInfoList = serverMembers.stream()
+                .map(member -> {
+                    ServerMemberStatus status = statusMap.get(member.getMemberId());
+
+                    return ServerReadResponseDto.convertToServerMemberInfo(member, status);
+                })
+                .collect(Collectors.toList());
+
         return ServerMemberInfoResponseDto.builder()
                 .serverId(serverId)
-                .serverMemberInfoList(
-                        serverMember.stream()
-                                .map(ServerReadResponseDto::convertToServerMemberInfo)
-                                .collect(Collectors.toList())
-                )
+                .serverMemberInfoList(serverMemberInfoList)
                 .build();
     }
 

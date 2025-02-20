@@ -93,7 +93,7 @@ public class MemberService {
         MemberEventDto memberEventDto = MemberEventDto.builder()
                 .memberId(memberId)
                 .type(MemberEventType.MEMBER_PRESENCE_UPDATE)
-                .globalStatus(member.getCustomPresenceStatus())
+                .customStatus(member.getCustomPresenceStatus())
                 .build();
         kafkaProducerService.sendMemberEvent(memberEventDto);
 
@@ -150,7 +150,7 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
         // 개발용 로그
-        log.info("[Member] Feign 에서 요청 받은 멤버 정보 = memberId = {}, name = {}, nickname = {}, email = {}, avatarUrl = {}, bannerUrl = {}, introduce = {}, globalStatus = {}",
+        log.info("[Member] Feign 에서 요청 받은 멤버 정보 = memberId = {}, name = {}, nickname = {}, email = {}, avatarUrl = {}, bannerUrl = {}, introduce = {}, customStatus = {}",
                 memberId, member.getName(), member.getNickname(), member.getEmail(), member.getAvatarUrl(), member.getBannerUrl(), member.getIntroduce(), member.getCustomPresenceStatus());
         return MemberInfoResponseDto.builder()
                 .memberId(memberId)
@@ -160,20 +160,20 @@ public class MemberService {
                 .avatarUrl(member.getAvatarUrl())
                 .bannerUrl(member.getBannerUrl())
                 .introduce(member.getIntroduce())
-                .globalStatus(member.getCustomPresenceStatus())
+                .customStatus(member.getCustomPresenceStatus())
                 .build();
     }
 
     /**
      * 멤버 전역 상태 조회
      */
-    public MemberGlobalStatusResponseDto getMemberGlobalStatus(Long memberId) {
+    public MemberCustomStatusResponseDto getMemberCustomStatus(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        return MemberGlobalStatusResponseDto.builder()
+        return MemberCustomStatusResponseDto.builder()
                 .memberId(memberId)
-                .globalStatus(member.getCustomPresenceStatus())
+                .customStatus(member.getCustomPresenceStatus())
                 .build();
     }
 }

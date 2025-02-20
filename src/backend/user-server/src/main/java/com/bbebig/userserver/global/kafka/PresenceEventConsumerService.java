@@ -31,13 +31,17 @@ public class PresenceEventConsumerService {
 
 	private void handleEvent(PresenceEventDto presenceEventDto) {
 		// 개발용 로그
-		log.info("[State] PresenceEventConsumerService: 온라인 이벤트 처리. memberId: {}, globalStatus: {}, actualStatus: {}, lastActivityTime: {}", presenceEventDto.getMemberId(), presenceEventDto.getGlobalStatus(), presenceEventDto.getActualStatus(), presenceEventDto.getLastActivityTime());
+		log.info("[State] PresenceEventConsumerService: 온라인 이벤트 처리. memberId: {}, globalStatus: {}, actualStatus: {}, customStatus: {}, lastActivityTime: {}",
+				presenceEventDto.getMemberId(), presenceEventDto.getGlobalStatus(), presenceEventDto.getActualStatus(),
+				presenceEventDto.getCustomStatus(), presenceEventDto.getLastActivityTime());
+
 		Long memberId = presenceEventDto.getMemberId();
+
 		List<Long> friendMemberIds = friendService.getMemberFriendIdList(memberId);
 		for (Long friendMemberId : friendMemberIds) {
 			FriendPresenceEventDto friendPresenceEventDto = FriendPresenceEventDto.builder()
 					.memberId(friendMemberId)
-					.friendId(memberId)
+					.friendMemberId(memberId)
 					.globalStatus(presenceEventDto.getGlobalStatus())
 					.build();
 			kafkaProducerService.sendNotificationEvent(friendPresenceEventDto);

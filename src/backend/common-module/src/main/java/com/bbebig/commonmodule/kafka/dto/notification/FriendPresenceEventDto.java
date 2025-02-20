@@ -12,8 +12,6 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper=false)
 public class FriendPresenceEventDto extends NotificationEventDto {
 
-	private Long friendId;
-
 	private Long friendMemberId;
 
 	private PresenceType globalStatus;
@@ -22,11 +20,11 @@ public class FriendPresenceEventDto extends NotificationEventDto {
 	public FriendPresenceEventDto(
 			@JsonProperty("memberId") Long memberId,
 			@JsonProperty("type") NotificationEventType type,
-			@JsonProperty("friendId") Long friendId,
+			@JsonProperty("friendMemberId") Long friendMemberId,
 			@JsonProperty("globalStatus") PresenceType globalStatus
 	) {
 		super(memberId, type);
-		this.friendId = friendId;
+		this.friendMemberId = friendMemberId;
 		this.globalStatus = globalStatus;
 	}
 

@@ -13,9 +13,9 @@ public class UserFeignResponseDto {
 	@Builder
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class MemberGlobalStatusResponseDto {
+	public static class MemberCustomStatusResponseDto {
 		private Long memberId;
-		private PresenceType globalStatus;
+		private PresenceType customStatus;
 	}
 
 	@Data
@@ -30,6 +30,6 @@ public class UserFeignResponseDto {
 		private String avatarUrl;
 		private String bannerUrl;
 		private String introduce;
-		private PresenceType globalStatus;
+		private PresenceType customStatus;
 	}
 }
