@@ -125,16 +125,16 @@ function ChatArea({ friend, channelId, isVoice, onClose }: ChatAreaProps) {
                     avatarUrl={
                       isMyMessage
                         ? mySelfData.avatarUrl
-                        : (friend?.friendAvatarUrl ?? '/image/common/default-avatar.png')
+                        : (friend?.memberAvatarUrl ?? '/image/common/default-avatar.png')
                     }
                     statusColor='black'
                     status={isMyMessage ? mySelfData.customPresenceStatus : 'ONLINE'}
-                    name={isMyMessage ? mySelfData.name : (friend?.friendName ?? '닉네임')}
+                    name={isMyMessage ? mySelfData.name : (friend?.memberNickname ?? '닉네임')}
                   />
 
                   <div className='flex-1'>
                     <div className='text-sm font-bold text-discord-font-color-normal'>
-                      {isMyMessage ? mySelfData.name : (friend?.friendName ?? '닉네임')}
+                      {isMyMessage ? mySelfData.name : (friend?.memberNickname ?? '닉네임')}
                       <span className='ml-2 text-xs text-gray-400'>
                         {isToday
                           ? `오늘 ${ampm} ${hour12}:${minutes}`
