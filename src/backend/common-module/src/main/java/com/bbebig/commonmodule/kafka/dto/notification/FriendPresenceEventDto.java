@@ -26,6 +26,7 @@ public class FriendPresenceEventDto extends NotificationEventDto {
 		super(memberId, type);
 		this.friendMemberId = friendMemberId;
 		this.globalStatus = globalStatus;
+		this.actualStatus = actualStatus;
 	}
 
 
