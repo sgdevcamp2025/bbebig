@@ -9,7 +9,7 @@ interface UserListItemProps {
   avatarUrl: string
   name: string
   description: string
-  status: CustomPresenceStatus
+  status?: CustomPresenceStatus
   statusColor?: string
   iconType: 'default' | 'request' | 'response'
   handleNavigateToDM?: (id: number) => void

@@ -2,29 +2,27 @@ import { ChangeEvent, useState } from 'react'
 
 import SearchInput from '@/components/search-input'
 import UserListItem from '@/components/user-list-item'
-import { statusKo } from '@/constants/status'
 import { useGetFriendPendingList } from '@/hooks/queries/user/useGetFriendPendingList'
-import { CustomPresenceStatus } from '@/types/user'
 
 function PendingFriends() {
   const friendPendingList = useGetFriendPendingList()
-  console.log(friendPendingList)
   const [searchValue, setSearchValue] = useState('')
 
-  const filteredFriends = Array.isArray(friendPendingList)
-    ? friendPendingList.filter((friend) => new RegExp(searchValue, 'i').test(friend.friendName))
-    : []
-
-  const responsePendingFriends = filteredFriends.filter(
-    (friend: { friendStatus: string }) => friend.friendStatus === 'RESPONSE_PENDING'
-  )
-  const requestPendingFriends = filteredFriends.filter(
-    (friend: { friendStatus: string }) => friend.friendStatus === 'REQUEST_PENDING'
-  )
+  const responsePendingFriends = friendPendingList.receivePendingFriends
+  const requestPendingFriends = friendPendingList.sendPendingFriends
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value)
   }
+
+  const allPendingList = [
+    ...(friendPendingList.receivePendingFriends || []),
+    ...(friendPendingList.sendPendingFriends || [])
+  ]
+
+  const filteredFriends = searchValue
+    ? allPendingList.filter((friend) => new RegExp(searchValue, 'i').test(friend.memberName))
+    : allPendingList
 
   const handleClear = () => {
     setSearchValue('')
@@ -43,17 +41,25 @@ function PendingFriends() {
         {responsePendingFriends.length > 0 && (
           <div className='flex flex-col gap-2'>
             <div className='text-discord-font-color-muted text-xs font-semibold mb-2'>
-              받음 — {responsePendingFriends.length}
+              받음 — {friendPendingList.receivePendingFriendsCount}
             </div>
             {responsePendingFriends.map(
-              (friend: { id: number; avatarUrl: string; name: string; status: string }) => (
+              (friend: {
+                friendId: number
+                memberId: number
+                memberName: string
+                memberNickname: string
+                memberAvatarUrl: string | null
+                memberBannerUrl: string | null
+                memberIntroduce: string | null
+                memberEmail: string
+              }) => (
                 <UserListItem
-                  key={friend.id}
-                  id={friend.id}
-                  avatarUrl={friend.avatarUrl ?? '/image/common/default-avatar.png'}
-                  name={friend.name}
-                  status={friend.status.toString() as CustomPresenceStatus}
-                  description={statusKo[friend.status.toString() as CustomPresenceStatus]}
+                  key={friend.friendId}
+                  id={friend.memberId}
+                  avatarUrl={friend.memberAvatarUrl ?? '/image/common/default-avatar.png'}
+                  name={friend.memberName}
+                  description={friend.memberEmail}
                   statusColor='black'
                   iconType='response'
                 />
@@ -65,17 +71,25 @@ function PendingFriends() {
         {requestPendingFriends.length > 0 && (
           <div className='flex flex-col gap-2'>
             <div className='text-discord-font-color-muted text-xs font-semibold mb-2'>
-              요청 — {requestPendingFriends.length}
+              요청 — {friendPendingList.pendingFriendsCount}
             </div>
             {requestPendingFriends.map(
-              (friend: { id: number; avatarUrl: string; name: string; status: string }) => (
+              (friend: {
+                friendId: number
+                memberId: number
+                memberName: string
+                memberNickname: string
+                memberAvatarUrl: string | null
+                memberBannerUrl: string | null
+                memberIntroduce: string | null
+                memberEmail: string
+              }) => (
                 <UserListItem
-                  key={friend.id}
-                  id={friend.id}
-                  avatarUrl={friend.avatarUrl ?? '/image/common/default-avatar.png'}
-                  name={friend.name}
-                  status={friend.status.toString() as CustomPresenceStatus}
-                  description={statusKo[friend.status.toString() as CustomPresenceStatus]}
+                  key={friend.friendId}
+                  id={friend.memberId}
+                  avatarUrl={friend.memberAvatarUrl ?? '/image/common/default-avatar.png'}
+                  name={friend.memberName}
+                  description={friend.memberEmail}
                   statusColor='black'
                   iconType='request'
                 />
