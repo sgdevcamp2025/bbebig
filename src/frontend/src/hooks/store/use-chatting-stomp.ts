@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import { chattingStompInstance } from '@/apis/config/stomp-instance'
 import { COOKIE_KEYS } from '@/constants/keys'
-import { ChatMessageRequest } from '@/types/stomp'
+import { ChatMessageRequest } from '@/types/ChatStompEvent'
 import cookie from '@/utils/cookie'
 
 export const useChattingStomp = () => {
