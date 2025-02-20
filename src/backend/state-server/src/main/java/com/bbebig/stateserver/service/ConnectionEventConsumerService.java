@@ -69,6 +69,7 @@ public class ConnectionEventConsumerService {
 						.build();
 			} else {
 				presenceEventDto = DtoConverter.convertMemberPresenceStatusToPresenceEventDto(memberPresenceStatus);
+				memberPresenceStatus.deleteDevice(connectionEventDto.getSocketSessionId());
 			}
 			kafkaProducerService.sendPresenceEvent(presenceEventDto);
 		}
