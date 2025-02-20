@@ -39,6 +39,7 @@ public class PresenceEventConsumerService {
 					.memberId(friendMemberId)
 					.friendId(memberId)
 					.globalStatus(presenceEventDto.getGlobalStatus())
+					.actualStatus(presenceEventDto.getActualStatus())
 					.build();
 			kafkaProducerService.sendNotificationEvent(friendPresenceEventDto);
 		}

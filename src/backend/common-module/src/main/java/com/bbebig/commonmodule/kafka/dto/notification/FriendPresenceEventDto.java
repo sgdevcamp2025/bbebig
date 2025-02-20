@@ -18,16 +18,20 @@ public class FriendPresenceEventDto extends NotificationEventDto {
 
 	private PresenceType globalStatus;
 
+	private PresenceType actualStatus;
+
 	@JsonCreator
 	public FriendPresenceEventDto(
 			@JsonProperty("memberId") Long memberId,
 			@JsonProperty("type") NotificationEventType type,
 			@JsonProperty("friendId") Long friendId,
-			@JsonProperty("globalStatus") PresenceType globalStatus
+			@JsonProperty("globalStatus") PresenceType globalStatus,
+			@JsonProperty("actualStatus") PresenceType actualStatus
 	) {
 		super(memberId, type);
 		this.friendId = friendId;
 		this.globalStatus = globalStatus;
+		this.actualStatus = actualStatus;
 	}
 
 
