@@ -32,7 +32,12 @@ function ChannelPage() {
   }
 
   if (currentChannel.channelType === 'CHAT') {
-    return <TextComponent channelId={Number(channelId)} />
+    return (
+      <TextComponent
+        channelId={Number(channelId)}
+        serverId={Number(serverId)}
+      />
+    )
   }
 
   if (currentChannel.channelType === 'VOICE') {

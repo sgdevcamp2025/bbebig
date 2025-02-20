@@ -11,6 +11,7 @@ import ServerIcon from '@/components/server-icon'
 import { statusKo } from '@/constants/status'
 import { useGetServer } from '@/hooks/queries/server/useGetServer'
 import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
+import useChattingStomp from '@/hooks/store/use-chatting-stomp'
 import { cn } from '@/libs/cn'
 import { useMediaSettingsStore } from '@/stores/use-media-setting.store'
 
@@ -20,6 +21,8 @@ import ServerCreateModal from './components/server-create-modal'
 import SettingModal, { SettingModalTabsID } from './components/setting-modal'
 
 const Inner = () => {
+  const { connect, disconnect, subscribeToServer } = useChattingStomp()
+
   const location = useLocation()
   const navigate = useNavigate()
   const { serverId } = useParams<{ serverId: string }>()
@@ -29,6 +32,14 @@ const Inner = () => {
       navigate('/channels/@me', { replace: true })
     }
   }, [serverId, navigate])
+
+  useEffect(() => {
+    connect()
+
+    return () => {
+      disconnect()
+    }
+  }, [])
 
   const myChannelList = useGetServer()
   const selfUser = useGetSelfUser()
@@ -50,6 +61,10 @@ const Inner = () => {
     } = await serviceService.getServersList({ serverId: serverId.toString() })
     const firstChannelId = channelInfoList[0].channelId
     navigate(`/channels/${serverId}/${firstChannelId}`)
+
+    subscribeToServer(serverId.toString(), '1', (message) => {
+      console.log(`[📩] 서버 이벤트 수신 (${serverId}):`, message)
+    })
   }
 
   const handleClickMyServer = () => {
