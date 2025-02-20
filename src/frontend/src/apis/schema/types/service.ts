@@ -47,7 +47,7 @@ export interface GetServerListResponseSchema {
     channelName: string
     channelType: ChannelType
     privateStatus: boolean
-    channelMemberList: number[]
+    channelMemberIdList: number[]
   }[]
 }
 
@@ -67,11 +67,10 @@ export interface GetServerMemebersResponseSchema {
   serverId: number
   serverMemberInfoList: {
     memberId: number
-    nickname: string
+    nickName: string
     avatarUrl: string | null
     bannerUrl: string | null
-    joinAt: string
-    customPresenceStatus: CustomPresenceStatus
+    globalStatus: CustomPresenceStatus
   }[]
 }
 
