@@ -3,37 +3,23 @@ import { ChangeEvent, useState } from 'react'
 import SearchInput from '@/components/search-input'
 import UserListItem from '@/components/user-list-item'
 import { statusKo } from '@/constants/status'
-import { Friend } from '@/types/friend'
-
-const DUMMY_FRIENDS: Friend[] = [
-  {
-    id: 1,
-    avatarUrl: '/image/common/default-avatar.png',
-    name: '이지형',
-    status: 'ONLINE',
-    friendStatus: 'RESPONSE_PENDING'
-  },
-  {
-    id: 2,
-    avatarUrl: '/image/common/default-avatar.png',
-    name: '김예지',
-    status: 'OFFLINE',
-    friendStatus: 'REQUEST_PENDING'
-  }
-]
+import { useGetFriendPendingList } from '@/hooks/queries/user/useGetFriendPendingList'
+import { CustomPresenceStatus } from '@/types/user'
 
 function PendingFriends() {
+  const friendPendingList = useGetFriendPendingList()
+  console.log(friendPendingList)
   const [searchValue, setSearchValue] = useState('')
 
-  const filteredFriends = DUMMY_FRIENDS.filter((friend) =>
-    friend.name.toLowerCase().includes(searchValue.toLowerCase())
-  )
+  const filteredFriends = Array.isArray(friendPendingList)
+    ? friendPendingList.filter((friend) => new RegExp(searchValue, 'i').test(friend.friendName))
+    : []
 
   const responsePendingFriends = filteredFriends.filter(
-    (friend) => friend.friendStatus === 'RESPONSE_PENDING'
+    (friend: { friendStatus: string }) => friend.friendStatus === 'RESPONSE_PENDING'
   )
   const requestPendingFriends = filteredFriends.filter(
-    (friend) => friend.friendStatus === 'REQUEST_PENDING'
+    (friend: { friendStatus: string }) => friend.friendStatus === 'REQUEST_PENDING'
   )
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
@@ -59,18 +45,20 @@ function PendingFriends() {
             <div className='text-discord-font-color-muted text-xs font-semibold mb-2'>
               받음 — {responsePendingFriends.length}
             </div>
-            {responsePendingFriends.map((friend) => (
-              <UserListItem
-                key={friend.id}
-                id={friend.id}
-                avatarUrl={friend.avatarUrl}
-                name={friend.name}
-                status={friend.status}
-                description={statusKo[friend.status]}
-                statusColor='black'
-                iconType='response'
-              />
-            ))}
+            {responsePendingFriends.map(
+              (friend: { id: number; avatarUrl: string; name: string; status: string }) => (
+                <UserListItem
+                  key={friend.id}
+                  id={friend.id}
+                  avatarUrl={friend.avatarUrl ?? '/image/common/default-avatar.png'}
+                  name={friend.name}
+                  status={friend.status.toString() as CustomPresenceStatus}
+                  description={statusKo[friend.status.toString() as CustomPresenceStatus]}
+                  statusColor='black'
+                  iconType='response'
+                />
+              )
+            )}
           </div>
         )}
 
@@ -79,18 +67,20 @@ function PendingFriends() {
             <div className='text-discord-font-color-muted text-xs font-semibold mb-2'>
               요청 — {requestPendingFriends.length}
             </div>
-            {requestPendingFriends.map((friend) => (
-              <UserListItem
-                key={friend.id}
-                id={friend.id}
-                avatarUrl={friend.avatarUrl}
-                name={friend.name}
-                status={friend.status}
-                description={statusKo[friend.status]}
-                statusColor='black'
-                iconType='request'
-              />
-            ))}
+            {requestPendingFriends.map(
+              (friend: { id: number; avatarUrl: string; name: string; status: string }) => (
+                <UserListItem
+                  key={friend.id}
+                  id={friend.id}
+                  avatarUrl={friend.avatarUrl ?? '/image/common/default-avatar.png'}
+                  name={friend.name}
+                  status={friend.status.toString() as CustomPresenceStatus}
+                  description={statusKo[friend.status.toString() as CustomPresenceStatus]}
+                  statusColor='black'
+                  iconType='request'
+                />
+              )
+            )}
           </div>
         )}
 

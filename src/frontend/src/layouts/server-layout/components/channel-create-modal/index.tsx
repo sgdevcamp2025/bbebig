@@ -30,7 +30,7 @@ const CHANNEL_TYPE_ITEMS = [
     value: 'CHAT',
     icon: (
       <img
-        src='/icon/channel/type-text.svg'
+        src='/icon/channel/type-chat.svg'
         alt='텍스트'
         width={20}
         height={20}
@@ -121,7 +121,7 @@ export function Inner({ serverId, isOpen, onClose, categoryInfo, selectCategoryI
             <div className='relative'>
               <div className='absolute left-[16px] top-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center'>
                 <img
-                  src='/icon/channel/type-text.svg'
+                  src='/icon/channel/type-chat.svg'
                   alt='텍스트'
                   width={14}
                   height={14}
