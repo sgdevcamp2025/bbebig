@@ -48,6 +48,9 @@ public class MemberPresenceStatus {
 		} else {
 			actualStatus = PresenceType.ONLINE;
 			globalStatus = Objects.requireNonNullElse(customStatus, PresenceType.ONLINE);
+			if (globalStatus == PresenceType.INVISIBLE) {
+				globalStatus = PresenceType.OFFLINE;
+			}
 		}
 
 	}
