@@ -1,6 +1,6 @@
 package com.bbebig.commonmodule.kafka.dto;
 
-import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
+import com.bbebig.commonmodule.kafka.dto.model.ChatType;
 import com.bbebig.commonmodule.kafka.dto.model.MessageEventType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -20,14 +20,16 @@ public class ChatMessageDto {
 	// UPDATE, DELETE 시 필요
 	private Long id; // 메시지 ID (Snowflake로 생성)
 
-	@NotNull(message = "채널 타입은 null일 수 없습니다.")
-	private ChannelType channelType;
+	@NotNull(message = "채팅 타입은 null일 수 없습니다.")
+	private ChatType chatType;
 
 	@NotNull(message = "메시지 타입은 null일 수 없습니다.")
 	private MessageType messageType;
 
 	@NotEmpty(message = "타입(type)은 비어 있을 수 없습니다.")
 	private MessageEventType type; // MESSAGE_CREATE, MESSAGE_UPDATE, MESSAGE_DELETE
+
+	// TODO: 추후 서버 채널과 DM 구분할 수 있도록 구현
 
 	// 채널 관련 필드
 	private Long serverId;
@@ -58,7 +60,7 @@ public class ChatMessageDto {
 	@JsonCreator
 	public ChatMessageDto(
 			@JsonProperty("id") Long id,
-			@JsonProperty("channelType") ChannelType channelType,
+			@JsonProperty("chatType") ChatType chatType,
 			@JsonProperty("messageType") MessageType messageType,
 			@JsonProperty("type") MessageEventType type,
 			@JsonProperty("serverId") Long serverId,
@@ -71,7 +73,7 @@ public class ChatMessageDto {
 			@JsonProperty("updatedAt") LocalDateTime updatedAt
 	) {
 		this.id = id;
-		this.channelType = channelType;
+		this.chatType = chatType;
 		this.messageType = messageType;
 		this.type = type;
 		this.serverId = serverId;

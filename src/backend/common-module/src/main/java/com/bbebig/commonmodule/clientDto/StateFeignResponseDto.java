@@ -36,16 +36,19 @@ public class StateFeignResponseDto {
 	@AllArgsConstructor
 	public static class ServerMemberPresenceResponseDto {
 		private Long serverId;
-		private List<MemberPresenceStatusDto> memberPresenceStatusList;
+		private List<MemberPresenceResponseDto> memberPresenceStatusList;
 	}
 
 	@Data
 	@Builder
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class MemberPresenceStatusDto {
+
+	public static class MemberPresenceResponseDto {
 		private Long memberId;
 		private PresenceType globalStatus;
 		private PresenceType actualStatus;
+		private PresenceType customStatus;
 	}
-}
+
+

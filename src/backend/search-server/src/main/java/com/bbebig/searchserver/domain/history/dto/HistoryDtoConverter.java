@@ -1,6 +1,7 @@
 package com.bbebig.searchserver.domain.history.dto;
 
 import com.bbebig.commonmodule.kafka.dto.ChatMessageDto;
+import com.bbebig.commonmodule.kafka.dto.model.MessageEventType;
 import com.bbebig.commonmodule.redis.domain.ChannelChatMessageDto;
 import com.bbebig.searchserver.domain.history.domain.ChannelChatMessage;
 import com.bbebig.searchserver.domain.search.domain.ChannelChatMessageElastic;
@@ -20,7 +21,7 @@ public class HistoryDtoConverter {
 				.content(messageDto.getContent())
 				.attachedFiles(messageDto.getAttachedFiles())
 				.createdAt(messageDto.getCreatedAt() != null ? messageDto.getCreatedAt() : null)
-				.updatedAt(messageDto.getType().equals("MESSAGE_UPDATE") ? messageDto.getUpdatedAt() : null)
+				.updatedAt(messageDto.getType() == MessageEventType.MESSAGE_UPDATE ? messageDto.getUpdatedAt() : null)
 				.messageType(messageDto.getMessageType())
 				.build();
 	}
@@ -34,7 +35,7 @@ public class HistoryDtoConverter {
 				.attachedFiles(messageDto.getAttachedFiles())
 				.targetMemberIds(messageDto.getTargetMemberIds())
 				.createdAt(messageDto.getCreatedAt() != null ? messageDto.getCreatedAt() : null)
-				.updatedAt(messageDto.getType().equals("MESSAGE_UPDATE") ? messageDto.getUpdatedAt() : null)
+				.updatedAt(messageDto.getType() == MessageEventType.MESSAGE_UPDATE ? messageDto.getUpdatedAt() : null)
 				.messageType(messageDto.getMessageType())
 				.build();
 	}

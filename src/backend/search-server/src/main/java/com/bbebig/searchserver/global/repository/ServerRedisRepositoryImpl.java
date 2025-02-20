@@ -1,6 +1,7 @@
 package com.bbebig.searchserver.global.repository;
 
 import com.bbebig.commonmodule.redis.domain.ServerMemberStatus;
+import com.bbebig.commonmodule.redis.repository.ServerRedisRepository;
 import com.bbebig.commonmodule.redis.util.ServerRedisKeys;
 import com.bbebig.searchserver.domain.history.domain.ChannelChatMessage;
 import jakarta.annotation.PostConstruct;
@@ -18,7 +19,7 @@ import java.util.Set;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class ServerRedisRepositoryImpl implements com.bbebig.commonmodule.redis.repository.ServerRedisRepository {
+public class ServerRedisRepositoryImpl implements ServerRedisRepository {
 
 	// Long (Set) 전용
 	private final RedisTemplate<String, Long> redisSetTemplate;
@@ -26,7 +27,7 @@ public class ServerRedisRepositoryImpl implements com.bbebig.commonmodule.redis.
 
 	// ServerMemberStatus (Hash) 전용
 	private final RedisTemplate<String, ServerMemberStatus> redisServerStatusTemplate;
-	private HashOperations<String, Long, ServerMemberStatus> hashOperations;
+	private HashOperations<String, String, ServerMemberStatus> hashOperations;
 
 	// ChannelChatMessage (List) 전용
 	private final RedisTemplate<String, ChannelChatMessage> redisChannelChatMessageTemplate;
@@ -88,13 +89,13 @@ public class ServerRedisRepositoryImpl implements com.bbebig.commonmodule.redis.
 	@Override
 	public void saveServerMemberPresenceStatus(Long serverId, Long memberId, ServerMemberStatus status) {
 		String key = ServerRedisKeys.getServerMemberPresenceStatusKey(serverId);
-		hashOperations.put(key, memberId, status);
+		hashOperations.put(key, memberId.toString(), status);
 	}
 
 	@Override
 	public void removeServerMemberPresenceStatus(Long serverId, Long memberId) {
 		String key = ServerRedisKeys.getServerMemberPresenceStatusKey(serverId);
-		hashOperations.delete(key, memberId);
+		hashOperations.delete(key, memberId.toString());
 	}
 
 	@Override
@@ -106,7 +107,7 @@ public class ServerRedisRepositoryImpl implements com.bbebig.commonmodule.redis.
 	@Override
 	public ServerMemberStatus getServerMemberStatus(Long serverId, Long memberId) {
 		String key = ServerRedisKeys.getServerMemberPresenceStatusKey(serverId);
-		return hashOperations.get(key, memberId);
+		return hashOperations.get(key, memberId.toString());
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package com.bbebig.serviceserver.server.dto.response;
 
+import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
+import com.bbebig.commonmodule.redis.domain.ServerMemberStatus;
 import com.bbebig.serviceserver.category.entity.Category;
 import com.bbebig.serviceserver.channel.entity.Channel;
 import com.bbebig.serviceserver.channel.entity.ChannelMember;
@@ -61,6 +63,11 @@ public class ServerReadResponseDto {
         private String avatarUrl;
         private String bannerUrl;
         private LocalDateTime joinAt;
+        private PresenceType globalStatus;
+
+        public void updateStatus(PresenceType globalStatus) {
+            this.globalStatus = globalStatus;
+        }
     }
 
     public static ServerReadResponseDto convertToServerReadResponseDto(Server server, List<Channel> channelList, List<Category> categoryList,
@@ -109,13 +116,14 @@ public class ServerReadResponseDto {
     }
 
 
-    public static ServerMemberInfo convertToServerMemberInfo(ServerMember serverMember) {
+    public static ServerMemberInfo convertToServerMemberInfo(ServerMember member, ServerMemberStatus status) {
         return ServerMemberInfo.builder()
-                .memberId(serverMember.getMemberId())
-                .nickName(serverMember.getMemberNickname())
-                .avatarUrl(serverMember.getMemberAvatarImageUrl())
-                .bannerUrl(serverMember.getMemberBannerImageUrl())
-                .joinAt(serverMember.getCreatedAt())
+                .memberId(member.getMemberId())
+                .nickName(member.getMemberNickname())
+                .avatarUrl(member.getMemberAvatarImageUrl())
+                .bannerUrl(member.getMemberBannerImageUrl())
+                .joinAt(member.getCreatedAt())
+                .globalStatus(status != null ? status.getGlobalStatus() : PresenceType.OFFLINE)
                 .build();
     }
 

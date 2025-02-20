@@ -43,10 +43,10 @@ public class FeignController {
 			@ApiResponse(responseCode = "400", description = "", content = @Content)
 	})
 	@GetMapping("/members/{memberId}/global-status")
-	public MemberGlobalStatusResponseDto getMemberGlobalStatus(
+	public MemberCustomStatusResponseDto getMemberCustomStatus(
 			@PathVariable Long memberId
 	) {
 		log.info("[Member] 멤버 전역 상태 조회 요청: memberId = {}", memberId);
-		return memberService.getMemberGlobalStatus(memberId);
+		return memberService.getMemberCustomStatus(memberId);
 	}
 }

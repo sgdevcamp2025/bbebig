@@ -31,7 +31,7 @@ public class MemberEventConsumerService {
 		if (memberEventDto.getType().equals(MemberEventType.MEMBER_DELETE)) {
 			memberRedisRepositoryImpl.deleteMemberPresenceStatus(memberEventDto.getMemberId());
 		} else if (memberEventDto.getType().equals(MemberEventType.MEMBER_PRESENCE_UPDATE)) {
-			stateService.updateMemberPresenceStatus(memberEventDto.getMemberId(), memberEventDto.getGlobalStatus());
+			stateService.updateMemberPresenceStatus(memberEventDto.getMemberId(), memberEventDto.getCustomStatus());
 		}
 		else {
 			if (!memberEventDto.getType().equals(MemberEventType.MEMBER_CREATE)) {
