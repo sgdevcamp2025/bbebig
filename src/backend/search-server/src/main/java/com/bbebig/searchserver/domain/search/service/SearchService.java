@@ -6,6 +6,8 @@ import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.json.JsonData;
+import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
+import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.searchserver.domain.search.domain.ChannelChatMessageElastic;
 import com.bbebig.searchserver.domain.search.domain.DmChatMessageElastic;
 import com.bbebig.searchserver.domain.search.dto.SearchMessageDtoConverter;
@@ -209,7 +211,7 @@ public class SearchService {
 	private void checkOptionValid(List<SearchOption> options) {
 		if (options == null || options.isEmpty()) {
 			log.warn("검색 옵션이 비어 있습니다. 검색을 수행할 수 없습니다.");
-			throw new IllegalArgumentException("At least one search option must be provided.");
+			throw new ErrorHandler(ErrorStatus.SEARCH_OPTION_INVALID);
 		}
 	}
 

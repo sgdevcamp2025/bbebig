@@ -1,6 +1,8 @@
 package com.bbebig.searchserver.domain.search.service;
 
 
+import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
+import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.*;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.status.ServerActionStatus;
 import com.bbebig.commonmodule.kafka.dto.serverEvent.status.ServerChannelStatus;
@@ -21,7 +23,7 @@ public class ServerEventConsumerService {
 	public void consumeForServerEvent(ServerEventDto serverEventDto) {
 		if (serverEventDto == null) {
 			log.error("[State] ServerEventConsumerService: 서버 이벤트 정보 없음");
-			return;
+			throw new ErrorHandler(ErrorStatus.KAFKA_CONSUME_NULL_EVENT);
 		}
 
 		if (serverEventDto.getType().equals(ServerEventType.SERVER_ACTION)) {
@@ -35,6 +37,7 @@ public class ServerEventConsumerService {
 				serverEventDto.getType().equals(ServerEventType.SERVER_MEMBER_ACTION) ||
 					serverEventDto.getType().equals(ServerEventType.SERVER_MEMBER_PRESENCE))) {
 				log.error("[State] ServerEventConsumerService: 서버 이벤트 타입이 잘못되었습니다. serverEventDto: {}", serverEventDto);
+				throw new ErrorHandler(ErrorStatus.INVALID_SERVER_EVENT_TYPE);
 			}
 		}
 	}

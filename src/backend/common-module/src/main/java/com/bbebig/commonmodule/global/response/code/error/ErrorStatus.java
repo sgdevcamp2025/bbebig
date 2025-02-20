@@ -70,6 +70,7 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_SERVER_EVENT_TYPE(HttpStatus.SERVICE_UNAVAILABLE, "KAFKA01", "유효하지 않은 서버 이벤트 타입입니다."),
     INVALID_NOTIFICATION_EVENT_TYPE(HttpStatus.SERVICE_UNAVAILABLE, "KAFKA02", "유효하지 않은 알림 이벤트 타입입니다."),
     INVALID_PRESENCE_EVENT_TYPE(HttpStatus.SERVICE_UNAVAILABLE, "KAFKA03", "유효하지 않은 프레즌스 이벤트 타입입니다."),
+    INVALID_MESSAGE_EVENT_TYPE(HttpStatus.SERVICE_UNAVAILABLE, "KAFKA04", "유효하지 않은 메시지 이벤트 타입입니다."),
 
     // MEMBER
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER401", "멤버를 찾을 수 없습니다."),
@@ -80,6 +81,13 @@ public enum ErrorStatus implements BaseErrorCode {
     FRIEND_REQUEST_NOT_PENDING(HttpStatus.BAD_REQUEST, "MEMBER406", "친구 요청 상태가 아닙니다."),
     UNAUTHORIZED_FRIEND_ACTION(HttpStatus.FORBIDDEN, "MEMBER407", "본인의 친구 관계가 아닙니다."),
     FRIEND_REQUEST_SELF(HttpStatus.BAD_REQUEST, "MEMBER408", "자기 자신에게 친구 요청을 보낼 수 없습니다."),
+
+    // SEARCH
+    CANNOT_MODIFY_DELETED_MESSAGE(HttpStatus.BAD_REQUEST, "SEARCH401", "삭제된 메시지는 수정할 수 없습니다."),
+    CHAT_MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH402", "채팅 메시지를 찾을 수 없습니다."),
+    MESSAGE_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "SEARCH403", "이미 삭제된 메시지입니다."),
+    SEARCH_OPTION_INVALID(HttpStatus.BAD_REQUEST, "SEARCH404", "검색 옵션을 확인해주세요."),
+    CHAT_TYPE_INVALID(HttpStatus.BAD_REQUEST, "SEARCH405", "채팅 타입을 확인해주세요."),
     ;
 
     private final HttpStatus httpStatus;
