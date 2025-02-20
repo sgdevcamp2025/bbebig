@@ -1,7 +1,5 @@
 package com.bbebig.userserver.friend.dto.response;
 
-import com.bbebig.commonmodule.clientDto.StateFeignResponseDto;
-import com.bbebig.commonmodule.clientDto.StateFeignResponseDto.MemberPresenceStatusDto;
 import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
 import com.bbebig.commonmodule.redis.domain.MemberPresenceStatus;
 import com.bbebig.userserver.friend.entity.Friend;
@@ -43,7 +41,6 @@ public class FriendResponseDto {
 		private String memberBannerUrl;
 		private String memberIntroduce;
 		private String memberEmail;
-		private PresenceType actualStatus;
 		private PresenceType globalStatus;
 		private LocalDateTime createdAt;
 	}
@@ -72,7 +69,6 @@ public class FriendResponseDto {
 				.memberBannerUrl(member.getBannerUrl())
 				.memberIntroduce(member.getIntroduce())
 				.memberEmail(member.getEmail())
-				.actualStatus(statusDto.getActualStatus())
 				.globalStatus(statusDto.getGlobalStatus())
 				.build();
 	}
