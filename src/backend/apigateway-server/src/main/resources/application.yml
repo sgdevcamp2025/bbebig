@@ -134,6 +134,12 @@ spring:
           filters:
             - StripPrefix=1
 
+        # 시그널링 서버(Signaling Server)
+        - id: signaling-server-socket
+          uri: lb://signaling-server
+          predicates:
+            - Path=/ws-stream/**
+
         # 미디어 서버(Kurento Server)
         - id: kurento-server
           uri: lb://kurento-server
