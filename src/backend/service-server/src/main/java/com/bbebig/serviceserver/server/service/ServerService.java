@@ -401,6 +401,7 @@ public class ServerService {
                 .build();
 
         // 레디스에 캐싱
+        // TODO: 주기적으로 Redis에 저장된 데이터를 PostGreSQL에 저장하는 로직 추가
         memberRedisRepository.saveServerLastInfo(memberId, serverId, lastInfo);
 
         return lastInfo;
