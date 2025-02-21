@@ -20,7 +20,7 @@ public class RedisConfig {
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		objectMapper.registerModule(new JavaTimeModule());
+		objectMapper.registerModule(new JavaTimeModule()); // ✅ JavaTimeModule 적용
 
 		// 타입 정보 활성화 (Object 직렬화 지원)
 		objectMapper.activateDefaultTyping(
