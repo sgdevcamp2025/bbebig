@@ -356,6 +356,7 @@ public class ServerService {
 
     // 서버 별 채널 마지막 방문 정보 조회
     // GET /servers/{serverId}/channels/info/member/{memberId}
+    @Transactional
     public ServerLastInfoResponseDto getServerChannelLastInfoForApi(Long memberId, Long serverId) {
         ServerLastInfo lastInfo = getServerLastInfo(memberId, serverId);
         List<ChannelLastInfo> channelLastInfoList = lastInfo.getChannelLastInfoList();
@@ -366,6 +367,7 @@ public class ServerService {
                                 .map(channelLastInfo -> ChannelLastInfoResponseDto.builder()
                                         .channelId(channelLastInfo.getChannelId())
                                         .lastReadMessageId(channelLastInfo.getLastReadMessageId())
+                                        .lastReadSequence(channelLastInfo.getLastReadSequence())
                                         .lastAccessAt(channelLastInfo.getLastAccessAt())
                                         .build())
                                 .collect(Collectors.toList())
@@ -411,6 +413,7 @@ public class ServerService {
         return ChannelLastInfo.builder()
                 .channelId(channelId)
                 .lastReadMessageId(channelMember.getLastReadMessageId())
+                .lastReadSequence(channelMember.getLastReadSequence())
                 .lastAccessAt(channelMember.getLastAccessAt())
                 .build();
     }

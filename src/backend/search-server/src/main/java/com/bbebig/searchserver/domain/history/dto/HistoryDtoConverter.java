@@ -2,7 +2,6 @@ package com.bbebig.searchserver.domain.history.dto;
 
 import com.bbebig.commonmodule.kafka.dto.ChatMessageDto;
 import com.bbebig.commonmodule.kafka.dto.model.MessageEventType;
-import com.bbebig.commonmodule.redis.domain.ChannelChatMessageDto;
 import com.bbebig.searchserver.domain.history.domain.ChannelChatMessage;
 import com.bbebig.searchserver.domain.search.domain.ChannelChatMessageElastic;
 import com.bbebig.searchserver.domain.history.domain.DmChatMessage;
@@ -81,22 +80,6 @@ public class HistoryDtoConverter {
 				.lastMessageId(messages.get(messages.size() - 1).getId())
 				.totalCount(messages.size())
 				.messages(messages)
-				.build();
-	}
-
-	public static ChannelChatMessageDto convertChannelMessageToRedisDto(ChannelChatMessage message) {
-		return ChannelChatMessageDto.builder()
-				.id(message.getId())
-				.serverId(message.getServerId())
-				.sequence(message.getSequence())
-				.channelId(message.getChannelId())
-				.sendMemberId(message.getSendMemberId())
-				.content(message.getContent())
-				.attachedFiles(message.getAttachedFiles())
-				.createdAt(message.getCreatedAt())
-				.updatedAt(message.getUpdatedAt())
-				.messageType(message.getMessageType())
-				.isDeleted(message.isDeleted())
 				.build();
 	}
 

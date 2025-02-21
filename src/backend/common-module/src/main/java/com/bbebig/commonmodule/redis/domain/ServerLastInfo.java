@@ -27,10 +27,10 @@ public class ServerLastInfo {
 		return this.channelLastInfoList.stream().anyMatch(channelLastInfo -> channelLastInfo.getChannelId().equals(channelId));
 	}
 
-	public void updateChannelLastInfo(Long channelId, Long lastReadMessageId, LocalDateTime lastAccessAt) {
+	public void updateChannelLastInfo(Long channelId, Long lastReadMessageId, Long lastReadSequence, LocalDateTime lastAccessAt) {
 		for (ChannelLastInfo channelLastInfo : this.channelLastInfoList) {
 			if (channelLastInfo.getChannelId().equals(channelId)) {
-				channelLastInfo.update(lastReadMessageId, lastAccessAt);
+				channelLastInfo.update(lastReadMessageId, lastReadSequence, lastAccessAt);
 				return;
 			}
 		}

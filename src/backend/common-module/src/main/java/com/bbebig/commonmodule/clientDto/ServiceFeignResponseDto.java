@@ -63,6 +63,7 @@ public class ServiceFeignResponseDto {
 	public static class ChannelLastInfoResponseDto {
 		private Long channelId;
 		private Long lastReadMessageId;
+		private Long lastReadSequence;
 		private LocalDateTime lastAccessAt;
 	}
 

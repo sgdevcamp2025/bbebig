@@ -18,10 +18,13 @@ public class ChannelLastInfo {
 
 	private Long lastReadMessageId;
 
+	private Long lastReadSequence;
+
 	private LocalDateTime lastAccessAt;
 
-	public void update(Long lastReadMessageId, LocalDateTime lastAccessAt) {
+	public void update(Long lastReadMessageId, Long lastReadSequence, LocalDateTime lastAccessAt) {
 		this.lastReadMessageId = lastReadMessageId;
+		this.lastReadSequence = lastReadSequence;
 		this.lastAccessAt = lastAccessAt;
 	}
 }

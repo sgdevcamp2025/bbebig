@@ -51,23 +51,23 @@ public class ChannelEventConsumerService {
 		ChannelMember channelMember = channelMemberRepository.findByServerMemberIdAndChannelId(memberId, channelId)
 				.orElseThrow(() -> new ErrorHandler(ErrorStatus.CHANNEL_MEMBER_NOT_FOUND));
 
-		channelMember.updateLastInfo(channelEventDto.getLastReadMessageId(), channelEventDto.getEventTime());
-		channelMemberRepository.save(channelMember);
+		channelMember.updateLastInfo(channelEventDto.getLastReadMessageId(), channelEventDto.getLastReadSequence(),channelEventDto.getEventTime());
 
 		if (memberRedisRepositoryImpl.existsServerLastInfo(memberId, channelEventDto.getServerId())) {
-			ServerLastInfo serverChannelLastInfo = memberRedisRepositoryImpl.getServerLastInfo(memberId, channelEventDto.getServerId());
-			if (!serverChannelLastInfo.existChannelLastInfo(channelId)) {
-				serverChannelLastInfo.addChannelLastInfo(
+			ServerLastInfo serverLastInfo = memberRedisRepositoryImpl.getServerLastInfo(memberId, channelEventDto.getServerId());
+			if (!serverLastInfo.existChannelLastInfo(channelId)) {
+				serverLastInfo.addChannelLastInfo(
 						ChannelLastInfo.builder()
 								.channelId(channelId)
 								.lastReadMessageId(channelEventDto.getLastReadMessageId())
 								.lastAccessAt(channelEventDto.getEventTime())
+								.lastReadSequence(channelEventDto.getLastReadSequence())
 								.build()
 				);
 				log.error("[State] ChannelEventConsumerService: 채널 정보가 없어서 업데이트 실패. memberId: {}, channelId: {}", memberId, channelId);
 			} else {
-				serverChannelLastInfo.updateChannelLastInfo(channelId, channelEventDto.getLastReadMessageId(), channelEventDto.getEventTime());
-				memberRedisRepositoryImpl.saveServerLastInfo(memberId, channelEventDto.getServerId(), serverChannelLastInfo);
+				serverLastInfo.updateChannelLastInfo(channelId, channelEventDto.getLastReadMessageId(), channelEventDto.getLastReadSequence(),channelEventDto.getEventTime());
+				memberRedisRepositoryImpl.saveServerLastInfo(memberId, channelEventDto.getServerId(), serverLastInfo);
 			}
 		} else {
 			channelService.getChannelLastInfo(memberId, channelEventDto.getServerId());

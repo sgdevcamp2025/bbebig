@@ -29,6 +29,8 @@ public class ChannelEventDto {
 
 	private Long lastReadMessageId;
 
+	private Long lastReadSequence;
+
 	// 서버에 있는 채널일 경우
 	private Long serverId;
 
@@ -45,6 +47,7 @@ public class ChannelEventDto {
 			@JsonProperty("channelType") ChannelType channelType,
 			@JsonProperty("sessionId") String sessionId,
 			@JsonProperty("lastReadMessageId") Long lastReadMessageId,
+			@JsonProperty("lastReadSequence") Long lastReadSequence,
 			@JsonProperty("serverId") Long serverId,
 			@JsonProperty("channelId") Long channelId,
 			@JsonProperty("eventTime") LocalDateTime eventTime
@@ -54,6 +57,7 @@ public class ChannelEventDto {
 		this.channelType = channelType;
 		this.sessionId = sessionId;
 		this.lastReadMessageId = lastReadMessageId;
+		this.lastReadSequence = lastReadSequence;
 		this.serverId = serverId;
 		this.channelId = channelId;
 		this.eventTime = eventTime;
