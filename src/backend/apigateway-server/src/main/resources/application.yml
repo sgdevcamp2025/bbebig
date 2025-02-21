@@ -21,6 +21,7 @@ spring:
           '[/**]': # 모든 요청에 대해 CORS 적용
             allowedOrigins:
               - "https://bbebig.netlify.app"
+              - "https://specially-mighty-titmouse.ngrok-free.app"
               - "http://localhost:5173"
               - "http://localhost:5174"
               - "http://localhost:5175"
