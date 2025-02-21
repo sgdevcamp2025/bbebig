@@ -4,16 +4,16 @@ import { CustomPresenceStatus } from '@/types/user'
 
 import Avatar from '../avatar'
 
-interface UserListItemProps {
+interface InnerProps {
   id: number
   avatarUrl: string
   name: string
   description: string
-  status: CustomPresenceStatus
+  status?: CustomPresenceStatus
   statusColor?: string
   iconType: 'default' | 'request' | 'response'
-  handleNavigateToDM?: (id: number) => void
-  handleDMIconClick?: (e: React.MouseEvent<HTMLButtonElement>, id: number) => void
+  handleNavigateToDM?: () => void
+  handleDMIconClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
 }
 
 const ICON_PATH = {
@@ -23,7 +23,6 @@ const ICON_PATH = {
 } as const
 
 export function Inner({
-  id,
   avatarUrl,
   name,
   description,
@@ -32,11 +31,11 @@ export function Inner({
   iconType = 'default',
   handleNavigateToDM,
   handleDMIconClick
-}: UserListItemProps) {
+}: InnerProps) {
   return (
     <div
       className='group flex items-center justify-between p-2 hover:bg-discord-gray-500 rounded cursor-pointer'
-      onClick={() => handleNavigateToDM?.(id)}>
+      onClick={() => handleNavigateToDM?.()}>
       <div className='flex items-center gap-3'>
         <Avatar
           name={name}
@@ -57,9 +56,7 @@ export function Inner({
           <button
             key={iconPath}
             type='button'
-            onClick={
-              iconPath === '/icon/friend/dm.svg' ? (e) => handleDMIconClick?.(e, id) : undefined
-            }
+            onClick={iconPath === '/icon/friend/dm.svg' ? (e) => handleDMIconClick?.(e) : undefined}
             aria-label={'icon'}
             className='p-2 bg-discord-gray-700 hover:bg-discord-gray-800 rounded-3xl group-hover:bg-discord-gray-800'>
             <img
@@ -73,18 +70,18 @@ export function Inner({
   )
 }
 
-type UserListItemLinkProps = Omit<UserListItemProps, 'onClick'>
+type UserListItemLinkProps = Omit<InnerProps, 'onClick'>
 
 function UserListItemLink({ ...props }: UserListItemLinkProps) {
   const navigate = useNavigate()
 
-  const handleNavigateToDM = (id: number) => {
-    navigate(`/channels/@me/${id}`)
+  const handleNavigateToDM = () => {
+    navigate(`/channels/@me/${props.id}`)
   }
 
-  const handleDMIconClick = (e: React.MouseEvent<HTMLButtonElement>, id: number) => {
+  const handleDMIconClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
-    handleNavigateToDM(id)
+    handleNavigateToDM()
   }
 
   return (

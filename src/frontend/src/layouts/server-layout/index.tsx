@@ -21,10 +21,12 @@ function ServerLayout() {
 
   const serverMemebersData = useGetServerMember(serverId)
 
-  const currentChannelUsers = serverMemebersData.result.serverMemberInfoList.map((member) => ({
+  const currentChannelUsers = serverMemebersData.serverMemberInfoList.map((member) => ({
     memberId: member.memberId,
-    name: member.nickname,
-    avatarUrl: member.avatarUrl
+    nickName: member.nickName,
+    avatarUrl: member.avatarUrl,
+    bannerUrl: member.bannerUrl,
+    globalStatus: member.globalStatus
   }))
 
   const handleChannelSelect = (selectedChannelId: number) => {

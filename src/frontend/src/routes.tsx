@@ -21,7 +21,7 @@ export const router = createBrowserRouter([
   {
     path: '/',
     element: (
-      <Suspense fallback={<LoadingModal isOpen={true} />}>
+      <Suspense fallback={<LoadingModal isOpen />}>
         <RootLayout />
       </Suspense>
     ),
@@ -29,14 +29,14 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: (
-          <Suspense fallback={<LoadingModal isOpen={true} />}>
+          <Suspense fallback={<LoadingModal isOpen />}>
             <LandingPage />
           </Suspense>
         )
       },
       {
         element: (
-          <Suspense fallback={<LoadingModal isOpen={true} />}>
+          <Suspense fallback={<LoadingModal isOpen />}>
             <AuthLayout />
           </Suspense>
         ),
@@ -44,7 +44,7 @@ export const router = createBrowserRouter([
           {
             path: 'login',
             element: (
-              <Suspense fallback={<LoadingModal isOpen={true} />}>
+              <Suspense fallback={<LoadingModal isOpen />}>
                 <LoginPage />
               </Suspense>
             )
@@ -52,7 +52,7 @@ export const router = createBrowserRouter([
           {
             path: 'register',
             element: (
-              <Suspense fallback={<LoadingModal isOpen={true} />}>
+              <Suspense fallback={<LoadingModal isOpen />}>
                 <RegisterPage />
               </Suspense>
             )
@@ -62,14 +62,14 @@ export const router = createBrowserRouter([
       {
         path: 'channels',
         element: (
-          <Suspense fallback={<LoadingModal isOpen={true} />}>
+          <Suspense fallback={<LoadingModal isOpen />}>
             <MainLayout />
           </Suspense>
         ),
         children: [
           {
             element: (
-              <Suspense fallback={<LoadingModal isOpen={true} />}>
+              <Suspense fallback={<LoadingModal isOpen />}>
                 <ServerLayout />
               </Suspense>
             ),
@@ -77,7 +77,7 @@ export const router = createBrowserRouter([
               {
                 path: ':serverId/:channelId',
                 element: (
-                  <Suspense fallback={<LoadingModal isOpen={true} />}>
+                  <Suspense fallback={<LoadingModal isOpen />}>
                     <ChannelPage />
                   </Suspense>
                 )
@@ -86,7 +86,7 @@ export const router = createBrowserRouter([
           },
           {
             element: (
-              <Suspense fallback={<LoadingModal isOpen={true} />}>
+              <Suspense fallback={<LoadingModal isOpen />}>
                 <DmLayout />
               </Suspense>
             ),
@@ -94,15 +94,15 @@ export const router = createBrowserRouter([
               {
                 path: '@me',
                 element: (
-                  <Suspense fallback={<LoadingModal isOpen={true} />}>
+                  <Suspense fallback={<LoadingModal isOpen />}>
                     <FriendPage />
                   </Suspense>
                 )
               },
               {
-                path: '@me/:friendId',
+                path: '@me/:memberId',
                 element: (
-                  <Suspense fallback={<LoadingModal isOpen={true} />}>
+                  <Suspense fallback={<LoadingModal isOpen />}>
                     <DmPage />
                   </Suspense>
                 )

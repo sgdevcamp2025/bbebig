@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "vite build && echo '/* /index.html 200' | cat > build/client/_redirects",
+    "build": "tsc && vite build && echo '/* /index.html 200' | cat > build/client/_redirects",
     "dev": "vite dev",
     "start": "vite",
     "typecheck": "tsc",
