@@ -13,6 +13,8 @@ public class ServerRedisKeys {
 
 	private static final String MESSAGE_LIST_KEY_SUFFIX = ":messageList";
 
+	private static final String SERVER_SEQUENCE_KEY_SUFFIX = ":sequence";
+
 	/**
 	 * Key pattern: "server:{serverId}:serverMemberStatus"
 	 * Type: Hash
@@ -84,5 +86,22 @@ public class ServerRedisKeys {
 	 */
 	public static String getServerChannelListKey(Long serverId) {
 		return SERVER_KEY_PREFIX + serverId + SERVER_CHANNEL_LIST_KEY_SUFFIX;
+	}
+
+	/**
+	 * Key pattern: "serverChannel:{channelId}:sequence"
+	 * Type: String
+	 * Value: Long
+	 * TTL: none (만료 없이 유지. 추후에 설정)
+	 * Used by: Chat Server
+	 *
+	 * 예시 Key: serverChannel:1:sequence
+	 * 해당 String은 채널의 시퀀스를 저장.
+	 *
+	 * @param channelId 채널 ID
+	 * @return "serverChannel:{channelId}:sequence"
+	 */
+	public static String getServerChannelSequenceKey(Long channelId) {
+		return SERVER_CHANNEL_KEY_PREFIX + channelId + SERVER_SEQUENCE_KEY_SUFFIX;
 	}
 }

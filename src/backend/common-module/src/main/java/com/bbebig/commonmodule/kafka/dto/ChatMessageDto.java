@@ -29,13 +29,13 @@ public class ChatMessageDto {
 	@NotEmpty(message = "타입(type)은 비어 있을 수 없습니다.")
 	private MessageEventType type; // MESSAGE_CREATE, MESSAGE_UPDATE, MESSAGE_DELETE
 
-	// TODO: 추후 서버 채널과 DM 구분할 수 있도록 구현
-
 	// 채널 관련 필드
 	private Long serverId;
 
 	@NotNull(message = "채널 ID는 null일 수 없습니다.")
 	private Long channelId;
+
+	private Long sequence;
 
 	@NotNull(message = "발신자 ID는 null일 수 없습니다.")
 	private Long sendMemberId;
@@ -65,6 +65,7 @@ public class ChatMessageDto {
 			@JsonProperty("type") MessageEventType type,
 			@JsonProperty("serverId") Long serverId,
 			@JsonProperty("channelId") Long channelId,
+			@JsonProperty("sequence") Long sequence,
 			@JsonProperty("sendMemberId") Long sendMemberId,
 			@JsonProperty("content") String content,
 			@JsonProperty("attachedFiles") List<ChatFileDto> attachedFiles,
@@ -78,6 +79,7 @@ public class ChatMessageDto {
 		this.type = type;
 		this.serverId = serverId;
 		this.channelId = channelId;
+		this.sequence = sequence;
 		this.sendMemberId = sendMemberId;
 		this.content = content;
 		this.attachedFiles = attachedFiles;
