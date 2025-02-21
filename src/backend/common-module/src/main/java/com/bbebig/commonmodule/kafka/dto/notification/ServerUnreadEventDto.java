@@ -15,6 +15,8 @@ public class ServerUnreadEventDto extends NotificationEventDto{
 
 	private Long channelId;
 
+	private Long sequence;
+
 	private String status; // UNREAD
 
 	@JsonCreator
@@ -23,11 +25,13 @@ public class ServerUnreadEventDto extends NotificationEventDto{
 			@JsonProperty("type") NotificationEventType type,
 			@JsonProperty("serverId") Long serverId,
 			@JsonProperty("channelId") Long channelId,
+			@JsonProperty("sequence") Long sequence,
 			@JsonProperty("status") String status
 	) {
 		super(memberId, type);
 		this.serverId = serverId;
 		this.channelId = channelId;
+		this.sequence = sequence;
 		this.status = status;
 	}
 }
