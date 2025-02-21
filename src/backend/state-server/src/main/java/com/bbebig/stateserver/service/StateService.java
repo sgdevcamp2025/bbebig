@@ -50,7 +50,7 @@ public class StateService {
 			return MemberPresenceResponseDto.builder()
 					.memberId(memberId)
 					.customStatus(memberGlobalStatus.getCustomStatus())
-					.globalStatus(memberGlobalStatus.getCustomStatus())
+					.globalStatus(PresenceType.OFFLINE)
 					.actualStatus(PresenceType.OFFLINE)
 					.build();
 		}

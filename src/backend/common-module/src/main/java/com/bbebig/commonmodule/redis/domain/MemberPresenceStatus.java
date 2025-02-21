@@ -40,6 +40,14 @@ public class MemberPresenceStatus {
 		calculateGlobalStatus();
 	}
 
+	public void deleteDevice(String sessionId) {
+		if (devices == null || devices.isEmpty()) {
+			return;
+		}
+		devices.removeIf(deviceInfo -> deviceInfo.getSocketSessionId().equals(sessionId));
+		calculateGlobalStatus();
+	}
+
 	private void calculateGlobalStatus() {
 		if (devices == null || devices.isEmpty() || actualStatus == PresenceType.OFFLINE) {
 			actualStatus = PresenceType.OFFLINE;

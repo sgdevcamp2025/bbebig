@@ -38,7 +38,7 @@ public class RedisConfig {
 	@Bean
 	public Jackson2JsonRedisSerializer<Object> redisJsonSerializer() {
 		ObjectMapper redisObjectMapper = createRedisObjectMapper();
-		return new Jackson2JsonRedisSerializer<>(redisObjectMapper, Object.class); // ✅ ObjectMapper 적용
+		return new Jackson2JsonRedisSerializer<>(redisObjectMapper, Object.class);
 	}
 
 	/**
