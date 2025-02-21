@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 
-import { GetUserResponseSchema } from '@/apis/schema/types/user'
 import Avatar from '@/components/avatar'
-import { User } from '@/types/user'
+
+import { ChannelStatusBarUser } from '../status-side-bar'
 
 interface InnerProps {
-  user: User
+  user: ChannelStatusBarUser
   onSendFriendRequest: () => void
   onMoreButtonClick: () => void
 }
@@ -16,7 +16,7 @@ export function Inner({ user, onSendFriendRequest, onMoreButtonClick }: InnerPro
   const navigate = useNavigate()
 
   const sendMessage = () => {
-    navigate(`/channels/@me`, {
+    navigate(`/channels/@me/${user.memberId}`, {
       state: { initialMessage: message }
     })
   }
@@ -67,8 +67,8 @@ export function Inner({ user, onSendFriendRequest, onMoreButtonClick }: InnerPro
       <div className='relative p-4'>
         <div className='flex justify-center items-center absolute top-[-40px]'>
           <Avatar
-            name={user.name}
-            status={user.customPresenceStatus}
+            name={user.nickName}
+            status={user.globalStatus}
             avatarUrl={user.avatarUrl}
             size='md'
             statusColor='black'
@@ -77,14 +77,14 @@ export function Inner({ user, onSendFriendRequest, onMoreButtonClick }: InnerPro
         </div>
 
         <div className='flex flex-col mt-8'>
-          <span className='text-lg font-semibold text-white'>{user.name}</span>
+          <span className='text-lg font-semibold text-white'>{user.nickName}</span>
           <div className='mt-3 h-8 flex items-center bg-discord-gray-600 rounded-md justify-between px-2'>
             <input
               type='text'
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={`@${user.name} 님에게 메시지 보내기`}
+              placeholder={`@${user.nickName} 님에게 메시지 보내기`}
               className='w-full bg-transparent text-xs text-white outline-none focus-none'
             />
             <img
@@ -100,35 +100,15 @@ export function Inner({ user, onSendFriendRequest, onMoreButtonClick }: InnerPro
 }
 
 interface UserProfileCardProps {
-  userId: number
+  user: ChannelStatusBarUser
   onSendFriendRequest: () => void
   onMoreButtonClick: () => void
 }
 
-function UserProfileCard({ userId, onSendFriendRequest, onMoreButtonClick }: UserProfileCardProps) {
-  // TODO: 유저 정보 조회
-  // const { data: userData } = useSuspenseQuery({
-  //   queryKey: ['user', userId],
-  //   queryFn: () => userService.getUser(userId)
-  // })
-
-  const userData = {
-    result: {
-      user: {
-        id: userId,
-        name: '서정우',
-        email: 'seojungwoo@gmail.com',
-        avatarUrl: '/image/common/default-avatar.png',
-        bannerUrl: '/image/common/default-background.png',
-        customPresenceStatus: 'ONLINE',
-        introduce: { text: '안녕하세요', emoji: '👋' }
-      }
-    }
-  } satisfies GetUserResponseSchema
-
+function UserProfileCard({ user, onSendFriendRequest, onMoreButtonClick }: UserProfileCardProps) {
   return (
     <Inner
-      user={userData.result.user}
+      user={user}
       onSendFriendRequest={onSendFriendRequest}
       onMoreButtonClick={onMoreButtonClick}
     />

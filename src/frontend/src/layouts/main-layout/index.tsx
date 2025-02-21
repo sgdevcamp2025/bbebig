@@ -1,6 +1,6 @@
 import { PlusIcon } from 'lucide-react'
 import { Suspense, useEffect, useState } from 'react'
-import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useShallow } from 'zustand/shallow'
 
 import serviceService from '@/apis/service/service'
@@ -25,13 +25,6 @@ const Inner = () => {
 
   const location = useLocation()
   const navigate = useNavigate()
-  const { serverId } = useParams<{ serverId: string }>()
-
-  useEffect(() => {
-    if (!serverId) {
-      navigate('/channels/@me', { replace: true })
-    }
-  }, [serverId, navigate])
 
   useEffect(() => {
     connect()
@@ -62,7 +55,7 @@ const Inner = () => {
     const firstChannelId = channelInfoList[0].channelId
     navigate(`/channels/${serverId}/${firstChannelId}`)
 
-    subscribeToServer(serverId.toString(), '1', (message) => {
+    subscribeToServer(serverId.toString(), (message) => {
       console.log(`[📩] 서버 이벤트 수신 (${serverId}):`, message)
     })
   }

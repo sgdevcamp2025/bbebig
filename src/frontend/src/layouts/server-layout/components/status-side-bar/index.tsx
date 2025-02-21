@@ -1,23 +1,33 @@
 import { Suspense, useRef, useState } from 'react'
 
-import { GetServerListResponseSchema } from '@/apis/schema/types/service'
 import Avatar from '@/components/avatar'
 import LoadingIcon from '@/components/loading-icon'
+import { CustomPresenceStatus } from '@/types/user'
 
 import UserProfileCard from '../user-profile-card'
 
 interface StatusSideBarProps {
-  channelUserList: GetServerListResponseSchema['serverMemberList']
+  channelUserList: ChannelStatusBarUser[]
+}
+
+export interface ChannelStatusBarUser {
+  memberId: number
+  nickName: string
+  avatarUrl: string | null
+  bannerUrl: string | null
+  globalStatus: CustomPresenceStatus
 }
 
 function StatusSideBar({ channelUserList }: StatusSideBarProps) {
-  const onlineUsers =
-    channelUserList?.filter((user) => user.customPresenceStatus === 'ONLINE') ?? []
-  const offlineUsers =
-    channelUserList?.filter((user) => user.customPresenceStatus !== 'ONLINE') ?? []
-  const [selectedUser, setSelectedUser] = useState<
-    GetServerListResponseSchema['serverMemberList'][number] | null
-  >(null)
+  const onlineUsers = Array.isArray(channelUserList)
+    ? channelUserList.filter((user) => user.globalStatus === 'ONLINE')
+    : []
+
+  const offlineUsers = Array.isArray(channelUserList)
+    ? channelUserList.filter((user) => user.globalStatus !== 'ONLINE')
+    : []
+
+  const [selectedUser, setSelectedUser] = useState<ChannelStatusBarUser | null>(null)
   const [selectedUserPosition, setSelectedUserPosition] = useState<{ top: number; left: number }>({
     top: 0,
     left: 0
@@ -25,17 +35,14 @@ function StatusSideBar({ channelUserList }: StatusSideBarProps) {
   const sidebarRef = useRef<HTMLDivElement>(null)
 
   const handleSendFriendRequest = () => {
-    console.log('친구 요청 보내기:', selectedUser?.nickname)
+    console.log('친구 요청 보내기:', selectedUser?.nickName)
   }
 
   const handleMoreButtonClick = () => {
     console.log('더보기 메뉴')
   }
 
-  const handleClickUser = (
-    user: GetServerListResponseSchema['serverMemberList'][number],
-    event: React.MouseEvent<HTMLDivElement>
-  ) => {
+  const handleClickUser = (user: ChannelStatusBarUser, event: React.MouseEvent<HTMLDivElement>) => {
     setSelectedUser(user)
 
     if (sidebarRef.current) {
@@ -66,13 +73,13 @@ function StatusSideBar({ channelUserList }: StatusSideBarProps) {
                   className='flex items-center gap-2 cursor-pointer hover:bg-discord-gray-600 rounded p-1'
                   onClick={(event) => handleClickUser(user, event)}>
                   <Avatar
-                    name={user.nickname}
-                    avatarUrl={user.profileImageUrl ?? ''}
+                    name={user.nickName}
+                    avatarUrl={user.avatarUrl ?? ''}
                     size='sm'
-                    status={user.customPresenceStatus}
+                    status={user.globalStatus}
                     statusColor={'black'}
                   />
-                  <span className='text-sm'>{user.nickname}</span>
+                  <span className='text-sm'>{user.nickName}</span>
                 </div>
               ))}
             </div>
@@ -91,13 +98,13 @@ function StatusSideBar({ channelUserList }: StatusSideBarProps) {
                   className='flex items-center gap-2 cursor-pointer hover:bg-discord-gray-600 rounded p-1'
                   onClick={(event) => handleClickUser(user, event)}>
                   <Avatar
-                    name={user.nickname}
-                    avatarUrl={user.profileImageUrl ?? ''}
+                    name={user.nickName}
+                    avatarUrl={user.avatarUrl ?? ''}
                     size='sm'
-                    status={user.customPresenceStatus}
+                    status={user.globalStatus}
                     statusColor={'black'}
                   />
-                  <span className='text-sm'>{user.nickname}</span>
+                  <span className='text-sm'>{user.nickName}</span>
                 </div>
               ))}
             </div>
@@ -119,7 +126,7 @@ function StatusSideBar({ channelUserList }: StatusSideBarProps) {
               </div>
             }>
             <UserProfileCard
-              userId={selectedUser.memberId}
+              user={selectedUser}
               onSendFriendRequest={handleSendFriendRequest}
               onMoreButtonClick={handleMoreButtonClick}
             />

@@ -15,5 +15,5 @@ export const useGetServerMember = (
     queryFn: () => serviceService.getServerMemebers({ serverId: Number(serverId) })
   })
 
-  return data
+  return data.result
 }

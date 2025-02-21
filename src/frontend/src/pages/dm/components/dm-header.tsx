@@ -1,21 +1,21 @@
 import Avatar from '@/components/avatar'
-import { Friend } from '@/types/friend'
+import { User } from '@/types/user'
 
 interface DmHeaderProps {
-  friend: Friend
+  member: User
 }
 
-function DmHeader({ friend }: DmHeaderProps) {
+function DmHeader({ member }: DmHeaderProps) {
   return (
     <div className='flex h-12 items-center gap-2 '>
       <Avatar
         statusColor='black'
-        avatarUrl={friend.memberAvatarUrl}
+        avatarUrl={member.avatarUrl}
         size='sm'
-        name={friend.memberNickname}
+        name={member.nickname}
       />
       <span className='text-discord-font-color-normal text-base font-semibold'>
-        {friend.memberName}
+        {member.nickname}
       </span>
     </div>
   )

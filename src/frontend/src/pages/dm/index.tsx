@@ -1,22 +1,35 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { ChangeEvent, Suspense, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
+import ChatArea from '@/components/chat-area'
 import CommonHeader from '@/components/common-header'
 import LoadingIcon from '@/components/loading-icon'
-import { Friend } from '@/types/friend'
+import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
+import { useGetUserInfo } from '@/hooks/queries/user/useGetUserInfo'
 
-import DmArea from './components/dm-area'
 import DmHeader from './components/dm-header'
 
 function DmPage() {
-  const { friendId } = useParams<{ friendId: string }>()
+  const { memberId } = useParams<{ memberId: string }>()
   const [searchValue, setSearchValue] = useState('')
-  const queryClient = useQueryClient()
+  const memberInfo = useGetUserInfo(Number(memberId))
+  const selfUserInfo = useGetSelfUser()
 
-  const friendData = queryClient.getQueryData<{ result: { friends: Friend[] } }>(['friend', 'list'])
+  const targetUser = {
+    memberId: memberInfo.id,
+    nickName: memberInfo.name,
+    avatarUrl: memberInfo.avatarUrl,
+    bannerUrl: memberInfo.bannerUrl,
+    globalStatus: memberInfo.customPresenceStatus
+  }
 
-  const selectedFriend = friendData?.result.friends.find((f) => f.memberId === Number(friendId))
+  const currentUser = {
+    memberId: selfUserInfo.id,
+    nickName: selfUserInfo.name,
+    avatarUrl: selfUserInfo.avatarUrl,
+    bannerUrl: selfUserInfo.bannerUrl,
+    globalStatus: selfUserInfo.customPresenceStatus
+  }
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value)
@@ -25,8 +38,9 @@ function DmPage() {
   const handleClear = () => {
     setSearchValue('')
   }
-  if (!selectedFriend) {
-    return <div>친구를 찾을 수 없습니다.</div>
+
+  if (!memberId) {
+    return <div>사용자를 찾을 수 없습니다.</div>
   }
 
   return (
@@ -39,10 +53,16 @@ function DmPage() {
           handleClear: handleClear,
           placeholder: '채팅 검색하기'
         }}>
-        <DmHeader friend={selectedFriend} />
+        <DmHeader member={memberInfo} />
       </CommonHeader>
       <Suspense fallback={<LoadingIcon />}>
-        <DmArea friend={selectedFriend} />
+        <ChatArea
+          chatKey={memberId}
+          users={{
+            currentUser: currentUser,
+            targetUser: targetUser
+          }}
+        />
       </Suspense>
     </div>
   )

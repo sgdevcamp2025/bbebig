@@ -1,45 +1,64 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import Avatar from '@/components/avatar'
 import CommonHeader from '@/components/common-header'
-import { useGetChannelInfo } from '@/hooks/queries/channel/useGetChannelInfo'
-import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
 import { cn } from '@/libs/cn'
 import DmAreaHeader from '@/pages/dm/components/dm-area-header'
 import useStatusBarStore from '@/stores/use-status-bar-store'
-import { Friend } from '@/types/friend'
 import { Message } from '@/types/message'
+import { ChatUser } from '@/types/user'
 import timeHelper from '@/utils/format-time'
 
-interface ChatAreaProps {
-  friend?: Friend
-  channelId?: number
+export interface ChatProps {
+  chatKey: string | number
+  users: {
+    currentUser: ChatUser
+    targetUser: ChatUser
+  }
   isVoice?: boolean
+  channelName?: string
   onClose?: () => void
+  initialMessage?: string
 }
 
-function ChatArea({ friend, channelId, isVoice, onClose }: ChatAreaProps) {
-  const containerRef = useRef<HTMLDivElement>(null)
+function ChatArea({
+  chatKey,
+  users,
+  isVoice,
+  channelName,
+  onClose,
+  initialMessage = ''
+}: ChatProps) {
+  // const containerRef = useRef<HTMLDivElement>(null)
   const messagesRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const [messages, setMessages] = useState<Record<string, Message[]>>({})
+  const [inputValue, setInputValue] = useState(initialMessage)
   const [searchValue, setSearchValue] = useState('')
   const { isStatusBarOpen, toggleStatusBar } = useStatusBarStore()
-  const mySelfData = useGetSelfUser()
-  const channelInfo = useGetChannelInfo(channelId ?? 0)
-
-  const chatKey = friend?.friendId ?? channelId
+  const currentUser = users.currentUser
+  const targetUser = users.targetUser
+  const isChannel = channelName !== undefined
+  const navigate = useNavigate()
 
   const sendMessage = () => {
-    if (!inputRef.current || !chatKey) return
-    const text = inputRef.current.value.trim()
+    if (!chatKey) return
+    const text = inputValue.trim()
     if (!text) return
+
+    if (!isChannel) {
+      navigate(`/channels/@me/${targetUser.memberId}`, {
+        state: { initialMessage: text }
+      })
+      return
+    }
 
     const newMessage: Message = {
       id: crypto.randomUUID(),
-      memberId: mySelfData.id.toString(),
-      type: 'CHANNEL',
-      contents: { text: text },
+      memberId: currentUser?.memberId.toString() ?? '',
+      type: isChannel ? 'CHANNEL' : 'DM',
+      contents: { text },
       createdAt: new Date(),
       updatedAt: new Date()
     }
@@ -49,7 +68,7 @@ function ChatArea({ friend, channelId, isVoice, onClose }: ChatAreaProps) {
       [chatKey]: [...(prev[chatKey] || []), newMessage]
     }))
 
-    inputRef.current.value = ''
+    setInputValue('')
   }
 
   useEffect(() => {
@@ -79,7 +98,7 @@ function ChatArea({ friend, channelId, isVoice, onClose }: ChatAreaProps) {
   return (
     <div className='flex flex-col h-full relative'>
       <div className='absolute inset-0 flex flex-col'>
-        {channelId && (
+        {isChannel ? (
           <CommonHeader
             type={isVoice ? 'VOICE' : 'DEFAULT'}
             isStatusBarOpen={isStatusBarOpen}
@@ -96,58 +115,48 @@ function ChatArea({ friend, channelId, isVoice, onClose }: ChatAreaProps) {
               src={isVoice ? '/icon/channel/threads.svg' : '/icon/channel/type-chat.svg'}
               alt={isVoice ? '음성 채널' : '텍스트 채널'}
             />
-            <span className='text-discord-font-color-normal font-medium'>
-              {channelInfo?.channelName}
-            </span>
+            <span className='text-discord-font-color-normal font-medium'>{channelName}</span>
           </CommonHeader>
+        ) : (
+          targetUser && <DmAreaHeader member={targetUser} />
         )}
 
-        {friend && <DmAreaHeader friend={friend} />}
-
         {/* 채팅 영역 */}
-        <div
-          ref={containerRef}
-          className='flex-1 overflow-y-auto p-4 flex flex-col justify-end'>
-          {chatKey &&
-            messages[chatKey]?.map((msg) => {
-              const { isToday, ampm, hour12, minutes, year, month, day } = timeHelper(
-                msg.createdAt.toISOString()
-              )
+        <div className='flex-1 overflow-y-auto p-4 flex flex-col justify-end'>
+          {messages[chatKey]?.map((msg) => {
+            const { isToday, ampm, hour12, minutes, year, month, day } = timeHelper(
+              msg.createdAt.toISOString()
+            )
 
-              const isMyMessage = msg.memberId.toString() === mySelfData.id.toString()
+            const isMyMessage = msg.memberId === currentUser?.memberId.toString()
+            const messageUser = isMyMessage ? currentUser : targetUser
 
-              return (
-                <div
-                  key={msg.id}
-                  className='flex items-start gap-3 mb-4'>
-                  <Avatar
-                    size='sm'
-                    avatarUrl={
-                      isMyMessage
-                        ? mySelfData.avatarUrl
-                        : (friend?.memberAvatarUrl ?? '/image/common/default-avatar.png')
-                    }
-                    statusColor='black'
-                    status={isMyMessage ? mySelfData.customPresenceStatus : 'ONLINE'}
-                    name={isMyMessage ? mySelfData.name : (friend?.memberNickname ?? '닉네임')}
-                  />
+            return (
+              <div
+                key={msg.id}
+                className='flex items-start gap-3 mb-4'>
+                <Avatar
+                  size='sm'
+                  avatarUrl={messageUser?.avatarUrl ?? '/image/common/default-avatar.png'}
+                  statusColor='black'
+                  status={messageUser?.globalStatus ?? 'ONLINE'}
+                  name={messageUser?.nickName ?? '닉네임'}
+                />
 
-                  <div className='flex-1'>
-                    <div className='text-sm font-bold text-discord-font-color-normal'>
-                      {isMyMessage ? mySelfData.name : (friend?.memberNickname ?? '닉네임')}
-                      <span className='ml-2 text-xs text-gray-400'>
-                        {isToday
-                          ? `오늘 ${ampm} ${hour12}:${minutes}`
-                          : `${year}. ${month}. ${day}. ${ampm} ${hour12}:${minutes}`}
-                      </span>
-                    </div>
-                    <div className='text-sm text-discord-font-color-normal'>
-                      {msg.contents.text}
-                    </div>
+                <div className='flex-1'>
+                  <div className='text-sm font-bold text-discord-font-color-normal'>
+                    {isMyMessage ? messageUser?.nickName : (messageUser?.nickName ?? '닉네임')}
+                    <span className='ml-2 text-xs text-gray-400'>
+                      {isToday
+                        ? `오늘 ${ampm} ${hour12}:${minutes}`
+                        : `${year}. ${month}. ${day}. ${ampm} ${hour12}:${minutes}`}
+                    </span>
                   </div>
+                  <div className='text-sm text-discord-font-color-normal'>{msg.contents.text}</div>
                 </div>
-              )
-            })}
+              </div>
+            )
+          })}
           <div ref={messagesRef} />
         </div>
 
@@ -163,6 +172,8 @@ function ChatArea({ friend, channelId, isVoice, onClose }: ChatAreaProps) {
             <input
               type='text'
               ref={inputRef}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
               placeholder='메시지 보내기'
               className='w-full bg-transparent text-white px-3 py-2 outline-none focus-none'
               onKeyDown={handleKeyDown}

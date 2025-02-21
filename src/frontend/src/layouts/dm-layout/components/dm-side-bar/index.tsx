@@ -4,7 +4,8 @@ import MenuButton from '@/components/menu-button'
 
 function DmSideBar() {
   const [selectedMenu, setSelectedMenu] = useState('친구')
-  const handleMenuClick = (label: string) => {
+
+  const handleMenuClick = (label: string) => () => {
     setSelectedMenu(label)
   }
 
@@ -23,7 +24,7 @@ function DmSideBar() {
             key={label}
             label={label}
             isActive={selectedMenu === label}
-            onClick={() => handleMenuClick(label)}
+            onClick={handleMenuClick(label)}
           />
         ))}
       </div>

@@ -5,48 +5,21 @@ import ChatArea from '@/components/chat-area'
 import CustomButton from '@/components/custom-button'
 import useUserStatus from '@/hooks/store/use-user-status'
 import { cn } from '@/libs/cn'
+import { ChatUser } from '@/types/user'
 
 interface Props {
   channelId: number
   channelName: string
   serverName: string
+  currentUser: ChatUser
+  targetUser: ChatUser
 }
 
-const userList = [
-  {
-    id: '1',
-    name: '홍길동',
-    avatarUrl: '/image/common/default-avatar.png',
-    bannerUrl: '/image/common/default-background.png',
-    backgroundColor: 'grey',
-    micStatus: false,
-    headphoneStatus: true
-  },
-  {
-    id: '2',
-    name: '이순신',
-    avatarUrl: '/image/common/default-avatar.png',
-    bannerUrl: '/image/common/default-background.png',
-    backgroundColor: 'grey',
-    micStatus: true,
-    headphoneStatus: true
-  }
-] as {
-  id: string
-  name: string
-  avatarUrl: string
-  bannerUrl: string
-  backgroundColor: string
-  micStatus: boolean
-  headphoneStatus: boolean
-}[]
-
-function VideoComponent({ channelId, serverName, channelName }: Props) {
+function VideoComponent({ channelId, serverName, channelName, currentUser, targetUser }: Props) {
   const [sideBar, setSideBar] = useState(true)
   const { joinVoiceChannel, getCurrentChannelInfo, leaveVoiceChannel } = useUserStatus()
-
   const isInVoiceChannel = getCurrentChannelInfo()?.channelId === channelId
-  const isEmptyText = userList.length === 0
+  const isEmptyText = false
 
   const handleJoinVoiceChannel = () => {
     joinVoiceChannel({ channelId, channelName, serverName })
@@ -87,16 +60,15 @@ function VideoComponent({ channelId, serverName, channelName }: Props) {
           <div />
           <section className='flex-1 flex flex-col items-center justify-center gap-2'>
             <ul className='flex gap-2 flex-wrap mb-8 w-full justify-center'>
-              {userList.map((user) => (
-                <li key={user.id}>
+              {[currentUser, ...targetUser].map((user) => (
+                <li key={user.memberId}>
                   <AvatarCard
-                    name={user.name}
+                    name={user.nickName}
                     avatarUrl={user.avatarUrl ?? '/image/common/default-avatar.png'}
                     backgroundUrl={user.bannerUrl ?? '/image/common/default-background.png'}
-                    backgroundColor={user.backgroundColor}
-                    size={userList.length > 3 ? 'sm' : isInVoiceChannel ? 'md' : 'sm'}
-                    micStatus={user.micStatus}
-                    headphoneStatus={user.headphoneStatus}
+                    size={users.length > 3 ? 'sm' : isInVoiceChannel ? 'md' : 'sm'}
+                    micStatus={true}
+                    headphoneStatus={true}
                   />
                 </li>
               ))}
@@ -107,7 +79,7 @@ function VideoComponent({ channelId, serverName, channelName }: Props) {
                 <span className='text-gray-90 text-sm font-semibold'>
                   {isEmptyText
                     ? '현재 채널에 아무도 없어요'
-                    : `${userList.map((user) => user.name).join(', ')} 님이 현재 음성 채널에 있어요.`}
+                    : `${users.map((user) => user.nickName).join(', ')} 님이 현재 음성 채널에 있어요.`}
                 </span>
                 <CustomButton
                   className='w-fit px-4 py-2 mt-5 mb-10'
@@ -150,7 +122,12 @@ function VideoComponent({ channelId, serverName, channelName }: Props) {
         <div className='flex flex-col min-w-[480px] h-screen bg-brand-10 rounded-l-lg'>
           <ChatArea
             isVoice={true}
-            channelId={channelId}
+            chatKey={channelId}
+            users={{
+              currentUser: currentUser,
+              targetUser: targetUser
+            }}
+            channelName={channelName}
             onClose={() => setSideBar(false)}
           />
         </div>

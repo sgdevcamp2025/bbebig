@@ -7,6 +7,6 @@ interface Message {
   updatedAt: Date
 }
 
-type MessageType = 'CHANNEL' | 'DIRECT'
+type MessageType = 'CHANNEL' | 'DM'
 
 export { type Message, type MessageType }
