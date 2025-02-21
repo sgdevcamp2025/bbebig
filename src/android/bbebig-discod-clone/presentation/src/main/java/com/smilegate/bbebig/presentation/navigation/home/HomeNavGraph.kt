@@ -13,13 +13,11 @@ import com.smilegate.bbebig.presentation.ui.serverjoin.navigation.serverJoinNavi
 
 fun NavGraphBuilder.homeNavGraph(
     navController: NavController,
+    onServerJoinClick: () -> Unit,
 ) {
     navigation<HomeNavGraph>(startDestination = Home) {
-        homeNavigation()
+        homeNavigation(onServerJoinClick = onServerJoinClick)
         createServerNavigation()
-        liveChatNavigation(
-            onBackClick = navController::popBackStack,
-        )
         serverJoinNavigation(
             onBackClick = navController::popBackStack,
         )

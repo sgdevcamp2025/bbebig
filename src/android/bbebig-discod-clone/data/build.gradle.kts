@@ -17,4 +17,11 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     // encrypted shared preferences
     implementation(libs.androidx.security.crypto)
+    // getstream webrtc
+    implementation(libs.io.getstream.webrtc.android)
+    // krossbow stomp
+    implementation(libs.krossbow.stomp.core)
+    implementation(libs.krossbow.websocket.okhttp)
+    implementation(libs.krossbow.stomp.kxserialization)
+    implementation(libs.krossbow.stomp.kxserialization.json)
 }

@@ -10,6 +10,7 @@ android {
 
 dependencies {
     implementation(project(":domain"))
+    implementation(project(":data"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -29,4 +30,6 @@ dependencies {
     implementation(libs.coil.compose)
     // compose material2
     implementation(libs.material)
+    // getstream webrtc
+    implementation(libs.io.getstream.webrtc.android)
 }

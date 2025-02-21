@@ -9,4 +9,6 @@ android {
 
 dependencies {
     implementation(project(":data"))
+    implementation(libs.krossbow.stomp.kxserialization)
+    implementation(libs.krossbow.stomp.kxserialization.json)
 }

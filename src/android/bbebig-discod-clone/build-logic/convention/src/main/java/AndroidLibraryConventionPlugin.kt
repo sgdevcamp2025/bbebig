@@ -26,6 +26,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
 
             dependencies {
                 add("implementation", libs.findLibrary("kotlinx.serialization.json").get())
+                add("implementation", libs.findLibrary("timber").get())
             }
         }
     }

@@ -9,6 +9,11 @@ datastorePreferences = "1.1.2"
 kotlin = "2.0.0"
 kotlinSerialization = "1.8.0"
 kotlinxSerializationConverter = "1.0.0"
+kotlinxSerializationProtobuf = "1.6.3"
+krossbowStompCore = "7.0.0"
+krossbowStompKxserialization = "7.0.0"
+krossbowStompKxserializationJson = "7.0.0"
+krossbowWebsocketOkhttp = "7.0.0"
 ksp = "2.0.0-1.0.24"
 
 coreKtx = "1.13.1"
@@ -35,6 +40,8 @@ retrofit = "2.11.0"
 moshi = "1.14.0"
 composeNavigation = "2.8.5"
 securityCrypto = "1.0.0"
+getstreamWebrtcAndroid = "1.1.1"
+timber = "5.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -56,6 +63,11 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.r
 hilt-core = { group = "com.google.dagger", name = "hilt-core", version.ref = "hilt" }
 
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinSerialization" }
+kotlinx-serialization-protobuf = { module = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf", version.ref = "kotlinxSerializationProtobuf" }
+krossbow-stomp-core = { module = "org.hildan.krossbow:krossbow-stomp-core", version.ref = "krossbowStompCore" }
+krossbow-stomp-kxserialization = { module = "org.hildan.krossbow:krossbow-stomp-kxserialization", version.ref = "krossbowStompKxserialization" }
+krossbow-stomp-kxserialization-json = { module = "org.hildan.krossbow:krossbow-stomp-kxserialization-json", version.ref = "krossbowStompKxserializationJson" }
+krossbow-websocket-okhttp = { module = "org.hildan.krossbow:krossbow-websocket-okhttp", version.ref = "krossbowWebsocketOkhttp" }
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }
 
 material = { group = "androidx.compose.material", name = "material", version.ref = "material" }
@@ -75,6 +87,7 @@ okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhtt
 okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
@@ -82,6 +95,7 @@ android-tools-common = { group = "com.android.tools", name = "common", version.r
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "room" }
+io-getstream-webrtc-android = { module = "io.getstream:stream-webrtc-android", version.ref = "getstreamWebrtcAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

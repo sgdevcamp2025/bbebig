@@ -8,10 +8,11 @@ import com.smilegate.bbebig.presentation.ui.home.HomeViewModel
 @Composable
 fun HomeRoute(
     homeViewModel: HomeViewModel = hiltViewModel(),
+    onServerJoinClick: () -> Unit,
 ) {
     HomeScreen(
         onMakeServerClick = {},
-        onServerJoinClick = {},
+        onServerJoinClick = onServerJoinClick,
         onClickInviteFriend = {},
         onSearchClick = {},
     )

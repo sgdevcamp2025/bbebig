@@ -20,8 +20,28 @@ annotation class AuthOkHttpClient
 
 @Retention(AnnotationRetention.BINARY)
 @Qualifier
+annotation class WebSocketClient
+
+@Retention(AnnotationRetention.BINARY)
+@Qualifier
 annotation class DefaultOkHttpClient
 
 @Retention(AnnotationRetention.BINARY)
 @Qualifier
 annotation class ServerRetrofit
+
+@Retention(AnnotationRetention.BINARY)
+@Qualifier
+annotation class WebSocketBaseUrl
+
+@Retention(AnnotationRetention.BINARY)
+@Qualifier
+annotation class WebSocketSendGroupPrefix
+
+@Retention(AnnotationRetention.BINARY)
+@Qualifier
+annotation class WebSocketReceiveGroupPrefix
+
+@Retention(AnnotationRetention.BINARY)
+@Qualifier
+annotation class StompWebSocketClient

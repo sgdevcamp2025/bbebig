@@ -13,8 +13,8 @@ fun NavController.navigateToHome() {
     }
 }
 
-fun NavGraphBuilder.homeNavigation() {
+fun NavGraphBuilder.homeNavigation(onServerJoinClick: () -> Unit) {
     composable<Home> {
-        HomeRoute()
+        HomeRoute(onServerJoinClick = onServerJoinClick)
     }
 }

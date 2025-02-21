@@ -4,6 +4,8 @@ import com.smilegate.bbebig.data.repository.AuthRepository
 import com.smilegate.bbebig.data.repository.AuthRepositoryImpl
 import com.smilegate.bbebig.data.repository.ServerRepository
 import com.smilegate.bbebig.data.repository.ServerRepositoryImpl
+import com.smilegate.bbebig.data.repository.WebSocketRepository
+import com.smilegate.bbebig.data.repository.WebSocketRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -21,4 +23,8 @@ interface RepositoryModule {
     @Binds
     @Singleton
     fun bindServerRepository(serverRepositoryImpl: ServerRepositoryImpl): ServerRepository
+
+    @Binds
+    @Singleton
+    fun bindWebSocketRepository(webSocketRepositoryImpl: WebSocketRepositoryImpl): WebSocketRepository
 }

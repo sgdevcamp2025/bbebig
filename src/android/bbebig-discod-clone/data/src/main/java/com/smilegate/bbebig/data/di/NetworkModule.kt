@@ -8,7 +8,13 @@ import com.smilegate.bbebig.data.di.qulifier.AuthRetrofit
 import com.smilegate.bbebig.data.di.qulifier.BaseUrl
 import com.smilegate.bbebig.data.di.qulifier.DefaultOkHttpClient
 import com.smilegate.bbebig.data.di.qulifier.ServerRetrofit
+import com.smilegate.bbebig.data.di.qulifier.StompWebSocketClient
 import com.smilegate.bbebig.data.di.qulifier.TimeOutPolicy
+import com.smilegate.bbebig.data.di.qulifier.WebSocketClient
+import org.hildan.krossbow.stomp.StompClient
+import com.smilegate.bbebig.data.di.qulifier.WebSocketBaseUrl
+import com.smilegate.bbebig.data.di.qulifier.WebSocketReceiveGroupPrefix
+import com.smilegate.bbebig.data.di.qulifier.WebSocketSendGroupPrefix
 import com.smilegate.bbebig.data.interceptor.AuthInterceptor
 import dagger.Module
 import dagger.Provides
@@ -18,8 +24,10 @@ import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.hildan.krossbow.websocket.okhttp.OkHttpWebSocketClient
 import retrofit2.Retrofit
 import retrofit2.create
+import java.time.Duration
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -39,6 +47,27 @@ object NetworkModule {
     @BaseUrl
     fun provideBaseUrl(): String {
         return "http://43.203.136.82:8080"
+    }
+
+    @Singleton
+    @Provides
+    @WebSocketSendGroupPrefix
+    fun provideWebSocketSendGroupPrefix(): String {
+        return "/pub/stream/group"
+    }
+
+    @Singleton
+    @Provides
+    @WebSocketReceiveGroupPrefix
+    fun provideWebSocketReceiveGroupPrefix(): String {
+        return "/sub/stream/group"
+    }
+
+    @Singleton
+    @Provides
+    @WebSocketBaseUrl
+    fun provideWebSocketUrl(): String {
+        return "wss://bbebig.store/ws-stream"
     }
 
     @Singleton
@@ -100,6 +129,21 @@ object NetworkModule {
 
     @Singleton
     @Provides
+    @WebSocketClient
+    fun provideWebSocketClient(
+        httpLoggingInterceptor: HttpLoggingInterceptor,
+    ): OkHttpClient {
+        return OkHttpClient
+            .Builder()
+            .addInterceptor(httpLoggingInterceptor)
+            .callTimeout(Duration.ofMinutes(1))
+            .pingInterval(Duration.ofSeconds(10))
+            .retryOnConnectionFailure(true)
+            .build()
+    }
+
+    @Singleton
+    @Provides
     @AuthRetrofit
     fun provideAuthRetrofit(
         @AuthOkHttpClient okHttpClient: OkHttpClient,
@@ -127,6 +171,15 @@ object NetworkModule {
             json.asConverterFactory("application/json".toMediaType()),
         )
         .build()
+
+    @Singleton
+    @Provides
+    @StompWebSocketClient
+    fun provideStompClient(
+        @WebSocketClient webSocketClient: OkHttpClient,
+    ): StompClient {
+        return StompClient(OkHttpWebSocketClient(webSocketClient))
+    }
 
     @Singleton
     @Provides
