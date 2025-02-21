@@ -40,26 +40,26 @@ public class KurentoManager {
      * 채널에 참여하는 사용자(memberId)용 WebRtcEndpoint 생성
      */
     public synchronized void createEndpoint(String channelId, String memberId) {
-        log.info("[KurentoManager] 채널 ID: {}, 사용자 ID: {} -> WebRtcEndpoint 생성 시작", channelId, memberId);
+        log.info("[Signal] 채널 타입: Group, 채널 ID: {}, 사용자 ID: {}, 상세: Kurento WebRtcEndpoint 생성 시작", channelId, memberId);
 
         MediaPipeline pipeline = getOrCreatePipeline(channelId);
-        log.info("[KurentoManager] 채널 ID: {}, 기존 Pipeline 존재 여부: {}", channelId, pipelines.containsKey(channelId));
+        log.info("[Signal] 채널 타입: Group, 채널 ID: {}, 기존 Kurento Pipeline 존재 여부: {}", channelId, pipelines.containsKey(channelId));
 
         WebRtcEndpoint webRtcEndpoint = new WebRtcEndpoint.Builder(pipeline).build();
-        log.info("[KurentoManager] 채널 ID: {}, 사용자 ID: {} -> WebRtcEndpoint 생성 완료", channelId, memberId);
+        log.info("[Signal] 채널 타입: Group, 채널 ID: {}, 사용자 ID: {}, 상세: Kurento WebRtcEndpoint 생성 완료", channelId, memberId);
 
         // (1) 구글 STUN 설정
         webRtcEndpoint.setStunServerAddress("stun.l.google.com");
         webRtcEndpoint.setStunServerPort(19302);
-        log.info("[KurentoManager] 채널 ID: {}, 사용자 ID: {} -> STUN 서버 설정 완료 ({}:{})",
+        log.info("[Signal] 채널 타입: Group, 채널 ID: {}, 사용자 ID: {}, 상세: STUN 서버 설정 완료 ({}:{})",
                 channelId, memberId, "stun.l.google.com", 19302);
 
         // (2) endpoints 저장
         endpoints.putIfAbsent(channelId, new ConcurrentHashMap<>());
         endpoints.get(channelId).put(memberId, webRtcEndpoint);
-        log.info("[KurentoManager] 채널 ID: {}, 사용자 ID: {} -> WebRtcEndpoint 저장 완료", channelId, memberId);
+        log.info("[Signal] 채널 타입: Group, 채널 ID: {}, 사용자 ID: {}, 상세: Kurento WebRtcEndpoint 저장 완료", channelId, memberId);
 
-        log.info("[KurentoManager] 현재 채널({})의 참가자 수: {}", channelId, endpoints.get(channelId).size());
+        log.info("[Signal] 채널 타입: Group, Kurento 현재 채널({})의 참가자 수: {}", channelId, endpoints.get(channelId).size());
     }
 
     /**

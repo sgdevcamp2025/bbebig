@@ -14,8 +14,6 @@ import org.kurento.client.WebRtcEndpoint;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -77,8 +75,6 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
             );
         }
 
-
-
         // (1) KurentoManager에서 WebRtcEndpoint 생성
         kurentoManager.createEndpoint(channelId, memberId);
 
@@ -110,8 +106,8 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
                 allUsersMessage
         );
 
-        log.info("[Signal] EXIST_USERS 메시지 전송 - 대상 경로: {}, 메시지: {}",
-                Path.directSubPath + message.getSenderId(), allUsersMessage);
+        log.info("[Signal] 채널 타입: Group, 대상 경로: {}, 상세: EXIST_USERS 메시지 전송",
+                Path.directSubPath + message.getSenderId());
     }
 
     /**
@@ -129,8 +125,8 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
                 userJoinedMessage
         );
 
-        log.info("[Signal] USER_JOINED 메시지 전송 - 대상 경로: {}, 메시지: {}",
-                Path.groupSubPath + message.getChannelId(), userJoinedMessage);
+        log.info("[Signal] 채널 타입: Group, 대상 경로: {}, 상세: USER_JOINED 메시지 전송",
+                Path.groupSubPath + message.getChannelId());
     }
 
     /**
