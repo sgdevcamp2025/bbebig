@@ -20,7 +20,7 @@ public class RedisConfig {
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		objectMapper.registerModule(new JavaTimeModule()); // ✅ JavaTimeModule 적용
+		objectMapper.registerModule(new JavaTimeModule());
 
 		// 타입 정보 활성화 (Object 직렬화 지원)
 		objectMapper.activateDefaultTyping(
@@ -57,7 +57,7 @@ public class RedisConfig {
 	@Bean
 	public RedisTemplate<String, Long> redisSetTemplate(RedisConnectionFactory connectionFactory) {
 		ObjectMapper redisObjectMapper = createRedisObjectMapper();
-		Jackson2JsonRedisSerializer<Long> serializer = new Jackson2JsonRedisSerializer<>(redisObjectMapper, Long.class); // ✅ ObjectMapper 적용
+		Jackson2JsonRedisSerializer<Long> serializer = new Jackson2JsonRedisSerializer<>(redisObjectMapper, Long.class);
 
 		RedisTemplate<String, Long> redisTemplate = new RedisTemplate<>();
 		redisTemplate.setConnectionFactory(connectionFactory);
@@ -117,7 +117,7 @@ public class RedisConfig {
 			RedisConnectionFactory connectionFactory,
 			Class<T> clazz) {
 		ObjectMapper redisObjectMapper = createRedisObjectMapper();
-		Jackson2JsonRedisSerializer<T> serializer = new Jackson2JsonRedisSerializer<>(redisObjectMapper, clazz); // ✅ ObjectMapper 적용
+		Jackson2JsonRedisSerializer<T> serializer = new Jackson2JsonRedisSerializer<>(redisObjectMapper, clazz);
 
 		RedisTemplate<String, T> redisTemplate = new RedisTemplate<>();
 		redisTemplate.setConnectionFactory(connectionFactory);

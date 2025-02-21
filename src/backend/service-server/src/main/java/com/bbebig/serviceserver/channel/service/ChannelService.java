@@ -201,6 +201,7 @@ public class ChannelService {
                 .channelId(channelId)
                 .lastReadMessageId(channelMember.getLastReadMessageId())
                 .lastAccessAt(channelMember.getLastAccessAt())
+                .lastReadSequence(channelMember.getLastReadSequence())
                 .build();
     }
 

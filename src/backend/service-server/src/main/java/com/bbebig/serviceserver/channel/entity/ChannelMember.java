@@ -40,10 +40,13 @@ public class ChannelMember extends BaseTimeEntity {
 
     private Long lastReadMessageId;
 
+    private Long lastReadSequence;
+
     private LocalDateTime lastAccessAt;
 
-    public void updateLastInfo(Long lastReadMessageId, LocalDateTime eventTime) {
+    public void updateLastInfo(Long lastReadMessageId, Long lastReadSequence,LocalDateTime lastAccessAt) {
         this.lastReadMessageId = lastReadMessageId;
-        this.lastAccessAt = eventTime;
+        this.lastReadSequence = lastReadSequence;
+        this.lastAccessAt = lastAccessAt;
     }
 }

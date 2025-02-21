@@ -1,5 +1,7 @@
 package com.bbebig.serviceserver.server.controller;
 
+import com.bbebig.commonmodule.clientDto.ServiceFeignResponseDto;
+import com.bbebig.commonmodule.clientDto.ServiceFeignResponseDto.ServerLastInfoResponseDto;
 import com.bbebig.commonmodule.global.response.code.CommonResponse;
 import com.bbebig.commonmodule.passport.annotation.PassportUser;
 import com.bbebig.commonmodule.proto.PassportProto.Passport;
@@ -68,9 +70,20 @@ public class ServerController {
         return CommonResponse.onSuccess(serverService.getServerMemberInfo(serverId));
     }
 
+    @Operation(summary = "서버의 마지막 접근 정보 조회", description = "내가 서버에 마지막으로 접근한 정보를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "서버의 마지막 접근 정보 조회 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "", content = @Content)
+    })
+    @GetMapping("/{serverId}/channels/info")
+    public CommonResponse<ServerLastInfoResponseDto> getServerLastInfo(
+            @Parameter(hidden = true) @PassportUser Passport passport,
+            @PathVariable Long serverId) {
+        log.info("[Service] 서버의 마지막 접근 정보 조회 요청: memberId = {}, serverId = {}", passport.getMemberId(), serverId);
+        return CommonResponse.onSuccess(serverService.getServerChannelLastInfoForApi(passport.getMemberId(), serverId));
+    }
 
-
-    @Operation(summary = "멤버별로 속해있는 서버 목록 조회", description = "멤버별로 속해있는 서버 목록 조회합니다. (For Client)")
+    @Operation(summary = "멤버별로 속해있는 서버 목록 조회", description = "멤버별로 속해있는 서버 목록을 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "멤버별로 속해있는 서버 목록 조회 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "", content = @Content)

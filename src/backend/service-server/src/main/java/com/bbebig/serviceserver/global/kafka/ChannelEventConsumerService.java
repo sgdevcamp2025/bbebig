@@ -11,6 +11,7 @@ import com.bbebig.serviceserver.channel.entity.ChannelMember;
 import com.bbebig.serviceserver.channel.repository.ChannelMemberRepository;
 import com.bbebig.serviceserver.channel.service.ChannelService;
 import com.bbebig.serviceserver.server.repository.MemberRedisRepositoryImpl;
+import com.bbebig.serviceserver.server.service.ServerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -26,12 +27,12 @@ public class ChannelEventConsumerService {
 	private final MemberRedisRepositoryImpl memberRedisRepositoryImpl;
 
 	private final ChannelService channelService;
+	private final ServerService serverService;
 
 	@KafkaListener(topics = "${spring.kafka.topic.channel-event}", groupId = "${spring.kafka.consumer.group-id.channel-event}", containerFactory = "channelEventListener")
 	public void consumeForChannelEvent(ChannelEventDto channelEventDto) {
 		if (channelEventDto == null) {
-			log.error("[State] ChannelEventConsumerService: 채널 이벤트 정보 없음");
-			return;
+			throw new ErrorHandler(ErrorStatus.KAFKA_CONSUME_NULL_EVENT);
 		}
 
 		// 개발용 로그
@@ -39,7 +40,7 @@ public class ChannelEventConsumerService {
 		if (channelEventDto.getType().equals(ChannelEventType.CHANNEL_ENTER) || channelEventDto.getType().equals(ChannelEventType.CHANNEL_LEAVE)) {
 			handleChannelEvent(channelEventDto);
 		} else {
-			log.error("[State] ChannelEventConsumerService: 채널 이벤트 타입이 잘못되었습니다. channelEventDto: {}", channelEventDto);
+			throw new ErrorHandler(ErrorStatus.INVALID_CHANNEL_EVENT_TYPE);
 		}
 	}
 
@@ -51,26 +52,27 @@ public class ChannelEventConsumerService {
 		ChannelMember channelMember = channelMemberRepository.findByServerMemberIdAndChannelId(memberId, channelId)
 				.orElseThrow(() -> new ErrorHandler(ErrorStatus.CHANNEL_MEMBER_NOT_FOUND));
 
-		channelMember.updateLastInfo(channelEventDto.getLastReadMessageId(), channelEventDto.getEventTime());
-		channelMemberRepository.save(channelMember);
+		channelMember.updateLastInfo(channelEventDto.getLastReadMessageId(), channelEventDto.getLastReadSequence(),channelEventDto.getEventTime());
 
 		if (memberRedisRepositoryImpl.existsServerLastInfo(memberId, channelEventDto.getServerId())) {
-			ServerLastInfo serverChannelLastInfo = memberRedisRepositoryImpl.getServerLastInfo(memberId, channelEventDto.getServerId());
-			if (!serverChannelLastInfo.existChannelLastInfo(channelId)) {
-				serverChannelLastInfo.addChannelLastInfo(
+			ServerLastInfo serverLastInfo = memberRedisRepositoryImpl.getServerLastInfo(memberId, channelEventDto.getServerId());
+			if (!serverLastInfo.existChannelLastInfo(channelId)) {
+				serverLastInfo.addChannelLastInfo(
 						ChannelLastInfo.builder()
 								.channelId(channelId)
 								.lastReadMessageId(channelEventDto.getLastReadMessageId())
 								.lastAccessAt(channelEventDto.getEventTime())
+								.lastReadSequence(channelEventDto.getLastReadSequence())
 								.build()
 				);
-				log.error("[State] ChannelEventConsumerService: 채널 정보가 없어서 업데이트 실패. memberId: {}, channelId: {}", memberId, channelId);
+				memberRedisRepositoryImpl.saveServerLastInfo(memberId, channelEventDto.getServerId(), serverLastInfo);
 			} else {
-				serverChannelLastInfo.updateChannelLastInfo(channelId, channelEventDto.getLastReadMessageId(), channelEventDto.getEventTime());
-				memberRedisRepositoryImpl.saveServerLastInfo(memberId, channelEventDto.getServerId(), serverChannelLastInfo);
+				serverLastInfo.updateChannelLastInfo(channelId, channelEventDto.getLastReadMessageId(), channelEventDto.getLastReadSequence(),channelEventDto.getEventTime());
+				memberRedisRepositoryImpl.saveServerLastInfo(memberId, channelEventDto.getServerId(), serverLastInfo);
 			}
 		} else {
-			channelService.getChannelLastInfo(memberId, channelEventDto.getServerId());
+			ServerLastInfo serverLastInfo = serverService.getServerLastInfo(memberId, channelEventDto.getServerId());
+			memberRedisRepositoryImpl.saveServerLastInfo(memberId, channelEventDto.getServerId(), serverLastInfo);
 		}
 	}
 

@@ -71,6 +71,7 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_NOTIFICATION_EVENT_TYPE(HttpStatus.SERVICE_UNAVAILABLE, "KAFKA02", "유효하지 않은 알림 이벤트 타입입니다."),
     INVALID_PRESENCE_EVENT_TYPE(HttpStatus.SERVICE_UNAVAILABLE, "KAFKA03", "유효하지 않은 프레즌스 이벤트 타입입니다."),
     INVALID_MESSAGE_EVENT_TYPE(HttpStatus.SERVICE_UNAVAILABLE, "KAFKA04", "유효하지 않은 메시지 이벤트 타입입니다."),
+    INVALID_CHANNEL_EVENT_TYPE(HttpStatus.SERVICE_UNAVAILABLE, "KAFKA05", "유효하지 않은 채널 이벤트 타입입니다."),
 
     // MEMBER
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER401", "멤버를 찾을 수 없습니다."),

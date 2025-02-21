@@ -21,6 +21,9 @@ public class ChannelChatMessageElastic {
 	private Long serverId;
 
 	@Field(type = FieldType.Long)
+	private Long sequence;
+
+	@Field(type = FieldType.Long)
 	private Long channelId;
 
 	@Field(type = FieldType.Long)
