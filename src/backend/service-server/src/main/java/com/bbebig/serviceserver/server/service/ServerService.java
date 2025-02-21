@@ -359,18 +359,19 @@ public class ServerService {
     @Transactional
     public ServerLastInfoResponseDto getServerChannelLastInfoForApi(Long memberId, Long serverId) {
         ServerLastInfo lastInfo = getServerLastInfo(memberId, serverId);
-        List<ChannelLastInfo> channelLastInfoList = lastInfo.getChannelLastInfoList();
+        Map<Long, ChannelLastInfo> channelLastInfoMap = lastInfo.getChannelLastInfoMap();
         return ServerLastInfoResponseDto.builder()
                 .serverId(serverId)
                 .channelInfoList(
-                        channelLastInfoList.stream()
-                                .map(channelLastInfo -> ChannelLastInfoResponseDto.builder()
-                                        .channelId(channelLastInfo.getChannelId())
-                                        .lastReadMessageId(channelLastInfo.getLastReadMessageId())
-                                        .lastReadSequence(channelLastInfo.getLastReadSequence())
-                                        .lastAccessAt(channelLastInfo.getLastAccessAt())
-                                        .build())
-                                .collect(Collectors.toList())
+                        channelLastInfoMap.entrySet().stream()
+                                .map(entry -> ChannelLastInfoResponseDto.builder()
+                                        .channelId(entry.getKey())
+                                        .lastReadMessageId(entry.getValue().getLastReadMessageId())
+                                        .lastReadSequence(entry.getValue().getLastReadSequence())
+                                        .lastAccessAt(entry.getValue().getLastAccessAt())
+                                        .build()
+                                )
+                                .toList()
                 )
                 .build();
     }
@@ -390,17 +391,16 @@ public class ServerService {
         ServerChannelListResponseDto serverChannelList = getServerChannelList(serverId);
         List<Long> channelIdList = serverChannelList.getChannelIdList();
 
-        List<ChannelLastInfo> result = new ArrayList<>();
+       Map<Long, ChannelLastInfo> result = new HashMap<>();
 
         for (Long channelId : channelIdList) {
-            result.add(getChannelLastInfo(channelId, memberId));
+            result.put(channelId, getChannelLastInfo(channelId, memberId));
         }
         ServerLastInfo lastInfo = ServerLastInfo.builder()
                 .serverId(serverId)
-                .channelLastInfoList(result)
+                .channelLastInfoMap(result)
                 .build();
 
-        // 레디스에 캐싱
         // TODO: 주기적으로 Redis에 저장된 데이터를 PostGreSQL에 저장하는 로직 추가
         memberRedisRepository.saveServerLastInfo(memberId, serverId, lastInfo);
 

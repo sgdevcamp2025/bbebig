@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
@@ -17,26 +18,25 @@ public class ServerLastInfo {
 
 	private Long serverId;
 
-	private List<ChannelLastInfo> channelLastInfoList;
+	private Map<Long, ChannelLastInfo> channelLastInfoMap;
 
 	public void addChannelLastInfo(ChannelLastInfo channelLastInfo) {
-		this.channelLastInfoList.add(channelLastInfo);
+		this.channelLastInfoMap.put(channelLastInfo.getChannelId(), channelLastInfo);
 	}
 
 	public boolean existChannelLastInfo(Long channelId) {
-		return this.channelLastInfoList.stream().anyMatch(channelLastInfo -> channelLastInfo.getChannelId().equals(channelId));
+		return this.channelLastInfoMap.containsKey(channelId);
 	}
 
 	public void updateChannelLastInfo(Long channelId, Long lastReadMessageId, Long lastReadSequence, LocalDateTime lastAccessAt) {
-		for (ChannelLastInfo channelLastInfo : this.channelLastInfoList) {
-			if (channelLastInfo.getChannelId().equals(channelId)) {
-				channelLastInfo.update(lastReadMessageId, lastReadSequence, lastAccessAt);
-				return;
-			}
-		}
+		ChannelLastInfo channelLastInfo = this.channelLastInfoMap.get(channelId);
+		channelLastInfo.setLastReadMessageId(lastReadMessageId);
+		channelLastInfo.setLastReadSequence(lastReadSequence);
+		channelLastInfo.setLastAccessAt(lastAccessAt);
+		this.channelLastInfoMap.put(channelId, channelLastInfo);
 	}
 
 	public void removeChannelLastInfo(Long channelId) {
-		this.channelLastInfoList.removeIf(channelLastInfo -> channelLastInfo.getChannelId().equals(channelId));
+		this.channelLastInfoMap.remove(channelId);
 	}
 }
