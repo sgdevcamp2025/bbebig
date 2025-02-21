@@ -5,6 +5,7 @@ import com.smilegate.bbebig.data.base.callApi
 import com.smilegate.bbebig.data.model.ServerCreateDataModel
 import com.smilegate.bbebig.data.model.ServerDataModel
 import com.smilegate.bbebig.data.model.ServerInfoDataModel
+import com.smilegate.bbebig.data.model.ServerJoinDataModel
 import com.smilegate.bbebig.data.model.toDataModel
 import com.smilegate.bbebig.data.request.ServerCreateRequest
 import javax.inject.Inject
@@ -22,5 +23,9 @@ class ServerDataSourceImpl @Inject constructor(
 
     override suspend fun createServer(serverCreateRequest: ServerCreateRequest): ServerCreateDataModel {
         return callApi { serverService.createServer(serverCreateRequest) }.toDataModel()
+    }
+
+    override suspend fun joinServer(serverId: Long): ServerJoinDataModel {
+        return callApi { serverService.joinServer(serverId) }.toDataModel()
     }
 }
