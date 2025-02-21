@@ -11,6 +11,14 @@ interface User {
   customPresenceStatus: CustomPresenceStatus
 }
 
+export interface ChatUser {
+  memberId: number
+  nickName: string
+  avatarUrl: string | null
+  bannerUrl: string | null
+  globalStatus: CustomPresenceStatus
+}
+
 type CustomPresenceStatus = 'ONLINE' | 'AWAY' | 'DND' | 'INVISIBLE' | 'OFFLINE'
 
 export { type CustomPresenceStatus, type User }
