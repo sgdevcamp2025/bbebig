@@ -77,6 +77,13 @@ spring:
             - name: PassportFilter
             - StripPrefix=1
 
+        - id: service-server-health-check
+          uri: lb://service-server
+          predicates:
+            - Path=/service-server/utils/health
+          filters:
+            - StripPrefix=1
+
         # Search Server 라우팅
         - id: search-server
           uri: lb://search-server
