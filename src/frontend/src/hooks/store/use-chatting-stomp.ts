@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import { chattingStompInstance } from '@/apis/config/stomp-instance'
 import { COOKIE_KEYS } from '@/constants/keys'
-import { ChatMessageRequest } from '@/types/ChatStompEvent'
+import { ChannelVisitEventRequest, ChatMessageRequest } from '@/types/ChatStompEvent'
 import cookie from '@/utils/cookie'
 
 import useGetSelfUser from '../queries/user/useGetSelfUser'
@@ -14,12 +14,15 @@ export const useChattingStomp = () => {
   const selfUser = useGetSelfUser()
   const memberId = selfUser.id.toString()
 
+  const checkConnection = () => {
+    return client.current?.connected && client.current?.webSocket?.readyState === WebSocket.OPEN
+  }
+
   // ✅ SUBSCRIBE
   // 연결
   const connect = () => {
-    if (client.current) {
-      console.log('[⚠️] 채팅 서버 연결 상태')
-      client.current.deactivate()
+    if (checkConnection()) {
+      console.log('[✅] 이미 채팅 서버에 연결되어 있음')
       return
     }
 
@@ -113,8 +116,8 @@ export const useChattingStomp = () => {
     if (client.current) {
       client.current.deactivate()
       console.log('[❌] 채팅 서버 연결 종료')
-      setIsConnected(false)
       client.current = null
+      setIsConnected(false)
     }
   }
 
@@ -132,22 +135,84 @@ export const useChattingStomp = () => {
 
   // 서버 채널 채팅 전송
   const publishToServerChatting = (body: ChatMessageRequest) => {
-    if (!isConnected || !client.current) {
+    if (!checkConnection()) {
       console.log('[❌] 채팅 서버에 연결되지 않음.')
+      connect()
       return
     }
 
     const destination = `/pub/channel/message`
+    const now = new Date().toISOString()
     console.log(`[📤] 서버 ${body.serverId} 채널로 메시지 발행:`)
 
-    client.current.publish({
+    client.current?.publish({
       destination,
-      body: JSON.stringify(body),
+      body: JSON.stringify({
+        chatType: 'CHANNEL',
+        messageType: 'TEXT',
+        type: 'MESSAGE_CREATE',
+        serverId: body.serverId,
+        channelId: body.channelId,
+        sendMemberId: body.sendMemberId,
+        content: body.content,
+        createdAt: now,
+        updatedAt: now
+      }),
       headers: {
         'content-type': 'application/json',
-        MemberId: body.sendMemberId ? body.sendMemberId.toString() : '1',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        MemberId: memberId
+      }
+    })
+  }
+
+  // 채널 방문 이벤트
+  const publishToChannelEnter = (body: ChannelVisitEventRequest) => {
+    if (!checkConnection()) {
+      console.log('[❌] 채팅 서버에 연결되지 않음.')
+      connect()
+      return
+    }
+
+    const destination = `/pub/channel/enter`
+    console.log(`[📤] 채널 ${body.channelId} 방문 이벤트 발행:`)
+
+    client.current?.publish({
+      destination,
+      body: JSON.stringify({
+        ...body,
+        memberId: Number(memberId),
+        type: 'ENTER',
+        eventTime: new Date().toISOString()
+      }),
+      headers: {
+        MemberId: memberId,
+        'content-type': 'application/json'
+      }
+    })
+  }
+
+  // 채널 퇴장 이벤트
+  const publishToChannelLeave = (body: ChannelVisitEventRequest) => {
+    if (!checkConnection()) {
+      console.log('[❌] 채팅 서버에 연결되지 않음.')
+      connect()
+      return
+    }
+
+    const destination = `/pub/channel/leave`
+    console.log(`[📤] 채널 ${body.channelId} 퇴장 이벤트 발행:`)
+
+    client.current?.publish({
+      destination,
+      body: JSON.stringify({
+        ...body,
+        type: 'LEAVE',
+        lastReadMessageId: '1',
+        eventTime: new Date().toISOString()
+      }),
+      headers: {
+        MemberId: memberId,
+        'content-type': 'application/json'
       }
     })
   }
@@ -168,7 +233,10 @@ export const useChattingStomp = () => {
     disconnect,
     subscribe,
     publishToServerChatting,
-    isConnected
+    publishToChannelLeave,
+    publishToChannelEnter,
+    isConnected,
+    checkConnection
   }
 }
 

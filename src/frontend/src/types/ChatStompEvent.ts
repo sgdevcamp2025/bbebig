@@ -44,21 +44,31 @@ export interface ServerMemberActionEvent {
 export interface ServerMemberPresenceEvent {
   serverId: number
   type: 'SERVER_MEMBER_PRESENCE'
-  memberId: number
+  memberId?: number
   actualStatus: 'ONLINE' | 'OFFLINE'
   globalStatus: 'ONLINE' | 'OFFLINE' | 'AWAY' | 'BUSY' | 'DND'
 }
 
 // 서버 채팅 메시지 이벤트
 export interface ChatMessageRequest {
-  id: number
-  channelType: 'CHANNEL' | 'DM'
+  chatType: 'CHANNEL' | 'DM'
   messageType: 'TEXT'
   type: 'MESSAGE_CREATE' | 'MESSAGE_UPDATE' | 'MESSAGE_DELETE'
   serverId: number
   channelId: number
   sendMemberId: number
   content: string
-  createdAt?: string
-  updatedAt?: string
+  createdAt: string
+  updatedAt: string
+}
+
+// 채널 방문/떠남 이벤트
+export interface ChannelVisitEventRequest {
+  memberId?: number
+  type: 'ENTER' | 'LEAVE'
+  channelType: 'CHANNEL' | 'DM'
+  serverId: number
+  channelId: number
+  lastReadMessageId?: string
+  eventTime?: string
 }

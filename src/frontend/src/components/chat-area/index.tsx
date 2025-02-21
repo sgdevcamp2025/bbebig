@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 import Avatar from '@/components/avatar'
 import CommonHeader from '@/components/common-header'
+import useChattingStomp from '@/hooks/store/use-chatting-stomp'
 import { cn } from '@/libs/cn'
 import DmAreaHeader from '@/pages/dm/components/dm-area-header'
 import useStatusBarStore from '@/stores/use-status-bar-store'
@@ -30,21 +31,20 @@ function ChatArea({
   onClose,
   initialMessage = ''
 }: ChatProps) {
-  // const containerRef = useRef<HTMLDivElement>(null)
   const messagesRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const [messages, setMessages] = useState<Record<string, Message[]>>({})
-  const [inputValue, setInputValue] = useState(initialMessage)
   const [searchValue, setSearchValue] = useState('')
   const { isStatusBarOpen, toggleStatusBar } = useStatusBarStore()
   const currentUser = users.currentUser
   const targetUser = users.targetUser
   const isChannel = channelName !== undefined
   const navigate = useNavigate()
+  const { isConnected, publishToServerChatting } = useChattingStomp()
 
   const sendMessage = () => {
-    if (!chatKey) return
-    const text = inputValue.trim()
+    if (!chatKey || !inputRef.current) return
+    const text = inputRef.current.value.trim()
     if (!text) return
 
     if (!isChannel) {
@@ -54,6 +54,7 @@ function ChatArea({
       return
     }
 
+    console.log('[✅] 채팅 서버 연결 상태 : ', isConnected)
     const newMessage: Message = {
       id: crypto.randomUUID(),
       memberId: currentUser?.memberId.toString() ?? '',
@@ -68,7 +69,19 @@ function ChatArea({
       [chatKey]: [...(prev[chatKey] || []), newMessage]
     }))
 
-    setInputValue('')
+    inputRef.current.value = ''
+
+    publishToServerChatting({
+      chatType: channelName ? 'CHANNEL' : 'DM',
+      messageType: 'TEXT',
+      type: 'MESSAGE_CREATE',
+      serverId: Number(chatKey),
+      channelId: Number(chatKey),
+      sendMemberId: currentUser.memberId,
+      content: text,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    })
   }
 
   useEffect(() => {
@@ -172,8 +185,7 @@ function ChatArea({
             <input
               type='text'
               ref={inputRef}
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
+              defaultValue={initialMessage}
               placeholder='메시지 보내기'
               className='w-full bg-transparent text-white px-3 py-2 outline-none focus-none'
               onKeyDown={handleKeyDown}
