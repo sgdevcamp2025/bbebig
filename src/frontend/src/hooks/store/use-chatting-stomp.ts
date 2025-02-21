@@ -6,9 +6,13 @@ import { COOKIE_KEYS } from '@/constants/keys'
 import { ChatMessageRequest } from '@/types/ChatStompEvent'
 import cookie from '@/utils/cookie'
 
+import useGetSelfUser from '../queries/user/useGetSelfUser'
+
 export const useChattingStomp = () => {
   const client = useRef<Client | null>(null)
   const [isConnected, setIsConnected] = useState(false)
+  const selfUser = useGetSelfUser()
+  const memberId = selfUser.id.toString()
 
   // ✅ SUBSCRIBE
   // 연결
@@ -25,7 +29,7 @@ export const useChattingStomp = () => {
     client.current.connectHeaders = {
       AcceptVersion: '1.3,1.2,1.1,1.0',
       Authorization: `Bearer ${currentToken}`,
-      MemberId: '1',
+      MemberId: memberId,
       Platform: 'WEB'
     }
 
@@ -54,11 +58,7 @@ export const useChattingStomp = () => {
   }
 
   // 서버 구독
-  const subscribeToServer = (
-    serverId: string,
-    memberId: '1',
-    callback: (message: unknown) => void
-  ) => {
+  const subscribeToServer = (serverId: string, callback: (message: unknown) => void) => {
     if (client.current && isConnected) {
       const destination = `/topic/server/${serverId}`
       console.log(`[✅] 서버 ${serverId} 구독 시작`)
@@ -92,7 +92,7 @@ export const useChattingStomp = () => {
   }
 
   // 개인 알림 구독
-  const subscribeToPersonal = (memberId: string, callback: (message: unknown) => void) => {
+  const subscribeToPersonal = (callback: (message: unknown) => void) => {
     if (client.current && isConnected) {
       const destination = `/queue/${memberId}`
       console.log(`[✅] 개인 알림 ${memberId} 구독 시작`)

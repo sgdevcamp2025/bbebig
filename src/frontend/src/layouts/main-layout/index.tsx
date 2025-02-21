@@ -55,7 +55,7 @@ const Inner = () => {
     const firstChannelId = channelInfoList[0].channelId
     navigate(`/channels/${serverId}/${firstChannelId}`)
 
-    subscribeToServer(serverId.toString(), '1', (message) => {
+    subscribeToServer(serverId.toString(), (message) => {
       console.log(`[📩] 서버 이벤트 수신 (${serverId}):`, message)
     })
   }
