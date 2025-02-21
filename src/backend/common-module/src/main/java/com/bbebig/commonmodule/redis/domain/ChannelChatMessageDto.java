@@ -23,6 +23,8 @@ public class ChannelChatMessageDto {
 
 	private Long channelId;
 
+	private Long sequence;
+
 	private Long sendMemberId;
 
 	private String content;
