@@ -5,7 +5,7 @@ interface Props {
   name: string
   avatarUrl: string
   backgroundUrl?: string
-  backgroundColor: CSSProperties['backgroundColor']
+  backgroundColor?: CSSProperties['backgroundColor']
   micStatus?: boolean
   headphoneStatus?: boolean
   size: 'sm' | 'md' | 'lg'
