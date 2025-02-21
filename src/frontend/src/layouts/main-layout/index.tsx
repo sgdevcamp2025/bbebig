@@ -14,6 +14,7 @@ import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
 import useChattingStomp from '@/hooks/store/use-chatting-stomp'
 import { cn } from '@/libs/cn'
 import { useMediaSettingsStore } from '@/stores/use-media-setting.store'
+import { useSignalingStomp } from '@/stores/use-signaling-stomp-store'
 
 import ProfileCard from './components/profile-card'
 import ProfileStatusButton from './components/profile-status-button'
@@ -21,7 +22,13 @@ import ServerCreateModal from './components/server-create-modal'
 import SettingModal, { SettingModalTabsID } from './components/setting-modal'
 
 const Inner = () => {
-  const { connect, disconnect, subscribeToServer } = useChattingStomp()
+  const {
+    connect: connectChatting,
+    disconnect: disconnectChatting,
+    subscribeToServer
+  } = useChattingStomp()
+
+  const { connect: connectSignaling, disconnect: disconnectSignaling } = useSignalingStomp()
 
   const location = useLocation()
   const navigate = useNavigate()
@@ -33,11 +40,13 @@ const Inner = () => {
     }
   }, [serverId, navigate])
 
-  useEffect(() => {
-    connect()
+  useEffect(function init() {
+    connectChatting()
+    connectSignaling()
 
-    return () => {
-      disconnect()
+    return function cleanup() {
+      disconnectChatting()
+      disconnectSignaling()
     }
   }, [])
 

@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import AvatarCard from '@/components/avatar-card'
 import ChatArea from '@/components/chat-area'
 import CustomButton from '@/components/custom-button'
+import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
+import { useSignalingWithSFU } from '@/hooks/store/use-signaling-with-sfu'
 import useUserStatus from '@/hooks/store/use-user-status'
 import { cn } from '@/libs/cn'
 
@@ -43,18 +45,30 @@ const userList = [
 
 function VideoComponent({ channelId, serverName, channelName }: Props) {
   const [sideBar, setSideBar] = useState(true)
-  const { joinVoiceChannel, getCurrentChannelInfo, leaveVoiceChannel } = useUserStatus()
+  const selfUser = useGetSelfUser()
+  const { getCurrentChannelInfo } = useUserStatus()
+
+  const { joinChannel, leaveChannel, users } = useSignalingWithSFU(
+    selfUser?.id.toString(),
+    channelId.toString(),
+    channelName,
+    serverName
+  )
 
   const isInVoiceChannel = getCurrentChannelInfo()?.channelId === channelId
   const isEmptyText = userList.length === 0
 
   const handleJoinVoiceChannel = () => {
-    joinVoiceChannel({ channelId, channelName, serverName })
+    joinChannel()
   }
 
   const handleLeaveVoiceChannel = () => {
-    leaveVoiceChannel()
+    leaveChannel()
   }
+
+  useEffect(function cleanup() {
+    return leaveChannel()
+  }, [])
 
   return (
     <div className='flex flex-1 h-screen'>
@@ -124,6 +138,9 @@ function VideoComponent({ channelId, serverName, channelName }: Props) {
                 )}>
                 <button
                   type='button'
+                  onClick={() => {
+                    console.log(users, 'users')
+                  }}
                   className='w-14 h-14 rounded-full bg-[#282d31] flex items-center justify-center'>
                   <img
                     alt='음성 채널 소리 끄기'

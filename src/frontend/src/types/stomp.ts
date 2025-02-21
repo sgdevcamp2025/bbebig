@@ -10,5 +10,4 @@ export interface StompState {
   subscribe: (destination: string, callback: (message: any) => void) => void
   unsubscribe: (destination: string) => void
   send: (destination: string, body: any) => void
-  message: (destination: string, body: any) => void
 }
