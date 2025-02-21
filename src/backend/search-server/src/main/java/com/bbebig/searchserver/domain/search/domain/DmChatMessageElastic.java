@@ -22,6 +22,9 @@ public class DmChatMessageElastic {
 	private Long channelId;
 
 	@Field(type = FieldType.Long)
+	private Long sequence;
+
+	@Field(type = FieldType.Long)
 	private Long sendMemberId;
 
 	@Field(type = FieldType.Text)
