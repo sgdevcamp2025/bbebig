@@ -2,8 +2,10 @@ package com.bbebig.searchserver.domain.history.domain;
 
 import com.bbebig.commonmodule.kafka.dto.*;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -14,6 +16,8 @@ import static com.bbebig.commonmodule.kafka.dto.ChatMessageDto.*;
 @Data
 @Document(collection = "channel_chat_messages")
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ChannelChatMessage {
 
 	@Id
