@@ -1,5 +1,5 @@
-import { Client, IMessage } from '@stomp/stompjs'
-import { useEffect, useRef, useState } from 'react'
+import { IMessage } from '@stomp/stompjs'
+import { useState } from 'react'
 
 import { chattingStompInstance } from '@/apis/config/stomp-instance'
 import { COOKIE_KEYS } from '@/constants/keys'
@@ -8,14 +8,16 @@ import cookie from '@/utils/cookie'
 
 import useGetSelfUser from '../queries/user/useGetSelfUser'
 
+const clientInstance = chattingStompInstance()
+
 export const useChattingStomp = () => {
-  const client = useRef<Client | null>(null)
+  // const client = useRef<Client | null>(null)
   const [isConnected, setIsConnected] = useState(false)
   const selfUser = useGetSelfUser()
   const memberId = selfUser.id.toString()
 
   const checkConnection = () => {
-    return client.current?.connected && client.current?.webSocket?.readyState === WebSocket.OPEN
+    return clientInstance.connected && clientInstance.webSocket?.readyState === WebSocket.OPEN
   }
 
   // ✅ SUBSCRIBE
@@ -27,63 +29,64 @@ export const useChattingStomp = () => {
     }
 
     const currentToken = cookie.getCookie(COOKIE_KEYS.ACCESS_TOKEN)
-    client.current = chattingStompInstance()
 
-    client.current.connectHeaders = {
+    clientInstance.connectHeaders = {
       AcceptVersion: '1.3,1.2,1.1,1.0',
       Authorization: `Bearer ${currentToken}`,
       MemberId: memberId,
       Platform: 'WEB'
     }
 
-    client.current.onConnect = () => {
+    clientInstance.onConnect = () => {
       console.log('[✅] 채팅 서버 연결 성공')
       setIsConnected(true)
     }
 
-    client.current.onStompError = (frame) => {
+    clientInstance.onStompError = (frame) => {
       console.error('[❌] STOMP 에러:', frame.headers['message'])
       setIsConnected(false)
     }
 
-    client.current.onWebSocketError = (event) => {
+    clientInstance.onWebSocketError = (event) => {
       console.error('[❌] WebSocket 에러:', event)
       setIsConnected(false)
     }
 
-    client.current.onDisconnect = () => {
+    clientInstance.onDisconnect = () => {
       console.log('[❌] 채팅 서버 연결 종료')
       setIsConnected(false)
-      client.current = null
     }
 
-    client.current.activate()
+    clientInstance.activate()
   }
 
   // 서버 구독
   const subscribeToServer = (serverId: string, callback: (message: unknown) => void) => {
-    if (client.current && isConnected) {
-      const destination = `/topic/server/${serverId}`
-      console.log(`[✅] 서버 ${serverId} 구독 시작`)
-
-      client.current.subscribe(
-        destination,
-        (message: IMessage) => {
-          console.log(`[📩] 서버 ${serverId} 메시지 수신:`, message.body)
-          callback(JSON.parse(message.body))
-        },
-        { id: `chat-${memberId}`, MemberId: memberId }
-      )
+    if (!isConnected || !clientInstance) {
+      console.log('[❌] 연결되지 않아 구독 불가:', serverId)
+      return
     }
+
+    const destination = `/topic/server/${serverId}`
+    console.log(`[✅] 서버 ${serverId} 구독 시작`)
+
+    clientInstance.subscribe(
+      destination,
+      (message: IMessage) => {
+        console.log(`[📩] 서버 ${serverId} 메시지 수신:`, message.body)
+        callback(JSON.parse(message.body))
+      },
+      { id: `chat-${memberId}`, MemberId: memberId }
+    )
   }
 
   // 채널 타이핑 구독
   const subscribeToChannel = (channelId: string, callback: (message: unknown) => void) => {
-    if (client.current && isConnected) {
+    if (clientInstance && isConnected) {
       const destination = `/topic/channel/${channelId}`
       console.log(`[✅] 채널 ${channelId} 구독 시작`)
 
-      client.current.subscribe(
+      clientInstance.subscribe(
         destination,
         (message: IMessage) => {
           console.log(`[📩] 채널 ${channelId} 메시지 수신:`, message.body)
@@ -96,11 +99,11 @@ export const useChattingStomp = () => {
 
   // 개인 알림 구독
   const subscribeToPersonal = (callback: (message: unknown) => void) => {
-    if (client.current && isConnected) {
+    if (clientInstance && isConnected) {
       const destination = `/queue/${memberId}`
       console.log(`[✅] 개인 알림 ${memberId} 구독 시작`)
 
-      client.current.subscribe(
+      clientInstance.subscribe(
         destination,
         (message: IMessage) => {
           console.log(`[📩] 개인 알림 ${memberId} 메시지 수신:`, message.body)
@@ -113,19 +116,19 @@ export const useChattingStomp = () => {
 
   // 연결 종료
   const disconnect = () => {
-    if (client.current) {
-      client.current.deactivate()
+    if (clientInstance) {
+      clientInstance.deactivate()
       console.log('[❌] 채팅 서버 연결 종료')
-      client.current = null
       setIsConnected(false)
     }
   }
 
   // 구독
   const subscribe = (destination: string, callback: (message: IMessage) => void) => {
-    if (client.current && isConnected) {
-      client.current.subscribe(destination, (message: IMessage) => {
-        console.log('[✅] 채팅 메시지 구독:', message)
+    if (checkConnection()) {
+      console.log(`[✅] 구독 요청: ${destination}`)
+      clientInstance.subscribe(destination, (message) => {
+        console.log(`[📩] 메시지 수신 (${destination}):`, message.body)
         callback(JSON.parse(message.body))
       })
     }
@@ -143,24 +146,27 @@ export const useChattingStomp = () => {
 
     const destination = `/pub/channel/message`
     const now = new Date().toISOString()
-    console.log(`[📤] 서버 ${body.serverId} 채널로 메시지 발행:`)
+    console.log(`[📤] 서버 ${body.serverId}의 ${body.channelId} 채널로 메시지 발행:`)
 
-    client.current?.publish({
-      destination,
-      body: JSON.stringify({
+    const messageBody =
+      JSON.stringify({
         chatType: 'CHANNEL',
         messageType: 'TEXT',
         type: 'MESSAGE_CREATE',
         serverId: body.serverId,
         channelId: body.channelId,
-        sendMemberId: body.sendMemberId,
+        sendMemberId: Number(memberId),
         content: body.content,
         createdAt: now,
         updatedAt: now
-      }),
+      }) + '\0'
+
+    clientInstance.publish({
+      destination,
+      body: messageBody,
       headers: {
-        'content-type': 'application/json',
-        MemberId: memberId
+        MemberId: memberId,
+        'content-type': 'application/json'
       }
     })
   }
@@ -176,7 +182,7 @@ export const useChattingStomp = () => {
     const destination = `/pub/channel/enter`
     console.log(`[📤] 채널 ${body.channelId} 방문 이벤트 발행:`)
 
-    client.current?.publish({
+    clientInstance.publish({
       destination,
       body: JSON.stringify({
         ...body,
@@ -202,7 +208,7 @@ export const useChattingStomp = () => {
     const destination = `/pub/channel/leave`
     console.log(`[📤] 채널 ${body.channelId} 퇴장 이벤트 발행:`)
 
-    client.current?.publish({
+    clientInstance.publish({
       destination,
       body: JSON.stringify({
         ...body,
@@ -216,14 +222,6 @@ export const useChattingStomp = () => {
       }
     })
   }
-
-  useEffect(() => {
-    return () => {
-      if (client.current) {
-        client.current.deactivate()
-      }
-    }
-  }, [])
 
   return {
     connect,
