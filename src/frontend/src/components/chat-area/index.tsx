@@ -19,8 +19,9 @@ export interface ChatProps {
   }
   isVoice?: boolean
   channelName?: string
-  onClose?: () => void
   initialMessage?: string
+  serverId?: number
+  onClose?: () => void
 }
 
 function ChatArea({
@@ -28,8 +29,9 @@ function ChatArea({
   users,
   isVoice,
   channelName,
+  initialMessage = '',
   onClose,
-  initialMessage = ''
+  serverId
 }: ChatProps) {
   const messagesRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -75,12 +77,9 @@ function ChatArea({
       chatType: channelName ? 'CHANNEL' : 'DM',
       messageType: 'TEXT',
       type: 'MESSAGE_CREATE',
-      serverId: Number(chatKey),
+      serverId: serverId ?? 0,
       channelId: Number(chatKey),
-      sendMemberId: currentUser.memberId,
-      content: text,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      content: text
     })
   }
 
