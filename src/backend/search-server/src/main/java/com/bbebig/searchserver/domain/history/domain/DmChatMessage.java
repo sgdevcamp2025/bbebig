@@ -37,7 +37,8 @@ public class DmChatMessage {
 
 	private MessageType messageType;
 
-	private Boolean isDeleted;
+	@Builder.Default
+	private Boolean deleted = false;
 
 	public void updateContent(String content) {
 		this.content = content;
@@ -45,11 +46,11 @@ public class DmChatMessage {
 	}
 
 	public void delete() {
-		this.isDeleted = true;
+		this.deleted = true;
 		this.updatedAt = LocalDateTime.now();
 	}
 
 	public boolean isDeleted() {
-		return this.isDeleted;
+		return this.deleted;
 	}
 }
