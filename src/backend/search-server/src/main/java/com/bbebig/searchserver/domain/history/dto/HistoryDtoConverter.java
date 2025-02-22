@@ -23,6 +23,7 @@ public class HistoryDtoConverter {
 				.createdAt(messageDto.getCreatedAt() != null ? messageDto.getCreatedAt() : null)
 				.updatedAt(messageDto.getType() == MessageEventType.MESSAGE_UPDATE ? messageDto.getUpdatedAt() : null)
 				.messageType(messageDto.getMessageType())
+				.deleted(messageDto.getType() == MessageEventType.MESSAGE_DELETE)
 				.build();
 	}
 
@@ -38,6 +39,7 @@ public class HistoryDtoConverter {
 				.createdAt(messageDto.getCreatedAt() != null ? messageDto.getCreatedAt() : null)
 				.updatedAt(messageDto.getType() == MessageEventType.MESSAGE_UPDATE ? messageDto.getUpdatedAt() : null)
 				.messageType(messageDto.getMessageType())
+				.deleted(messageDto.getType() == MessageEventType.MESSAGE_DELETE)
 				.build();
 	}
 
