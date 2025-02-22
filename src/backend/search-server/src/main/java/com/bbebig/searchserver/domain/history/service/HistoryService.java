@@ -1,5 +1,7 @@
 package com.bbebig.searchserver.domain.history.service;
 
+import com.bbebig.commonmodule.clientDto.SearchFeignResponseDto;
+import com.bbebig.commonmodule.clientDto.SearchFeignResponseDto.ServerChannelSequenceResponseDto;
 import com.bbebig.commonmodule.clientDto.ServiceFeignResponseDto.*;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
@@ -275,6 +277,24 @@ public class HistoryService {
 			cacheChannelMessage(channelId);
 		}
 		return serverRedisRepository.getChannelMessageList(channelId);
+	}
+
+	public ServerChannelSequenceResponseDto getChannelLastSequence(Long channelId) {
+		Long lastSequence = serverRedisRepository.getServerChannelSequence(channelId);
+		if (lastSequence == null) {
+			Optional<ChannelChatMessage> topByChannelIdOrderByIdDesc = channelChatMessageRepository.findTopByChannelIdOrderByIdDesc(channelId);
+			if (topByChannelIdOrderByIdDesc.isPresent()) {
+				lastSequence = topByChannelIdOrderByIdDesc.get().getId();
+				serverRedisRepository.saveServerChannelSequence(channelId, lastSequence);
+			} else {
+				lastSequence = 0L;
+				serverRedisRepository.saveServerChannelSequence(channelId, lastSequence);
+			}
+		}
+		return ServerChannelSequenceResponseDto.builder()
+				.channelId(channelId)
+				.lastSequence(lastSequence)
+				.build();
 	}
 
 	private void cacheChannelMessage(Long channelId) {

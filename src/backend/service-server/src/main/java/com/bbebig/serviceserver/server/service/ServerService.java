@@ -1,5 +1,7 @@
 package com.bbebig.serviceserver.server.service;
 
+import com.bbebig.commonmodule.clientDto.SearchFeignResponseDto;
+import com.bbebig.commonmodule.clientDto.SearchFeignResponseDto.ServerChannelSequenceResponseDto;
 import com.bbebig.commonmodule.clientDto.ServiceFeignResponseDto.*;
 import com.bbebig.commonmodule.clientDto.StateFeignResponseDto.ServerMemberPresenceResponseDto;
 import com.bbebig.commonmodule.clientDto.UserFeignResponseDto.*;
@@ -21,6 +23,7 @@ import com.bbebig.serviceserver.channel.entity.ChannelType;
 import com.bbebig.serviceserver.channel.repository.ChannelMemberRepository;
 import com.bbebig.serviceserver.channel.repository.ChannelRepository;
 import com.bbebig.serviceserver.global.client.MemberClient;
+import com.bbebig.serviceserver.global.client.SearchClient;
 import com.bbebig.serviceserver.global.client.StateClient;
 import com.bbebig.serviceserver.global.kafka.KafkaProducerService;
 import com.bbebig.serviceserver.server.dto.request.ServerCreateRequestDto;
@@ -62,6 +65,7 @@ public class ServerService {
 
     private final MemberClient memberClient;
     private final StateClient stateClient;
+    private final SearchClient searchClient;
     private final ServerRedisRepositoryImpl serverRedisRepositoryImpl;
 
 
@@ -171,8 +175,8 @@ public class ServerService {
             List<ChannelMember> channelMemberList = channelMemberRepository.findAllByChannelId(channel.getId());
             Long sequence = serverRedisRepositoryImpl.getServerChannelSequence(channel.getId());
             if (sequence == null) {
-                // TODO : 예외처리 구현
-                sequence = 0L;
+                ServerChannelSequenceResponseDto channelLastSequence = searchClient.getChannelLastSequence(channel.getId());
+                sequence = channelLastSequence.getLastSequence();
             }
             channel.updateLastSequence(sequence);
             channelRepository.save(channel);

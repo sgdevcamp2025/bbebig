@@ -24,4 +24,7 @@ public interface ChannelChatMessageRepository extends MongoRepository<ChannelCha
 	);
 
 	List<ChannelChatMessage> findByChannelId(Long channelId, Pageable pageable);
+
+	@Query(value = "{ 'channelId': ?0, 'deleted': false }", sort = "{ 'id': -1 }")
+	Optional<ChannelChatMessage> findTopByChannelIdOrderByIdDesc(Long channelId);
 }
