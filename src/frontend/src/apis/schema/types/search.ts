@@ -29,7 +29,7 @@ export interface GetHistoryChattingMessagesRequestSchema {
   limit?: number
 }
 
-export interface GetHistoryChattingMessageResponse {
+export interface GetHistoryChattingMessageResponseSchema {
   id: number
   serverId: number
   channelId: number

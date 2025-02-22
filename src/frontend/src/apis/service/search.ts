@@ -3,7 +3,7 @@ import { CommonResponseType } from '../schema/types/common'
 import {
   GetAllServersUnreadCountRequestSchema,
   GetAllServerUnreadCountResponseSchema,
-  GetHistoryChattingMessageResponse,
+  GetHistoryChattingMessageResponseSchema,
   GetHistoryChattingMessagesRequestSchema,
   GetSingleServerUnreadCountRequestSchema,
   GetSingleServerUnreadCountResponseSchema,
@@ -25,15 +25,14 @@ const searchService = () => {
 
   // 서버 채팅 채널 과거 메시지 조회
   const getHistoryChattingMessages = async (data: GetHistoryChattingMessagesRequestSchema) => {
-    const response = await axiosInstance.get<CommonResponseType<GetHistoryChattingMessageResponse>>(
-      `${HISTORY_MEMBER_PATH}/${data.serverId}/channel/${data.channelId}/messages`,
-      {
-        params: {
-          messageId: data.messageId,
-          limit: data.limit
-        }
+    const response = await axiosInstance.get<
+      CommonResponseType<GetHistoryChattingMessageResponseSchema>
+    >(`${SEARCH_SERVER_PATH}/${data.serverId}/channel/${data.channelId}/messages`, {
+      params: {
+        messageId: data.messageId,
+        limit: data.limit
       }
-    )
+    })
     return response.data
   }
 
