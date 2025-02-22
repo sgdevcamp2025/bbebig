@@ -55,10 +55,12 @@ public class HistoryService {
 
 		if (ChatType.CHANNEL.equals(messageDto.getChatType())) {
 			Long channelId = messageDto.getChannelId();
-			if (serverRedisRepository.existsChannelMessageList(channelId)) {
+			if (!serverRedisRepository.existsChannelMessageList(channelId) ||
+					serverRedisRepository.getChannelMessageList(channelId).isEmpty()) {
 				cacheChannelMessage(channelId);
+			} else {
+				serverRedisRepository.saveChannelMessage(channelId, message);
 			}
-			serverRedisRepository.saveChannelMessage(channelId, message);
 		}
 	}
 
