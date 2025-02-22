@@ -178,6 +178,7 @@ public class ServerService {
                 ServerChannelSequenceResponseDto channelLastSequence = searchClient.getChannelLastSequence(channel.getId());
                 sequence = channelLastSequence.getLastSequence();
             }
+            // TODO : 추후에 채널별 마지막으로 발행된 시퀀스 번호를 주기적으로 DB에 저장하는 로직 구현
             channel.updateLastSequence(sequence);
             channelRepository.save(channel);
 
