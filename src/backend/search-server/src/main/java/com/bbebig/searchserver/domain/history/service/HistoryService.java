@@ -278,6 +278,9 @@ public class HistoryService {
 	private void cacheChannelMessage(Long channelId) {
 		List<ChannelChatMessage> messages = channelChatMessageRepository.findByChannelId(channelId,
 				PageRequest.of(0, 300, Sort.by(Sort.Order.desc("id"))));
+		if (messages == null) {
+			messages = new ArrayList<>();
+		}
 		serverRedisRepository.saveChannelMessages(channelId, messages);
 	}
 
