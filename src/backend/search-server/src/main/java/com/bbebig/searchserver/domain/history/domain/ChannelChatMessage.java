@@ -2,8 +2,10 @@ package com.bbebig.searchserver.domain.history.domain;
 
 import com.bbebig.commonmodule.kafka.dto.*;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -14,6 +16,8 @@ import static com.bbebig.commonmodule.kafka.dto.ChatMessageDto.*;
 @Data
 @Document(collection = "channel_chat_messages")
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ChannelChatMessage {
 
 	@Id
@@ -37,7 +41,8 @@ public class ChannelChatMessage {
 
 	private MessageType messageType;
 
-	private Boolean isDeleted;
+	@Builder.Default
+	private Boolean deleted = false;
 
 	public void updateContent(String content) {
 		this.content = content;
@@ -45,12 +50,12 @@ public class ChannelChatMessage {
 	}
 
 	public void delete() {
-		this.isDeleted = true;
+		this.deleted = true;
 		this.updatedAt = LocalDateTime.now();
 	}
 
 	public boolean isDeleted() {
-		return this.isDeleted;
+		return deleted != null ? deleted : false; // null이면 기본값 false 반환
 	}
 }
 
