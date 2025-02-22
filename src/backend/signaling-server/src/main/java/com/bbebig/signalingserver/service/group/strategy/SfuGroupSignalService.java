@@ -227,6 +227,16 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
                     memberId);
             return;
         }
+        if (candidate.getSdpMid() == null) {
+            log.error("[Signal] 채널 타입: Group, 유저 ID: {}, 상세: Candidate 처리 실패 - sdpMid가 null입니다.",
+                    memberId);
+            return;
+        }
+        if (candidate.getSdpMLineIndex() == null) {
+            log.error("[Signal] 채널 타입: Group, 유저 ID: {}, 상세: Candidate 처리 실패 - sdpMLineIndex가 null입니다.",
+                    memberId);
+            return;
+        }
 
         // Kurento IceCandidate로 변환
         IceCandidate kc = new IceCandidate(
