@@ -46,6 +46,7 @@ public class ServerReadResponseDto {
         private String channelType;
         private boolean privateStatus;
         private final List<Long> channelMemberIdList;
+        private Long lastSequence;
     }
 
     @Data
@@ -70,15 +71,8 @@ public class ServerReadResponseDto {
         }
     }
 
-    public static ServerReadResponseDto convertToServerReadResponseDto(Server server, List<Channel> channelList, List<Category> categoryList,
-                                                                        Map<Long, List<ChannelMember>> channelMemberMap) {
+    public static ServerReadResponseDto convertToServerReadResponseDto(Server server, List<Category> categoryList, List<ChannelInfo> channelInfoList) {
         List<CategoryInfo> categoryInfoList = new ArrayList<>();
-
-        List<ChannelInfo> channelInfoList = new ArrayList<>();
-        for (Channel channel : channelList) {
-            ChannelInfo channelInfo = convertToChannelInfo(channel, channelMemberMap.get(channel.getId()).stream().map(channelMember -> channelMember.getServerMember().getMemberId()).toList());
-            channelInfoList.add(channelInfo);
-        }
 
         for (Category category : categoryList) {
             CategoryInfo categoryInfo = convertToCategoryInfo(category);
@@ -95,7 +89,7 @@ public class ServerReadResponseDto {
                 .build();
     }
 
-    public static ChannelInfo convertToChannelInfo(Channel channel, List<Long> channelMemberIdList) {
+    public static ChannelInfo convertToChannelInfo(Channel channel, List<Long> channelMemberIdList, Long lastSequence) {
         return ChannelInfo.builder()
                 .channelId(channel.getId())
                 .categoryId(channel.getCategory() == null ? null : channel.getCategory().getId())
@@ -104,6 +98,7 @@ public class ServerReadResponseDto {
                 .channelType(channel.getChannelType().name())
                 .channelMemberIdList(channelMemberIdList)
                 .privateStatus(channel.isPrivateStatus())
+                .lastSequence(lastSequence)
                 .build();
     }
 

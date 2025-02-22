@@ -43,6 +43,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.bbebig.serviceserver.server.dto.response.ServerReadResponseDto.*;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -60,6 +62,7 @@ public class ServerService {
 
     private final MemberClient memberClient;
     private final StateClient stateClient;
+    private final ServerRedisRepositoryImpl serverRedisRepositoryImpl;
 
 
     /**
@@ -163,12 +166,21 @@ public class ServerService {
 
         List<Channel> channels = channelRepository.findAllByServerId(serverId);
         List<Category> categories = categoryRepository.findAllByServerId(serverId);
-        Map<Long, List<ChannelMember>> channelMembers = new HashMap<>();
+        List<ChannelInfo> channelInfoList = new ArrayList<>();
         for (Channel channel : channels) {
             List<ChannelMember> channelMemberList = channelMemberRepository.findAllByChannelId(channel.getId());
-            channelMembers.put(channel.getId(), channelMemberList);
+            Long sequence = serverRedisRepositoryImpl.getServerChannelSequence(channel.getId());
+            if (sequence == null) {
+                // TODO : 예외처리 구현
+                sequence = 0L;
+            }
+            channel.updateLastSequence(sequence);
+            channelRepository.save(channel);
+
+            channelInfoList.add(convertToChannelInfo(channel,
+                    channelMemberList.stream().map(channelMember -> channelMember.getServerMember().getMemberId()).toList(), sequence));
         }
-        return ServerReadResponseDto.convertToServerReadResponseDto(server, channels, categories, channelMembers);
+        return convertToServerReadResponseDto(server, categories, channelInfoList);
     }
 
     /**
@@ -326,7 +338,7 @@ public class ServerService {
                 .map(member -> {
                     ServerMemberStatus status = statusMap.get(member.getMemberId());
 
-                    return ServerReadResponseDto.convertToServerMemberInfo(member, status);
+                    return convertToServerMemberInfo(member, status);
                 })
                 .collect(Collectors.toList());
 

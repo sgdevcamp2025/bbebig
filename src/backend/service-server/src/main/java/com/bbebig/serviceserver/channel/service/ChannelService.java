@@ -22,7 +22,6 @@ import com.bbebig.serviceserver.channel.repository.ChannelRepository;
 import com.bbebig.serviceserver.global.kafka.KafkaProducerService;
 import com.bbebig.serviceserver.server.entity.Server;
 import com.bbebig.serviceserver.server.entity.ServerMember;
-import com.bbebig.serviceserver.server.repository.MemberRedisRepositoryImpl;
 import com.bbebig.serviceserver.server.repository.ServerMemberRepository;
 import com.bbebig.serviceserver.server.repository.ServerRedisRepositoryImpl;
 import com.bbebig.serviceserver.server.repository.ServerRepository;
@@ -45,7 +44,6 @@ public class ChannelService {
     private final CategoryRepository categoryRepository;
 
     private final ServerRedisRepositoryImpl serverRedisRepository;
-    private final MemberRedisRepositoryImpl memberRedisRepository;
     private final ServerService serverService;
     private final KafkaProducerService kafkaProducerService;
 
@@ -76,6 +74,7 @@ public class ChannelService {
                 .position(position)
                 .channelType(channelCreateRequestDto.getChannelType())
                 .privateStatus(channelCreateRequestDto.isPrivateStatus())
+                .lastSequence(1L)
                 .build();
 
         channelRepository.save(channel);

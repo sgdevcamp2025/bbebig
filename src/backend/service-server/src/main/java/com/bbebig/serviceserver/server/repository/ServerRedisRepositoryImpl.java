@@ -154,4 +154,13 @@ public class ServerRedisRepositoryImpl implements ServerRedisRepository {
 		String key = ServerRedisKeys.getServerChannelListKey(serverId);
 		redisSetTemplate.delete(key);
 	}
+
+	/**
+	 * 서버별 채널 시퀀스 정보를 가져 옴
+	 * (serverChannel:{serverId}:channelSequence) => ChannelId, Sequence
+	 */
+	public Long getServerChannelSequence(Long channelId) {
+		String redisKey = ServerRedisKeys.getServerChannelSequenceKey(channelId);
+		return redisSetTemplate.opsForValue().get(redisKey);
+	}
 }
