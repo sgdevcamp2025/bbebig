@@ -206,4 +206,19 @@ public class ServerRedisRepositoryImpl implements ServerRedisRepository {
 				.count();
 	}
 
+	/**
+	 * 서버별 채널 시퀀스 정보를 저장
+	 * (serverChannel:{serverId}:channelSequence) => ChannelId, Sequence
+	 */
+	public void saveServerChannelSequence(Long channelId, Long sequence) {
+		String redisKey = ServerRedisKeys.getServerChannelSequenceKey(channelId);
+		redisSetTemplate.opsForValue().set(redisKey, sequence);
+	}
+
+	// 서버별 채널 시퀀스 정보 조회
+	public Long getServerChannelSequence(Long channelId) {
+		String redisKey = ServerRedisKeys.getServerChannelSequenceKey(channelId);
+		return redisSetTemplate.opsForValue().get(redisKey);
+	}
+
 }

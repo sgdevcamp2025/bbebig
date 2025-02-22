@@ -1,5 +1,7 @@
 package com.bbebig.serviceserver.server.service;
 
+import com.bbebig.commonmodule.clientDto.SearchFeignResponseDto;
+import com.bbebig.commonmodule.clientDto.SearchFeignResponseDto.ServerChannelSequenceResponseDto;
 import com.bbebig.commonmodule.clientDto.ServiceFeignResponseDto.*;
 import com.bbebig.commonmodule.clientDto.StateFeignResponseDto.ServerMemberPresenceResponseDto;
 import com.bbebig.commonmodule.clientDto.UserFeignResponseDto.*;
@@ -21,6 +23,7 @@ import com.bbebig.serviceserver.channel.entity.ChannelType;
 import com.bbebig.serviceserver.channel.repository.ChannelMemberRepository;
 import com.bbebig.serviceserver.channel.repository.ChannelRepository;
 import com.bbebig.serviceserver.global.client.MemberClient;
+import com.bbebig.serviceserver.global.client.SearchClient;
 import com.bbebig.serviceserver.global.client.StateClient;
 import com.bbebig.serviceserver.global.kafka.KafkaProducerService;
 import com.bbebig.serviceserver.server.dto.request.ServerCreateRequestDto;
@@ -43,6 +46,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.bbebig.serviceserver.server.dto.response.ServerReadResponseDto.*;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -60,6 +65,8 @@ public class ServerService {
 
     private final MemberClient memberClient;
     private final StateClient stateClient;
+    private final SearchClient searchClient;
+    private final ServerRedisRepositoryImpl serverRedisRepositoryImpl;
 
 
     /**
@@ -163,12 +170,22 @@ public class ServerService {
 
         List<Channel> channels = channelRepository.findAllByServerId(serverId);
         List<Category> categories = categoryRepository.findAllByServerId(serverId);
-        Map<Long, List<ChannelMember>> channelMembers = new HashMap<>();
+        List<ChannelInfo> channelInfoList = new ArrayList<>();
         for (Channel channel : channels) {
             List<ChannelMember> channelMemberList = channelMemberRepository.findAllByChannelId(channel.getId());
-            channelMembers.put(channel.getId(), channelMemberList);
+            Long sequence = serverRedisRepositoryImpl.getServerChannelSequence(channel.getId());
+            if (sequence == null) {
+                ServerChannelSequenceResponseDto channelLastSequence = searchClient.getChannelLastSequence(channel.getId());
+                sequence = channelLastSequence.getLastSequence();
+            }
+            // TODO : 추후에 채널별 마지막으로 발행된 시퀀스 번호를 주기적으로 DB에 저장하는 로직 구현
+            channel.updateLastSequence(sequence);
+            channelRepository.save(channel);
+
+            channelInfoList.add(convertToChannelInfo(channel,
+                    channelMemberList.stream().map(channelMember -> channelMember.getServerMember().getMemberId()).toList(), sequence));
         }
-        return ServerReadResponseDto.convertToServerReadResponseDto(server, channels, categories, channelMembers);
+        return convertToServerReadResponseDto(server, categories, channelInfoList);
     }
 
     /**
@@ -326,7 +343,7 @@ public class ServerService {
                 .map(member -> {
                     ServerMemberStatus status = statusMap.get(member.getMemberId());
 
-                    return ServerReadResponseDto.convertToServerMemberInfo(member, status);
+                    return convertToServerMemberInfo(member, status);
                 })
                 .collect(Collectors.toList());
 

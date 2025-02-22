@@ -46,6 +46,9 @@ public class Channel extends BaseTimeEntity {
     @Column(name = "private_status")
     private boolean privateStatus;
 
+    @Column(name = "last_sequence")
+    private Long lastSequence;
+
     public void update(ChannelUpdateRequestDto channelUpdateRequestDto) {
         this.name = channelUpdateRequestDto.getChannelName();
         this.privateStatus = channelUpdateRequestDto.isPrivateStatus();
@@ -57,5 +60,9 @@ public class Channel extends BaseTimeEntity {
 
     public void updatePosition(int position) {
         this.position = position;
+    }
+
+    public void updateLastSequence(Long lastSequence) {
+        this.lastSequence = lastSequence;
     }
 }
