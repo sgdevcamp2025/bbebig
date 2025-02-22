@@ -26,7 +26,7 @@ public class ChatMessageDto {
 	@NotNull(message = "메시지 타입은 null일 수 없습니다.")
 	private MessageType messageType;
 
-	@NotEmpty(message = "타입(type)은 비어 있을 수 없습니다.")
+	@NotNull(message = "타입(type)은 비어 있을 수 없습니다.")
 	private MessageEventType type; // MESSAGE_CREATE, MESSAGE_UPDATE, MESSAGE_DELETE
 
 	// 채널 관련 필드
