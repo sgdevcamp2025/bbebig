@@ -3,8 +3,8 @@ interface Message {
   memberId: string
   type: MessageType
   contents: { text: string }
-  createdAt: Date
-  updatedAt: Date
+  createdAt?: string
+  updatedAt?: string
 }
 
 interface ChannelMessage {
@@ -14,8 +14,8 @@ interface ChannelMessage {
   sequence: number
   sendMemberId: number
   content: string
-  createdAt: string
-  updatedAt: string
+  createdAt?: string
+  updatedAt?: string
   messageType: 'TEXT' | 'IMAGE' | 'VIDEO' | 'FILE' | 'SYSTEM'
   isDeleted: boolean
   deleted: boolean

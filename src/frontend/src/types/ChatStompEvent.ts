@@ -56,10 +56,10 @@ export interface ChatMessageRequest {
   type: 'MESSAGE_CREATE' | 'MESSAGE_UPDATE' | 'MESSAGE_DELETE'
   serverId: number
   channelId: number
-  sendMemberId: number
+  sendMemberId?: number
   content: string
-  createdAt: string
-  updatedAt: string
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 // 채널 방문/떠남 이벤트

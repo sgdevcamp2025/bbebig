@@ -1,4 +1,10 @@
 import { IMessage } from '@stomp/stompjs'
+import dayjs from 'dayjs'
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 import { useState } from 'react'
 
 import { chattingStompInstance } from '@/apis/config/stomp-instance'
@@ -61,9 +67,9 @@ export const useChattingStomp = () => {
   }
 
   // 서버 구독
-  const subscribeToServer = (serverId: string, callback: (message: unknown) => void) => {
+  const subscribeToServer = (serverId: number, callback: (message: unknown) => void) => {
     if (!isConnected || !clientInstance) {
-      console.log('[❌] 연결되지 않아 구독 불가:', serverId)
+      console.log('[❌] STOMP 연결되지 않아서 구독 불가:', serverId)
       return
     }
 
@@ -81,7 +87,7 @@ export const useChattingStomp = () => {
   }
 
   // 채널 타이핑 구독
-  const subscribeToChannel = (channelId: string, callback: (message: unknown) => void) => {
+  const subscribeToChannelTyping = (channelId: string, callback: (message: unknown) => void) => {
     if (clientInstance && isConnected) {
       const destination = `/topic/channel/${channelId}`
       console.log(`[✅] 채널 ${channelId} 구독 시작`)
@@ -145,8 +151,9 @@ export const useChattingStomp = () => {
     }
 
     const destination = `/pub/channel/message`
-    const now = new Date().toISOString()
     console.log(`[📤] 서버 ${body.serverId}의 ${body.channelId} 채널로 메시지 발행:`)
+
+    const now = dayjs().tz('Asia/Seoul').toISOString().slice(0, -1)
 
     const messageBody =
       JSON.stringify({
@@ -157,8 +164,7 @@ export const useChattingStomp = () => {
         channelId: body.channelId,
         sendMemberId: Number(memberId),
         content: body.content,
-        createdAt: now,
-        updatedAt: now
+        createdAt: now
       }) + '\0'
 
     clientInstance.publish({
@@ -226,7 +232,7 @@ export const useChattingStomp = () => {
   return {
     connect,
     subscribeToServer,
-    subscribeToChannel,
+    subscribeToChannelTyping,
     subscribeToPersonal,
     disconnect,
     subscribe,
