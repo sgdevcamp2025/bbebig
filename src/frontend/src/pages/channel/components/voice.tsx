@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 
-import AvatarCard from '@/components/avatar-card'
 import ChatArea from '@/components/chat-area'
 import CustomButton from '@/components/custom-button'
 import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
@@ -9,15 +8,25 @@ import useUserStatus from '@/hooks/store/use-user-status'
 import { cn } from '@/libs/cn'
 import { ChatUser } from '@/types/user'
 
+import VideoCard from './video-card'
+
 interface Props {
   channelId: number
   channelName: string
   serverName: string
+  serverMemberList: ChatUser[]
   currentUser: ChatUser
   targetUser: ChatUser
 }
 
-function VideoComponent({ channelId, serverName, channelName, currentUser, targetUser }: Props) {
+function VideoComponent({
+  channelId,
+  serverName,
+  channelName,
+  currentUser,
+  targetUser,
+  serverMemberList
+}: Props) {
   const [sideBar, setSideBar] = useState(true)
   const selfUser = useGetSelfUser()
   const { getCurrentChannelInfo } = useUserStatus()
@@ -29,20 +38,32 @@ function VideoComponent({ channelId, serverName, channelName, currentUser, targe
     serverName
   )
 
+  useEffect(() => {
+    return () => {
+      if (getCurrentChannelInfo()?.channelId === channelId) {
+        leaveChannel(selfUser?.id.toString())
+      }
+    }
+  }, [])
+
   const isInVoiceChannel = getCurrentChannelInfo()?.channelId === channelId
-  const isEmptyText = false
 
   const handleJoinVoiceChannel = () => {
     joinChannel()
   }
 
   const handleLeaveVoiceChannel = () => {
-    leaveChannel()
+    if (getCurrentChannelInfo()?.channelId === channelId) {
+      leaveChannel(selfUser?.id.toString())
+    }
   }
 
-  useEffect(function cleanup() {
-    return leaveChannel()
-  }, [])
+  const voiceUsers = users.map((user) => {
+    const findUser = serverMemberList.find((member) => member.memberId === Number(user.id))
+    return { ...findUser, ...user }
+  })
+
+  console.log(users, 'voiceUsers')
 
   return (
     <div className='flex flex-1 h-screen'>
@@ -75,26 +96,22 @@ function VideoComponent({ channelId, serverName, channelName, currentUser, targe
           <div />
           <section className='flex-1 flex flex-col items-center justify-center gap-2'>
             <ul className='flex gap-2 flex-wrap mb-8 w-full justify-center'>
-              {[currentUser, ...targetUser].map((user) => (
-                <li key={user.memberId}>
-                  <AvatarCard
-                    name={user.nickName}
-                    avatarUrl={user.avatarUrl ?? '/image/common/default-avatar.png'}
-                    backgroundUrl={user.bannerUrl ?? '/image/common/default-background.png'}
-                    size={users.length > 3 ? 'sm' : isInVoiceChannel ? 'md' : 'sm'}
-                    micStatus={true}
-                    headphoneStatus={true}
-                  />
-                </li>
+              {voiceUsers.map((user) => (
+                <VideoCard
+                  key={user.memberId}
+                  size='md'
+                  id={user.memberId?.toString() ?? ''}
+                  user={user}
+                />
               ))}
             </ul>
             {!isInVoiceChannel && (
               <>
                 <h4 className='text-gray-10 text-3xl font-bold'>{channelName}</h4>
                 <span className='text-gray-90 text-sm font-semibold'>
-                  {isEmptyText
+                  {users.length === 0
                     ? '현재 채널에 아무도 없어요'
-                    : `${users.map((user) => user.nickName).join(', ')} 님이 현재 음성 채널에 있어요.`}
+                    : `${serverMemberList.map((user) => user.nickName).join(', ')} 님이 현재 음성 채널에 있어요.`}
                 </span>
                 <CustomButton
                   className='w-fit px-4 py-2 mt-5 mb-10'

@@ -69,7 +69,9 @@ function ChannelPage() {
         channelId={Number(channelId)}
         serverName={serverInfo.serverName}
         channelName={currentChannel.channelName}
-        users={[currentUser, targetUser].filter(Boolean)}
+        serverMemberList={serverMemberList.serverMemberInfoList}
+        currentUser={currentUser}
+        targetUser={targetUser}
       />
     )
   }

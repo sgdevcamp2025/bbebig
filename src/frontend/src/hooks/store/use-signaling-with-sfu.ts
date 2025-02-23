@@ -7,10 +7,15 @@ import useUserStatus from './use-user-status'
 
 // WebRTC 설정
 const PC_CONFIG = {
-  iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun1.l.google.com:19302' }]
+  iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun1.l.google.com:19302' }],
+  encodedInsertableStreams: true,
+  qos: {
+    dscp: true,
+    maxPacketSize: 2500000
+  }
 }
 
-interface WebRTCUser {
+export interface WebRTCUser {
   id: string
   stream: MediaStream | null
   audioEnabled: boolean
@@ -33,6 +38,7 @@ export function useSignalingWithSFU(
   channelName: string,
   serverName: string
 ) {
+  const subscriptionId = `subscription-${userId}-${channelId}`
   const { startStream, getStream } = useMediaControl()
   const { send, subscribe, unsubscribe } = useSignalingStomp()
   const [users, setUsers] = useState<WebRTCUser[]>([])
@@ -62,6 +68,7 @@ export function useSignalingWithSFU(
 
   // 원격 사용자 추가
   const addRemoteUser = (remoteUserId: string, stream: MediaStream) => {
+    console.log('원격 사용자가 참여했습니다.', remoteUserId)
     setUsers((prev) => {
       const existingUser = prev.find((user) => user.id === remoteUserId)
       if (existingUser) {
@@ -81,7 +88,7 @@ export function useSignalingWithSFU(
 
   // 사용자 제거
   const removeUser = (remoteUserId: string) => {
-    console.log('removeUser', remoteUserId)
+    console.log('사용자가 나갔습니다.', remoteUserId)
     const pc = receiverPcsRef.current.get(remoteUserId)
     if (pc) {
       pc.close()
@@ -93,11 +100,6 @@ export function useSignalingWithSFU(
   // Sender PeerConnection 생성
   const createSenderPeerConnection = async () => {
     try {
-      if (senderPcRef.current?.signalingState === 'stable') {
-        console.log('Reusing existing stable connection')
-        return
-      }
-
       // 기존 연결 체크 및 정리
       if (senderPcRef.current) {
         console.log('Closing existing sender connection')
@@ -120,7 +122,6 @@ export function useSignalingWithSFU(
       }
 
       stream.getTracks().forEach((track) => {
-        console.log('Adding track to sender:', track.kind)
         pc.addTrack(track, stream)
       })
 
@@ -142,9 +143,26 @@ export function useSignalingWithSFU(
       }
 
       try {
-        console.log('Creating sender offer')
-        const offer = await pc.createOffer()
-        await pc.setLocalDescription(offer)
+        console.log('생성자 제안 생성')
+        const offer = await pc.createOffer({
+          offerToReceiveAudio: true,
+          offerToReceiveVideo: true
+        })
+
+        // SDP 필터링
+        const filteredSdp = offer.sdp
+          ?.split('\n')
+          .filter(
+            (line) =>
+              !line.includes('AMR/8000') && // 지원되지 않는 오디오 코덱 제거
+              !line.includes('CN/') // 컴포트 노이즈 코덱 제거
+          )
+          .join('\n')
+
+        await pc.setLocalDescription({
+          type: offer.type,
+          sdp: filteredSdp
+        })
 
         if (pc.signalingState === 'have-local-offer') {
           console.log('Sending offer to SFU')
@@ -158,17 +176,26 @@ export function useSignalingWithSFU(
       } catch (error) {
         console.error('Sender offer creation failed:', error)
       }
+
+      // 비디오 트랜시버 설정
+      pc.addTransceiver('video', {
+        direction: 'sendrecv',
+        streams: [stream],
+        sendEncodings: [
+          {
+            rid: 'high',
+            maxBitrate: 2500000,
+            scaleResolutionDownBy: 1.0
+          }
+        ]
+      })
     } catch (error) {
       console.error('Sender connection creation failed:', error)
     }
   }
 
   const handleOffer = async (message: SignalingMessage) => {
-    console.log('handleOffer', message)
-    const pc =
-      message.senderId === 'SFU_SERVER'
-        ? senderPcRef.current
-        : receiverPcsRef.current.get(message.senderId)
+    const pc = receiverPcsRef.current.get(message.senderId)
 
     if (!pc || !message.sdp) {
       console.error('No PeerConnection or SDP found for:', message.senderId)
@@ -176,12 +203,6 @@ export function useSignalingWithSFU(
     }
 
     try {
-      console.log('Setting remote description for:', message.senderId, {
-        signalingState: pc.signalingState,
-        connectionState: pc.connectionState,
-        iceConnectionState: pc.iceConnectionState
-      })
-
       await pc.setRemoteDescription(new RTCSessionDescription(message.sdp))
 
       if (pc.signalingState === 'stable') {
@@ -198,121 +219,45 @@ export function useSignalingWithSFU(
   }
 
   const handleAnswer = async (message: SignalingMessage) => {
-    console.log('Received answer message:', {
-      from: message.senderId,
-      sdpType: message.sdp?.type,
-      sdpDescription: message.sdp?.sdp,
-      state: senderPcRef.current?.signalingState
-    })
-
-    const pc =
-      message.senderId === 'SFU_SERVER'
-        ? senderPcRef.current
-        : receiverPcsRef.current.get(message.senderId)
+    console.log('Answer 설정 시작:', message)
+    const pc = receiverPcsRef.current.get(message.senderId) || senderPcRef.current
 
     if (!pc || !message.sdp) {
-      console.error('No PeerConnection or SDP found for:', message.senderId)
+      console.error('Invalid PeerConnection or SDP')
+      return
+    }
+
+    if (pc.signalingState === 'stable') {
       return
     }
 
     try {
-      console.log('Setting remote description:', {
-        userId: message.senderId,
-        currentState: pc.signalingState,
-        sdp: message.sdp
-      })
-
-      const answer = new RTCSessionDescription(message.sdp)
-      await pc.setRemoteDescription(answer)
-
-      // 트랜시버 상태 확인
-      const transceivers = pc.getTransceivers()
-      console.log(
-        'Transceiver status after answer:',
-        transceivers.map((t) => ({
-          mid: t.mid,
-          currentDirection: t.currentDirection,
-          direction: t.direction
-        }))
-      )
-
-      // ontrack 이벤트 핸들러를 먼저 설정
-      pc.ontrack = (event) => {
-        console.log('Track received:', {
-          kind: event.track.kind,
-          userId: message.senderId,
-          trackId: event.track.id,
-          streamId: event.streams[0]?.id,
-          readyState: event.track.readyState
-        })
-
-        // 트랙 상태 변경 모니터링
-        event.track.onmute = () => console.log('Track muted:', event.track.id)
-        event.track.onunmute = () => console.log('Track unmuted:', event.track.id)
-        event.track.onended = () => console.log('Track ended:', event.track.id)
-
-        if (event.streams && event.streams[0]) {
-          const stream = event.streams[0]
-          console.log(
-            'Stream tracks:',
-            stream.getTracks().map((t) => ({
-              kind: t.kind,
-              id: t.id,
-              enabled: t.enabled,
-              readyState: t.readyState
-            }))
-          )
-
-          setUsers((prev) => {
-            const newUsers = prev.map((user) =>
-              user.id === message.senderId ? { ...user, stream } : user
-            )
-            console.log('Updated users with stream:', message.senderId)
-            return newUsers
-          })
-        } else {
-          console.warn('No stream received with track')
-        }
-      }
-
-      // 연결 상태 모니터링 강화
-      pc.onconnectionstatechange = () => {
-        console.log('Connection state changed:', {
-          userId: message.senderId,
-          connectionState: pc.connectionState,
-          iceConnectionState: pc.iceConnectionState,
-          signalingState: pc.signalingState
-        })
-      }
-
-      pc.oniceconnectionstatechange = () => {
-        console.log('ICE connection state:', pc.iceConnectionState)
-      }
-
-      // ICE 재협상이 필요한 경우
-      if (pc.iceConnectionState === 'disconnected') {
-        console.log('Restarting ICE')
-        const offer = await pc.createOffer({ iceRestart: true })
-        await pc.setLocalDescription(offer)
-      }
+      await pc.setRemoteDescription(new RTCSessionDescription(message.sdp))
+      console.log('Answer 설정 성공:', pc.signalingState)
     } catch (error) {
       console.error('Answer 설정 실패:', error)
+      // 실패 시 연결 재설정
+      if (message.senderId === 'SFU_SERVER') {
+        await createSenderPeerConnection()
+      }
     }
   }
 
   const handleUserJoined = async (message: SignalingMessage) => {
+    if (message.senderId === userId) return
+
     try {
-      console.log('New user joined:', message.senderId)
+      console.log('새로운 사용자가 참여했습니다.', message.senderId)
 
       const pc = new RTCPeerConnection(PC_CONFIG)
 
       // 스트림 처리를 위한 빈 스트림 생성
       const remoteStream = new MediaStream()
-      console.log('Created new MediaStream for:', message.senderId)
+      console.log('새로운 미디어 스트림을 생성했습니다.', message.senderId)
 
       // 트랙 이벤트 핸들러
       pc.ontrack = (event) => {
-        console.log('Track received:', {
+        console.log('새로운 트래킹 이벤트가 발생했습니다.', {
           kind: event.track.kind,
           userId: message.senderId,
           trackId: event.track.id,
@@ -323,34 +268,21 @@ export function useSignalingWithSFU(
         remoteStream.addTrack(event.track)
 
         // 트랙 상태 변경 감지
-        event.track.onmute = () => console.log('Track muted:', event.track.id)
+        event.track.onmute = () => console.log('트랙이 뮤트되었습니다.', event.track.id)
+
         event.track.onunmute = () => {
-          console.log('Track unmuted:', {
+          console.log('트랙이 뮤트되지 않았습니다.', {
             trackId: event.track.id,
             streamTracks: remoteStream.getTracks().length
           })
         }
 
-        // 스트림 상태 업데이트
-        setUsers((prev) => {
-          const newUsers = prev.map((user) =>
-            user.id === message.senderId ? { ...user, stream: remoteStream } : user
-          )
-          console.log('Updated users with stream:', {
-            userId: message.senderId,
-            tracks: remoteStream.getTracks().map((t) => ({
-              kind: t.kind,
-              enabled: t.enabled,
-              muted: t.muted
-            }))
-          })
-          return newUsers
-        })
+        addRemoteUser(message.senderId, remoteStream)
       }
 
       // 연결 상태 모니터링
       pc.onconnectionstatechange = () => {
-        console.log('Connection state:', {
+        console.log('연결 상태:', {
           userId: message.senderId,
           state: pc.connectionState,
           iceState: pc.iceConnectionState
@@ -359,7 +291,7 @@ export function useSignalingWithSFU(
         if (pc.connectionState === 'connected') {
           const receivers = pc.getReceivers()
           console.log(
-            'Active receivers:',
+            '활성 수신기:',
             receivers.map((r) => ({
               kind: r.track?.kind,
               trackId: r.track?.id,
@@ -371,27 +303,22 @@ export function useSignalingWithSFU(
 
       // ICE 후보 처리
       pc.onicecandidate = ({ candidate }) => {
-        if (candidate) {
-          console.log('Sending ICE candidate:', {
-            userId: message.senderId,
-            type: candidate.type,
-            protocol: candidate.protocol
-          })
-          send('/pub/stream/group', {
-            messageType: 'CANDIDATE',
-            channelId,
-            senderId: userId,
-            receiverId: message.senderId,
-            candidate
-          })
-        }
+        send('/pub/stream/group', {
+          messageType: 'CANDIDATE',
+          channelId,
+          senderId: userId,
+          receiverId: message.senderId,
+          candidate
+        })
       }
 
       // 기존 연결 정리
       const oldPc = receiverPcsRef.current.get(message.senderId)
+
       if (oldPc) {
         oldPc.close()
       }
+
       receiverPcsRef.current.set(message.senderId, pc)
 
       // 새 사용자 추가 (초기 스트림 설정)
@@ -458,46 +385,58 @@ export function useSignalingWithSFU(
 
   // 채널 입장
   const joinChannel = async () => {
-    try {
-      subscribe(`/sub/stream/direct/${userId}`, (message: SignalingMessage) => {
-        switch (message.messageType) {
-          case 'OFFER':
-            handleOffer(message)
-            break
-          case 'ANSWER':
-            handleAnswer(message)
-            break
-          case 'CANDIDATE':
-            handleCandidate(message)
-            break
-          case 'EXIST_USERS':
-            if (message.participants) {
-              const uniqueParticipants = [...new Set(message.participants)]
-              const currentUsers = new Set(users.map((u) => u.id))
+    initialize()
 
-              // 새로운 사용자만 처리
-              for (const id of uniqueParticipants) {
-                if (id !== Number(userId) && !currentUsers.has(String(id))) {
-                  handleUserJoined({ ...message, senderId: String(id) })
+    try {
+      subscribe(
+        `/sub/stream/direct/${userId}`,
+        (message: SignalingMessage) => {
+          console.log('Direct message received:', message)
+          switch (message.messageType) {
+            case 'OFFER':
+              handleOffer(message)
+              break
+            case 'CANDIDATE':
+              handleCandidate(message)
+              break
+            case 'EXIST_USERS':
+              if (message.participants) {
+                const uniqueParticipants = [...new Set(message.participants)]
+                const currentUsers = new Set(users.map((u) => u.id))
+
+                // 새로운 사용자만 처리
+                for (const id of uniqueParticipants) {
+                  if (id !== Number(userId) && !currentUsers.has(String(id))) {
+                    handleUserJoined({ ...message, senderId: String(id) })
+                  }
                 }
               }
-            }
-            break
-        }
-      })
+              break
+            case 'ANSWER':
+              handleAnswer(message)
+              break
+          }
+        },
+        subscriptionId + 'direct'
+      )
 
-      subscribe(`/sub/stream/group/${channelId}`, (message: SignalingMessage) => {
-        switch (message.messageType) {
-          case 'USER_JOINED':
-            if (message.senderId !== userId) {
-              handleUserJoined(message)
-            }
-            break
-          case 'USER_LEFT':
-            removeUser(message.senderId)
-            break
-        }
-      })
+      subscribe(
+        `/sub/stream/group/${channelId}`,
+        (message: SignalingMessage) => {
+          console.log('Group message received:', message)
+          switch (message.messageType) {
+            case 'USER_JOINED':
+              if (message.senderId !== userId) {
+                handleUserJoined(message)
+              }
+              break
+            case 'USER_LEFT':
+              removeUser(message.senderId)
+              break
+          }
+        },
+        subscriptionId + 'group'
+      )
     } catch (err) {
       console.error('채널 입장 실패:', err)
     }
@@ -524,19 +463,22 @@ export function useSignalingWithSFU(
   }
 
   // 채널 퇴장
-  const leaveChannel = () => {
-    if (channelInfo?.channelId !== Number(channelId)) return
-
+  const leaveChannel = (senderId: string) => {
     send('/pub/stream/group', {
       messageType: 'LEAVE_CHANNEL',
       channelId,
-      senderId: userId
+      senderId
     })
 
     leaveVoiceChannel()
-    unsubscribe(`/sub/stream/direct/${channelId}`)
-    unsubscribe(`/sub/stream/group/${channelId}`)
 
+    unsubscribe(`/sub/stream/direct/${channelId}`, subscriptionId + 'direct')
+    unsubscribe(`/sub/stream/group/${channelId}`, subscriptionId + 'group')
+
+    initialize()
+  }
+
+  const initialize = () => {
     if (senderPcRef.current) {
       senderPcRef.current.close()
       senderPcRef.current = null
@@ -544,7 +486,6 @@ export function useSignalingWithSFU(
 
     receiverPcsRef.current.forEach((pc) => pc.close())
     receiverPcsRef.current.clear()
-
     setUsers([])
   }
 

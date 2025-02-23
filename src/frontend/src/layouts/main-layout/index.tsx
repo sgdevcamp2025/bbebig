@@ -74,7 +74,7 @@ const Inner = () => {
   }
 
   const [settingModalState, setSettingModalState] = useState({
-    itemId: SettingModalTabsID.none,
+    itemId: SettingModalTabsID.myAccount,
     isOpen: false
   })
 
@@ -98,7 +98,7 @@ const Inner = () => {
 
   const handleClickSettingModalClose = () => {
     setSettingModalState({
-      itemId: SettingModalTabsID.none,
+      itemId: SettingModalTabsID.myAccount,
       isOpen: false
     })
   }

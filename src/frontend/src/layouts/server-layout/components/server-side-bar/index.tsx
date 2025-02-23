@@ -150,7 +150,7 @@ function ServerSideBar({
           <div
             key={category.categoryId}
             className='mt-4'>
-            <button
+            <div
               onClick={() => toggleCategory(category.categoryId)}
               className='w-full px-2 flex items-center justify-between group'>
               <div className='flex items-center'>
@@ -174,14 +174,13 @@ function ServerSideBar({
                 }}>
                 <Plus className='w-4 h-4 text-discord-font-color-muted' />
               </button>
-            </button>
+            </div>
 
             {expandedCategories.includes(category.categoryId) && (
               <div className='px-2 mt-1'>
                 {category.channelInfoList.map((channel) => (
-                  <button
+                  <div
                     key={channel.channelId}
-                    type='button'
                     onClick={() => onChannelSelect?.(channel.channelId)}
                     className={cn(
                       'w-full flex items-center px-2 py-1 rounded transition-colors',
@@ -228,7 +227,7 @@ function ServerSideBar({
                         />
                       </button>
                     </div>
-                  </button>
+                  </div>
                 ))}
               </div>
             )}

@@ -33,12 +33,18 @@ export const useSignalingStomp = create<StompState>((set, get) => ({
   },
 
   // 메시지 구독
-  subscribe: (destination, callback) => {
+  subscribe: (destination, callback, id) => {
     const client = get().client
     if (client && get().isConnected) {
-      client.subscribe(destination, (message: IMessage) => {
-        callback(JSON.parse(message.body))
-      })
+      client.subscribe(
+        destination,
+        (message: IMessage) => {
+          callback(JSON.parse(message.body))
+        },
+        {
+          id
+        }
+      )
     }
   },
 
@@ -54,10 +60,12 @@ export const useSignalingStomp = create<StompState>((set, get) => ({
   },
 
   // 메시지 구독 취소
-  unsubscribe: (destination) => {
+  unsubscribe: (destination, id) => {
     const client = get().client
-    if (client && get().isConnected) {
-      client.unsubscribe(destination)
+    if (client) {
+      client.unsubscribe(id, {
+        destination
+      })
     }
   }
 }))
