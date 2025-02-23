@@ -14,7 +14,7 @@ export const useGetHistoryChattingMessages = (
 ) => {
   const { data } = useSuspenseQuery({
     ...config,
-    queryKey: ['historyChattingMessages'],
+    queryKey: ['historyChattingMessages', params.channelId],
     queryFn: () => searchService.getHistoryChattingMessages(params)
   })
 
