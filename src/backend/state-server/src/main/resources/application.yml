@@ -12,7 +12,7 @@ spring:
       host: redis
 
   kafka:
-    bootstrap-servers: kafka00:9092,kafka01:9093,kafka02:9094
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
 
     topic:
       channel-chat-event: "channelChatEvent"
@@ -25,7 +25,7 @@ spring:
       member-event: "memberEvent"
 
     producer:
-      bootstrap-servers: kafka00:9092,kafka01:9093,kafka02:9094
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
 
     consumer:
       group-id:
