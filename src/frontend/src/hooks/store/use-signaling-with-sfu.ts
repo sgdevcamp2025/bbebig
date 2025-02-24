@@ -493,6 +493,7 @@ export function useSignalingWithSFU(
 
     try {
       subscribe(
+        subscriptionId + 'direct',
         `/sub/stream/direct/${userId}`,
         (message: SignalingMessage) => {
           console.log('Direct message received:', message)
@@ -520,11 +521,11 @@ export function useSignalingWithSFU(
               handleAnswer(message)
               break
           }
-        },
-        subscriptionId + 'direct'
+        }
       )
 
       subscribe(
+        subscriptionId + 'group',
         `/sub/stream/group/${channelId}`,
         (message: SignalingMessage) => {
           console.log('Group message received:', message)
@@ -538,8 +539,7 @@ export function useSignalingWithSFU(
               removeUser(message.senderId)
               break
           }
-        },
-        subscriptionId + 'group'
+        }
       )
     } catch (err) {
       console.error('채널 입장 실패:', err)

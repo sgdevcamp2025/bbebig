@@ -1,7 +1,7 @@
 import { Client, IMessage } from '@stomp/stompjs'
 import { useEffect, useRef, useState } from 'react'
 
-import { chattingStompInstance } from '@/apis/config/stomp-instance'
+import { CHAT_SERVER_URL } from '@/constants/env'
 import { COOKIE_KEYS } from '@/constants/keys'
 import { ChatMessageRequest } from '@/types/ChatStompEvent'
 import cookie from '@/utils/cookie'
@@ -24,7 +24,12 @@ export const useChattingStomp = () => {
     }
 
     const currentToken = cookie.getCookie(COOKIE_KEYS.ACCESS_TOKEN)
-    client.current = chattingStompInstance()
+    client.current = new Client({
+      brokerURL: CHAT_SERVER_URL,
+      reconnectDelay: 5000,
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000
+    })
 
     client.current.connectHeaders = {
       AcceptVersion: '1.3,1.2,1.1,1.0',
