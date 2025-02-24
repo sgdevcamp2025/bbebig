@@ -9,7 +9,7 @@ data object HomeNavGraph
 data object Home
 
 @Serializable
-data object SerVerJoin
+data object ServerJoin
 
 @Serializable
 data object Search
