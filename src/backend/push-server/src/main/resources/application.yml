@@ -1,9 +1,55 @@
 server:
   port: 9060
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
 
 spring:
   application:
     name: push-server
+
+  data:
+    redis:
+      port: 6379
+      host: redis
+
+    kafka:
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+
+      topic:
+        channel-chat-event: "channelChatEvent"
+        dm-chat-event: "dmChatEvent"
+        connection-event: "connectionEvent"
+        presence-event: "presenceEvent"
+        notification-event: "notificationEvent"
+        server-event: "serverEvent"
+        channel-event: "channelEvent"
+        member-event: "memberEvent"
+
+      producer:
+        bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+
+      consumer:
+        group-id:
+          channel-chat-event: "${spring.application.name}-channelChatEventGroup"
+          dm-chat-event: "${spring.application.name}-dmChatEventGroup"
+          notification-event: "${spring.application.name}-notificationEventGroup"
+          server-event: "${spring.application.name}-serverEventGroup"
+          channel-event: "${spring.application.name}-channelEventGroup"
+          connection-event: "${spring.application.name}-connectionEventGroup"
+          presence-event: "${spring.application.name}-presenceEventGroup"
+          member-event: "${spring.application.name}-memberEventGroup"
+
+        enable-auto-commit: true
+        auto-offset-reset: latest
+
+  logging:
+    level:
+      org.springframework.jdbc: DEBUG # 운영 시에 WARN 변경
+      org.apache.kafka: WARN
+      org.springframework.kafka: WARN
 
 eureka:
   client:
@@ -11,6 +57,14 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://discovery-server:8761/eureka
+  instance:
+    instance-id: ${spring.cloud.client.ip-address}:${spring.application.instance_id:${random.value}}
+
+springdoc:
+  path: /swagger-ui/index.html
+  swagger-ui:
+    tags-sorter: alpha
+    operations-sorter: method
 
 eas:
   passport:
