@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { useShallow } from 'zustand/shallow'
 
-import { discordLogo } from '@/constants/discord-assets-path'
 import useLoginStore from '@/stores/use-login-store'
 
 const navigation = [
@@ -49,7 +48,7 @@ function Header() {
 
   useEffect(() => {
     initialLoginState()
-  }, [])
+  }, [initialLoginState])
 
   return (
     <div className='absolute left-0 right-0 top-0 mobile-range:sticky mobile-range:top-0 mobile-range:z-50 mobile-range:bg-blue-30'>
@@ -57,12 +56,14 @@ function Header() {
         role='banner'
         className='mx-auto flex min-h-20 w-[90%] max-w-[1180px] justify-between'>
         <div className='flex w-full items-center justify-between gap-4'>
-          <img
-            alt='Click for home'
-            src={discordLogo}
-            loading='lazy'
-            className='h-auto w-[124px]'
-          />
+          <div className='flex h-[34px] w-[124px] items-center justify-between gap-2'>
+            <img
+              src='/icon/brand/icon_logo.svg'
+              width={36}
+              height={36}
+            />
+            <img src='/icon/brand/brand_logo.svg' />
+          </div>
           <ul className='flex flex-row mobile-range:hidden tablet-range:hidden'>
             {navigation.map((item, index) => (
               <li

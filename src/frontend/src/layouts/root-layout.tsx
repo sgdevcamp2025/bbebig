@@ -9,7 +9,7 @@ import queryClient from '@/libs/query-client'
 function RootLayout() {
   return (
     <div className='h-full min-h-screen max-w-full bg-blue-10'>
-      <title>Discord Clone</title>
+      <title>Biscord</title>
       <MSWProvider />
       <QueryClientProvider client={queryClient}>
         <Outlet />
