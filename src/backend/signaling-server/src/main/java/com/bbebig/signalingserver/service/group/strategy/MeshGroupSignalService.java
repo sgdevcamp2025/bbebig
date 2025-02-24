@@ -6,6 +6,7 @@ import com.bbebig.signalingserver.domain.MessageType;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.signalingserver.service.group.ChannelManager;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -63,30 +64,34 @@ public class MeshGroupSignalService implements GroupSignalStrategy {
             );
         }
 
-//        // 나를 제외한 기존 멤버 목록
-//        Set<String> participants = channelManager.getParticipants(message.getChannelId());
-//        List<String> otherUsers = new ArrayList<>(participants);
-//        otherUsers.remove(memberId);
+        // 기존 멤버 목록
+        Set<String> participants = channelManager.getParticipants(message.getChannelId());
 
-        notifyExistUsers(message);
+        notifyExistUsers(message, participants);
+
         notifyUserJoined(message);
     }
 
     /**
      * 본인에게 기존 멤버 정보를 전달
      */
-    private void notifyExistUsers(SignalMessage message) {
-        // TODO: 기존 유저 ID 추가
+    private void notifyExistUsers(SignalMessage message, Set<String> participants) {
         SignalMessage allUsersMessage = SignalMessage.builder()
                 .messageType(MessageType.EXIST_USERS)
                 .channelId(message.getChannelId())
                 .senderId(message.getSenderId())
+                .participants(participants.stream()
+                        .map(Long::parseLong)
+                        .toList())
                 .build();
 
         messagingTemplate.convertAndSend(
                 Path.directSubPath + message.getSenderId(),
                 allUsersMessage
         );
+
+        log.info("[Signal] 채널 타입: Group, 대상 경로: {}, 상세: EXIST_USERS 메시지 전송",
+                Path.directSubPath + message.getSenderId());
     }
 
     /**
@@ -103,6 +108,9 @@ public class MeshGroupSignalService implements GroupSignalStrategy {
                 Path.groupSubPath + message.getChannelId(),
                 userJoinedMessage
         );
+
+        log.info("[Signal] 채널 타입: Group, 대상 경로: {}, 상세: USER_JOINED 메시지 전송",
+                Path.groupSubPath + message.getChannelId());
     }
 
     /**
