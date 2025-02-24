@@ -1,3 +1,6 @@
+import { useEffect } from 'react'
+import { useShallow } from 'zustand/shallow'
+
 import { discordLogo } from '@/constants/discord-assets-path'
 import useLoginStore from '@/stores/use-login-store'
 
@@ -37,7 +40,16 @@ const navigation = [
 ] as const
 
 function Header() {
-  const isLogin = useLoginStore((state) => state.isLogin)
+  const { isLogin, initialLoginState } = useLoginStore(
+    useShallow((state) => ({
+      isLogin: state.isLogin,
+      initialLoginState: state.initialLoginState
+    }))
+  )
+
+  useEffect(() => {
+    initialLoginState()
+  }, [])
 
   return (
     <div className='absolute left-0 right-0 top-0 mobile-range:sticky mobile-range:top-0 mobile-range:z-50 mobile-range:bg-blue-30'>
