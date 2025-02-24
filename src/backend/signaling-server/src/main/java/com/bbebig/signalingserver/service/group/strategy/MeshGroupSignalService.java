@@ -60,7 +60,7 @@ public class MeshGroupSignalService {
                     .build();
 
             messagingTemplate.convertAndSend(
-                    Path.directSubPath + message.getSenderId(),
+                    Path.meshDirectSubPath + message.getSenderId(),
                     fullMessage
             );
         }
@@ -87,7 +87,7 @@ public class MeshGroupSignalService {
                 .build();
 
         messagingTemplate.convertAndSend(
-                Path.directSubPath + message.getSenderId(),
+                Path.meshDirectSubPath + message.getSenderId(),
                 allUsersMessage
         );
 
@@ -106,7 +106,7 @@ public class MeshGroupSignalService {
                 .build();
 
         messagingTemplate.convertAndSend(
-                Path.groupSubPath + message.getChannelId(),
+                Path.meshGroupSubPath + message.getChannelId(),
                 userJoinedMessage
         );
 
@@ -127,7 +127,7 @@ public class MeshGroupSignalService {
                 .build();
 
         messagingTemplate.convertAndSend(
-                Path.groupSubPath + message.getChannelId(),
+                Path.meshGroupSubPath + message.getChannelId(),
                 userLeftMessage
         );
 
@@ -162,7 +162,7 @@ public class MeshGroupSignalService {
 
         for (String memberId : otherMembers) {
             messagingTemplate.convertAndSend(
-                    Path.directSubPath + memberId,
+                    Path.meshDirectSubPath + memberId,
                     groupMessage
             );
         }
