@@ -1,9 +1,9 @@
 import { useRef, useState } from 'react'
 
 import { useSignalingStomp } from '@/stores/use-signaling-stomp-store'
+import { useUserChannelStatus } from '@/stores/use-user-status-store'
 import { filterAMR, onChangeDefaultCodecs } from '@/utils/webrtc-helper'
 
-import useUserStatus from '../stores/use-user-status'
 import useMediaControl from './use-media-control'
 
 // WebRTC 설정
@@ -54,7 +54,7 @@ export function useSignalingWithSFU(
   const { startStream, getStream } = useMediaControl()
   const { send, subscribe, unsubscribe } = useSignalingStomp()
   const [users, setUsers] = useState<WebRTCUser[]>([])
-  const { joinVoiceChannel, leaveVoiceChannel } = useUserStatus()
+  const { joinVoiceChannel, leaveVoiceChannel } = useUserChannelStatus()
 
   const senderPcRef = useRef<RTCPeerConnection | null>(null)
   const receiverPcsRef = useRef<Map<string, RTCPeerConnection>>(new Map())

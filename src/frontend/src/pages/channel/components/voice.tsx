@@ -5,7 +5,7 @@ import CustomButton from '@/components/custom-button'
 import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
 import { useSignalingWithSFU } from '@/hooks/use-signaling-with-sfu'
 import { cn } from '@/libs/cn'
-import useUserStatus from '@/stores/use-user-status'
+import { useUserChannelStatus } from '@/stores/use-user-status-store'
 import { ChatUser } from '@/types/user'
 
 import VideoCard from './video-card'
@@ -29,7 +29,7 @@ function VideoComponent({
 }: Props) {
   const [sideBar, setSideBar] = useState(true)
   const selfUser = useGetSelfUser()
-  const { getCurrentChannelInfo } = useUserStatus()
+  const { getCurrentChannelInfo } = useUserChannelStatus()
 
   const { joinChannel, leaveChannel, users } = useSignalingWithSFU(
     selfUser?.id.toString(),

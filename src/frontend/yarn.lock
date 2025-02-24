@@ -3006,6 +3006,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/kurento-utils@npm:^6.7.4":
+  version: 6.7.4
+  resolution: "@types/kurento-utils@npm:6.7.4"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/a5176f595f321e5cbe66f1342dd513e28e1a7bc070fdb848a8c13147e32b1c28d5329210387f7246dccee5c72867d89d58e4299a91237d38e64a9146e0b4eb20
+  languageName: node
+  linkType: hard
+
 "@types/mdx@npm:^2.0.0":
   version: 2.0.13
   resolution: "@types/mdx@npm:2.0.13"
@@ -5395,6 +5404,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"freeice@npm:^2.1.2":
+  version: 2.2.2
+  resolution: "freeice@npm:2.2.2"
+  dependencies:
+    normalice: "npm:^1.0.0"
+  checksum: 10c0/b1657b3c54e7dd1484e07120b8a88f685f96aea7cbdb7cdc7c2b8cd9bb6f8101a39d72ec5af10a163cb60a92efa232660cfd851cce9cf9b3d293fd2d5a329358
+  languageName: node
+  linkType: hard
+
 "frontend@workspace:.":
   version: 0.0.0-use.local
   resolution: "frontend@workspace:."
@@ -5415,6 +5433,7 @@ __metadata:
     "@storybook/test": "npm:^8.5.0"
     "@tanstack/eslint-plugin-query": "npm:^5.66.1"
     "@tanstack/react-query": "npm:^5.66.0"
+    "@types/kurento-utils": "npm:^6.7.4"
     "@types/node": "npm:^20"
     "@types/react": "npm:^19.0.1"
     "@types/react-dom": "npm:^19.0.1"
@@ -5436,6 +5455,7 @@ __metadata:
     eslint-plugin-unused-imports: "npm:^4.1.4"
     globals: "npm:^15.14.0"
     isbot: "npm:^5.1.17"
+    kurento-utils: "npm:^7.1.0"
     lucide-react: "npm:^0.473.0"
     msw: "npm:^2.7.1"
     postcss: "npm:^8.5.1"
@@ -5742,6 +5762,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"hark@npm:^1.0.0":
+  version: 1.2.3
+  resolution: "hark@npm:1.2.3"
+  dependencies:
+    wildemitter: "npm:^1.2.0"
+  checksum: 10c0/237f787eed9422501dc3297b98467a3db7b95dbbb7400df9ee70bcf3df087121e637a588dedc85ac8abfbb9a983c61f586725bb27ff8568e6957ebdafae18e43
+  languageName: node
+  linkType: hard
+
 "has-bigints@npm:^1.0.2":
   version: 1.1.0
   resolution: "has-bigints@npm:1.1.0"
@@ -5912,7 +5941,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"inherits@npm:^2.0.1, inherits@npm:^2.0.3, inherits@npm:~2.0.3":
+"inherits@npm:^2.0.0, inherits@npm:^2.0.1, inherits@npm:^2.0.3, inherits@npm:~2.0.3":
   version: 2.0.4
   resolution: "inherits@npm:2.0.4"
   checksum: 10c0/4e531f648b29039fb7426fb94075e6545faa1eb9fe83c29f0b6d9e7263aceb4289d2d4557db0d428188eeb449cc7c5e77b0a0b2c4e248ff2a65933a0dee49ef2
@@ -6482,6 +6511,32 @@ __metadata:
   languageName: node
   linkType: hard
 
+"kurento-browser-extensions@npm:*":
+  version: 0.0.2
+  resolution: "kurento-browser-extensions@npm:0.0.2"
+  checksum: 10c0/26afa4331a56fc4a60bf8fe96256848e3191fb5aacdaf7ea5f6acbf620aa73174c55d4a31935518204268ee4cd923f3658a94b84f7991c0d051e29ab604a5df3
+  languageName: node
+  linkType: hard
+
+"kurento-utils@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "kurento-utils@npm:7.1.0"
+  dependencies:
+    freeice: "npm:^2.1.2"
+    hark: "npm:^1.0.0"
+    inherits: "npm:^2.0.0"
+    kurento-browser-extensions: "npm:*"
+    merge: "npm:^1.2.0"
+    sdp-translator: "npm:^0.1.15"
+    ua-parser-js: "npm:^0.7.7"
+    uuid: "npm:^3.0.0"
+  dependenciesMeta:
+    kurento-browser-extensions:
+      optional: true
+  checksum: 10c0/d201fcd967a6d0cfb6898a69a3ec8657918ac5ef07a9d3c385030adb4f9bf782749ff4f360451bfa04fc83f24e2c94ce4b18a418bf0fdb2a1a6c6b992429798d
+  languageName: node
+  linkType: hard
+
 "levn@npm:^0.4.1":
   version: 0.4.1
   resolution: "levn@npm:0.4.1"
@@ -6668,6 +6723,13 @@ __metadata:
   version: 1.4.1
   resolution: "merge2@npm:1.4.1"
   checksum: 10c0/254a8a4605b58f450308fc474c82ac9a094848081bf4c06778200207820e5193726dc563a0d2c16468810516a5c97d9d3ea0ca6585d23c58ccfff2403e8dbbeb
+  languageName: node
+  linkType: hard
+
+"merge@npm:^1.2.0":
+  version: 1.2.1
+  resolution: "merge@npm:1.2.1"
+  checksum: 10c0/09f0ed1e85f336feb32d93d1243cb8930be22c7e6e4aa0c59a08a6f680d274dbe021c7d2a35ee8383cab2524efbb3f51985c3052e3dcf134951656511edf4693
   languageName: node
   linkType: hard
 
@@ -6997,6 +7059,13 @@ __metadata:
   bin:
     nopt: bin/nopt.js
   checksum: 10c0/19cb986f79abaca2d0f0b560021da7b32ee6fcc3de48f3eaeb0c324d36755c17754f886a754c091f01f740c17caf7d6aea8237b7fbaf39f476ae5e30a249f18f
+  languageName: node
+  linkType: hard
+
+"normalice@npm:^1.0.0":
+  version: 1.0.1
+  resolution: "normalice@npm:1.0.1"
+  checksum: 10c0/8be7faa9c38d6b3397def3b80ce6157adecf945363b27595263c80e9dcca63073cc099eee31147acbbeb02a2c830f325b32499b71b0ab9e3e540fb29bb0adc26
   languageName: node
   linkType: hard
 
@@ -8281,12 +8350,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sdp-transform@npm:1.5.*":
+  version: 1.5.3
+  resolution: "sdp-transform@npm:1.5.3"
+  bin:
+    sdp-verify: ./checker.js
+  checksum: 10c0/44cfb23f74a8f3afcd3aa1af94aeefe69278f0e4649c92cb96b31f6dad494bf10676e9c618350ee867408327b450fd7e66d1d6200a8c518a806485e776548a18
+  languageName: node
+  linkType: hard
+
 "sdp-transform@npm:^2.15.0":
   version: 2.15.0
   resolution: "sdp-transform@npm:2.15.0"
   bin:
     sdp-verify: checker.js
   checksum: 10c0/96c060f113a3d5418defa168db609f7e23e5bd7954fa1cf7784f103dbe702e24d667e5310d2ac6d88abdb32322af83d6ebd0df08e07f4f172d5ed5888f921386
+  languageName: node
+  linkType: hard
+
+"sdp-translator@npm:^0.1.15":
+  version: 0.1.24
+  resolution: "sdp-translator@npm:0.1.24"
+  dependencies:
+    sdp-transform: "npm:1.5.*"
+  checksum: 10c0/bed5ad7eeefe3203fd4f95ee47783b7a35a6476a91ddffcb47d1d30a2beaa13d1a6b843ed916d35da044e8c860300a2c54d4ab49c591809b7f8c5395e180dcf2
   languageName: node
   linkType: hard
 
@@ -9184,6 +9271,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ua-parser-js@npm:^0.7.7":
+  version: 0.7.40
+  resolution: "ua-parser-js@npm:0.7.40"
+  bin:
+    ua-parser-js: script/cli.js
+  checksum: 10c0/d114f0b71b5b0106dcc0cb7cc26a44690073e886fa1444f8c03131d4f57b3f6645f9fb7b308b0aaaa5a2774461f9e8fe1a2a1c3ff69aa531316fcf14cd44dbe3
+  languageName: node
+  linkType: hard
+
 "ua-parser-js@npm:^2.0.2":
   version: 2.0.2
   resolution: "ua-parser-js@npm:2.0.2"
@@ -9367,6 +9463,15 @@ __metadata:
     is-typed-array: "npm:^1.1.3"
     which-typed-array: "npm:^1.1.2"
   checksum: 10c0/c27054de2cea2229a66c09522d0fa1415fb12d861d08523a8846bf2e4cbf0079d4c3f725f09dcb87493549bcbf05f5798dce1688b53c6c17201a45759e7253f3
+  languageName: node
+  linkType: hard
+
+"uuid@npm:^3.0.0":
+  version: 3.4.0
+  resolution: "uuid@npm:3.4.0"
+  bin:
+    uuid: ./bin/uuid
+  checksum: 10c0/1c13950df865c4f506ebfe0a24023571fa80edf2e62364297a537c80af09c618299797bbf2dbac6b1f8ae5ad182ba474b89db61e0e85839683991f7e08795347
   languageName: node
   linkType: hard
 
@@ -9717,6 +9822,13 @@ __metadata:
   bin:
     why-is-node-running: cli.js
   checksum: 10c0/1cde0b01b827d2cf4cb11db962f3958b9175d5d9e7ac7361d1a7b0e2dc6069a263e69118bd974c4f6d0a890ef4eedfe34cf3d5167ec14203dbc9a18620537054
+  languageName: node
+  linkType: hard
+
+"wildemitter@npm:^1.2.0":
+  version: 1.2.1
+  resolution: "wildemitter@npm:1.2.1"
+  checksum: 10c0/614b1ff678b9114326963254994d0145d47aad6b816c0ee2b6f231ba2d245e25bb052ddd276190592e9c04ca154c3b8cd321ace404c4dbb7118e86fd512d65d4
   languageName: node
   linkType: hard
 
