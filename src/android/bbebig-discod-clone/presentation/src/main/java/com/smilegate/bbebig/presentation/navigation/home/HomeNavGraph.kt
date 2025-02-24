@@ -15,7 +15,11 @@ fun NavGraphBuilder.homeNavGraph(
     navController: NavController,
 ) {
     navigation<HomeNavGraph>(startDestination = Home) {
-        homeNavigation()
+        homeNavigation(
+            onNavigateLiveChatRoom = { channelId ->
+                // TODO: 채팅 액티비티로 이동하는 로직
+            },
+        )
         createServerNavigation()
         liveChatNavigation(
             onBackClick = navController::popBackStack,
