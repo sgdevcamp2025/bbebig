@@ -195,7 +195,7 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
         String offerSdp = message.getSdp().getSdp();
 
         // 3) Kurento에 Offer 적용 -> Answer 생성
-        String AnswerSdp = endpoint.processOffer(offerSdp);
+        String answerSdp = endpoint.processOffer(offerSdp);
 
         // 4) 브라우저로 ANSWER 메시지 전송
         SignalMessage answerMessage = SignalMessage.builder()
@@ -205,7 +205,7 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
                 .receiverId(memberId)
                 .sdp(Sdp.builder()
                         .type("answer")
-                        .sdp(AnswerSdp)
+                        .sdp(answerSdp)
                         .build())
                 .build();
 

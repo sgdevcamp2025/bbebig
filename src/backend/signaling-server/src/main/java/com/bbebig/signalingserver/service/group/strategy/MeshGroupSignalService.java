@@ -7,6 +7,7 @@ import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.signalingserver.service.group.ChannelManager;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -142,16 +143,27 @@ public class MeshGroupSignalService implements GroupSignalStrategy {
             throw new ErrorHandler(ErrorStatus.GROUP_STREAM_SESSION_NOT_FOUND);
         }
 
+        Set<String> participants = channelManager.getParticipants(channelId);
+
+        Set<String> otherMembers = participants.stream()
+                .filter(memberId -> !memberId.equals(message.getSenderId()))
+                .collect(Collectors.toSet());
+
         SignalMessage groupMessage = SignalMessage.builder()
                 .messageType(message.getMessageType())
+                .channelId(message.getChannelId())
                 .senderId(message.getSenderId())
                 .sdp(message.getSdp())
                 .candidate(message.getCandidate())
                 .build();
 
-        messagingTemplate.convertAndSend(
-                Path.groupSubPath + channelId,
-                groupMessage
-        );
+        for (String memberId : otherMembers) {
+            messagingTemplate.convertAndSend(
+                    Path.directSubPath + memberId,
+                    groupMessage
+            );
+        }
+        log.info("[Signal] 채널 타입: Group - Mesh, 메시지타입: {}, 채널: {}, 보낸사람: {}, 대상: {}명",
+                message.getMessageType(), channelId, message.getSenderId(), otherMembers.size());
     }
 }
