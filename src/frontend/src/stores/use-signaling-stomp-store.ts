@@ -1,22 +1,26 @@
-import { IMessage } from '@stomp/stompjs'
+import { Client, IMessage } from '@stomp/stompjs'
 import { create } from 'zustand'
 
-import { signalingStompInstance } from '@/apis/config/stomp-instance'
+import { SIGNALING_SERVER_URL } from '@/constants/env'
 import { StompState } from '@/types/stomp'
 
 export const useSignalingStomp = create<StompState>((set, get) => ({
   client: null,
-  isConnected: false,
-
   // 연결
   connect: () => {
-    const client = signalingStompInstance()
+    const client = new Client({
+      brokerURL: SIGNALING_SERVER_URL,
+      reconnectDelay: 5000,
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000
+    })
+
     client.onConnect = () => {
-      set({ isConnected: true, client: client })
+      set({ client: client })
     }
 
     client.onDisconnect = () => {
-      set({ isConnected: false, client: null })
+      set({ client: null })
     }
 
     client.activate()
@@ -26,46 +30,46 @@ export const useSignalingStomp = create<StompState>((set, get) => ({
   // 연결 종료
   disconnect: () => {
     const client = get().client
-    if (client) {
-      client.deactivate()
-      set({ client: null, isConnected: false })
-    }
+    if (!client) throw new Error('Client is not connected')
+
+    client.deactivate()
+    set({ client: null })
   },
 
   // 메시지 구독
-  subscribe: (destination, callback, id) => {
+  subscribe: (subscriptionId, destination, callback) => {
     const client = get().client
-    if (client && get().isConnected) {
-      client.subscribe(
-        destination,
-        (message: IMessage) => {
-          callback(JSON.parse(message.body))
-        },
-        {
-          id
-        }
-      )
-    }
+    if (!client) throw new Error('Client is not connected')
+
+    client.subscribe(
+      destination,
+      (message: IMessage) => {
+        callback(JSON.parse(message.body))
+      },
+      {
+        id: subscriptionId
+      }
+    )
   },
 
   // 메시지 발행
   send: (destination, body) => {
     const client = get().client
-    if (client && get().isConnected) {
-      client.publish({
-        destination,
-        body: JSON.stringify(body)
-      })
-    }
+    if (!client) throw new Error('Client is not connected')
+
+    client.publish({
+      destination,
+      body: JSON.stringify(body)
+    })
   },
 
   // 메시지 구독 취소
-  unsubscribe: (destination, id) => {
+  unsubscribe: (subscriptionId, destination) => {
     const client = get().client
-    if (client) {
-      client.unsubscribe(id, {
-        destination
-      })
-    }
+    if (!client) throw new Error('Client is not connected')
+
+    client.unsubscribe(destination, {
+      id: subscriptionId
+    })
   }
 }))
