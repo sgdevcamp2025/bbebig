@@ -1,22 +1,21 @@
 import { create } from 'zustand'
 
+import authService from '@/apis/service/auth'
 import { COOKIE_KEYS } from '@/constants/keys'
 import cookie from '@/utils/cookie'
-
 interface LoginStore {
   isLogin: boolean
+  initialLoginState: () => Promise<void>
   login: () => void
   logout: () => void
 }
 
-const getInitialLoginState = () => {
-  if (typeof window === 'undefined') return false
-  const accessToken = cookie.getCookie(COOKIE_KEYS.ACCESS_TOKEN)
-  return !!accessToken
-}
-
 const useLoginStore = create<LoginStore>()((set) => ({
-  isLogin: getInitialLoginState(),
+  isLogin: false,
+  initialLoginState: async () => {
+    const statusCheck = await authService.statusCheck()
+    set({ isLogin: statusCheck.result.status })
+  },
   login: () => set({ isLogin: true }),
   logout: () => {
     cookie.deleteCookie(COOKIE_KEYS.ACCESS_TOKEN)

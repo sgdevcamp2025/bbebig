@@ -17,22 +17,15 @@ const RegisterPage = lazy(() => import('./pages/auth/register'))
 const ChannelPage = lazy(() => import('./pages/channel'))
 const FriendPage = lazy(() => import('./pages/friend'))
 const DmPage = lazy(() => import('./pages/dm'))
+
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: (
-      <Suspense fallback={<LoadingModal isOpen />}>
-        <RootLayout />
-      </Suspense>
-    ),
+    element: <RootLayout />,
     children: [
       {
         index: true,
-        element: (
-          <Suspense fallback={<LoadingModal isOpen />}>
-            <LandingPage />
-          </Suspense>
-        )
+        element: <LandingPage />
       },
       {
         element: (

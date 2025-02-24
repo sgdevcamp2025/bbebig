@@ -70,6 +70,7 @@
     "eslint-plugin-storybook": "^0.11.2",
     "eslint-plugin-unused-imports": "^4.1.4",
     "globals": "^15.14.0",
+    "msw": "^2.7.1",
     "prettier": "^3.4.2",
     "react-router-devtools": "^1.1.0",
     "storybook": "^8.5.0",
@@ -90,5 +91,10 @@
     "node": ">=20.11.0",
     "npm": ">=10.9.0"
   },
-  "packageManager": "yarn@4.6.0"
+  "packageManager": "yarn@4.6.0",
+  "msw": {
+    "workerDirectory": [
+      "./public"
+    ]
+  }
 }
