@@ -6,7 +6,7 @@ dayjs.extend(utc)
 dayjs.extend(timezone)
 
 function timeHelper(timestamp: string) {
-  const date = dayjs(timestamp).tz('Asia/Seoul')
+  const date = dayjs.utc(timestamp).tz('Asia/Seoul')
   const today = dayjs().tz('Asia/Seoul')
   const isToday = date.isSame(today, 'day')
 
@@ -19,8 +19,8 @@ function timeHelper(timestamp: string) {
   const day = date.date()
 
   return {
-    date: date.format(),
-    today: today.format(),
+    date: date.format('YYYY-MM-DD HH:mm:ss'),
+    today: today.format('YYYY-MM-DD HH:mm:ss'),
     isToday,
     hours,
     minutes,
