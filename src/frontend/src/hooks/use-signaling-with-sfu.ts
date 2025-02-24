@@ -3,8 +3,8 @@ import { useRef, useState } from 'react'
 import { useSignalingStomp } from '@/stores/use-signaling-stomp-store'
 import { filterAMR, onChangeDefaultCodecs } from '@/utils/webrtc-helper'
 
-import useMediaControl from '../use-media-control'
-import useUserStatus from './use-user-status'
+import useUserStatus from '../stores/use-user-status'
+import useMediaControl from './use-media-control'
 
 // WebRTC 설정
 const PC_CONFIG: RTCConfiguration = {
