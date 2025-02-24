@@ -16,7 +16,6 @@ interface Props {
 }
 
 export const SettingModalTabsID = {
-  none: -1,
   myAccount: 101,
   myProfile: 102,
   voiceSetting: 201,
@@ -53,7 +52,7 @@ const tabs = [
 ] as const
 
 function SettingModal({ itemId, isOpen, onClose }: Props) {
-  const [currentItemId, setCurrentItemId] = useState(SettingModalTabsID.none)
+  const [currentItemId, setCurrentItemId] = useState(SettingModalTabsID.myAccount)
 
   useEffect(
     function initialCurrentItemId() {
