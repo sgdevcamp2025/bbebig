@@ -1,5 +1,6 @@
 package com.smilegate.bbebig.presentation.ui.intro.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -19,7 +20,7 @@ fun IntroRoute(
     viewModel: IntroViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
+    Log.d("IntroRoute", "uiState: $uiState")
     IntroScreen(
         modifier = modifier,
         onNavigateToLoginClick = { viewModel.handleIntent(IntroIntent.ClickLogin) },

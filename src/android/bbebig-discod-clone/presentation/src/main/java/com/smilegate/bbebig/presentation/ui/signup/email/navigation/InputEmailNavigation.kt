@@ -4,7 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.smilegate.bbebig.presentation.navigation.signup.InputEmail
-import com.smilegate.bbebig.presentation.navigation.signup.SignUpNavGraph
+import com.smilegate.bbebig.presentation.navigation.user.Intro
 
 fun NavController.navigateToEmail() {
     navigate(
@@ -21,7 +21,7 @@ fun NavGraphBuilder.emailNavigation(
         EmailRoute(
             onBackClick = onBackClick,
             navigateToNickname = navigateToNickname,
-            navBackStackEntry = navController.getBackStackEntry<SignUpNavGraph>(),
+            navBackStackEntry = navController.getBackStackEntry<Intro>(),
         )
     }
 }
