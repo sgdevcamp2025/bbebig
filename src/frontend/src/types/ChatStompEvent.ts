@@ -74,7 +74,7 @@ export interface ChattingMessageEvent extends BaseServerEvent {
 export interface ChannelVisitEventRequest extends BaseServerEvent {
   type: 'ENTER' | 'LEAVE'
   memberId?: number
-  channelType: 'CHANNEL' | 'DM'
+  channelType: 'CHAT' | 'VOICE'
   channelId: number
   lastReadMessageId?: string
   eventTime?: string

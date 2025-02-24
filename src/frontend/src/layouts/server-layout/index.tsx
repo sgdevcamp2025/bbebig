@@ -46,7 +46,8 @@ function ServerLayout() {
   useEffect(() => {
     console.log(`[🚪] 채널 ${channelId} 자동 입장`)
     publishToChannelEnter({
-      channelType: 'CHANNEL',
+      channelType: channelInfoList.find((channel) => channel.channelId === Number(channelId))
+        ?.channelType as 'CHAT' | 'VOICE',
       serverId: Number(serverId),
       channelId: Number(channelId),
       type: 'ENTER'
@@ -55,7 +56,8 @@ function ServerLayout() {
     return () => {
       console.log(`[🚪] 채널 ${channelId} 퇴장`)
       publishToChannelLeave({
-        channelType: 'CHANNEL',
+        channelType: channelInfoList.find((channel) => channel.channelId === Number(channelId))
+          ?.channelType as 'CHAT' | 'VOICE',
         serverId: Number(serverId),
         channelId: Number(channelId),
         type: 'LEAVE'
