@@ -19,6 +19,15 @@ function authService() {
     return user;
   };
 
+  const findUserByNickname = async (nickname: string) => {
+    const user = await db.member.findFirst({
+      where: {
+        nickname,
+      },
+    });
+    return user;
+  };
+
   const register = async (
     email: string,
     password: string,
@@ -125,6 +134,7 @@ function authService() {
 
   return {
     findUserByEmail,
+    findUserByNickname,
     register,
     loginWithPassword,
     refresh,

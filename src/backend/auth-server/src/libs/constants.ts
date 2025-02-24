@@ -1,4 +1,5 @@
 import { Secret } from 'jsonwebtoken';
+import { CommonResponseType } from 'src/schema/type';
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 const isProduction = process.env.NODE_ENV === 'production';
@@ -21,7 +22,7 @@ const REDIS_VOLUME = process.env.REDIS_VOLUME;
 
 const AUTH_PREFIX = 'AUTH';
 
-const ERROR_MESSAGE = {
+const ERROR_MESSAGE: Record<string, CommonResponseType> = {
   badRequest: {
     code: `${AUTH_PREFIX}001`,
     message: 'Bad Request',
@@ -90,9 +91,20 @@ const ERROR_MESSAGE = {
     code: `${AUTH_PREFIX}017`,
     message: 'Access Token Decode Failed',
   },
+  duplicateNickname: {
+    code: `${AUTH_PREFIX}018`,
+    message: 'Duplicate Nickname',
+  },
+  loginStatusDisabled: {
+    code: `${AUTH_PREFIX}019`,
+    message: 'Login Status Disabled',
+    result: {
+      status: false,
+    },
+  },
 } as const;
 
-const SUCCESS_MESSAGE = {
+const SUCCESS_MESSAGE: Record<string, CommonResponseType> = {
   loginOk: {
     code: `${AUTH_PREFIX}100`,
     message: 'Login Ok!',
@@ -128,6 +140,13 @@ const SUCCESS_MESSAGE = {
   healthCheckOk: {
     code: `${AUTH_PREFIX}108`,
     message: 'health check success!',
+  },
+  loginStatusOK: {
+    code: `${AUTH_PREFIX}109`,
+    message: 'login status is enabled',
+    result: {
+      status: true,
+    },
   },
 } as const;
 

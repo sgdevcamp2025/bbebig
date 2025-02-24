@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { commonResponseSchema } from './commonSchema';
+import { commonResponseSchema, commonResponseSchemaOmitResult } from './commonSchema';
 
 const signInSchema = {
   tags: ['auth'],
@@ -16,7 +16,7 @@ const signInSchema = {
         accessToken: z.string(),
       }),
     }),
-    400: commonResponseSchema,
+    400: commonResponseSchemaOmitResult,
   },
 };
 
@@ -36,7 +36,7 @@ const mobileSignInSchema = {
         refreshToken: z.string(),
       }),
     }),
-    400: commonResponseSchema,
+    400: commonResponseSchemaOmitResult,
   },
 };
 
@@ -75,7 +75,7 @@ const registerSchema = {
       code: z.string().default('AUTH104'),
       message: z.string().default('register success!'),
     }),
-    400: commonResponseSchema,
+    400: commonResponseSchemaOmitResult,
   },
 };
 
@@ -90,7 +90,29 @@ const refreshTokenSchema = {
         accessToken: z.string(),
       }),
     }),
-    400: commonResponseSchema,
+    400: commonResponseSchemaOmitResult,
+  },
+  description: `
+  리프레시 토큰은 쿠키('refresh_token')로 자동 처리됩니다.
+  Swagger UI에서 테스트하려면 브라우저 쿠키가 있어야 합니다.
+  1. 먼저 로그인하여 쿠키 설정
+  2. 이 엔드포인트 호출하여 새 액세스 토큰 발급
+`,
+};
+
+const refreshTokenMobileSchema = {
+  tags: ['auth'],
+  security: [{ bearerAuth: [] }],
+  response: {
+    201: z.object({
+      code: z.string().default('AUTH102'),
+      message: z.string().default('refresh success'),
+      result: z.object({
+        accessToken: z.string(),
+        refreshToken: z.string(),
+      }),
+    }),
+    400: commonResponseSchemaOmitResult,
   },
   description: `
   리프레시 토큰은 쿠키('refresh_token')로 자동 처리됩니다.
@@ -109,7 +131,7 @@ const logoutSchema = {
       code: z.string().default('AUTH101'),
       message: z.string().default('Logout success!'),
     }),
-    400: commonResponseSchema,
+    400: commonResponseSchemaOmitResult,
   },
 };
 
@@ -122,7 +144,7 @@ const verifyTokenSchema = {
       code: z.string().default('AUTH105'),
       message: z.string().default('token verify success!'),
     }),
-    401: commonResponseSchema,
+    401: commonResponseSchemaOmitResult,
   },
 };
 
@@ -138,7 +160,7 @@ const verifyEmailSchema = {
       code: z.enum(['AUTH106']),
       message: z.enum(['email verify success!']),
     }),
-    400: commonResponseSchema,
+    400: commonResponseSchemaOmitResult,
   },
 };
 
@@ -155,7 +177,7 @@ const tokenDecodeSchema = {
         valid: z.boolean(),
       }),
     }),
-    400: commonResponseSchema,
+    400: commonResponseSchemaOmitResult,
   },
 };
 
@@ -170,9 +192,22 @@ const healthCheckSchema = {
   },
 };
 
+const loginStatusCheckSchema = {
+  tags: ['auth'],
+  description: '로그인 상태를 확인 합니다.',
+  response: {
+    200: z.object({
+      code: z.string().default('AUTH109'),
+      message: z.string().default('login status check success!'),
+    }),
+    401: commonResponseSchema,
+  },
+};
+
 export {
   logoutSchema,
   refreshTokenSchema,
+  refreshTokenMobileSchema,
   verifyTokenSchema,
   registerSchema,
   signInSchema,
@@ -180,4 +215,5 @@ export {
   verifyEmailSchema,
   tokenDecodeSchema,
   healthCheckSchema,
+  loginStatusCheckSchema,
 };

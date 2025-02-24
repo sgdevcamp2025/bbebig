@@ -4,15 +4,24 @@ import {
   healthCheckSchema,
   logoutSchema,
   mobileSignInSchema,
+  refreshTokenMobileSchema,
   refreshTokenSchema,
   registerSchema,
   signInSchema,
   verifyTokenSchema,
+  loginStatusCheckSchema,
 } from '../../schema/authSchema';
 import { verifySignIn } from '../../libs/authHelper';
 import { authController } from '../../controllers';
 
 const authRoute = async (app: FastifyInstance) => {
+  app.withTypeProvider<ZodTypeProvider>().route({
+    method: 'GET',
+    url: '/status-check',
+    schema: loginStatusCheckSchema,
+    handler: authController.loginStatusCheck,
+  });
+
   app.withTypeProvider<ZodTypeProvider>().route({
     method: 'POST',
     url: '/login',
@@ -43,11 +52,18 @@ const authRoute = async (app: FastifyInstance) => {
   });
 
   app.withTypeProvider<ZodTypeProvider>().route({
-    method: 'PUT',
+    method: 'POST',
     url: '/refresh',
     schema: refreshTokenSchema,
     preHandler: [verifySignIn],
     handler: authController.refresh,
+  });
+
+  app.withTypeProvider<ZodTypeProvider>().route({
+    method: 'POST',
+    url: '/refresh-mobile',
+    schema: refreshTokenMobileSchema,
+    handler: authController.refreshMobile,
   });
 
   app.withTypeProvider<ZodTypeProvider>().route({

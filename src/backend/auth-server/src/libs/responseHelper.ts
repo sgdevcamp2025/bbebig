@@ -1,5 +1,5 @@
 import { FastifyReply } from 'fastify';
-import { CommonResponseType } from 'src/schema/type';
+import { CommonResponseType } from '../schema/type';
 
 function handleSuccess(
   res: FastifyReply,

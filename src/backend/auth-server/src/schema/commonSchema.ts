@@ -6,4 +6,6 @@ const commonResponseSchema = z.object({
   result: z.optional(z.any()),
 });
 
-export { commonResponseSchema };
+const commonResponseSchemaOmitResult = commonResponseSchema.omit({ result: true });
+
+export { commonResponseSchema, commonResponseSchemaOmitResult };
