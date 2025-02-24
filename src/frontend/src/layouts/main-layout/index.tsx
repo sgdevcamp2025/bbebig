@@ -46,20 +46,16 @@ const Inner = () => {
     initChatting()
 
     return function cleanup() {
-      console.log('cleanup 에서 checkConnection() - 연결 해제', checkConnection())
       disconnectChatting()
       disconnectSignaling()
     }
   }, [])
 
   useEffect(() => {
-    console.log('checkConnection() - useEffect자동구독 ', checkConnection())
     const subscribeToServerIfConnected = async () => {
       if (!selectedServerId) return
 
       await connectChatting()
-
-      console.log('서버 자동구독 useEffect 에서 checkConnection()', checkConnection())
 
       if (checkConnection()) {
         console.log(`[📡] 서버 ${selectedServerId} 자동 구독`)
