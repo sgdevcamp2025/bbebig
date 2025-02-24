@@ -11,14 +11,15 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Service;
 
 /**
  * 그룹 스트리밍 시그널링을 처리하는 서비스 (Mesh)
  */
 @Slf4j
-//@Service
+@Service
 @RequiredArgsConstructor
-public class MeshGroupSignalService implements GroupSignalStrategy {
+public class MeshGroupSignalService {
 
     private final SimpMessagingTemplate messagingTemplate;
     private final ChannelManager channelManager;
@@ -26,7 +27,6 @@ public class MeshGroupSignalService implements GroupSignalStrategy {
     /**
      * 그룹 시그널링 처리
      */
-    @Override
     public void processGroupSignal(SignalMessage message) {
         switch (message.getMessageType()) {
             case JOIN_CHANNEL:
@@ -91,8 +91,8 @@ public class MeshGroupSignalService implements GroupSignalStrategy {
                 allUsersMessage
         );
 
-        log.info("[Signal] 채널 타입: Group, 대상 경로: {}, 상세: EXIST_USERS 메시지 전송",
-                Path.directSubPath + message.getSenderId());
+        log.info("[Signal] 채널 타입: Group - Mesh, 채널: {}, 유저: {}. 상세: EXIST_USERS 메시지 전송",
+                message.getChannelId(), message.getSenderId());
     }
 
     /**
@@ -110,8 +110,8 @@ public class MeshGroupSignalService implements GroupSignalStrategy {
                 userJoinedMessage
         );
 
-        log.info("[Signal] 채널 타입: Group, 대상 경로: {}, 상세: USER_JOINED 메시지 전송",
-                Path.groupSubPath + message.getChannelId());
+        log.info("[Signal] 채널 타입: Group - Mesh, 채널: {}, 유저: {}. 상세: USER_JOINED 메시지 전송",
+                message.getChannelId(), message.getSenderId());
     }
 
     /**
@@ -130,6 +130,9 @@ public class MeshGroupSignalService implements GroupSignalStrategy {
                 Path.groupSubPath + message.getChannelId(),
                 userLeftMessage
         );
+
+        log.info("[Signal] 채널 타입: Group - Mesh, 채널: {}, 유저: {}. 상세: LEAVE_CHANNEL 메시지 전송",
+                message.getChannelId(), message.getSenderId());
     }
 
     /**

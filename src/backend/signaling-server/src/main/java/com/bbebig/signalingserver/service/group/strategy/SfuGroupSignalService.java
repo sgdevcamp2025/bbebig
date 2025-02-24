@@ -28,7 +28,7 @@ import java.util.Set;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class SfuGroupSignalService implements GroupSignalStrategy {
+public class SfuGroupSignalService {
 
     private final SimpMessagingTemplate messagingTemplate;
     private final ChannelManager channelManager;
@@ -42,7 +42,6 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
     /**
      * 그룹 시그널링 처리
      */
-    @Override
     public void processGroupSignal(SignalMessage message) {
         switch (message.getMessageType()) {
             case JOIN_CHANNEL:
