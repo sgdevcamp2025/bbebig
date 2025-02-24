@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { commonResponseSchema } from '../common'
 
 export interface CommonResponseType<T> {
-  code: number
+  code: string
   message: string
   result: T
 }
