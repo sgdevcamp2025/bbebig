@@ -26,6 +26,10 @@ function ChannelPage() {
     globalStatus: selfUser.customPresenceStatus
   }
 
+  const targetUsers = serverMemberList.serverMemberInfoList.filter(
+    (user) => user.memberId !== selfUser.id
+  )
+
   const targetUser = serverMemberList.serverMemberInfoList.find(
     (user) => user.memberId !== selfUser.id
   ) ?? {
@@ -58,7 +62,7 @@ function ChannelPage() {
         channelName={currentChannel.channelName}
         serverId={Number(serverId)}
         currentUser={currentUser}
-        targetUser={targetUser}
+        targetUsers={targetUsers}
       />
     )
   }

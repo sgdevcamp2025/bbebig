@@ -16,7 +16,7 @@ export interface ChatProps {
   chatKey: string | number
   users: {
     currentUser: ChatUser
-    targetUser: ChatUser
+    targetUsers: ChatUser[]
   }
   isVoice?: boolean
   channelName?: string
@@ -42,7 +42,7 @@ function ChatArea({
 
   const [searchValue, setSearchValue] = useState('')
   const { isStatusBarOpen, toggleStatusBar } = useStatusBarStore()
-  const targetUser = users.targetUser
+
   const isChannel = channelName !== undefined
   const navigate = useNavigate()
   const { publishToServerChatting } = useChattingStomp()
@@ -59,7 +59,7 @@ function ChatArea({
     if (!text) return
 
     if (!isChannel) {
-      navigate(`/channels/@me/${targetUser.memberId}`, {
+      navigate(`/channels/@me/${users.targetUsers[0].memberId}`, {
         state: { initialMessage: text }
       })
       return
@@ -121,7 +121,7 @@ function ChatArea({
             <span className='text-discord-font-color-normal font-medium'>{channelName}</span>
           </CommonHeader>
         ) : (
-          targetUser && <DmAreaHeader member={targetUser} />
+          users.targetUsers && <DmAreaHeader member={users.targetUsers[0]} />
         )}
 
         {/* 채팅 영역 */}
@@ -133,7 +133,10 @@ function ChatArea({
               )
 
               const isMyMessage = msg.sendMemberId === users.currentUser?.memberId
-              const messageUser = isMyMessage ? users.currentUser : users.targetUser
+              const messageUser = isMyMessage
+                ? users.currentUser
+                : users.targetUsers.find((user) => user.memberId === msg.sendMemberId) ||
+                  users.targetUsers[0]
 
               return (
                 <div

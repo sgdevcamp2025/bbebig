@@ -6,11 +6,11 @@ interface Props {
   channelId: number
   serverId: number
   currentUser: ChatUser
-  targetUser: ChatUser
+  targetUsers: ChatUser[]
   channelName: string
 }
 
-function TextComponent({ channelId, serverId, currentUser, targetUser, channelName }: Props) {
+function TextComponent({ channelId, serverId, currentUser, targetUsers, channelName }: Props) {
   const historyMessages = useGetHistoryChattingMessages({
     serverId: serverId,
     channelId: channelId,
@@ -26,7 +26,7 @@ function TextComponent({ channelId, serverId, currentUser, targetUser, channelNa
         serverId={serverId}
         users={{
           currentUser: currentUser,
-          targetUser: targetUser
+          targetUsers: targetUsers
         }}
         channelName={channelName}
         historyMessages={historyMessages.messages}
