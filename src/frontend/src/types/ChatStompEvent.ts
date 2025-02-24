@@ -1,19 +1,30 @@
+export type ServerSubscribeResponse =
+  | ServerChannelEvent
+  | ServerCategoryEvent
+  | ServerActionEvent
+  | ServerMemberActionEvent
+  | ServerMemberPresenceEvent
+  | ChattingMessageEvent
+
+export interface BaseServerEvent {
+  serverId: number
+  type: string
+}
+
 // 🛜 SUBSCRIBE
 // 서버 채널 생성/수정/삭제 이벤트
-export interface ServerChannelEvent {
-  serverId: number
-  type: 'SEVER_CHANNEL'
+export interface ServerChannelEvent extends BaseServerEvent {
+  type: 'SERVER_CHANNEL'
   categoryId: number
   channeId: number
   channelType: 'CHAT' | 'VOICE'
   order: number | null
   status: 'CREATE' | 'UPDATE' | 'DELETE'
 }
-
 // 서버 카테고리 생성/수정/삭제 이벤트
-export interface ServerCategoryEvent {
+export interface ServerCategoryEvent extends BaseServerEvent {
   serverId: number
-  type: 'SEVER_CATEGORY'
+  type: 'SERVER_CATEGORY'
   categoryId: number
   categoryName: string | null
   order: number | null
@@ -21,53 +32,49 @@ export interface ServerCategoryEvent {
 }
 
 // 서버 수정/삭제 이벤트
-export interface ServerActionEvent {
-  serverId: number
-  type: 'SEVER_ACTION'
-  serverName: string | null
-  profileImageUrl: string | null
+export interface ServerActionEvent extends BaseServerEvent {
+  type: 'SERVER_ACTION'
+  serverName?: string | null
+  profileImageUrl?: string | null
   status: 'UPDATE' | 'DELETE'
 }
 
 // 서버 멤버 참여/탈퇴/수정 이벤트
-export interface ServerMemberActionEvent {
-  serverId: number
+export interface ServerMemberActionEvent extends BaseServerEvent {
   type: 'SERVER_MEMBER_ACTION'
   memberId: number
-  nickName: string | null
-  avatarUrl: string | null
-  bannerUrl: string | null
+  nickName?: string | null
+  avatarUrl?: string | null
+  bannerUrl?: string | null
   status: 'JOIN' | 'LEAVE' | 'UPDATE'
 }
 
 // 서버 멤버 온/오프라인 상태 업데이트 이벤트
-export interface ServerMemberPresenceEvent {
-  serverId: number
+export interface ServerMemberPresenceEvent extends BaseServerEvent {
   type: 'SERVER_MEMBER_PRESENCE'
-  memberId?: number
-  actualStatus: 'ONLINE' | 'OFFLINE'
-  globalStatus: 'ONLINE' | 'OFFLINE' | 'AWAY' | 'BUSY' | 'DND'
+  memberId: number
+  actualStatus: 'ONLINE' | 'OFFLINE' | 'AWAY' | 'BUSY' | 'INVISIBLE'
+  globalStatus: 'ONLINE' | 'OFFLINE' | 'AWAY' | 'BUSY' | 'INVISIBLE'
 }
 
-// 서버 채팅 메시지 이벤트
-export interface ChatMessageRequest {
+// 서버 채팅 메시지 이벤트 (STOMP에서 받는 MESSAGE)
+export interface ChattingMessageEvent extends BaseServerEvent {
   chatType: 'CHANNEL' | 'DM'
   messageType: 'TEXT'
-  type: 'MESSAGE_CREATE' | 'MESSAGE_UPDATE' | 'MESSAGE_DELETE'
-  serverId: number
+  type: 'MESSAGE_CREATE'
   channelId: number
+  sequence?: number
   sendMemberId?: number
   content: string
-  createdAt?: Date
-  updatedAt?: Date
+  createdAt?: string
+  updatedAt?: string
 }
 
 // 채널 방문/떠남 이벤트
-export interface ChannelVisitEventRequest {
-  memberId?: number
+export interface ChannelVisitEventRequest extends BaseServerEvent {
   type: 'ENTER' | 'LEAVE'
+  memberId?: number
   channelType: 'CHANNEL' | 'DM'
-  serverId: number
   channelId: number
   lastReadMessageId?: string
   eventTime?: string

@@ -9,8 +9,9 @@ import { useState } from 'react'
 
 import { chattingStompInstance } from '@/apis/config/stomp-instance'
 import { COOKIE_KEYS } from '@/constants/keys'
-import { ChannelVisitEventRequest, ChatMessageRequest } from '@/types/ChatStompEvent'
+import { ChannelVisitEventRequest, ChattingMessageEvent } from '@/types/ChatStompEvent'
 import cookie from '@/utils/cookie'
+import { handleServerEvent } from '@/utils/serverEventHandler'
 
 import useGetSelfUser from '../queries/user/useGetSelfUser'
 
@@ -79,8 +80,13 @@ export const useChattingStomp = () => {
     clientInstance.subscribe(
       destination,
       (message: IMessage) => {
-        console.log(`[📩] 서버 ${serverId} 메시지 수신:`, message.body)
-        callback(JSON.parse(message.body))
+        try {
+          const messageBody = JSON.parse(message.body)
+          handleServerEvent(messageBody)
+          callback(messageBody)
+        } catch (error) {
+          console.error('[❌] 서버 이벤트 처리 중 오류 발생:', error)
+        }
       },
       { id: `chat-${memberId}`, MemberId: memberId }
     )
@@ -143,7 +149,7 @@ export const useChattingStomp = () => {
   // ✅ PUBLISH
 
   // 서버 채널 채팅 전송
-  const publishToServerChatting = (body: ChatMessageRequest) => {
+  const publishToServerChatting = (body: ChattingMessageEvent) => {
     if (!checkConnection()) {
       console.log('[❌] 채팅 서버에 연결되지 않음.')
       connect()

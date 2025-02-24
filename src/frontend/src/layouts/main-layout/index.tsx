@@ -12,6 +12,7 @@ import { statusKo } from '@/constants/status'
 import { useGetServer } from '@/hooks/queries/server/useGetServer'
 import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
 import useChattingStomp from '@/hooks/store/use-chatting-stomp'
+import { useServerStore } from '@/hooks/store/use-select-server-store'
 import { cn } from '@/libs/cn'
 import { useMediaSettingsStore } from '@/stores/use-media-setting.store'
 import { CustomPresenceStatus } from '@/types/user'
@@ -22,23 +23,35 @@ import ServerCreateModal from './components/server-create-modal'
 import SettingModal, { SettingModalTabsID } from './components/setting-modal'
 
 const Inner = () => {
-  const { connect, isConnected, disconnect, subscribeToServer, checkConnection } =
+  const { connect, isConnected, disconnect, checkConnection, subscribeToServer } =
     useChattingStomp()
-
-  const location = useLocation()
-  const navigate = useNavigate()
+  const { selectedServerId, setSelectedServer } = useServerStore()
 
   useEffect(() => {
     if (!isConnected && !checkConnection()) {
-      console.log('[🔗] STOMP 연결 시도...')
+      console.log('[🔗] MainLayout STOMP 연결 시도')
       connect()
     }
 
     return () => {
-      console.log('[❌] STOMP 연결 해제 요청...')
+      console.log('[❌] MainLayout STOMP 연결 해제')
       disconnect()
     }
   }, [])
+
+  useEffect(() => {
+    if (isConnected && selectedServerId) {
+      console.log(`[📡] 서버 ${selectedServerId} 자동 구독`)
+      subscribeToServer(selectedServerId, (message) => {
+        console.log(`[📩] 서버 이벤트 수신 (${selectedServerId}):`, message)
+        // handleServerEvent(message as ServerSubscribeResponse)
+        console.log('서버 메인 레이아웃에서 useFfect 안 서버 구독 ')
+      })
+    }
+  }, [isConnected, selectedServerId])
+
+  const location = useLocation()
+  const navigate = useNavigate()
 
   const myChannelList = useGetServer()
   const selfUser = useGetSelfUser()
@@ -60,10 +73,18 @@ const Inner = () => {
     } = await serviceService.getServersList({ serverId: serverId.toString() })
     const firstChannelId = channelInfoList[0].channelId
     navigate(`/channels/${serverId}/${firstChannelId}`)
+    setSelectedServer(serverId)
 
-    subscribeToServer(serverId.toString(), (message) => {
-      console.log(`[📩] 서버 이벤트 수신 (${serverId}):`, message)
-    })
+    if (isConnected) {
+      console.log(`[📡] 서버 클릭 - 서버 ${serverId} 이벤트 구독 요청`)
+      subscribeToServer(serverId, (message) => {
+        console.log(`[📩] 서버 클릭 - 서버 이벤트 수신 (${serverId}):`, message)
+
+        console.log('서버 클릭해서 구독 _ main layout ')
+      })
+    } else {
+      console.log('[❌] STOMP가 연결되지 않아 구독 불가능')
+    }
   }
 
   const handleClickMyServer = () => {

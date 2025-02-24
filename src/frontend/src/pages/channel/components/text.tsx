@@ -1,8 +1,5 @@
-import { IMessage } from '@stomp/stompjs'
-import { useEffect, useState } from 'react'
-
 import ChatArea from '@/components/chat-area'
-import useChattingStomp from '@/hooks/store/use-chatting-stomp'
+import { useGetHistoryChattingMessages } from '@/hooks/queries/search/useGetHistoryChattingMessages'
 import { ChatUser } from '@/types/user'
 
 interface Props {
@@ -13,28 +10,26 @@ interface Props {
   channelName: string
 }
 
-function TextComponent({ channelId, currentUser, targetUser, channelName }: Props) {
-  const { connect, subscribe } = useChattingStomp()
-  const [, setMessages] = useState<IMessage[]>([])
+function TextComponent({ channelId, serverId, currentUser, targetUser, channelName }: Props) {
+  const historyMessages = useGetHistoryChattingMessages({
+    serverId: serverId,
+    channelId: channelId,
+    limit: 20
+  })
 
-  useEffect(() => {
-    connect()
+  console.log('TextComponent - historyMessages', historyMessages)
 
-    subscribe(`/topic/channel/${channelId}`, (message) => {
-      console.log('[📩] 채널 메시지 수신:', message)
-      setMessages((prev) => [...prev, message])
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [channelId])
   return (
     <div className='flex-1 flex flex-col h-screen'>
       <ChatArea
         chatKey={channelId}
+        serverId={serverId}
         users={{
           currentUser: currentUser,
           targetUser: targetUser
         }}
         channelName={channelName}
+        historyMessages={historyMessages.messages}
       />
     </div>
   )

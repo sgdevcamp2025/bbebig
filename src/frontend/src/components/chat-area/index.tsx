@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom'
 
 import Avatar from '@/components/avatar'
 import CommonHeader from '@/components/common-header'
+import { useChatStore } from '@/hooks/store/use-chat-store'
 import useChattingStomp from '@/hooks/store/use-chatting-stomp'
 import { cn } from '@/libs/cn'
 import DmAreaHeader from '@/pages/dm/components/dm-area-header'
 import useStatusBarStore from '@/stores/use-status-bar-store'
-import { Message } from '@/types/message'
+import { ChannelMessage } from '@/types/message'
 import { ChatUser } from '@/types/user'
 import timeHelper from '@/utils/format-time'
 
@@ -21,6 +22,7 @@ export interface ChatProps {
   channelName?: string
   initialMessage?: string
   serverId?: number
+  historyMessages?: ChannelMessage[]
   onClose?: () => void
 }
 
@@ -31,18 +33,26 @@ function ChatArea({
   channelName,
   initialMessage = '',
   onClose,
-  serverId
+  serverId,
+  historyMessages
 }: ChatProps) {
   const messagesRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-  const [messages, setMessages] = useState<Record<string, Message[]>>({})
+  const { messages, setMessages } = useChatStore()
+
   const [searchValue, setSearchValue] = useState('')
   const { isStatusBarOpen, toggleStatusBar } = useStatusBarStore()
-  const currentUser = users.currentUser
   const targetUser = users.targetUser
   const isChannel = channelName !== undefined
   const navigate = useNavigate()
-  const { isConnected, publishToServerChatting } = useChattingStomp()
+  const { publishToServerChatting } = useChattingStomp()
+
+  useEffect(() => {
+    if (historyMessages && chatKey) {
+      console.log('chat area에서 setMessaages: ')
+      setMessages(Number(chatKey), historyMessages.length ? historyMessages.slice().reverse() : [])
+    }
+  }, [historyMessages, chatKey])
 
   const sendMessage = () => {
     if (!chatKey || !inputRef.current) return
@@ -55,23 +65,7 @@ function ChatArea({
       })
       return
     }
-
-    console.log('[✅] 채팅 서버 연결 상태 : ', isConnected)
-    const newMessage: Message = {
-      id: crypto.randomUUID(),
-      memberId: currentUser?.memberId.toString() ?? '',
-      type: isChannel ? 'CHANNEL' : 'DM',
-      contents: { text },
-      createdAt: new Date(),
-      updatedAt: new Date()
-    }
-
-    setMessages((prev) => ({
-      ...prev,
-      [chatKey]: [...(prev[chatKey] || []), newMessage]
-    }))
-
-    inputRef.current.value = ''
+    console.log('chat area에서 publishToServerChatting: ')
 
     publishToServerChatting({
       chatType: channelName ? 'CHANNEL' : 'DM',
@@ -81,14 +75,13 @@ function ChatArea({
       channelId: Number(chatKey),
       content: text
     })
+
+    inputRef.current.value = ''
   }
 
   useEffect(() => {
     if (messagesRef.current) {
-      const messageContainer = messagesRef.current.parentElement
-      if (messageContainer) {
-        messageContainer.scrollTop = messageContainer.scrollHeight
-      }
+      messagesRef.current.scrollIntoView({ behavior: 'smooth' })
     }
   }, [messages])
 
@@ -134,41 +127,42 @@ function ChatArea({
         )}
 
         {/* 채팅 영역 */}
-        <div className='flex-1 overflow-y-auto p-4 flex flex-col justify-end'>
-          {messages[chatKey]?.map((msg) => {
-            const { isToday, ampm, hour12, minutes, year, month, day } = timeHelper(
-              msg.createdAt.toISOString()
-            )
+        <div className='flex-1 h-full overflow-y-auto p-4 flex flex-col'>
+          {Array.isArray(messages[Number(chatKey)]) &&
+            messages[Number(chatKey)].map((msg) => {
+              const { isToday, ampm, hour12, minutes, year, month, day } = timeHelper(
+                msg.createdAt ?? ''
+              )
 
-            const isMyMessage = msg.memberId === currentUser?.memberId.toString()
-            const messageUser = isMyMessage ? currentUser : targetUser
+              const isMyMessage = msg.sendMemberId === users.currentUser?.memberId
+              const messageUser = isMyMessage ? users.currentUser : users.targetUser
 
-            return (
-              <div
-                key={msg.id}
-                className='flex items-start gap-3 mb-4'>
-                <Avatar
-                  size='sm'
-                  avatarUrl={messageUser?.avatarUrl ?? '/image/common/default-avatar.png'}
-                  statusColor='black'
-                  status={messageUser?.globalStatus ?? 'ONLINE'}
-                  name={messageUser?.nickName ?? '닉네임'}
-                />
+              return (
+                <div
+                  key={`${msg.channelId}-${msg.id}`}
+                  className='flex items-start gap-3 mb-4'>
+                  <Avatar
+                    size='sm'
+                    avatarUrl={messageUser?.avatarUrl ?? '/image/common/default-avatar.png'}
+                    statusColor='black'
+                    status={messageUser?.globalStatus ?? 'ONLINE'}
+                    name={messageUser?.nickName ?? '닉네임'}
+                  />
 
-                <div className='flex-1'>
-                  <div className='text-sm font-bold text-discord-font-color-normal'>
-                    {isMyMessage ? messageUser?.nickName : (messageUser?.nickName ?? '닉네임')}
-                    <span className='ml-2 text-xs text-gray-400'>
-                      {isToday
-                        ? `오늘 ${ampm} ${hour12}:${minutes}`
-                        : `${year}. ${month}. ${day}. ${ampm} ${hour12}:${minutes}`}
-                    </span>
+                  <div className='flex-1'>
+                    <div className='text-sm font-bold text-discord-font-color-normal'>
+                      {isMyMessage ? messageUser?.nickName : (messageUser?.nickName ?? '닉네임')}
+                      <span className='ml-2 text-xs text-gray-400'>
+                        {isToday
+                          ? `오늘 ${ampm} ${hour12}:${minutes}`
+                          : `${year}. ${month}. ${day}. ${ampm} ${hour12}:${minutes}`}
+                      </span>
+                    </div>
+                    <div className='text-sm text-discord-font-color-normal'>{msg.content}</div>
                   </div>
-                  <div className='text-sm text-discord-font-color-normal'>{msg.contents.text}</div>
                 </div>
-              </div>
-            )
-          })}
+              )
+            })}
           <div ref={messagesRef} />
         </div>
 
