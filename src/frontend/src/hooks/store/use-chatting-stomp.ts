@@ -160,7 +160,7 @@ export const useChattingStomp = () => {
     const destination = `/pub/channel/message`
     console.log(`[📤] 서버 ${body.serverId}의 ${body.channelId} 채널로 메시지 발행:`)
 
-    const now = dayjs().tz('Asia/Seoul').toISOString().slice(0, -1)
+    const now = dayjs.utc().subtract(500, 'millisecond').format('YYYY-MM-DDTHH:mm:ss')
 
     const messageBody =
       JSON.stringify({
@@ -200,7 +200,7 @@ export const useChattingStomp = () => {
       body: JSON.stringify({
         ...body,
         memberId: Number(memberId),
-        type: 'ENTER',
+        type: 'CHANNEL_ENTER',
         eventTime: new Date().toISOString()
       }),
       headers: {
@@ -225,7 +225,8 @@ export const useChattingStomp = () => {
       destination,
       body: JSON.stringify({
         ...body,
-        type: 'LEAVE',
+        memberId: Number(memberId),
+        type: 'CHANNEL_LEAVE',
         lastReadMessageId: '1',
         eventTime: new Date().toISOString()
       }),
