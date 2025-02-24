@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 @Reusable
 class JoinServerUseCase @Inject constructor(
-    private val serverRepository: ServerRepository
+    private val serverRepository: ServerRepository,
 ) {
     suspend operator fun invoke(serverId: Long): ServerJoinDomainModel {
         return serverRepository.joinServer(serverId).toDomainModel()
