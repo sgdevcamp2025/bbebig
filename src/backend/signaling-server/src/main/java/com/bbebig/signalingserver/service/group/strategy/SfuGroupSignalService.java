@@ -7,6 +7,8 @@ import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.signalingserver.service.group.ChannelManager;
 import com.bbebig.signalingserver.service.group.KurentoManager;
+import java.util.Collections;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.kurento.client.IceCandidate;
@@ -27,6 +29,8 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
     private final SimpMessagingTemplate messagingTemplate;
     private final ChannelManager channelManager;
     private final KurentoManager kurentoManager;
+
+    private final Set<String> registeredListenerEndpoints = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     /**
      * 그룹 시그널링 처리
@@ -182,10 +186,7 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
         // 3) Kurento에 Offer 적용 -> Answer 생성
         String AnswerSdp = endpoint.processOffer(offerSdp);
 
-        // 4) ICE Candidate 수집 시작
-        endpoint.gatherCandidates();
-
-        // 5) 브라우저로 ANSWER 메시지 전송
+        // 4) 브라우저로 ANSWER 메시지 전송
         SignalMessage answerMessage = SignalMessage.builder()
                 .messageType(MessageType.ANSWER)
                 .channelId(channelId)
@@ -220,6 +221,13 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
             return;
         }
 
+        // Candidate 요청이 들어올 때 ICE Candidate 리스너 등록
+        addIceCandidateListener(channelId, memberId, endpoint);
+
+        // ICE Candidate 수집 시작
+        endpoint.gatherCandidates();
+        log.info("[Kurento] ICE Candidate gathering 시작 - 채널: {}, 유저 ID: {}", channelId, memberId);
+
         // 브라우저가 보낸 Candidate 필드
         SignalMessage.Candidate candidate = message.getCandidate();
         if (candidate == null || candidate.getCandidate() == null) {
@@ -248,5 +256,45 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
 
         log.info("[Signal] 채널 타입: Group, 유저 ID: {}, 채널 ID: {}, candidate: {}, 상세: ICE Candidate 등록 완료",
                 memberId, channelId, candidate.getCandidate());
+    }
+
+    /**
+     * ICE Candidate 리스너 등록
+     */
+    private void addIceCandidateListener(String channelId, String memberId, WebRtcEndpoint endpoint) {
+        String endpointKey = channelId + "_" + memberId;
+        if (!registeredListenerEndpoints.contains(endpointKey)) {
+            log.info("[Kurento] ICE Candidate Listener 등록 - 채널: {}, 유저: {}", channelId, memberId);
+
+            endpoint.addIceCandidateFoundListener(event -> {
+                IceCandidate kurentoCandidate = event.getCandidate();
+                log.info("[Kurento] ICE Candidate 발견 - candidate: {}", kurentoCandidate.getCandidate());
+
+                // Candidate 정보를 담은 SignalMessage 생성
+                SignalMessage candidateMessage = SignalMessage.builder()
+                        .messageType(MessageType.CANDIDATE) // CANDIDATE 메시지 타입 설정
+                        .channelId(channelId)
+                        .senderId("SFU_SERVER") // 서버가 보낸 메시지로 표시
+                        .receiverId(memberId)   // 클라이언트에게 전달
+                        .candidate(SignalMessage.Candidate.builder()
+                                .candidate(kurentoCandidate.getCandidate())
+                                .sdpMid(kurentoCandidate.getSdpMid())
+                                .sdpMLineIndex(kurentoCandidate.getSdpMLineIndex())
+                                .build())
+                        .build();
+
+                // WebSocket을 통해 클라이언트로 전송
+                messagingTemplate.convertAndSend(
+                        Path.directSubPath + memberId,
+                        candidateMessage
+                );
+
+                log.info("[Signal] 채널 타입: Group, 유저 ID: {}, candidate: {}, 상세: Kurento에서 ICE Candidate 전송 완료",
+                        memberId, kurentoCandidate.getCandidate());
+            });
+
+            // 리스너 등록 완료 후 해당 endpoint 키를 등록
+            registeredListenerEndpoints.add(endpointKey);
+        }
     }
 }
