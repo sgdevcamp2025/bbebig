@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { Outlet, useNavigate, useParams } from 'react-router-dom'
 
 import { useGetServerInfo } from '@/hooks/queries/server/useGetServerInfo'
@@ -13,7 +13,6 @@ function ServerLayout() {
   const { serverId, channelId } = useParams<{ serverId: string; channelId: string }>()
   const { isStatusBarOpen } = useStatusBarStore()
   const { publishToChannelEnter, publishToChannelLeave } = useChattingStomp()
-  const prevChannelIdRef = useRef(channelId)
 
   const navigate = useNavigate()
 
@@ -45,35 +44,24 @@ function ServerLayout() {
   }))
 
   useEffect(() => {
-    if (prevChannelIdRef.current && prevChannelIdRef.current !== channelId) {
+    console.log(`[🚪] 채널 ${channelId} 자동 입장`)
+    publishToChannelEnter({
+      channelType: 'CHANNEL',
+      serverId: Number(serverId),
+      channelId: Number(channelId),
+      type: 'ENTER'
+    })
+
+    return () => {
+      console.log(`[🚪] 채널 ${channelId} 퇴장`)
       publishToChannelLeave({
         channelType: 'CHANNEL',
         serverId: Number(serverId),
-        channelId: Number(prevChannelIdRef.current),
+        channelId: Number(channelId),
         type: 'LEAVE'
       })
-
-      publishToChannelEnter({
-        channelType: 'CHANNEL',
-        serverId: Number(serverId),
-        channelId: Number(channelId),
-        type: 'ENTER'
-      })
     }
-
-    prevChannelIdRef.current = channelId
-
-    return () => {
-      if (channelId && !prevChannelIdRef.current) {
-        publishToChannelLeave({
-          channelType: 'CHANNEL',
-          serverId: Number(serverId),
-          channelId: Number(channelId),
-          type: 'LEAVE'
-        })
-      }
-    }
-  }, [channelId, serverId])
+  }, [serverId, channelId])
 
   return (
     <div className='flex h-screen w-full'>

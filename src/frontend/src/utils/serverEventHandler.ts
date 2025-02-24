@@ -23,7 +23,6 @@ export const handleServerEvent = (message: ServerSubscribeResponse) => {
     case 'MESSAGE_CREATE':
       console.log('MESSAGE_CREATE', message)
       if (!message.sendMemberId) return
-      console.log('이벤트 핸들러에서 추가!!!')
       addMessage(message.channelId, {
         ...message,
         sendMemberId: message.sendMemberId

@@ -49,7 +49,6 @@ function ChatArea({
 
   useEffect(() => {
     if (historyMessages && chatKey) {
-      console.log('chat area에서 setMessaages: ')
       setMessages(Number(chatKey), historyMessages.length ? historyMessages.slice().reverse() : [])
     }
   }, [historyMessages, chatKey])
@@ -65,7 +64,6 @@ function ChatArea({
       })
       return
     }
-    console.log('chat area에서 publishToServerChatting: ')
 
     publishToServerChatting({
       chatType: channelName ? 'CHANNEL' : 'DM',
