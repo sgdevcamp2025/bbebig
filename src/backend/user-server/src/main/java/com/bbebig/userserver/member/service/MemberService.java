@@ -1,6 +1,5 @@
 package com.bbebig.userserver.member.service;
 
-import com.bbebig.commonmodule.clientDto.UserFeignResponseDto;
 import com.bbebig.commonmodule.clientDto.UserFeignResponseDto.*;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
@@ -26,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -143,6 +143,12 @@ public class MemberService {
         return MemberReadResponseDto.convertToMemberReadResponseDto(member);
     }
 
+    @Transactional(readOnly = true)
+    public MemberReadResponseDto getMemberByNickname(String nickname) {
+        Optional<Member> member = memberRepository.findByNickname(nickname);
+		return member.map(MemberReadResponseDto::convertToMemberReadResponseDto).orElse(null);
+	}
+
     /**
      * 멤버 정보 조회 (For Feign Client)
      */
@@ -163,6 +169,8 @@ public class MemberService {
                 .customStatus(member.getCustomPresenceStatus())
                 .build();
     }
+
+
 
     /**
      * 멤버 전역 상태 조회
