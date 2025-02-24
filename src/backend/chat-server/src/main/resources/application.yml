@@ -1,5 +1,5 @@
 server:
-  port: 9050
+  port: ${PORT_ID:9050}
 
 spring:
   application:
@@ -11,7 +11,7 @@ spring:
       host: redis
 
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
 
     topic:
       channel-chat-event: "channelChatEvent"
@@ -24,7 +24,7 @@ spring:
       member-event: "memberEvent"
 
     producer:
-      bootstrap-servers: kafka:9092
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
 
     consumer:
       group-id:

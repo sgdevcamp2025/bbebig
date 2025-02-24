@@ -31,7 +31,7 @@ public class ChannelChatController {
 		}
 
 		messageDto.setId(snowflakeGenerator.nextId());
-		messageDto.setSequence(sequenceRedisGenerator.nextSeqForServerChannel(messageDto.getServerId()));
+		messageDto.setSequence(sequenceRedisGenerator.nextSeqForServerChannel(messageDto.getChannelId()));
 
 		validateTimestamps(messageDto);
 
