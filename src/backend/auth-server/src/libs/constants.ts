@@ -90,6 +90,10 @@ const ERROR_MESSAGE = {
     code: `${AUTH_PREFIX}017`,
     message: 'Access Token Decode Failed',
   },
+  duplicateNickname: {
+    code: `${AUTH_PREFIX}018`,
+    message: 'Duplicate Nickname',
+  },
 } as const;
 
 const SUCCESS_MESSAGE = {

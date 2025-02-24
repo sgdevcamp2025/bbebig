@@ -113,11 +113,18 @@ function authController() {
     const hashedPassword = generateHash(password);
 
     const isEmailExists = await authService.findUserByEmail(email);
+    const isNicknameExists = await authService.findUserByNickname(nickname);
 
     if (isEmailExists) {
       handleError(res, ERROR_MESSAGE.duplicateEmail);
       return;
     }
+
+    if (isNicknameExists) {
+      handleError(res, ERROR_MESSAGE.duplicateNickname);
+      return;
+    }
+
     try {
       await authService.register(email, hashedPassword, name, nickname, birthdate);
 
