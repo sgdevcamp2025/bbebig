@@ -16,15 +16,15 @@ abstract class BaseViewModel<S : UiState, SE : UiSideEffect, I : UiIntent>(
 
     private val initialState: S by lazy { createInitialState(savedStateHandle) }
 
-    protected abstract fun createInitialState(savedStateHandle: SavedStateHandle): S
+    internal abstract fun createInitialState(savedStateHandle: SavedStateHandle): S
 
-    protected abstract fun handleIntent(intent: I)
+    internal abstract fun handleIntent(intent: I)
 
     private val _uiState = MutableStateFlow(initialState)
-    val uiState get() = _uiState.asStateFlow()
+    val uiState = _uiState.asStateFlow()
 
     private val _sideEffect = Channel<SE>()
-    val sideEffect get() = _sideEffect.receiveAsFlow()
+    val sideEffect = _sideEffect.receiveAsFlow()
 
     // Get current state
     private val currentState: S
