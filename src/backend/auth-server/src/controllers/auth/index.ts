@@ -175,6 +175,54 @@ function authController() {
 
       const result = await authService.refresh(refreshToken, redisRefreshToken);
 
+      res.setCookie('refresh_token', result.refreshToken, {
+        sameSite: 'lax',
+        httpOnly: true,
+        secure: false,
+        path: '/',
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+      });
+
+      await redis.set(REDIS_KEY.refreshToken(id), result.refreshToken);
+
+      handleSuccess(res, {
+        ...SUCCESS_MESSAGE.refreshToken,
+        result: {
+          accessToken: result.accessToken,
+        },
+      });
+    } catch (error) {
+      handleError(res, ERROR_MESSAGE.unauthorized, error);
+    }
+  };
+
+  const refreshMobile = async (req: FastifyRequest, res: FastifyReply) => {
+    const id = req.user?.id;
+    const refreshToken = req.cookies.refresh_token;
+
+    if (!refreshToken || !id) {
+      handleError(res, ERROR_MESSAGE.unauthorized);
+      return;
+    }
+
+    try {
+      const redisRefreshToken = await redis.get(REDIS_KEY.refreshToken(id));
+
+      if (!redisRefreshToken) {
+        handleError(res, ERROR_MESSAGE.unauthorized);
+        return;
+      }
+
+      const result = await authService.refresh(refreshToken, redisRefreshToken);
+
+      res.setCookie('refresh_token', result.refreshToken, {
+        sameSite: 'lax',
+        httpOnly: true,
+        secure: false,
+        path: '/',
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+      });
+
       await redis.set(REDIS_KEY.refreshToken(id), result.refreshToken);
 
       handleSuccess(res, {
@@ -213,6 +261,18 @@ function authController() {
     handleSuccess(res, SUCCESS_MESSAGE.healthCheckOk, 200);
   };
 
+  const loginStatusCheck = async (req: FastifyRequest, res: FastifyReply) => {
+    const id = req.user?.id;
+    const refreshToken = req.cookies.refresh_token;
+
+    if (!id || !refreshToken) {
+      handleError(res, ERROR_MESSAGE.loginStatusDisabled);
+      return;
+    }
+
+    handleSuccess(res, SUCCESS_MESSAGE.loginStatusOK, 200);
+  };
+
   return {
     login,
     register,
@@ -221,6 +281,8 @@ function authController() {
     verifyToken,
     healthCheck,
     mobileLogin,
+    refreshMobile,
+    loginStatusCheck,
   };
 }
 
