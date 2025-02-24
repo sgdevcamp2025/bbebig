@@ -2,7 +2,7 @@ import { IMessage } from '@stomp/stompjs'
 import { useEffect, useState } from 'react'
 
 import ChatArea from '@/components/chat-area'
-import useChattingStomp from '@/hooks/store/use-chatting-stomp'
+import useChattingStomp from '@/stores/use-chatting-stomp'
 import { ChatUser } from '@/types/user'
 
 interface Props {

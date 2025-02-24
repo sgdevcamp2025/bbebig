@@ -6,7 +6,7 @@ import { COOKIE_KEYS } from '@/constants/keys'
 import { ChatMessageRequest } from '@/types/ChatStompEvent'
 import cookie from '@/utils/cookie'
 
-import useGetSelfUser from '../queries/user/useGetSelfUser'
+import useGetSelfUser from '../hooks/queries/user/useGetSelfUser'
 
 export const useChattingStomp = () => {
   const client = useRef<Client | null>(null)

@@ -2,7 +2,7 @@ import { cva } from 'class-variance-authority'
 import { useEffect, useRef } from 'react'
 
 import AvatarCard from '@/components/avatar-card'
-import { WebRTCUser } from '@/hooks/store/use-signaling-with-sfu'
+import { WebRTCUser } from '@/hooks/use-signaling-with-sfu'
 import { cn } from '@/libs/cn'
 import { CustomPresenceStatus } from '@/types/user'
 
