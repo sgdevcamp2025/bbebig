@@ -248,6 +248,5 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
 
         log.info("[Signal] 채널 타입: Group, 유저 ID: {}, 채널 ID: {}, candidate: {}, 상세: ICE Candidate 등록 완료",
                 memberId, channelId, candidate.getCandidate());
-
     }
 }

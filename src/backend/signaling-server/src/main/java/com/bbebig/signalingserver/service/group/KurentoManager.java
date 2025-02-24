@@ -1,12 +1,19 @@
 package com.bbebig.signalingserver.service.group;
 
+import com.bbebig.signalingserver.domain.MessageType;
+import com.bbebig.signalingserver.domain.Path;
+import com.bbebig.signalingserver.domain.SignalMessage;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
+import org.kurento.client.IceCandidate;
 import org.kurento.client.KurentoClient;
 import org.kurento.client.MediaPipeline;
 import org.kurento.client.WebRtcEndpoint;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -14,6 +21,9 @@ import org.springframework.stereotype.Component;
 public class KurentoManager {
 
     private final KurentoClient kurentoClient;
+    private final SimpMessagingTemplate messagingTemplate;
+
+    private final Set<String> registeredListenerEndpoints = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     // channelId -> MediaPipeline
     private final Map<String, MediaPipeline> pipelines = new ConcurrentHashMap<>();
@@ -21,8 +31,9 @@ public class KurentoManager {
     // channelId -> (memberId -> WebRtcEndpoint)
     private final Map<String, Map<String, WebRtcEndpoint>> endpoints = new ConcurrentHashMap<>();
 
-    public KurentoManager(@Value("${kurento.ws.url}") String kurentoWsUrl) {
+    public KurentoManager(@Value("${kurento.ws.url}") String kurentoWsUrl, SimpMessagingTemplate messagingTemplate) {
         this.kurentoClient = KurentoClient.create(kurentoWsUrl);
+        this.messagingTemplate = messagingTemplate;
     }
 
     /**
@@ -59,7 +70,50 @@ public class KurentoManager {
         endpoints.get(channelId).put(memberId, webRtcEndpoint);
         log.info("[Signal] 채널 타입: Group, 채널 ID: {}, 사용자 ID: {}, 상세: Kurento WebRtcEndpoint 저장 완료", channelId, memberId);
 
+        // ICE Candidate 리스너 등록
+        addIceCandidateListener(channelId, memberId, webRtcEndpoint);
+
         log.info("[Signal] 채널 타입: Group, Kurento 현재 채널({})의 참가자 수: {}", channelId, endpoints.get(channelId).size());
+    }
+
+    /**
+     * ICE Candidate 리스너 등록
+     */
+    private void addIceCandidateListener(String channelId, String memberId, WebRtcEndpoint endpoint) {
+        String endpointKey = channelId + "_" + memberId;
+        if (!registeredListenerEndpoints.contains(endpointKey)) {
+            log.info("[Kurento] ICE Candidate Listener 등록 - 채널: {}, 유저: {}", channelId, memberId);
+
+            endpoint.addIceCandidateFoundListener(event -> {
+                IceCandidate kurentoCandidate = event.getCandidate();
+                log.info("[Kurento] ICE Candidate 발견 - candidate: {}", kurentoCandidate.getCandidate());
+
+                // Candidate 정보를 담은 SignalMessage 생성
+                SignalMessage candidateMessage = SignalMessage.builder()
+                        .messageType(MessageType.CANDIDATE) // CANDIDATE 메시지 타입 설정
+                        .channelId(channelId)
+                        .senderId("SFU_SERVER") // 서버가 보낸 메시지로 표시
+                        .receiverId(memberId)   // 클라이언트에게 전달
+                        .candidate(SignalMessage.Candidate.builder()
+                                .candidate(kurentoCandidate.getCandidate())
+                                .sdpMid(kurentoCandidate.getSdpMid())
+                                .sdpMLineIndex(kurentoCandidate.getSdpMLineIndex())
+                                .build())
+                        .build();
+
+                // WebSocket을 통해 클라이언트로 전송
+                messagingTemplate.convertAndSend(
+                        Path.directSubPath + memberId,
+                        candidateMessage
+                );
+
+                log.info("[Signal] 채널 타입: Group, 유저 ID: {}, candidate: {}, 상세: Kurento에서 ICE Candidate 전송 완료",
+                        memberId, kurentoCandidate.getCandidate());
+            });
+
+            // 리스너 등록 완료 후 해당 endpoint 키를 등록
+            registeredListenerEndpoints.add(endpointKey);
+        }
     }
 
     /**
