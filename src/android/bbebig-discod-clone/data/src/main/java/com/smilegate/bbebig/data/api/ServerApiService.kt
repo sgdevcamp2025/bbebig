@@ -15,7 +15,7 @@ interface ServerApiService {
     @GET("service-server/servers")
     suspend fun getServerList(): BaseResponse<ServerListResponse>
 
-    @GET("service-server/servers{serverId}")
+    @GET("service-server/servers/{serverId}")
     suspend fun getServerInfo(@Path(value = "serverId") severId: Long): BaseResponse<ServerInfoResponse>
 
     @POST("service-server/servers")

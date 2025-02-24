@@ -1,10 +1,11 @@
 package com.smilegate.bbebig.presentation.ui.home.model
 
 import com.smilegate.bbebig.domain.model.ServerInfoDomainModel
+import com.smilegate.bbebig.presentation.utils.ImmutableList
 
 data class ServerInfo(
-    val categoryInfoList: List<CategoryInfo>,
-    val channelInfoList: List<ChannelInfo>,
+    val categoryMap: Map<Long?, List<CategoryInfo>>,
+    val channelList: ImmutableList<Pair<Long?, List<ChannelInfo>>>,
     val ownerId: Long,
     val serverId: Long,
     val serverImageUrl: String,
@@ -12,8 +13,8 @@ data class ServerInfo(
 )
 
 fun ServerInfoDomainModel.toUiModel(): ServerInfo = ServerInfo(
-    categoryInfoList = categoryInfoList.map { it.toUiModel() },
-    channelInfoList = channelInfoList.map { it.toUiModel() },
+    categoryMap = categoryMap.mapValues { it.value.map { it.toUiModel() } },
+    channelList = ImmutableList(channelList.map { it.first to it.second.map { it.toUiModel() } }),
     ownerId = ownerId,
     serverId = serverId,
     serverImageUrl = serverImageUrl,

@@ -10,6 +10,7 @@ import javax.inject.Inject
 class GetServerListUseCase @Inject constructor(
     private val serverRepository: ServerRepository,
 ) {
-    suspend operator fun invoke(): List<ServerDomainModel> =
-        serverRepository.getServerList().toDomainModel()
+    suspend operator fun invoke(): Result<List<ServerDomainModel>> {
+        return runCatching { serverRepository.getServerList().toDomainModel() }
+    }
 }

@@ -30,15 +30,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DrawerValue
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.ModalBottomSheetLayout
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material3.rememberDrawerState
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -65,9 +66,6 @@ import coil.compose.AsyncImage
 import com.smilegate.bbebig.presentation.component.DiscordParticipantContainer
 import com.smilegate.bbebig.presentation.component.DiscordRoundButton
 import com.smilegate.bbebig.presentation.component.DiscordTitleContainer
-import com.smilegate.bbebig.presentation.model.SampleChannel
-import com.smilegate.bbebig.presentation.model.SampleServerList
-import com.smilegate.bbebig.presentation.model.ServerType
 import com.smilegate.bbebig.presentation.theme.Blue70
 import com.smilegate.bbebig.presentation.theme.Gray10
 import com.smilegate.bbebig.presentation.theme.Gray30
@@ -77,6 +75,12 @@ import com.smilegate.bbebig.presentation.theme.Gray60
 import com.smilegate.bbebig.presentation.theme.Gray70
 import com.smilegate.bbebig.presentation.theme.Gray80
 import com.smilegate.bbebig.presentation.theme.White
+import com.smilegate.bbebig.presentation.ui.home.model.CategoryInfo
+import com.smilegate.bbebig.presentation.ui.home.model.ChannelInfo
+import com.smilegate.bbebig.presentation.ui.home.model.Server
+import com.smilegate.bbebig.presentation.ui.home.model.ServerInfo
+import com.smilegate.bbebig.presentation.ui.home.mvi.HomeUiState
+import com.smilegate.bbebig.presentation.utils.ImmutableList
 import com.smilegate.bbebig.presentation.utils.StableImage
 import com.smilegate.bbebig.presentation.utils.noRippleSingleClick
 import com.smilegate.bbebig.presentation.utils.rippleClick
@@ -85,36 +89,63 @@ import com.smilegate.devcamp.presentation.R
 
 @Composable
 fun HomeScreen(
+    uiState: HomeUiState,
     onMakeServerClick: () -> Unit,
     onServerJoinClick: () -> Unit,
     onClickInviteFriend: () -> Unit,
+    onClickJoinLiveChat: () -> Unit,
     onSearchClick: () -> Unit,
-    serverList: SampleServerList = SampleServerList.getDummyList(),
+    onSubChannelClick: (ChannelInfo) -> Unit,
+    onClickBackChatRoom: () -> Unit,
+    onServerClick: (Long) -> Unit,
 ) {
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+
+    LaunchedEffect(uiState.isChatRoomVisible) {
+        if (uiState.isChatRoomVisible) {
+            drawerState.open()
+        } else {
+            drawerState.close()
+        }
+    }
+
     Row(
         modifier = Modifier.fillMaxSize(),
     ) {
         ServerListContainer(
             modifier = Modifier.fillMaxHeight(),
-            serverList = serverList,
+            serverList = uiState.serverList,
             onMakeServerClick = onMakeServerClick,
+            onServerClick = onServerClick,
         )
         ServerChannelContainer(
             modifier = Modifier.background(color = Gray30),
-            serverList = serverList,
+            serverInfo = uiState.serverInfo,
             onMakeServerClick = onMakeServerClick,
             onServerJoinClick = onServerJoinClick,
             onSearchClick = onSearchClick,
             onClickAddFriend = onClickInviteFriend,
+            onSubChannelClick = onSubChannelClick,
         )
     }
+    LiveChatJoinBottomSheet(
+        modifier = Modifier.fillMaxWidth(),
+        isVisible = uiState.isSheetVisible,
+        channelName = uiState.selectedChannelInfo.channelName,
+        participantList = emptyList(),
+        onClickMuteMic = {},
+        onClickJoinLiveChat = onClickJoinLiveChat,
+        onClickChannelChat = {},
+        onClickInviteUser = {},
+    )
 }
 
 @Composable
 private fun ServerListContainer(
     modifier: Modifier,
-    serverList: SampleServerList,
+    serverList: ImmutableList<Server>,
     onMakeServerClick: () -> Unit,
+    onServerClick: (Long) -> Unit,
 ) {
     val selectedServerId = remember { mutableIntStateOf(Int.MIN_VALUE) }
 
@@ -123,28 +154,35 @@ private fun ServerListContainer(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        itemsIndexed(serverList.channelList) { index, serverInfo ->
+        itemsIndexed(
+            items = serverList,
+            key = { _, server ->
+                server.serverId
+            },
+        ) { index, server ->
             if (index == 0) {
                 Spacer(modifier = Modifier.height(10.dp))
             }
+
+//            if (index == 0) {
+//                HorizontalDivider(
+//                    modifier = Modifier
+//                        .width(25.dp)
+//                        .padding(top = 10.dp),
+//                    thickness = 1.dp,
+//                    color = Gray80,
+//                )
+//            }
             ServerItem(
                 modifier = Modifier,
                 isSelected = selectedServerId.intValue == index,
                 index = index,
-                imageUrl = "https://picsum.photos/seed/picsum/200/300",
+                imageUrl = server.serverImageUrl,
                 onServerClick = { clickedIndex ->
                     selectedServerId.intValue = clickedIndex
+                    onServerClick(server.serverId)
                 },
             )
-            if (index == 0) {
-                HorizontalDivider(
-                    modifier = Modifier
-                        .width(25.dp)
-                        .padding(top = 10.dp),
-                    thickness = 1.dp,
-                    color = Gray80,
-                )
-            }
         }
         item {
             MakeServerItem(modifier = Modifier, onMakeServerClick = onMakeServerClick)
@@ -252,7 +290,6 @@ private fun ServerItem(
             contentDescription = null,
             contentScale = ContentScale.Crop,
         )
-
         ServerItemIndicator(
             modifier = Modifier.align(Alignment.CenterStart),
             isSelect = isSelected,
@@ -308,41 +345,32 @@ private fun MakeServerItem(modifier: Modifier, onMakeServerClick: () -> Unit) {
 @Composable
 private fun ServerChannelContainer(
     modifier: Modifier,
-    serverList: SampleServerList,
-    type: ServerType = ServerType.DM,
+    serverInfo: ServerInfo,
     onMakeServerClick: () -> Unit,
     onServerJoinClick: () -> Unit,
     onSearchClick: () -> Unit,
     onClickAddFriend: () -> Unit,
+    onSubChannelClick: (ChannelInfo) -> Unit,
 ) {
-    when (type) {
-        ServerType.DM -> {
-            DMContentContainer(
-                modifier = modifier.fillMaxSize(),
-                onClickAddFriend = onClickAddFriend,
-                onClickSearch = onSearchClick,
-            )
-        }
-
-        is ServerType.Server -> {
-            if (serverList.channelList.isEmpty()) {
-                EmptyServerContent(
-                    modifier = modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 15.dp, vertical = 20.dp),
-                    onMakeServerClick = onMakeServerClick,
-                    onServerJoinClick = onServerJoinClick,
-                )
-            } else {
-                ServerContentContainer(
-                    modifier = modifier
-                        .fillMaxSize()
-                        .padding(top = 5.dp),
-                    onSearchClick = onSearchClick,
-                    serverList = serverList,
-                )
-            }
-        }
+    if (serverInfo.channelList.isEmpty()) {
+        EmptyServerContent(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(horizontal = 15.dp, vertical = 20.dp),
+            onMakeServerClick = onMakeServerClick,
+            onServerJoinClick = onServerJoinClick,
+        )
+    } else {
+        ServerContentContainer(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(top = 5.dp),
+            onSearchClick = onSearchClick,
+            serverName = serverInfo.serverName,
+            channelInfoList = serverInfo.channelList,
+            categoryMap = serverInfo.categoryMap,
+            onSubChannelClick = onSubChannelClick,
+        )
     }
 }
 
@@ -440,15 +468,18 @@ private fun EmptyFriendListContainer(modifier: Modifier, onClickAddFriend: () ->
 @Composable
 private fun ServerContentContainer(
     modifier: Modifier,
-    serverList: SampleServerList,
+    channelInfoList: ImmutableList<Pair<Long?, List<ChannelInfo>>>,
+    categoryMap: Map<Long?, List<CategoryInfo>>,
+    serverName: String,
     onSearchClick: () -> Unit,
+    onSubChannelClick: (ChannelInfo) -> Unit,
 ) {
     LazyColumn(modifier = modifier) {
         stickyHeader {
             Column(modifier = modifier.padding(horizontal = 15.dp)) {
                 TopTitleContainer(
                     modifier = Modifier,
-                    title = serverList.serverName,
+                    title = serverName,
                     onClickSearch = onSearchClick,
                 )
                 DiscordRoundButton(
@@ -471,12 +502,14 @@ private fun ServerContentContainer(
             )
         }
 
-        itemsIndexed(serverList.channelList) { index, serverInfo ->
+        itemsIndexed(channelInfoList) { index, categoryInfo ->
             ChannelItem(
                 modifier = Modifier.padding(vertical = 5.dp),
-                channelInfo = serverInfo,
+                categoryName = categoryMap.getOrDefault(categoryInfo.first, emptyList())
+                    .getOrNull(0)?.categoryName ?: "",
+                channelInfo = categoryInfo.second,
                 onChanelClick = { },
-                onSubChannelClick = { },
+                onSubChannelClick = onSubChannelClick,
             )
         }
     }
@@ -485,39 +518,42 @@ private fun ServerContentContainer(
 @Composable
 private fun ChannelItem(
     modifier: Modifier,
-    channelInfo: SampleChannel,
+    categoryName: String,
+    channelInfo: List<ChannelInfo>,
     onChanelClick: () -> Unit,
-    onSubChannelClick: () -> Unit,
+    onSubChannelClick: (ChannelInfo) -> Unit,
 ) {
     var isChannelSelected by rememberSaveable { mutableStateOf(false) }
 
     Column(modifier = modifier) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { isChannelSelected = !isChannelSelected },
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            StableImage(
+        if (categoryName.isNotEmpty()) {
+            Row(
                 modifier = Modifier
-                    .size(10.dp)
-                    .rotate(if (isChannelSelected) -90f else 0f),
-                drawableResId = R.drawable.ic_dropdown_menu,
-            )
-            Text(text = channelInfo.channelName)
+                    .fillMaxWidth()
+                    .clickable { isChannelSelected = !isChannelSelected },
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                StableImage(
+                    modifier = Modifier
+                        .size(10.dp)
+                        .rotate(if (isChannelSelected) -90f else 0f),
+                    drawableResId = R.drawable.ic_dropdown_menu,
+                )
+                Text(text = categoryName)
+            }
         }
 
         if (isChannelSelected) {
             Column(
                 modifier = Modifier.padding(start = 15.dp, top = 5.dp, bottom = 5.dp),
             ) {
-                channelInfo.subChannelList.forEach { subChannel ->
+                channelInfo.forEach { subChannel ->
                     Text(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 3.dp)
-                            .rippleSingleClick { /*TODO: 향후 채널 선택시 클릭이벤트 적용*/ },
-                        text = subChannel.subChannelName,
+                            .rippleSingleClick { onSubChannelClick(subChannel) },
+                        text = subChannel.channelName,
                     )
                 }
             }
@@ -529,8 +565,6 @@ private fun ChannelItem(
 private fun LiveChatJoinBottomSheet(
     modifier: Modifier,
     isVisible: Boolean,
-    userName: String,
-    userIconResId: Int,
     channelName: String,
     participantList: List<Any>,
     onClickMuteMic: () -> Unit,
@@ -562,9 +596,7 @@ private fun LiveChatJoinBottomSheet(
                         .heightIn(max = 500.dp)
                         .fillMaxSize()
                         .background(Gray10),
-                    userName = userName,
                     participantList = participantList,
-                    userIconResId = userIconResId,
                 )
                 BottomUtilBarContainer(
                     modifier = Modifier
@@ -593,8 +625,6 @@ private fun LiveChatJoinBottomSheet(
 @Composable
 private fun BottomSheetParticipateContainer(
     modifier: Modifier,
-    userName: String,
-    userIconResId: Int,
     participantList: List<Any>,
 ) {
     LazyColumn(modifier = modifier) {
@@ -609,8 +639,6 @@ private fun BottomSheetParticipateContainer(
                     )
                     .clip(RoundedCornerShape(20.dp))
                     .background(Gray50),
-                userName,
-                userIconResId,
                 participantList,
             )
         }
@@ -726,8 +754,6 @@ private fun ChannelNameContainer(modifier: Modifier, channelName: String) {
 @Composable
 private fun ParticipantItem(
     modifier: Modifier,
-    userName: String,
-    userIconResId: Int,
     participantList: List<Any>,
 ) {
     Column(
@@ -738,8 +764,8 @@ private fun ParticipantItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp, vertical = 10.dp),
-                userIconResId = userIconResId,
-                userName = userName,
+                userIconResId = 1,
+                userName = "",
                 userIconSize = 30.dp,
             )
             if (participantList.lastIndex != index) {
@@ -757,49 +783,16 @@ private fun ParticipantItem(
 
 @Composable
 @Preview
-private fun ServerItemPreview() {
+private fun HomeScreenPreView() {
     HomeScreen(
         onMakeServerClick = {},
         onServerJoinClick = {},
         onClickInviteFriend = {},
         onSearchClick = {},
-    )
-}
-
-@Composable
-@Preview
-private fun LiveChatJoinBottomSheetPreview() {
-    LiveChatJoinBottomSheet(
-        modifier = Modifier.fillMaxSize(),
-        isVisible = true,
-        userName = "User Name",
-        userIconResId = R.drawable.ic_invite_user,
-        channelName = "Channel Name",
-        participantList = listOf(
-            Any(),
-            Any(),
-            Any(),
-            Any(),
-            Any(),
-            Any(),
-            Any(),
-            Any(),
-            Any(),
-            Any(),
-            Any(),
-            Any(),
-            Any(),
-            Any(),
-            Any(),
-            Any(),
-            Any(),
-            Any(),
-            Any(),
-            Any(),
-        ),
-        onClickMuteMic = {},
+        uiState = HomeUiState.initialize(),
+        onSubChannelClick = {},
         onClickJoinLiveChat = {},
-        onClickChannelChat = {},
-        onClickInviteUser = {},
+        onClickBackChatRoom = {},
+        onServerClick = {},
     )
 }

@@ -36,10 +36,12 @@ import com.smilegate.devcamp.presentation.R
 
 @Composable
 fun ChannelChatScreen(
+    channelName: String,
     onClickBack: () -> Unit,
     onClickSearch: () -> Unit,
     onClickAddPhoto: () -> Unit,
     onClickSendChat: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
@@ -144,6 +146,7 @@ private fun ChatInputContainer(
 @Preview
 private fun ChannelChatScreenPreview() {
     ChannelChatScreen(
+        channelName = "Sample Channel",
         onClickBack = {},
         onClickSearch = {},
         onClickAddPhoto = {},

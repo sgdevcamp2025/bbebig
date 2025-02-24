@@ -13,8 +13,10 @@ fun NavController.navigateToHome() {
     }
 }
 
-fun NavGraphBuilder.homeNavigation() {
+fun NavGraphBuilder.homeNavigation(onNavigateLiveChatRoom: (Long) -> Unit) {
     composable<Home> {
-        HomeRoute()
+        HomeRoute(
+            onNavigateLiveChatRoom = onNavigateLiveChatRoom,
+        )
     }
 }
