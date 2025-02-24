@@ -15,6 +15,9 @@ export default defineConfig(({ mode }) => {
         plugins: [autoprefixer, tailwindcss]
       }
     },
+    server: {
+      allowedHosts: ['specially-mighty-titmouse.ngrok-free.app']
+    },
     plugins: [
       react(),
       tsconfigPaths(),

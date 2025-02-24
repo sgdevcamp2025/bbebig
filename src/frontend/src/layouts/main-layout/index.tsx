@@ -15,6 +15,7 @@ import useChattingStomp from '@/hooks/store/use-chatting-stomp'
 import { useServerStore } from '@/hooks/store/use-select-server-store'
 import { cn } from '@/libs/cn'
 import { useMediaSettingsStore } from '@/stores/use-media-setting.store'
+import { useSignalingStomp } from '@/stores/use-signaling-stomp-store'
 import { CustomPresenceStatus } from '@/types/user'
 
 import ProfileCard from './components/profile-card'
@@ -23,35 +24,36 @@ import ServerCreateModal from './components/server-create-modal'
 import SettingModal, { SettingModalTabsID } from './components/setting-modal'
 
 const Inner = () => {
-  const { connect, isConnected, disconnect, checkConnection, subscribeToServer } =
-    useChattingStomp()
+  const {
+    connect: connectChatting,
+    isConnected: isChatConnected,
+    disconnect: disconnectChatting,
+    subscribeToServer,
+    checkConnection
+  } = useChattingStomp()
+  const { connect: connectSignaling, disconnect: disconnectSignaling } = useSignalingStomp()
   const { selectedServerId, setSelectedServer } = useServerStore()
+  const location = useLocation()
+  const navigate = useNavigate()
 
-  useEffect(() => {
-    if (!isConnected && !checkConnection()) {
-      console.log('[🔗] MainLayout STOMP 연결 시도')
-      connect()
-    }
+  useEffect(function init() {
+    connectChatting()
+    connectSignaling()
 
-    return () => {
-      console.log('[❌] MainLayout STOMP 연결 해제')
-      disconnect()
+    return function cleanup() {
+      disconnectChatting()
+      disconnectSignaling()
     }
   }, [])
 
   useEffect(() => {
-    if (isConnected && selectedServerId) {
+    if (isChatConnected && selectedServerId) {
       console.log(`[📡] 서버 ${selectedServerId} 자동 구독`)
       subscribeToServer(selectedServerId, (message) => {
         console.log(`[📩] 서버 이벤트 수신 (${selectedServerId}):`, message)
-        // handleServerEvent(message as ServerSubscribeResponse)
-        console.log('서버 메인 레이아웃에서 useFfect 안 서버 구독 ')
       })
     }
-  }, [isConnected, selectedServerId])
-
-  const location = useLocation()
-  const navigate = useNavigate()
+  }, [isChatConnected, selectedServerId])
 
   const myChannelList = useGetServer()
   const selfUser = useGetSelfUser()
@@ -75,7 +77,7 @@ const Inner = () => {
     navigate(`/channels/${serverId}/${firstChannelId}`)
     setSelectedServer(serverId)
 
-    if (isConnected) {
+    if (isChatConnected) {
       console.log(`[📡] 서버 클릭 - 서버 ${serverId} 이벤트 구독 요청`)
       subscribeToServer(serverId, (message) => {
         console.log(`[📩] 서버 클릭 - 서버 이벤트 수신 (${serverId}):`, message)
@@ -92,7 +94,7 @@ const Inner = () => {
   }
 
   const [settingModalState, setSettingModalState] = useState({
-    itemId: SettingModalTabsID.none,
+    itemId: SettingModalTabsID.myAccount,
     isOpen: false
   })
 
@@ -116,7 +118,7 @@ const Inner = () => {
 
   const handleClickSettingModalClose = () => {
     setSettingModalState({
-      itemId: SettingModalTabsID.none,
+      itemId: SettingModalTabsID.myAccount,
       isOpen: false
     })
   }

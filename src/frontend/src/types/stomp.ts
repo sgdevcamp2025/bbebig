@@ -7,8 +7,7 @@ export interface StompState {
   isConnected: boolean
   connect: () => void
   disconnect: () => void
-  subscribe: (destination: string, callback: (message: any) => void) => void
-  unsubscribe: (destination: string) => void
+  subscribe: (destination: string, callback: (message: any) => void, id: string) => void
+  unsubscribe: (destination: string, id: string) => void
   send: (destination: string, body: any) => void
-  message: (destination: string, body: any) => void
 }
