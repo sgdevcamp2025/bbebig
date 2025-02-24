@@ -4,8 +4,12 @@ import { COOKIE_KEYS } from '@/constants/keys'
 import cookie from '@/utils/cookie'
 
 import axiosInstance from '../config/axios-instance'
-import { LoginResponseSchema, LoginSchema, RegisterSchema } from '../schema/types/auth'
-
+import {
+  LoginResponseSchema,
+  LoginSchema,
+  RegisterSchema,
+  StatusCheckResponseSchema
+} from '../schema/types/auth'
 const BASE_PATH = `/auth-server/auth`
 
 export interface CustomAxiosRequestConfig extends AxiosRequestConfig {
@@ -13,6 +17,11 @@ export interface CustomAxiosRequestConfig extends AxiosRequestConfig {
 }
 
 const authService = () => {
+  const statusCheck = async () => {
+    const response = await axiosInstance.get<StatusCheckResponseSchema>(`${BASE_PATH}/status-check`)
+    return response.data
+  }
+
   const login = async (data: LoginSchema) => {
     const res = await axiosInstance.post<LoginResponseSchema>(`${BASE_PATH}/login`, data, {
       useAuth: false
@@ -42,7 +51,8 @@ const authService = () => {
     login,
     register,
     logout,
-    refreshToken
+    refreshToken,
+    statusCheck
   }
 }
 
