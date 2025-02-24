@@ -82,6 +82,14 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
         // (1) KurentoManager에서 WebRtcEndpoint 생성
         kurentoManager.createEndpoint(channelId, memberId);
 
+        // JOIN_CHANNEL 시점에 ICE Candidate 리스너를 등록하고 후보 수집 시작
+        WebRtcEndpoint endpoint = kurentoManager.getEndpoint(channelId, memberId);
+        addIceCandidateListener(channelId, memberId, endpoint);
+
+        // ICE Candidate 수집 시작
+        endpoint.gatherCandidates();
+        log.info("[Kurento] ICE Candidate gathering 시작 - 채널: {}, 유저 ID: {}", channelId, memberId);
+
         // 기존 멤버 목록
         Set<String> participants = channelManager.getParticipants(message.getChannelId());
 
@@ -221,13 +229,6 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
             return;
         }
 
-        // Candidate 요청이 들어올 때 ICE Candidate 리스너 등록
-        addIceCandidateListener(channelId, memberId, endpoint);
-
-        // ICE Candidate 수집 시작
-        endpoint.gatherCandidates();
-        log.info("[Kurento] ICE Candidate gathering 시작 - 채널: {}, 유저 ID: {}", channelId, memberId);
-
         // 브라우저가 보낸 Candidate 필드
         SignalMessage.Candidate candidate = message.getCandidate();
         if (candidate == null || candidate.getCandidate() == null) {
@@ -268,7 +269,9 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
 
             endpoint.addIceCandidateFoundListener(event -> {
                 IceCandidate kurentoCandidate = event.getCandidate();
-                log.info("[Kurento] ICE Candidate 발견 - candidate: {}", kurentoCandidate.getCandidate());
+                log.info("[Kurento] ICE Candidate 발견 - candidate: {}, sdpMid: {}, sdpMLineIndex: {}",
+                        kurentoCandidate.getCandidate(), kurentoCandidate.getSdpMid(),
+                        kurentoCandidate.getSdpMLineIndex());
 
                 // Candidate 정보를 담은 SignalMessage 생성
                 SignalMessage candidateMessage = SignalMessage.builder()
