@@ -2,6 +2,7 @@ package com.bbebig.userserver.global.kafka;
 
 import com.bbebig.commonmodule.kafka.dto.PresenceEventDto;
 import com.bbebig.commonmodule.kafka.dto.notification.FriendPresenceEventDto;
+import com.bbebig.commonmodule.kafka.dto.notification.NotificationEventType;
 import com.bbebig.userserver.friend.service.FriendService;
 import com.bbebig.userserver.member.service.KafkaProducerService;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,7 @@ public class PresenceEventConsumerService {
 		for (Long friendMemberId : friendMemberIds) {
 			FriendPresenceEventDto friendPresenceEventDto = FriendPresenceEventDto.builder()
 					.memberId(friendMemberId)
+					.type(NotificationEventType.FRIEND_PRESENCE)
 					.friendMemberId(memberId)
 					.globalStatus(presenceEventDto.getGlobalStatus())
 					.build();

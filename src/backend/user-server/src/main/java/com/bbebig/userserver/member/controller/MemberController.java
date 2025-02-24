@@ -96,4 +96,17 @@ public class MemberController {
         return CommonResponse.onSuccess(memberService.readMember(memberId));
     }
 
+    @Operation(summary = "멤버 닉네임으로 검색", description = "멤버 닉네임으로 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "멤버 조회 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "", content = @Content)
+    })
+    @GetMapping("/search")
+    public CommonResponse<MemberReadResponseDto> getMemberByNickName(
+            @RequestParam("nickName") String nickName
+    ) {
+        log.info("[Member] 닉네임으로 멤버 조회 요청: nickName = {}", nickName);
+        return CommonResponse.onSuccess(memberService.getMemberByNickname(nickName));
+    }
+
 }
