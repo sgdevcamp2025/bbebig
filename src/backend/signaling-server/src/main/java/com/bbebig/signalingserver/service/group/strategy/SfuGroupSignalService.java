@@ -5,6 +5,8 @@ import com.bbebig.signalingserver.domain.MessageType;
 import com.bbebig.signalingserver.domain.SignalMessage;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
+import com.bbebig.signalingserver.domain.SignalMessage.Candidate;
+import com.bbebig.signalingserver.domain.SignalMessage.Sdp;
 import com.bbebig.signalingserver.service.group.ChannelManager;
 import com.bbebig.signalingserver.service.group.KurentoManager;
 import java.util.Collections;
@@ -13,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.kurento.client.IceCandidate;
 import org.kurento.client.WebRtcEndpoint;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +33,9 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
     private final SimpMessagingTemplate messagingTemplate;
     private final ChannelManager channelManager;
     private final KurentoManager kurentoManager;
+
+    @Qualifier("applicationTaskExecutor")
+    private final TaskExecutor taskExecutor;
 
     private final Set<String> registeredListenerEndpoints = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
@@ -196,7 +203,7 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
                 .channelId(channelId)
                 .senderId("SFU_SERVER")
                 .receiverId(memberId)
-                .sdp(SignalMessage.Sdp.builder()
+                .sdp(Sdp.builder()
                         .type("answer")
                         .sdp(AnswerSdp)
                         .build())
@@ -230,7 +237,7 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
         }
 
         // 브라우저가 보낸 Candidate 필드
-        SignalMessage.Candidate candidate = message.getCandidate();
+        Candidate candidate = message.getCandidate();
         if (candidate == null || candidate.getCandidate() == null) {
             log.error("[Signal] 채널 타입: Group, 유저 ID: {}, 상세: Candidate 처리 실패 - candidate 객체가 null입니다.",
                     memberId);
@@ -279,7 +286,7 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
                         .channelId(channelId)
                         .senderId("SFU_SERVER") // 서버가 보낸 메시지로 표시
                         .receiverId(memberId)   // 클라이언트에게 전달
-                        .candidate(SignalMessage.Candidate.builder()
+                        .candidate(Candidate.builder()
                                 .candidate(kurentoCandidate.getCandidate())
                                 .sdpMid(kurentoCandidate.getSdpMid())
                                 .sdpMLineIndex(kurentoCandidate.getSdpMLineIndex())
@@ -287,13 +294,11 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
                         .build();
 
                 // WebSocket을 통해 클라이언트로 전송
-                messagingTemplate.convertAndSend(
-                        Path.directSubPath + memberId,
-                        candidateMessage
-                );
-
-                log.info("[Signal] 채널 타입: Group, 유저 ID: {}, candidate: {}, 상세: Kurento에서 ICE Candidate 전송 완료",
-                        memberId, kurentoCandidate.getCandidate());
+                taskExecutor.execute(() -> {
+                    messagingTemplate.convertAndSend(Path.directSubPath + memberId, candidateMessage);
+                    log.info("[Signal] 채널 타입: Group, 유저 ID: {}, candidate: {}, 상세: Kurento에서 ICE Candidate 전송 완료",
+                            memberId, kurentoCandidate.getCandidate());
+                });
             });
 
             // 리스너 등록 완료 후 해당 endpoint 키를 등록
