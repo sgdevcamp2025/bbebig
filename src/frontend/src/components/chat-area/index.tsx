@@ -53,7 +53,7 @@ function ChatArea({
     }
   }, [historyMessages, chatKey])
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (!chatKey || !inputRef.current) return
     const text = inputRef.current.value.trim()
     if (!text) return

@@ -5,7 +5,6 @@ import utc from 'dayjs/plugin/utc'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
-import { useState } from 'react'
 
 import { chattingStompInstance } from '@/apis/config/stomp-instance'
 import { COOKIE_KEYS } from '@/constants/keys'
@@ -18,8 +17,6 @@ import useGetSelfUser from '../queries/user/useGetSelfUser'
 const clientInstance = chattingStompInstance()
 
 export const useChattingStomp = () => {
-  // const client = useRef<Client | null>(null)
-  const [isConnected, setIsConnected] = useState(false)
   const selfUser = useGetSelfUser()
   const memberId = selfUser.id.toString()
 
@@ -29,47 +26,50 @@ export const useChattingStomp = () => {
 
   // ✅ SUBSCRIBE
   // 연결
-  const connect = () => {
+  const connect = (): Promise<void> => {
     if (checkConnection()) {
       console.log('[✅] 이미 채팅 서버에 연결되어 있음')
-      return
+      return Promise.resolve()
     }
 
-    const currentToken = cookie.getCookie(COOKIE_KEYS.ACCESS_TOKEN)
+    console.log('[🔗] 채팅 서버 연결 시도...')
 
-    clientInstance.connectHeaders = {
-      AcceptVersion: '1.3,1.2,1.1,1.0',
-      Authorization: `Bearer ${currentToken}`,
-      MemberId: memberId,
-      Platform: 'WEB'
-    }
+    return new Promise<void>((resolve, reject) => {
+      const token = cookie.getCookie(COOKIE_KEYS.ACCESS_TOKEN)
 
-    clientInstance.onConnect = () => {
-      console.log('[✅] 채팅 서버 연결 성공')
-      setIsConnected(true)
-    }
+      clientInstance.connectHeaders = {
+        AcceptVersion: '1.3,1.2,1.1,1.0',
+        Authorization: `Bearer ${token}`,
+        MemberId: memberId,
+        Platform: 'WEB'
+      }
 
-    clientInstance.onStompError = (frame) => {
-      console.error('[❌] STOMP 에러:', frame.headers['message'])
-      setIsConnected(false)
-    }
+      clientInstance.onConnect = () => {
+        console.log('[✅] 채팅 서버 연결 성공')
+        resolve()
+      }
 
-    clientInstance.onWebSocketError = (event) => {
-      console.error('[❌] WebSocket 에러:', event)
-      setIsConnected(false)
-    }
+      clientInstance.onStompError = (frame) => {
+        console.error('[❌] STOMP 에러:', frame.headers['message'])
+        reject(new Error('STOMP 연결 오류'))
+      }
 
-    clientInstance.onDisconnect = () => {
-      console.log('[❌] 채팅 서버 연결 종료')
-      setIsConnected(false)
-    }
+      clientInstance.onWebSocketError = (event) => {
+        console.error('[❌] WebSocket 에러:', event)
+        reject(new Error('WebSocket 연결 오류'))
+      }
 
-    clientInstance.activate()
+      clientInstance.onDisconnect = () => {
+        console.log('[❌] 채팅 서버 연결 종료')
+        reject(new Error('STOMP 연결 종료'))
+      }
+
+      clientInstance.activate()
+    })
   }
-
   // 서버 구독
   const subscribeToServer = (serverId: number, callback: (message: unknown) => void) => {
-    if (!isConnected || !clientInstance) {
+    if (!checkConnection() || !clientInstance) {
       console.log('[❌] STOMP 연결되지 않아서 구독 불가:', serverId)
       return
     }
@@ -94,7 +94,7 @@ export const useChattingStomp = () => {
 
   // 채널 타이핑 구독
   const subscribeToChannelTyping = (channelId: string, callback: (message: unknown) => void) => {
-    if (clientInstance && isConnected) {
+    if (checkConnection() && clientInstance) {
       const destination = `/topic/channel/${channelId}`
       console.log(`[✅] 채널 ${channelId} 구독 시작`)
 
@@ -111,7 +111,7 @@ export const useChattingStomp = () => {
 
   // 개인 알림 구독
   const subscribeToPersonal = (callback: (message: unknown) => void) => {
-    if (clientInstance && isConnected) {
+    if (checkConnection() && clientInstance) {
       const destination = `/queue/${memberId}`
       console.log(`[✅] 개인 알림 ${memberId} 구독 시작`)
 
@@ -131,7 +131,6 @@ export const useChattingStomp = () => {
     if (clientInstance) {
       clientInstance.deactivate()
       console.log('[❌] 채팅 서버 연결 종료')
-      setIsConnected(false)
     }
   }
 
@@ -149,12 +148,14 @@ export const useChattingStomp = () => {
   // ✅ PUBLISH
 
   // 서버 채널 채팅 전송
-  const publishToServerChatting = (body: ChattingMessageEvent) => {
+  const publishToServerChatting = async (body: ChattingMessageEvent) => {
     if (!checkConnection()) {
       console.log('[❌] 채팅 서버에 연결되지 않음.')
-      connect()
+      await connect()
       return
     }
+
+    console.log(checkConnection())
 
     const destination = `/pub/channel/message`
     console.log(`[📤] 서버 ${body.serverId}의 ${body.channelId} 채널로 메시지 발행:`)
@@ -184,10 +185,10 @@ export const useChattingStomp = () => {
   }
 
   // 채널 방문 이벤트
-  const publishToChannelEnter = (body: ChannelVisitEventRequest) => {
+  const publishToChannelEnter = async (body: ChannelVisitEventRequest) => {
     if (!checkConnection()) {
       console.log('[❌] 채팅 서버에 연결되지 않음.')
-      connect()
+      await connect()
       return
     }
 
@@ -245,7 +246,6 @@ export const useChattingStomp = () => {
     publishToServerChatting,
     publishToChannelLeave,
     publishToChannelEnter,
-    isConnected,
     checkConnection
   }
 }

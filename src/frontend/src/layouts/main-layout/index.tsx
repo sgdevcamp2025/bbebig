@@ -26,7 +26,6 @@ import SettingModal, { SettingModalTabsID } from './components/setting-modal'
 const Inner = () => {
   const {
     connect: connectChatting,
-    isConnected: isChatConnected,
     disconnect: disconnectChatting,
     subscribeToServer,
     checkConnection
@@ -37,23 +36,41 @@ const Inner = () => {
   const navigate = useNavigate()
 
   useEffect(function init() {
-    connectChatting()
+    const initChatting = async () => {
+      if (!checkConnection()) {
+        await connectChatting()
+      }
+    }
+
     connectSignaling()
+    initChatting()
 
     return function cleanup() {
+      console.log('cleanup 에서 checkConnection() - 연결 해제', checkConnection())
       disconnectChatting()
       disconnectSignaling()
     }
   }, [])
 
   useEffect(() => {
-    if (isChatConnected && selectedServerId) {
-      console.log(`[📡] 서버 ${selectedServerId} 자동 구독`)
-      subscribeToServer(selectedServerId, (message) => {
-        console.log(`[📩] 서버 이벤트 수신 (${selectedServerId}):`, message)
-      })
+    console.log('checkConnection() - useEffect자동구독 ', checkConnection())
+    const subscribeToServerIfConnected = async () => {
+      if (!selectedServerId) return
+
+      await connectChatting()
+
+      console.log('서버 자동구독 useEffect 에서 checkConnection()', checkConnection())
+
+      if (checkConnection()) {
+        console.log(`[📡] 서버 ${selectedServerId} 자동 구독`)
+        subscribeToServer(selectedServerId, (message) => {
+          console.log(`[📩] 서버 이벤트 수신 (${selectedServerId}):`, message)
+        })
+      }
     }
-  }, [isChatConnected, selectedServerId])
+
+    subscribeToServerIfConnected()
+  }, [selectedServerId, checkConnection])
 
   const myChannelList = useGetServer()
   const selfUser = useGetSelfUser()
@@ -77,15 +94,12 @@ const Inner = () => {
     navigate(`/channels/${serverId}/${firstChannelId}`)
     setSelectedServer(serverId)
 
-    if (isChatConnected) {
+    console.log('handleClickServer 에서 checkConnection()', checkConnection())
+    if (checkConnection()) {
       console.log(`[📡] 서버 클릭 - 서버 ${serverId} 이벤트 구독 요청`)
       subscribeToServer(serverId, (message) => {
         console.log(`[📩] 서버 클릭 - 서버 이벤트 수신 (${serverId}):`, message)
-
-        console.log('서버 클릭해서 구독 _ main layout ')
       })
-    } else {
-      console.log('[❌] STOMP가 연결되지 않아 구독 불가능')
     }
   }
 
