@@ -86,10 +86,6 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
         WebRtcEndpoint endpoint = kurentoManager.getEndpoint(channelId, memberId);
         addIceCandidateListener(channelId, memberId, endpoint);
 
-        // ICE Candidate 수집 시작
-        endpoint.gatherCandidates();
-        log.info("[Kurento] ICE Candidate gathering 시작 - 채널: {}, 유저 ID: {}", channelId, memberId);
-
         // 기존 멤버 목록
         Set<String> participants = channelManager.getParticipants(message.getChannelId());
 
@@ -213,6 +209,10 @@ public class SfuGroupSignalService implements GroupSignalStrategy {
 
         log.info("[Signal] 채널 타입: Group, 유저 ID: {}, 채널 ID: {}, 상세: ANSWER 전송 완료",
                 memberId, channelId);
+
+        // ICE Candidate 수집 시작
+        endpoint.gatherCandidates();
+        log.info("[Kurento] ICE Candidate gathering 시작 - 채널: {}, 유저 ID: {}", channelId, memberId);
     }
 
     /**
