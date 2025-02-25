@@ -9,9 +9,9 @@ import userService from '@/apis/service/user'
 import Avatar from '@/components/avatar'
 import StatusIcon from '@/components/status-icon'
 import { statusKo } from '@/constants/status'
+import { useLogoutMutation } from '@/hooks/queries/auth/useLogoutMutation'
 import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
 import useClickOutside from '@/hooks/use-click-outside'
-import useLoginStore from '@/stores/use-login-store'
 import { CustomPresenceStatus } from '@/types/user'
 
 import MenuItem from './menu-item'
@@ -93,7 +93,7 @@ export function Content({
   })
 
   const navigate = useNavigate()
-  const { logout } = useLoginStore()
+  const { mutate: logout } = useLogoutMutation()
 
   const statusMenuRef = useRef<HTMLDivElement>(null)
 
@@ -110,7 +110,7 @@ export function Content({
   }
 
   const handleClickLogout = () => {
-    logout()
+    logout(undefined)
     navigate('/', { replace: true })
   }
 

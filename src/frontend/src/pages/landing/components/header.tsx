@@ -1,7 +1,6 @@
-import { useEffect } from 'react'
-import { useShallow } from 'zustand/shallow'
+import { useEffect, useState } from 'react'
 
-import useLoginStore from '@/stores/use-login-store'
+import { useStatusCheckMutation } from '@/hooks/queries/auth/useStatusCheckMutation'
 
 const navigation = [
   {
@@ -39,16 +38,16 @@ const navigation = [
 ] as const
 
 function Header() {
-  const { isLogin, initialLoginState } = useLoginStore(
-    useShallow((state) => ({
-      isLogin: state.isLogin,
-      initialLoginState: state.initialLoginState
-    }))
-  )
+  const [isLogin, setIsLogin] = useState(false)
+  const { mutate: statusCheck } = useStatusCheckMutation({
+    onSuccess: (data) => {
+      setIsLogin(data.result.status)
+    }
+  })
 
   useEffect(() => {
-    initialLoginState()
-  }, [initialLoginState])
+    statusCheck(undefined)
+  }, [statusCheck])
 
   return (
     <div className='absolute left-0 right-0 top-0 mobile-range:sticky mobile-range:top-0 mobile-range:z-50 mobile-range:bg-blue-30'>

@@ -1,52 +1,42 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { useShallow } from 'zustand/shallow'
 
 import { loginRequestSchema } from '@/apis/schema/auth'
 import { LoginSchema } from '@/apis/schema/types/auth'
-import authService from '@/apis/service/auth'
 import AuthInput from '@/components/auth-input'
 import CustomButton from '@/components/custom-button'
-import useLoginStore from '@/stores/use-login-store'
-
+import { useLoginMutation } from '@/hooks/queries/auth/useLoginMutation'
 function LoginPage() {
   const navigate = useNavigate()
   const [movePage, setMovePage] = useState(false)
   const { register, handleSubmit } = useForm<LoginSchema>({
     resolver: zodResolver(loginRequestSchema)
   })
+  const { mutate: login, isSuccess } = useLoginMutation()
 
-  const { login, isLogin } = useLoginStore(
-    useShallow((state) => ({
-      login: state.login,
-      isLogin: state.isLogin
-    }))
-  )
-
-  const handleMoveSignUpPage = useCallback(() => {
+  const handleMoveSignUpPage = () => {
     setMovePage(true)
 
     setTimeout(() => {
       navigate('/register')
     }, 500)
-  }, [navigate])
+  }
 
   const signIn = async (data: LoginSchema) => {
-    await authService.login(data)
-    login()
+    await login(data)
   }
 
   useEffect(() => {
-    if (isLogin) {
+    if (isSuccess) {
       setMovePage(true)
 
       setTimeout(() => {
         navigate('/channels/@me', { replace: true })
       }, 500)
     }
-  }, [isLogin, navigate])
+  }, [isSuccess, navigate])
 
   return (
     <form
