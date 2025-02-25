@@ -1,3 +1,6 @@
+import { ChannelType } from './server'
+import { CustomPresenceStatus } from './user'
+
 export type ServerSubscribeResponse =
   | ServerChannelEvent
   | ServerCategoryEvent
@@ -17,7 +20,7 @@ export interface ServerChannelEvent extends BaseServerEvent {
   type: 'SERVER_CHANNEL'
   categoryId: number
   channeId: number
-  channelType: 'CHAT' | 'VOICE'
+  channelType: ChannelType
   order: number | null
   status: 'CREATE' | 'UPDATE' | 'DELETE'
 }
@@ -54,8 +57,8 @@ export interface ServerMemberPresenceEvent extends BaseServerEvent {
   type: 'SERVER_MEMBER_PRESENCE'
   memberId: number
   serverId: number
-  actualStatus: 'ONLINE' | 'AWAY' | 'BUSY' | 'INVISIBLE'
-  globalStatus: 'ONLINE' | 'AWAY' | 'BUSY' | 'INVISIBLE'
+  actualStatus: CustomPresenceStatus
+  globalStatus: CustomPresenceStatus
 }
 
 // 서버 채팅 메시지 이벤트 (STOMP에서 받는 MESSAGE)
@@ -75,7 +78,7 @@ export interface ChattingMessageEvent extends BaseServerEvent {
 export interface ChannelVisitEventRequest extends BaseServerEvent {
   type: 'ENTER' | 'LEAVE'
   memberId?: number
-  channelType: 'CHAT' | 'VOICE'
+  channelType: ChannelType
   channelId: number
   lastReadMessageId?: string
   eventTime?: string

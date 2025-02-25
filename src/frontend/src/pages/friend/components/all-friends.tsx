@@ -45,7 +45,7 @@ function AllFriends() {
             id={friend.memberId}
             avatarUrl={friend.memberAvatarUrl ?? '/image/common/default-avatar.png'}
             name={friend.memberName}
-            status={friend.actualStatus as CustomPresenceStatus}
+            status={friend.globalStatus}
             description={statusKo[friend.actualStatus as CustomPresenceStatus]}
             statusColor='black'
             iconType='default'

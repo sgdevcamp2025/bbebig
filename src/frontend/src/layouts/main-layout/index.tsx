@@ -11,7 +11,6 @@ import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
 import useChattingStomp from '@/hooks/store/use-chatting-stomp'
 import { useMediaSettingsStore } from '@/stores/use-media-setting.store'
 import { useSignalingStomp } from '@/stores/use-signaling-stomp-store'
-import { CustomPresenceStatus } from '@/types/user'
 
 import ProfileCard from './components/profile-card'
 import ProfileStatusButton from './components/profile-status-button'
@@ -192,7 +191,7 @@ const Inner = () => {
                 <div className='h-[13px] overflow-hidden'>
                   <div className='flex flex-col h-[13px] leading-[13px] group-hover:translate-y-[-100%] transition-all duration-300'>
                     <span className='text-[13px] text-left text-gray-10'>
-                      {statusKo[selfUser.customPresenceStatus as CustomPresenceStatus]} 표시
+                      {statusKo[selfUser.customPresenceStatus]} 표시
                     </span>
                     <span className='text-[13px] text-left text-gray-10'>
                       {selfUser.email.split('@')[0]}

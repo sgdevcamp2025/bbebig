@@ -29,7 +29,7 @@ function ServerLayout() {
     if (!channel) return
 
     publishToChannelEnter({
-      channelType: channel.channelType as 'CHAT' | 'VOICE',
+      channelType: channel.channelType,
       serverId: Number(serverId),
       channelId: Number(channelId),
       type: 'ENTER'
@@ -37,7 +37,7 @@ function ServerLayout() {
 
     return () => {
       publishToChannelLeave({
-        channelType: channel.channelType as 'CHAT' | 'VOICE',
+        channelType: channel.channelType,
         serverId: Number(serverId),
         channelId: Number(channelId),
         type: 'LEAVE'
