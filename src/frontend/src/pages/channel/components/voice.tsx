@@ -14,7 +14,7 @@ interface Props {
   serverName: string
   serverMemberList: ChatUser[]
   currentUser: ChatUser
-  targetUser: ChatUser
+  targetUser: ChatUser[]
 }
 
 function VideoComponent({
@@ -141,7 +141,7 @@ function VideoComponent({
             chatKey={channelId}
             users={{
               currentUser: currentUser,
-              targetUser: targetUser
+              targetUsers: targetUser
             }}
             channelName={channelName}
             onClose={() => setSideBar(false)}

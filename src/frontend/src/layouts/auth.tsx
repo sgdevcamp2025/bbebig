@@ -1,9 +1,10 @@
 import { Navigate, Outlet } from 'react-router-dom'
 
-import useLoginStore from '@/stores/use-login-store'
+import { COOKIE_KEYS } from '@/constants/keys'
+import cookie from '@/utils/cookie'
 
 function AuthLayout() {
-  const isLogin = useLoginStore((state) => state.isLogin)
+  const isLogin = cookie.getCookie(COOKIE_KEYS.ACCESS_TOKEN)
 
   if (isLogin) {
     return (

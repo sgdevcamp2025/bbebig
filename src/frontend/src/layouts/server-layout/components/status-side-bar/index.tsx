@@ -2,6 +2,7 @@ import { Suspense, useRef, useState } from 'react'
 
 import Avatar from '@/components/avatar'
 import LoadingIcon from '@/components/loading-icon'
+import { useGetServerMember } from '@/hooks/queries/server/useGetServerMember'
 import { CustomPresenceStatus } from '@/types/user'
 
 import UserProfileCard from '../user-profile-card'
@@ -18,7 +19,7 @@ export interface ChannelStatusBarUser {
   globalStatus: CustomPresenceStatus
 }
 
-function StatusSideBar({ channelUserList }: StatusSideBarProps) {
+function Inner({ channelUserList }: StatusSideBarProps) {
   const onlineUsers = Array.isArray(channelUserList)
     ? channelUserList.filter((user) => user.globalStatus === 'ONLINE')
     : []
@@ -137,4 +138,16 @@ function StatusSideBar({ channelUserList }: StatusSideBarProps) {
   )
 }
 
-export default StatusSideBar
+export function StatusSideBar({ serverId }: { serverId: string }) {
+  const serverMemebersData = useGetServerMember(serverId)
+
+  const currentChannelUsers = serverMemebersData.serverMemberInfoList.map((member) => ({
+    memberId: member.memberId,
+    nickName: member.nickName,
+    avatarUrl: member.avatarUrl,
+    bannerUrl: member.bannerUrl,
+    globalStatus: member.globalStatus
+  }))
+
+  return <Inner channelUserList={currentChannelUsers} />
+}
