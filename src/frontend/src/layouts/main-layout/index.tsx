@@ -1,5 +1,5 @@
 import { PlusIcon } from 'lucide-react'
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useShallow } from 'zustand/shallow'
 
@@ -27,10 +27,12 @@ const Inner = () => {
     connect: connectChatting,
     disconnect: disconnectChatting,
     subscribeToServer,
+    unsubscribe,
     checkConnection
   } = useChattingStomp()
   const { connect: connectSignaling, disconnect: disconnectSignaling } = useSignalingStomp()
   const { serverId } = useParams<{ serverId: string }>()
+  const previousServerId = useRef<number | null>(null)
 
   const location = useLocation()
   const navigate = useNavigate()
@@ -62,10 +64,18 @@ const Inner = () => {
         subscribeToServer(Number(serverId), (message) => {
           console.log(`[📩] 서버 이벤트 수신 (${serverId}):`, message)
         })
+
+        previousServerId.current = Number(serverId)
       }
     }
 
     subscribeToServerIfConnected()
+
+    return function cleanup() {
+      if (previousServerId.current) {
+        unsubscribe(`/topic/server/${previousServerId.current}`)
+      }
+    }
   }, [serverId, checkConnection])
 
   const myChannelList = useGetServer()
@@ -89,7 +99,6 @@ const Inner = () => {
     const firstChannelId = channelInfoList[0].channelId
     navigate(`/channels/${serverId}/${firstChannelId}`)
 
-    console.log('handleClickServer 에서 checkConnection()', checkConnection())
     if (checkConnection()) {
       console.log(`[📡] 서버 클릭 - 서버 ${serverId} 이벤트 구독 요청`)
       subscribeToServer(serverId, (message) => {

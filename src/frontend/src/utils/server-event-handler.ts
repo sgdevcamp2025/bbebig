@@ -1,5 +1,5 @@
 import { useChatStore } from '@/hooks/store/use-chat-store'
-import { ServerSubscribeResponse } from '@/types/ChatStompEvent'
+import { ServerSubscribeResponse } from '@/types/chat-stomp-event'
 
 export const handleServerEvent = (message: ServerSubscribeResponse) => {
   const { addMessage } = useChatStore.getState()

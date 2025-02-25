@@ -8,7 +8,7 @@ dayjs.extend(timezone)
 
 import { chattingStompInstance } from '@/apis/config/stomp-instance'
 import { COOKIE_KEYS } from '@/constants/keys'
-import { ChannelVisitEventRequest, ChattingMessageEvent } from '@/types/ChatStompEvent'
+import { ChannelVisitEventRequest, ChattingMessageEvent } from '@/types/chat-stomp-event'
 import cookie from '@/utils/cookie'
 import { handleServerEvent } from '@/utils/server-event-handler'
 
@@ -67,6 +67,7 @@ export const useChattingStomp = () => {
       clientInstance.activate()
     })
   }
+
   // 서버 구독
   const subscribeToServer = (serverId: number, callback: (message: unknown) => void) => {
     if (!checkConnection() || !clientInstance) {
@@ -134,14 +135,11 @@ export const useChattingStomp = () => {
     }
   }
 
-  // 구독
-  const subscribe = (destination: string, callback: (message: IMessage) => void) => {
+  // 구독 해제
+  const unsubscribe = (destination: string) => {
     if (checkConnection()) {
-      console.log(`[✅] 구독 요청: ${destination}`)
-      clientInstance.subscribe(destination, (message) => {
-        console.log(`[📩] 메시지 수신 (${destination}):`, message.body)
-        callback(JSON.parse(message.body))
-      })
+      console.log(`[❌] 구독 해제 요청: ${destination}`)
+      clientInstance.unsubscribe(destination)
     }
   }
 
@@ -243,7 +241,7 @@ export const useChattingStomp = () => {
     subscribeToChannelTyping,
     subscribeToPersonal,
     disconnect,
-    subscribe,
+    unsubscribe,
     publishToServerChatting,
     publishToChannelLeave,
     publishToChannelEnter,
