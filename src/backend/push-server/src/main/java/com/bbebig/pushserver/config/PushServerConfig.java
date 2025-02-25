@@ -1,4 +1,4 @@
-package com.bbebig.pushserver.global.config;
+package com.bbebig.pushserver.config;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

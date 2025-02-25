@@ -169,6 +169,6 @@ public class MemberRedisRepositoryImpl implements MemberRedisRepository {
 
 	public boolean existsServerLastInfo(Long memberId, Long serverId) {
 		String key = MemberRedisKeys.getMemberServerListKey(memberId);
-		return Boolean.TRUE.equals(setOperations.isMember(key, serverId.toString()));
+		return Boolean.TRUE.equals(serverLastInfoValueOperations.hasKey(key, serverId.toString()));
 	}
 }
