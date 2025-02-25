@@ -28,77 +28,41 @@ export const router = createBrowserRouter([
         element: <LandingPage />
       },
       {
-        element: (
-          <Suspense fallback={<LoadingModal isOpen />}>
-            <AuthLayout />
-          </Suspense>
-        ),
+        element: <AuthLayout />,
         children: [
           {
             path: 'login',
-            element: (
-              <Suspense fallback={<LoadingModal isOpen />}>
-                <LoginPage />
-              </Suspense>
-            )
+            element: <LoginPage />
           },
           {
             path: 'register',
-            element: (
-              <Suspense fallback={<LoadingModal isOpen />}>
-                <RegisterPage />
-              </Suspense>
-            )
+            element: <RegisterPage />
           }
         ]
       },
       {
         path: 'channels',
-        element: (
-          <Suspense fallback={<LoadingModal isOpen />}>
-            <MainLayout />
-          </Suspense>
-        ),
+        element: <MainLayout />,
         children: [
           {
-            element: (
-              <Suspense fallback={<LoadingModal isOpen />}>
-                <ServerLayout />
-              </Suspense>
-            ),
+            element: <ServerLayout />,
             children: [
               {
                 path: ':serverId/:channelId',
-                element: (
-                  <Suspense fallback={<LoadingModal isOpen />}>
-                    <ChannelPage />
-                  </Suspense>
-                )
+                element: <ChannelPage />
               }
             ]
           },
           {
-            element: (
-              <Suspense fallback={<LoadingModal isOpen />}>
-                <DmLayout />
-              </Suspense>
-            ),
+            element: <DmLayout />,
             children: [
               {
                 path: '@me',
-                element: (
-                  <Suspense fallback={<LoadingModal isOpen />}>
-                    <FriendPage />
-                  </Suspense>
-                )
+                element: <FriendPage />
               },
               {
                 path: '@me/:memberId',
-                element: (
-                  <Suspense fallback={<LoadingModal isOpen />}>
-                    <DmPage />
-                  </Suspense>
-                )
+                element: <DmPage />
               }
             ]
           }

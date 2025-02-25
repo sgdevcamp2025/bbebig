@@ -8,6 +8,7 @@ import { LoginSchema } from '@/apis/schema/types/auth'
 import AuthInput from '@/components/auth-input'
 import CustomButton from '@/components/custom-button'
 import { useLoginMutation } from '@/hooks/queries/auth/useLoginMutation'
+
 function LoginPage() {
   const navigate = useNavigate()
   const [movePage, setMovePage] = useState(false)
