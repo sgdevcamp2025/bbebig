@@ -31,12 +31,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.DrawerValue
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.ModalBottomSheetLayout
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material3.rememberDrawerState
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.HorizontalDivider
@@ -69,6 +67,7 @@ import com.smilegate.bbebig.presentation.component.DiscordRoundButton
 import com.smilegate.bbebig.presentation.component.DiscordTitleContainer
 import com.smilegate.bbebig.presentation.theme.Blue70
 import com.smilegate.bbebig.presentation.theme.Gray10
+import com.smilegate.bbebig.presentation.theme.Gray15
 import com.smilegate.bbebig.presentation.theme.Gray30
 import com.smilegate.bbebig.presentation.theme.Gray40
 import com.smilegate.bbebig.presentation.theme.Gray50
@@ -76,6 +75,7 @@ import com.smilegate.bbebig.presentation.theme.Gray60
 import com.smilegate.bbebig.presentation.theme.Gray70
 import com.smilegate.bbebig.presentation.theme.Gray80
 import com.smilegate.bbebig.presentation.theme.White
+import com.smilegate.bbebig.presentation.ui.channelchat.ChannelChatScreen
 import com.smilegate.bbebig.presentation.ui.home.model.CategoryInfo
 import com.smilegate.bbebig.presentation.ui.home.model.ChannelInfo
 import com.smilegate.bbebig.presentation.ui.home.model.Server
@@ -99,17 +99,8 @@ fun HomeScreen(
     onSubChannelClick: (ChannelInfo) -> Unit,
     onClickBackChatRoom: () -> Unit,
     onServerClick: (Long) -> Unit,
+    onDisMissSheet: () -> Unit,
 ) {
-    val drawerState = rememberDrawerState(DrawerValue.Closed)
-
-    LaunchedEffect(uiState.isChatRoomVisible) {
-        if (uiState.isChatRoomVisible) {
-            drawerState.open()
-        } else {
-            drawerState.close()
-        }
-    }
-
     Row(
         modifier = Modifier
             .fillMaxSize()
@@ -141,7 +132,18 @@ fun HomeScreen(
         onClickJoinLiveChat = onClickJoinLiveChat,
         onClickChannelChat = {},
         onClickInviteUser = {},
+        onDisMissSheet = onDisMissSheet,
     )
+    if (uiState.isChatRoomVisible) {
+        ChannelChatScreen(
+            modifier = Modifier.fillMaxSize().background(Gray15),
+            channelName = uiState.selectedChannelInfo.channelName,
+            onClickBack = onClickBackChatRoom,
+            onClickSearch = {},
+            onClickAddPhoto = {},
+            onClickSendChat = {},
+        )
+    }
 }
 
 @Composable
@@ -168,15 +170,6 @@ private fun ServerListContainer(
                 Spacer(modifier = Modifier.height(10.dp))
             }
 
-//            if (index == 0) {
-//                HorizontalDivider(
-//                    modifier = Modifier
-//                        .width(25.dp)
-//                        .padding(top = 10.dp),
-//                    thickness = 1.dp,
-//                    color = Gray80,
-//                )
-//            }
             ServerItem(
                 modifier = Modifier,
                 isSelected = selectedServerId.intValue == index,
@@ -549,14 +542,14 @@ private fun ChannelItem(
 
         if (isChannelSelected) {
             Column(
-                modifier = Modifier.padding(start = 15.dp, top = 5.dp, bottom = 5.dp),
+                modifier = Modifier.padding(horizontal = 15.dp, vertical = 5.dp),
             ) {
                 channelInfo.forEach { subChannel ->
                     Text(
                         modifier = Modifier
+                            .clip(RoundedCornerShape(5.dp))
                             .fillMaxWidth()
-                            .padding(vertical = 3.dp)
-                            .rippleSingleClick { onSubChannelClick(subChannel) },
+                            .rippleClick { onSubChannelClick(subChannel) },
                         text = subChannel.channelName,
                     )
                 }
@@ -575,10 +568,17 @@ private fun LiveChatJoinBottomSheet(
     onClickJoinLiveChat: () -> Unit,
     onClickChannelChat: () -> Unit,
     onClickInviteUser: () -> Unit,
+    onDisMissSheet: () -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = true,
+        confirmValueChange = { newValue ->
+            if (newValue == ModalBottomSheetValue.Hidden) {
+                onDisMissSheet()
+            }
+            true
+        },
     )
 
     ModalBottomSheetLayout(
@@ -798,5 +798,6 @@ private fun HomeScreenPreView() {
         onClickJoinLiveChat = {},
         onClickBackChatRoom = {},
         onServerClick = {},
+        onDisMissSheet = {},
     )
 }

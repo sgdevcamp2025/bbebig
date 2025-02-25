@@ -19,6 +19,7 @@ fun NavGraphBuilder.homeNavGraph(
             onNavigateLiveChatRoom = { channelId ->
                 // TODO: 채팅 액티비티로 이동하는 로직
             },
+            onClickBack = navController::popBackStack,
         )
         createServerNavigation()
         liveChatNavigation(

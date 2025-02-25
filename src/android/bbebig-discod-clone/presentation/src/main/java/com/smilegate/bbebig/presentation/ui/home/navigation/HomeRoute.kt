@@ -1,5 +1,6 @@
 package com.smilegate.bbebig.presentation.ui.home.navigation
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -12,6 +13,7 @@ import com.smilegate.bbebig.presentation.ui.home.mvi.HomeSideEffect
 
 @Composable
 fun HomeRoute(
+    onClickBack: () -> Unit,
     onNavigateLiveChatRoom: (Long) -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -26,7 +28,19 @@ fun HomeRoute(
 
                 is HomeSideEffect.NavigateToChatRoom -> {
                 }
+
+                HomeSideEffect.NavigateToBack -> {
+                    onClickBack()
+                }
             }
+        }
+    }
+
+    BackHandler {
+        if (uiState.isChatRoomVisible) {
+            viewModel.handleIntent(HomeIntent.ClickBackChatRoom)
+        } else {
+            viewModel.handleIntent(HomeIntent.ClickBack)
         }
     }
 
@@ -47,6 +61,9 @@ fun HomeRoute(
         },
         onServerClick = {
             viewModel.handleIntent(HomeIntent.ClickServer(it))
+        },
+        onDisMissSheet = {
+            viewModel.handleIntent(HomeIntent.DisMissSheet)
         },
     )
 }
