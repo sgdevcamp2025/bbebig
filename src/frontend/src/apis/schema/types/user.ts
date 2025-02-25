@@ -100,8 +100,8 @@ export interface GetFriendListResponseSchema {
     memberBannerUrl: string | null
     memberIntroduce: string | null
     memberEmail: string
-    actualStatus: string
-    globalStatus: string
+    actualStatus: CustomPresenceStatus
+    globalStatus: CustomPresenceStatus
     createdAt: string | null
   }[]
 }
