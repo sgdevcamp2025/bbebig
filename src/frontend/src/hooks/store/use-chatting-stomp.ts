@@ -69,7 +69,7 @@ export const useChattingStomp = () => {
   }
 
   // 서버 구독
-  const subscribeToServer = (serverId: number, callback: (message: unknown) => void) => {
+  const subscribeToServer = (serverId: number, callback?: (message: unknown) => void) => {
     if (!checkConnection() || !clientInstance) {
       console.log('[❌] STOMP 연결되지 않아서 구독 불가:', serverId)
       return
@@ -83,8 +83,9 @@ export const useChattingStomp = () => {
       (message: IMessage) => {
         try {
           const messageBody = JSON.parse(message.body)
+          console.log(`[📩] 서버 이벤트 수신 (${serverId}):`, messageBody)
           handleServerEvent(messageBody)
-          callback(messageBody)
+          callback?.(messageBody)
         } catch (error) {
           console.error('[❌] 서버 이벤트 처리 중 오류 발생:', error)
         }
@@ -152,8 +153,6 @@ export const useChattingStomp = () => {
       await connect()
       return
     }
-
-    console.log(checkConnection())
 
     const destination = `/pub/channel/message`
     console.log(`[📤] 서버 ${body.serverId}의 ${body.channelId} 채널로 메시지 발행:`)

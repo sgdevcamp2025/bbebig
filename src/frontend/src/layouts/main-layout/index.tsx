@@ -57,16 +57,11 @@ const Inner = () => {
 
       if (checkConnection()) {
         if (previousServerId.current && previousServerId.current !== Number(serverId)) {
-          console.log(`[❌] 서버 (${previousServerId.current}) 구독 해제`)
           unsubscribe(`/topic/server/${previousServerId.current}`)
         }
 
         if (previousServerId.current !== Number(serverId)) {
-          console.log(`[📡] 서버 ${serverId} 자동 구독`)
-          subscribeToServer(Number(serverId), (message) => {
-            console.log(`[📩] 서버 이벤트 수신 (${serverId}):`, message)
-          })
-
+          subscribeToServer(Number(serverId))
           previousServerId.current = Number(serverId)
         }
       }
@@ -76,7 +71,6 @@ const Inner = () => {
 
     return () => {
       if (previousServerId.current !== Number(serverId)) {
-        console.log(`[🔴] ${previousServerId.current} 구독 해제`)
         unsubscribe(`/topic/server/${previousServerId.current}`)
       }
     }
@@ -104,10 +98,7 @@ const Inner = () => {
     navigate(`/channels/${serverId}/${firstChannelId}`)
 
     if (checkConnection()) {
-      console.log(`[📡] 서버 클릭 - 서버 ${serverId} 이벤트 구독 요청`)
-      subscribeToServer(serverId, (message) => {
-        console.log(`[📩] 서버 클릭 - 서버 이벤트 수신 (${serverId}):`, message)
-      })
+      subscribeToServer(serverId)
     }
   }
 
