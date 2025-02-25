@@ -1,27 +1,37 @@
 import { ChevronDown, CirclePlus, FolderPlus, Plus, Settings, UserRoundPlus, X } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { Suspense, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
+import { useGetServerInfo } from '@/hooks/queries/server/useGetServerInfo'
+import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
 import useClickOutside from '@/hooks/use-click-outside'
 import { cn } from '@/libs/cn'
-import { CategoryInfo } from '@/types/server'
 
 import CategoryCreateModal from '../cateogry-create-modal'
 import ChannelCreateModal from '../channel-create-modal'
 import SettingModal from '../setting-modal'
+import ServerSideBarSkeleton from './server-side-bar-skeleton'
 
 interface ServerSideBarProps {
-  serverName: string
-  categories: CategoryInfo[]
-  selectedChannelId?: string
-  onChannelSelect: (channelId: number) => void
+  serverId: string
 }
 
-function ServerSideBar({
-  serverName,
-  categories = [],
-  selectedChannelId,
-  onChannelSelect
-}: ServerSideBarProps) {
+export function Inner({ serverId }: ServerSideBarProps) {
+  const serverData = useGetServerInfo(serverId)
+  const myInfo = useGetSelfUser()
+  const navigate = useNavigate()
+
+  const { serverName, categoryInfoList, channelInfoList } = serverData
+
+  const categories = categoryInfoList.map((category) => ({
+    ...category,
+    channelInfoList: channelInfoList.filter((channel) => channel.categoryId === category.categoryId)
+  }))
+
+  const handleChannelSelect = (channelId: number) => {
+    navigate(`/channels/${serverId}/${channelId}`)
+  }
+
   const [expandedCategories, setExpandedCategories] = useState<number[]>(
     categories.map((category) => category.categoryId)
   )
@@ -48,10 +58,6 @@ function ServerSideBar({
     setServerMenuOpen((prev) => !prev)
   }
 
-  useEffect(() => {
-    setExpandedCategories(categories.map((category) => category.categoryId))
-  }, [categories])
-
   useClickOutside(serverMenuRef, () => setServerMenuOpen(false))
 
   const ServerMenu = [
@@ -62,7 +68,10 @@ function ServerSideBar({
       onClick: () => {
         console.log('초대하기')
       }
-    },
+    }
+  ]
+
+  const AdminMenu = [
     {
       name: '서버 설정',
       icon: <Settings className='w-4 h-4' />,
@@ -91,8 +100,14 @@ function ServerSideBar({
     }
   ] as const
 
+  const isAdmin = serverData.ownerId === myInfo.id
+
+  if (!isAdmin) {
+    ServerMenu.concat(AdminMenu)
+  }
+
   return (
-    <div className='w-60 bg-discord-gray-700 h-[calc(100%-52px)] flex flex-col'>
+    <>
       <button
         type='button'
         onClick={handleCloseServerMenu}
@@ -181,10 +196,10 @@ function ServerSideBar({
                 {category.channelInfoList.map((channel) => (
                   <div
                     key={channel.channelId}
-                    onClick={() => onChannelSelect?.(channel.channelId)}
+                    onClick={() => handleChannelSelect(channel.channelId)}
                     className={cn(
-                      'w-full flex items-center px-2 py-1 rounded transition-colors',
-                      selectedChannelId && Number(selectedChannelId) === channel.channelId
+                      'w-full flex items-center px-2 py-1 rounded transition-colors cursor-pointer',
+                      selectedChannel && Number(selectedChannel.id) === channel.channelId
                         ? 'bg-discord-gray-500 text-white'
                         : 'text-discord-font-color-muted hover:bg-discord-gray-600'
                     )}>
@@ -195,11 +210,10 @@ function ServerSideBar({
                       />
                     </span>
                     <span className='flex-1 ml-1 text-left'>{channel.channelName}</span>
-
                     <div
                       className={cn(
                         'flex items-center gap-2 transition-opacity',
-                        selectedChannelId && Number(selectedChannelId) === channel.channelId
+                        selectedChannel && Number(selectedChannel.id) === channel.channelId
                           ? 'opacity-100'
                           : 'opacity-0 group-hover:opacity-100'
                       )}>
@@ -210,13 +224,11 @@ function ServerSideBar({
                           alt='스레드'
                         />
                       )}
-
                       <img
                         src='/icon/channel/invite.svg'
                         className='w-[15px] h-[15px]'
                         alt='초대'
                       />
-
                       <button
                         type='button'
                         onClick={() => handleOpenSettings(channel.channelId, channel.channelName)}>
@@ -248,6 +260,16 @@ function ServerSideBar({
         isOpen={categoryCreateModalOpen}
         onClose={() => setCategoryCreateModalOpen(false)}
       />
+    </>
+  )
+}
+
+export function ServerSideBar({ serverId }: { serverId: string }) {
+  return (
+    <div className='w-60 bg-discord-gray-700 h-[calc(100%-52px)] flex flex-col'>
+      <Suspense fallback={<ServerSideBarSkeleton />}>
+        <Inner serverId={serverId} />
+      </Suspense>
     </div>
   )
 }
