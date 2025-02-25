@@ -146,6 +146,10 @@ public class MeshGroupSignalService {
             throw new ErrorHandler(ErrorStatus.GROUP_STREAM_SESSION_NOT_FOUND);
         }
 
+        log.info("[Signal] messageType={}, senderId={}, channelId={}, sdp 존재 여부={}, candidate 존재 여부={}",
+                message.getMessageType(), message.getSenderId(), message.getChannelId(),
+                message.getSdp() != null, message.getCandidate() != null);
+
         SignalMessage groupMessage = SignalMessage.builder()
                 .messageType(message.getMessageType())
                 .channelId(message.getChannelId())
@@ -153,6 +157,10 @@ public class MeshGroupSignalService {
                 .sdp(message.getSdp())
                 .candidate(message.getCandidate())
                 .build();
+
+        log.info("[Signal] 채널 타입: Group - Mesh, messageType={}, channelId={}, senderId={}, sdp={}, candidate={}",
+                groupMessage.getMessageType(), groupMessage.getChannelId(),
+                groupMessage.getSenderId(), groupMessage.getSdp(), groupMessage.getCandidate());
 
         messagingTemplate.convertAndSend(
                 Path.meshGroupSubPath + message.getChannelId(),
@@ -162,6 +170,10 @@ public class MeshGroupSignalService {
         Set<String> otherMembers = channelManager.getParticipants(channelId).stream()
                 .filter(memberId -> !memberId.equals(message.getSenderId()))
                 .collect(Collectors.toSet());
+
+
+        log.debug("[Signal] 채널 타입: Group - Mesh, 대상 개수={}, 대상 목록={}",
+                otherMembers.size(), otherMembers);
 
         log.info("[Signal] 채널 타입: Group - Mesh, 메시지타입: {}, 채널: {}, 보낸사람: {}, 대상: {}명",
                 message.getMessageType(), channelId, message.getSenderId(), otherMembers.size());
