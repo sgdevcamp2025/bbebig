@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 
+import { TURN_SERVER_URL } from '@/constants/env'
 import { useSignalingStomp } from '@/stores/use-signaling-stomp-store'
 import useUserStatus from '@/stores/use-user-status'
 
@@ -7,17 +8,13 @@ const PC_CONFIG: RTCConfiguration = {
   iceServers: [
     { urls: 'stun:stun.l.google.com:19302' },
     {
-      urls: [
-        'turn:openrelay.metered.ca:80?transport=udp',
-        'turn:openrelay.metered.ca:80?transport=tcp',
-        'turn:openrelay.metered.ca:443?transport=tcp'
-      ],
-      username: 'openrelayproject',
-      credential: 'openrelayproject'
+      urls: TURN_SERVER_URL,
+      username: 'kurentouser',
+      credential: 'kurentouser'
     }
   ],
-  iceTransportPolicy: 'all' as RTCIceTransportPolicy,
-  iceCandidatePoolSize: 5,
+  iceTransportPolicy: 'relay' as RTCIceTransportPolicy,
+  iceCandidatePoolSize: 0,
   bundlePolicy: 'max-bundle' as RTCBundlePolicy,
   rtcpMuxPolicy: 'require' as RTCRtcpMuxPolicy
 }
