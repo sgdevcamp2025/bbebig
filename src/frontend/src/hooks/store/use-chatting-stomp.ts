@@ -10,7 +10,7 @@ import { chattingStompInstance } from '@/apis/config/stomp-instance'
 import { COOKIE_KEYS } from '@/constants/keys'
 import { ChannelVisitEventRequest, ChattingMessageEvent } from '@/types/ChatStompEvent'
 import cookie from '@/utils/cookie'
-import { handleServerEvent } from '@/utils/serverEventHandler'
+import { handleServerEvent } from '@/utils/server-event-handler'
 
 import useGetSelfUser from '../queries/user/useGetSelfUser'
 
