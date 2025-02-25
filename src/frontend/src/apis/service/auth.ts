@@ -38,8 +38,13 @@ const authService = () => {
   }
 
   const logout = async () => {
-    await axiosInstance.post(`${BASE_PATH}/logout`)
-    cookie.deleteCookie(COOKIE_KEYS.ACCESS_TOKEN)
+    try {
+      await axiosInstance.post(`${BASE_PATH}/logout`)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      cookie.deleteCookie(COOKIE_KEYS.ACCESS_TOKEN)
+    }
   }
 
   const refreshToken = async () => {
