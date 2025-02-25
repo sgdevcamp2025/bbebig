@@ -17,3 +17,4 @@ val Gray05 = Color(0xFF060607) // Almost Black
 val Blue70 = Color(0xFF5A65EA) // Discord Bluei
 val Blue50 = Color(0xFF171CB3) // Login Blue
 val Red50 = Color(0xFFC94543) // Alerti Red
+val Gray15 = Color(0xFF1C1D22) // Gray
