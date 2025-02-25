@@ -95,13 +95,6 @@ const ERROR_MESSAGE: Record<string, CommonResponseType> = {
     code: `${AUTH_PREFIX}018`,
     message: 'Duplicate Nickname',
   },
-  loginStatusDisabled: {
-    code: `${AUTH_PREFIX}019`,
-    message: 'Login Status Disabled',
-    result: {
-      status: false,
-    },
-  },
 } as const;
 
 const SUCCESS_MESSAGE: Record<string, CommonResponseType> = {
@@ -146,6 +139,13 @@ const SUCCESS_MESSAGE: Record<string, CommonResponseType> = {
     message: 'login status is enabled',
     result: {
       status: true,
+    },
+  },
+  loginStatusDisabled: {
+    code: `${AUTH_PREFIX}110`,
+    message: 'login status is disabled',
+    result: {
+      status: false,
     },
   },
 } as const;

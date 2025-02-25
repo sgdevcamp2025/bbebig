@@ -266,7 +266,7 @@ function authController() {
     const refreshToken = req.cookies.refresh_token;
 
     if (!id || !refreshToken) {
-      handleError(res, ERROR_MESSAGE.loginStatusDisabled);
+      handleSuccess(res, SUCCESS_MESSAGE.loginStatusDisabled, 200);
       return;
     }
 
