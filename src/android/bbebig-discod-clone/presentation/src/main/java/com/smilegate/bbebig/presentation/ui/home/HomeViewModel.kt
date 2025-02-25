@@ -1,6 +1,5 @@
 package com.smilegate.bbebig.presentation.ui.home
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.smilegate.bbebig.domain.usecase.GetServerInfoUseCase
@@ -48,6 +47,7 @@ class HomeViewModel @Inject constructor(
                     }
 
                     ChatRoomType.CHAT -> {
+                        updateChatRoomState(isVisible = true)
                         postSideEffect(HomeSideEffect.NavigateToChatRoom)
                     }
                 }
@@ -73,12 +73,20 @@ class HomeViewModel @Inject constructor(
             }
 
             HomeIntent.ClickBackChatRoom -> {
-                updateDrawer(isVisible = false)
+                updateChatRoomState(isVisible = false)
+            }
+
+            HomeIntent.DisMissSheet -> {
+                updateJoinBottomSheet(isVisible = false)
+            }
+
+            HomeIntent.ClickBack -> {
+                postSideEffect(HomeSideEffect.NavigateToBack)
             }
         }
     }
 
-    private fun updateDrawer(isVisible: Boolean) {
+    private fun updateChatRoomState(isVisible: Boolean) {
         reduce {
             copy(
                 isChatRoomVisible = isVisible,
@@ -106,7 +114,6 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             getServerListUseCase()
                 .onSuccess { serverList ->
-                    Log.d("HomeViewModel", "serverList: $serverList")
                     updateServerList(serverList = serverList.toUiModel())
                 }
                 .onFailure {
