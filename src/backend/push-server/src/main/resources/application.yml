@@ -15,35 +15,35 @@ spring:
       port: 6379
       host: redis
 
-    kafka:
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+
+    topic:
+      channel-chat-event: "channelChatEvent"
+      dm-chat-event: "dmChatEvent"
+      connection-event: "connectionEvent"
+      presence-event: "presenceEvent"
+      notification-event: "notificationEvent"
+      server-event: "serverEvent"
+      channel-event: "channelEvent"
+      member-event: "memberEvent"
+
+    producer:
       bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
 
-      topic:
-        channel-chat-event: "channelChatEvent"
-        dm-chat-event: "dmChatEvent"
-        connection-event: "connectionEvent"
-        presence-event: "presenceEvent"
-        notification-event: "notificationEvent"
-        server-event: "serverEvent"
-        channel-event: "channelEvent"
-        member-event: "memberEvent"
+    consumer:
+      group-id:
+        channel-chat-event: "${spring.application.name}-channelChatEventGroup"
+        dm-chat-event: "${spring.application.name}-dmChatEventGroup"
+        notification-event: "${spring.application.name}-notificationEventGroup"
+        server-event: "${spring.application.name}-serverEventGroup"
+        channel-event: "${spring.application.name}-channelEventGroup"
+        connection-event: "${spring.application.name}-connectionEventGroup"
+        presence-event: "${spring.application.name}-presenceEventGroup"
+        member-event: "${spring.application.name}-memberEventGroup"
 
-      producer:
-        bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
-
-      consumer:
-        group-id:
-          channel-chat-event: "${spring.application.name}-channelChatEventGroup"
-          dm-chat-event: "${spring.application.name}-dmChatEventGroup"
-          notification-event: "${spring.application.name}-notificationEventGroup"
-          server-event: "${spring.application.name}-serverEventGroup"
-          channel-event: "${spring.application.name}-channelEventGroup"
-          connection-event: "${spring.application.name}-connectionEventGroup"
-          presence-event: "${spring.application.name}-presenceEventGroup"
-          member-event: "${spring.application.name}-memberEventGroup"
-
-        enable-auto-commit: true
-        auto-offset-reset: latest
+      enable-auto-commit: true
+      auto-offset-reset: latest
 
   logging:
     level:
