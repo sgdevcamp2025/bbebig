@@ -1,6 +1,6 @@
 import { PlusIcon } from 'lucide-react'
 import { Suspense, useEffect, useState } from 'react'
-import { Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useShallow } from 'zustand/shallow'
 
 import serviceService from '@/apis/service/service'
@@ -12,7 +12,6 @@ import { statusKo } from '@/constants/status'
 import { useGetServer } from '@/hooks/queries/server/useGetServer'
 import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
 import useChattingStomp from '@/hooks/store/use-chatting-stomp'
-import { useServerStore } from '@/hooks/store/use-select-server-store'
 import { cn } from '@/libs/cn'
 import { useMediaSettingsStore } from '@/stores/use-media-setting.store'
 import { useSignalingStomp } from '@/stores/use-signaling-stomp-store'
@@ -31,7 +30,8 @@ const Inner = () => {
     checkConnection
   } = useChattingStomp()
   const { connect: connectSignaling, disconnect: disconnectSignaling } = useSignalingStomp()
-  const { selectedServerId, setSelectedServer } = useServerStore()
+  const { serverId } = useParams<{ serverId: string }>()
+
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -53,20 +53,20 @@ const Inner = () => {
 
   useEffect(() => {
     const subscribeToServerIfConnected = async () => {
-      if (!selectedServerId) return
+      if (!serverId) return
 
       await connectChatting()
 
       if (checkConnection()) {
-        console.log(`[📡] 서버 ${selectedServerId} 자동 구독`)
-        subscribeToServer(selectedServerId, (message) => {
-          console.log(`[📩] 서버 이벤트 수신 (${selectedServerId}):`, message)
+        console.log(`[📡] 서버 ${serverId} 자동 구독`)
+        subscribeToServer(Number(serverId), (message) => {
+          console.log(`[📩] 서버 이벤트 수신 (${serverId}):`, message)
         })
       }
     }
 
     subscribeToServerIfConnected()
-  }, [selectedServerId, checkConnection])
+  }, [serverId, checkConnection])
 
   const myChannelList = useGetServer()
   const selfUser = useGetSelfUser()
@@ -88,7 +88,6 @@ const Inner = () => {
     } = await serviceService.getServersList({ serverId: serverId.toString() })
     const firstChannelId = channelInfoList[0].channelId
     navigate(`/channels/${serverId}/${firstChannelId}`)
-    setSelectedServer(serverId)
 
     console.log('handleClickServer 에서 checkConnection()', checkConnection())
     if (checkConnection()) {
