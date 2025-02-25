@@ -30,16 +30,6 @@ function ChannelPage() {
     (user) => user.memberId !== selfUser.id
   )
 
-  const targetUser = serverMemberList.serverMemberInfoList.find(
-    (user) => user.memberId !== selfUser.id
-  ) ?? {
-    memberId: 0,
-    nickName: '',
-    avatarUrl: '',
-    bannerUrl: '',
-    globalStatus: 'OFFLINE'
-  }
-
   const currentChannel = useMemo(
     () => serverInfo.channelInfoList.find((channel) => channel.channelId === Number(channelId)),
     [serverInfo.channelInfoList, channelId]
