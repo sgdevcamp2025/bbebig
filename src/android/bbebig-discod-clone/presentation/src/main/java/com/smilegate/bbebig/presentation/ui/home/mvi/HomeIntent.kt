@@ -13,4 +13,6 @@ sealed interface HomeIntent : UiIntent {
     data class ClickChannelRoom(val channelInfo: ChannelInfo) : HomeIntent
     data class ClickLiveChatRoom(val channelId: Long) : HomeIntent
     data object ClickBackChatRoom : HomeIntent
+    data object DisMissSheet : HomeIntent
+    data object ClickBack : HomeIntent
 }
