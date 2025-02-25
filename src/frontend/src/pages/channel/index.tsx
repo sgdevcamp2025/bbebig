@@ -75,7 +75,7 @@ function ChannelPage() {
         channelName={currentChannel.channelName}
         serverMemberList={serverMemberList.serverMemberInfoList}
         currentUser={currentUser}
-        targetUser={targetUser}
+        targetUser={targetUsers}
       />
     )
   }
