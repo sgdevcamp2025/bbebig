@@ -54,6 +54,7 @@ export interface ServerMemberPresenceEvent extends BaseServerEvent {
   type: 'SERVER_MEMBER_PRESENCE'
   memberId: number
   serverId: number
+  actualStatus: 'ONLINE' | 'AWAY' | 'BUSY' | 'INVISIBLE'
   globalStatus: 'ONLINE' | 'AWAY' | 'BUSY' | 'INVISIBLE'
 }
 

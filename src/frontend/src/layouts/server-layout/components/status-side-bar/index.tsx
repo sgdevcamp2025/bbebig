@@ -1,8 +1,9 @@
-import { Suspense, useRef, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 
 import Avatar from '@/components/avatar'
 import LoadingIcon from '@/components/loading-icon'
 import { useGetServerMember } from '@/hooks/queries/server/useGetServerMember'
+import { useStatusStore } from '@/hooks/store/use-status-store'
 import { CustomPresenceStatus } from '@/types/user'
 
 import UserProfileCard from '../user-profile-card'
@@ -21,11 +22,15 @@ export interface ChannelStatusBarUser {
 
 function Inner({ channelUserList }: StatusSideBarProps) {
   const onlineUsers = Array.isArray(channelUserList)
-    ? channelUserList.filter((user) => user.globalStatus === 'ONLINE')
+    ? channelUserList.filter(
+        (user) => user.globalStatus !== 'INVISIBLE' && user.globalStatus !== 'OFFLINE'
+      )
     : []
 
   const offlineUsers = Array.isArray(channelUserList)
-    ? channelUserList.filter((user) => user.globalStatus !== 'ONLINE')
+    ? channelUserList.filter(
+        (user) => user.globalStatus === 'INVISIBLE' || user.globalStatus === 'OFFLINE'
+      )
     : []
 
   const [selectedUser, setSelectedUser] = useState<ChannelStatusBarUser | null>(null)
@@ -139,15 +144,20 @@ function Inner({ channelUserList }: StatusSideBarProps) {
 }
 
 export function StatusSideBar({ serverId }: { serverId: string }) {
+  const { channelMemberList, setChannelMembers } = useStatusStore()
+
   const serverMemebersData = useGetServerMember(serverId)
+  useEffect(() => {
+    setChannelMembers(
+      serverMemebersData.serverMemberInfoList.map((member) => ({
+        memberId: member.memberId,
+        nickName: member.nickName,
+        avatarUrl: member.avatarUrl,
+        bannerUrl: member.bannerUrl,
+        globalStatus: member.globalStatus
+      }))
+    )
+  }, [setChannelMembers])
 
-  const currentChannelUsers = serverMemebersData.serverMemberInfoList.map((member) => ({
-    memberId: member.memberId,
-    nickName: member.nickName,
-    avatarUrl: member.avatarUrl,
-    bannerUrl: member.bannerUrl,
-    globalStatus: member.globalStatus
-  }))
-
-  return <Inner channelUserList={currentChannelUsers} />
+  return <Inner channelUserList={channelMemberList} />
 }

@@ -22,27 +22,28 @@ function ServerLayout() {
   const { channelInfoList } = serverData
 
   useEffect(() => {
-    console.log(`[🚪] 채널 ${channelId} 자동 입장`)
+    if (!channelInfoList || channelInfoList.length === 0) return
+
+    const channel = channelInfoList.find((channel) => channel.channelId === Number(channelId))
+
+    if (!channel) return
+
     publishToChannelEnter({
-      channelType: channelInfoList.find((channel) => channel.channelId === Number(channelId))
-        ?.channelType as 'CHAT' | 'VOICE',
+      channelType: channel.channelType as 'CHAT' | 'VOICE',
       serverId: Number(serverId),
       channelId: Number(channelId),
       type: 'ENTER'
     })
 
     return () => {
-      console.log(`[🚪] 채널 ${channelId} 퇴장`)
       publishToChannelLeave({
-        channelType: channelInfoList.find((channel) => channel.channelId === Number(channelId))
-          ?.channelType as 'CHAT' | 'VOICE',
+        channelType: channel.channelType as 'CHAT' | 'VOICE',
         serverId: Number(serverId),
         channelId: Number(channelId),
         type: 'LEAVE'
       })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [serverId, channelId])
+  }, [channelId, channelInfoList, serverId])
 
   return (
     <div className='flex h-screen w-full'>

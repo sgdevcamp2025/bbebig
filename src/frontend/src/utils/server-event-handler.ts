@@ -1,5 +1,7 @@
 import { useChatStore } from '@/hooks/store/use-chat-store'
+import { useStatusStore } from '@/hooks/store/use-status-store'
 import { ServerSubscribeResponse } from '@/types/chat-stomp-event'
+import { CustomPresenceStatus } from '@/types/user'
 
 export const handleServerEvent = (message: ServerSubscribeResponse) => {
   const { addMessage } = useChatStore.getState()
@@ -19,6 +21,13 @@ export const handleServerEvent = (message: ServerSubscribeResponse) => {
       break
     case 'SERVER_MEMBER_PRESENCE':
       console.log('SERVER_MEMBER_PRESENCE', message)
+      useStatusStore.setState((state) => ({
+        channelMemberList: state.channelMemberList.map((user) =>
+          user.memberId === message.memberId
+            ? { ...user, globalStatus: message.globalStatus as CustomPresenceStatus }
+            : user
+        )
+      }))
       break
     case 'MESSAGE_CREATE':
       if (!message.sendMemberId) return
