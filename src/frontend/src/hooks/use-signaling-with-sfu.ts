@@ -1,7 +1,6 @@
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 
 import { useSignalingStomp } from '@/stores/use-signaling-stomp-store'
-import { filterAMR, onChangeDefaultCodecs } from '@/utils/webrtc-helper'
 
 import useUserStatus from '../stores/use-user-status'
 import useMediaControl from './use-media-control'
@@ -53,68 +52,22 @@ export function useSignalingWithSFU(
   const subscriptionId = `subscription-${userId}-${channelId}`
   const { startStream, getStream } = useMediaControl()
   const { send, subscribe, unsubscribe } = useSignalingStomp()
-  const [users, setUsers] = useState<WebRTCUser[]>([])
   const { joinVoiceChannel, leaveVoiceChannel } = useUserStatus()
 
   const senderPcRef = useRef<RTCPeerConnection | null>(null)
   const receiverPcsRef = useRef<Map<string, RTCPeerConnection>>(new Map())
 
-  const getDynamicPayloads = () => {
-    return [96, 97] // VP8 payloadType (일반적으로 96=VP8/90000, 97=VP9/90000)
+  const paintPeerFace = (peerStream: MediaStream, id: string) => {
+    const stream = document.querySelector('#streams')
+    const video = document.createElement('video')
+    video.srcObject = peerStream
+    video.id = id
+    video.autoplay = true
+    video.playsInline = true
+    video.style.width = '100%'
+    video.style.height = '100%'
+    stream?.appendChild(video)
   }
-
-  // 로컬 사용자 추가
-  const addLocalUser = async (stream: MediaStream) => {
-    setUsers((prev) => {
-      const existingUser = prev.find((user) => user.id === userId)
-      if (!existingUser) {
-        return [
-          ...prev,
-          {
-            id: userId,
-            stream,
-            audioEnabled: true,
-            videoEnabled: true,
-            connected: false
-          }
-        ]
-      }
-      return prev
-    })
-  }
-
-  // 원격 사용자 추가
-  const addRemoteUser = (remoteUserId: string, stream: MediaStream) => {
-    console.log('원격 사용자가 참여했습니다.', remoteUserId)
-    setUsers((prev) => {
-      const existingUser = prev.find((user) => user.id === remoteUserId)
-      if (existingUser) {
-        return prev.map((user) => (user.id === remoteUserId ? { ...user, stream } : user))
-      }
-      return [
-        ...prev,
-        {
-          id: remoteUserId,
-          stream,
-          audioEnabled: true,
-          videoEnabled: true,
-          connected: false
-        }
-      ]
-    })
-  }
-
-  // 사용자 제거
-  const removeUser = (remoteUserId: string) => {
-    console.log('사용자가 나갔습니다.', remoteUserId)
-    const pc = receiverPcsRef.current.get(remoteUserId)
-    if (pc) {
-      pc.close()
-      receiverPcsRef.current.delete(remoteUserId)
-    }
-    setUsers((prev) => prev.filter((user) => user.id !== remoteUserId))
-  }
-
   // Sender PeerConnection 생성
   const createSenderPeerConnection = async () => {
     try {
@@ -172,8 +125,6 @@ export function useSignalingWithSFU(
         }
       })
 
-      await addLocalUser(stream)
-
       pc.onicecandidate = ({ candidate }) => {
         if (candidate) {
           console.log('ICE 후보 생성:', {
@@ -209,26 +160,15 @@ export function useSignalingWithSFU(
           connectionState: pc.connectionState,
           timestamp: new Date().toISOString()
         })
-
-        // ICE 연결 상태에 따른 user 업데이트
-        setUsers((prevUsers) => {
-          return prevUsers.map((user) => {
-            if (user.id === userId) {
-              return {
-                ...user,
-                connected:
-                  pc.iceConnectionState === 'connected' || pc.iceConnectionState === 'completed'
-              }
-            }
-            return user
-          })
-        })
       }
 
       try {
         console.log('생성자 제안 생성')
-        const offer = await createFilteredOffer(pc)
-        const filteredOffer = filterAMR(offer)
+        const offer = await pc.createOffer({
+          offerToReceiveAudio: true,
+          offerToReceiveVideo: true,
+          iceRestart: true
+        })
 
         console.log('Sending offer to SFU')
 
@@ -236,10 +176,7 @@ export function useSignalingWithSFU(
           messageType: 'OFFER',
           channelId,
           senderId: userId,
-          sdp: {
-            type: 'offer',
-            sdp: filteredOffer
-          }
+          sdp: offer
         })
       } catch (error) {
         console.error('Sender offer creation failed:', error)
@@ -354,13 +291,6 @@ export function useSignalingWithSFU(
 
       // 트랙 이벤트 핸들러
       pc.ontrack = (event) => {
-        console.log('새로운 트래킹 이벤트가 발생했습니다.', {
-          kind: event.track.kind,
-          userId: message.senderId,
-          trackId: event.track.id,
-          readyState: event.track.readyState
-        })
-
         // 트랙을 즉시 remoteStream에 추가
         remoteStream.addTrack(event.track)
 
@@ -374,33 +304,11 @@ export function useSignalingWithSFU(
           })
         }
 
-        addRemoteUser(message.senderId, remoteStream)
-      }
-
-      // 연결 상태 모니터링
-      pc.onconnectionstatechange = () => {
-        console.log('연결 상태:', {
-          userId: message.senderId,
-          state: pc.connectionState,
-          iceState: pc.iceConnectionState
-        })
-
-        if (pc.connectionState === 'connected') {
-          const receivers = pc.getReceivers()
-          console.log(
-            '활성 수신기:',
-            receivers.map((r) => ({
-              kind: r.track?.kind,
-              trackId: r.track?.id,
-              enabled: r.track?.enabled
-            }))
-          )
-        }
+        paintPeerFace(remoteStream, message.senderId)
       }
 
       // ICE 후보 처리
       pc.onicecandidate = ({ candidate }) => {
-        console.log('ICE 후보 처리:', candidate, new Date().toISOString())
         if (candidate) {
           send('/pub/stream/group', {
             messageType: 'CANDIDATE',
@@ -416,33 +324,12 @@ export function useSignalingWithSFU(
         }
       }
 
-      // 새 사용자 추가 (초기 스트림 설정)
-      setUsers((prev) => {
-        const filtered = prev.filter((user) => user.id !== message.senderId)
-        return [
-          ...filtered,
-          {
-            id: message.senderId,
-            stream: remoteStream, // 빈 스트림으로 초기화
-            audioEnabled: true,
-            videoEnabled: true,
-            connected: false
-          }
-        ]
-      })
-
-      // 트랜시버 설정
-      pc.addTransceiver('audio', { direction: 'recvonly' })
-      pc.addTransceiver('video', { direction: 'recvonly' })
-
       try {
         const offer = await pc.createOffer({
           offerToReceiveAudio: true,
           offerToReceiveVideo: true
         })
         console.log(offer, 'offer')
-
-        const changedOffer = onChangeDefaultCodecs(offer, getDynamicPayloads())
 
         await pc.setLocalDescription(offer)
 
@@ -453,7 +340,7 @@ export function useSignalingWithSFU(
           receiverId: message.senderId,
           sdp: {
             type: 'offer',
-            sdp: changedOffer
+            sdp: offer
           }
         })
       } catch (error) {
@@ -487,6 +374,10 @@ export function useSignalingWithSFU(
     }
   }
 
+  const handleUserLeft = (message: SignalingMessage) => {
+    console.log('사용자가 나갔습니다.', message.senderId)
+  }
+
   // 채널 입장
   const joinChannel = async () => {
     initialize()
@@ -507,11 +398,10 @@ export function useSignalingWithSFU(
             case 'EXIST_USERS':
               if (message.participants) {
                 const uniqueParticipants = [...new Set(message.participants)]
-                const currentUsers = new Set(users.map((u) => u.id))
 
                 // 새로운 사용자만 처리
                 for (const id of uniqueParticipants) {
-                  if (id !== Number(userId) && !currentUsers.has(String(id))) {
+                  if (id !== Number(userId)) {
                     handleUserJoined({ ...message, senderId: String(id) })
                   }
                 }
@@ -536,7 +426,7 @@ export function useSignalingWithSFU(
               }
               break
             case 'USER_LEFT':
-              removeUser(message.senderId)
+              handleUserLeft(message)
               break
           }
         }
@@ -567,11 +457,11 @@ export function useSignalingWithSFU(
   }
 
   // 채널 퇴장
-  const leaveChannel = (senderId: string) => {
+  const leaveChannel = () => {
     send('/pub/stream/group', {
       messageType: 'LEAVE_CHANNEL',
       channelId,
-      senderId
+      senderId: userId
     })
 
     leaveVoiceChannel()
@@ -590,7 +480,6 @@ export function useSignalingWithSFU(
 
     receiverPcsRef.current.forEach((pc) => pc.close())
     receiverPcsRef.current.clear()
-    setUsers([])
   }
 
   // ICE 재시작 로직 추가
@@ -601,18 +490,7 @@ export function useSignalingWithSFU(
     }
   }
 
-  // SDP 처리 단순화
-  const createFilteredOffer = async (pc: RTCPeerConnection) => {
-    const offer = await pc.createOffer()
-    // VP8 코덱 설정
-    const changedOffer = onChangeDefaultCodecs(offer, getDynamicPayloads())
-    // AMR 필터링
-    const filteredOffer = filterAMR(changedOffer)
-    return filteredOffer
-  }
-
   return {
-    users,
     joinChannel,
     leaveChannel
   }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import ChatArea from '@/components/chat-area'
 import CustomButton from '@/components/custom-button'
@@ -7,8 +7,6 @@ import { useSignalingWithSFU } from '@/hooks/use-signaling-with-sfu'
 import { cn } from '@/libs/cn'
 import useUserStatus from '@/stores/use-user-status'
 import { ChatUser } from '@/types/user'
-
-import VideoCard from './video-card'
 
 interface Props {
   channelId: number
@@ -27,24 +25,16 @@ function VideoComponent({
   targetUser,
   serverMemberList
 }: Props) {
-  const [sideBar, setSideBar] = useState(true)
+  const [sideBar, setSideBar] = useState(false)
   const selfUser = useGetSelfUser()
   const { getCurrentChannelInfo } = useUserStatus()
 
-  const { joinChannel, leaveChannel, users } = useSignalingWithSFU(
+  const { joinChannel, leaveChannel } = useSignalingWithSFU(
     selfUser?.id.toString(),
     channelId.toString(),
     channelName,
     serverName
   )
-
-  useEffect(() => {
-    return () => {
-      if (getCurrentChannelInfo()?.channelId === channelId) {
-        leaveChannel(selfUser?.id.toString())
-      }
-    }
-  }, [])
 
   const isInVoiceChannel = getCurrentChannelInfo()?.channelId === channelId
 
@@ -53,17 +43,14 @@ function VideoComponent({
   }
 
   const handleLeaveVoiceChannel = () => {
-    if (getCurrentChannelInfo()?.channelId === channelId) {
-      leaveChannel(selfUser?.id.toString())
-    }
+    leaveChannel()
   }
 
-  const voiceUsers = users.map((user) => {
-    const findUser = serverMemberList.find((member) => member.memberId === Number(user.id))
-    return { ...findUser, ...user }
+  const voiceUsers = serverMemberList.map((user) => {
+    return { ...user }
   })
 
-  console.log(users, 'voiceUsers')
+  console.log(voiceUsers, 'voiceUsers')
 
   return (
     <div className='flex flex-1 h-screen'>
@@ -95,23 +82,17 @@ function VideoComponent({
           </section>
           <div />
           <section className='flex-1 flex flex-col items-center justify-center gap-2'>
-            <ul className='flex gap-2 flex-wrap mb-8 w-full justify-center'>
-              {voiceUsers.map((user) => (
-                <VideoCard
-                  key={user.memberId}
-                  size='md'
-                  id={user.memberId?.toString() ?? ''}
-                  user={user}
-                />
-              ))}
-            </ul>
+            <ul
+              id='streams'
+              className='flex gap-2 flex-wrap mb-8 w-full justify-center'
+            />
             {!isInVoiceChannel && (
               <>
                 <h4 className='text-gray-10 text-3xl font-bold'>{channelName}</h4>
                 <span className='text-gray-90 text-sm font-semibold'>
-                  {users.length === 0
+                  {voiceUsers.length === 0
                     ? '현재 채널에 아무도 없어요'
-                    : `${serverMemberList.map((user) => user.nickName).join(', ')} 님이 현재 음성 채널에 있어요.`}
+                    : `${voiceUsers.map((user) => user.nickName).join(', ')} 님이 현재 음성 채널에 있어요.`}
                 </span>
                 <CustomButton
                   className='w-fit px-4 py-2 mt-5 mb-10'
@@ -129,7 +110,7 @@ function VideoComponent({
                 <button
                   type='button'
                   onClick={() => {
-                    console.log(users, 'users')
+                    console.log(voiceUsers, 'voiceUsers')
                   }}
                   className='w-14 h-14 rounded-full bg-[#282d31] flex items-center justify-center'>
                   <img
