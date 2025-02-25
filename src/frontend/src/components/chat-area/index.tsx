@@ -8,6 +8,7 @@ import DmAreaHeader from '@/pages/dm/components/dm-area-header'
 import { useChatStore } from '@/stores/use-chat-store'
 import { useChattingStomp } from '@/stores/use-chatting-stomp'
 import useStatusBarStore from '@/stores/use-status-bar-store'
+import { useStatusStore } from '@/stores/use-status-store'
 import { ChannelMessage } from '@/types/message'
 import { ChatUser } from '@/types/user'
 import timeHelper from '@/utils/format-time'
@@ -42,6 +43,7 @@ function ChatArea({
 
   const [searchValue, setSearchValue] = useState('')
   const { isStatusBarOpen, toggleStatusBar } = useStatusBarStore()
+  const { channelMemberList } = useStatusStore()
 
   const isChannel = channelName !== undefined
   const navigate = useNavigate()
@@ -141,6 +143,12 @@ function ChatArea({
                   : users.targetUsers.find((user) => user.memberId === msg.sendMemberId) ||
                     users.targetUsers[0]
 
+                const status =
+                  channelMemberList.find((member) => member.memberId === messageUser?.memberId)
+                    ?.globalStatus ||
+                  messageUser?.globalStatus ||
+                  'ONLINE'
+
                 return (
                   <div
                     key={`${msg.channelId}-${msg.id}`}
@@ -149,7 +157,7 @@ function ChatArea({
                       size='sm'
                       avatarUrl={messageUser?.avatarUrl ?? '/image/common/default-avatar.png'}
                       statusColor='black'
-                      status={messageUser?.globalStatus ?? 'ONLINE'}
+                      status={status}
                       name={messageUser?.nickName ?? '닉네임'}
                     />
 
