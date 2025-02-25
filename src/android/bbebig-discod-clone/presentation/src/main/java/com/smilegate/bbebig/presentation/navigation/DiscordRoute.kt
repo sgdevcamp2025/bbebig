@@ -19,3 +19,6 @@ data object LiveChat
 
 @Serializable
 data object CreateServer
+
+@Serializable
+data object Splash
