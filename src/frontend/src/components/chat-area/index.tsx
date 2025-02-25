@@ -5,6 +5,7 @@ import Avatar from '@/components/avatar'
 import CommonHeader from '@/components/common-header'
 import { useChatStore } from '@/hooks/store/use-chat-store'
 import useChattingStomp from '@/hooks/store/use-chatting-stomp'
+import { useStatusStore } from '@/hooks/store/use-status-store'
 import { cn } from '@/libs/cn'
 import DmAreaHeader from '@/pages/dm/components/dm-area-header'
 import useStatusBarStore from '@/stores/use-status-bar-store'
@@ -42,6 +43,7 @@ function ChatArea({
 
   const [searchValue, setSearchValue] = useState('')
   const { isStatusBarOpen, toggleStatusBar } = useStatusBarStore()
+  const { channelMemberList } = useStatusStore()
 
   const isChannel = channelName !== undefined
   const navigate = useNavigate()
@@ -141,6 +143,12 @@ function ChatArea({
                   : users.targetUsers.find((user) => user.memberId === msg.sendMemberId) ||
                     users.targetUsers[0]
 
+                const status =
+                  channelMemberList.find((member) => member.memberId === messageUser?.memberId)
+                    ?.globalStatus ||
+                  messageUser?.globalStatus ||
+                  'ONLINE'
+
                 return (
                   <div
                     key={`${msg.channelId}-${msg.id}`}
@@ -149,7 +157,7 @@ function ChatArea({
                       size='sm'
                       avatarUrl={messageUser?.avatarUrl ?? '/image/common/default-avatar.png'}
                       statusColor='black'
-                      status={messageUser?.globalStatus ?? 'ONLINE'}
+                      status={status}
                       name={messageUser?.nickName ?? '닉네임'}
                     />
 
