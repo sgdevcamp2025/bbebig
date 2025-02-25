@@ -146,12 +146,6 @@ public class MeshGroupSignalService {
             throw new ErrorHandler(ErrorStatus.GROUP_STREAM_SESSION_NOT_FOUND);
         }
 
-        Set<String> participants = channelManager.getParticipants(channelId);
-
-        Set<String> otherMembers = participants.stream()
-                .filter(memberId -> !memberId.equals(message.getSenderId()))
-                .collect(Collectors.toSet());
-
         SignalMessage groupMessage = SignalMessage.builder()
                 .messageType(message.getMessageType())
                 .channelId(message.getChannelId())
@@ -160,12 +154,15 @@ public class MeshGroupSignalService {
                 .candidate(message.getCandidate())
                 .build();
 
-        for (String memberId : otherMembers) {
-            messagingTemplate.convertAndSend(
-                    Path.meshDirectSubPath + memberId,
-                    groupMessage
-            );
-        }
+        messagingTemplate.convertAndSend(
+                Path.meshGroupSubPath + message.getChannelId(),
+                groupMessage
+        );
+
+        Set<String> otherMembers = channelManager.getParticipants(channelId).stream()
+                .filter(memberId -> !memberId.equals(message.getSenderId()))
+                .collect(Collectors.toSet());
+
         log.info("[Signal] 채널 타입: Group - Mesh, 메시지타입: {}, 채널: {}, 보낸사람: {}, 대상: {}명",
                 message.getMessageType(), channelId, message.getSenderId(), otherMembers.size());
     }
