@@ -282,7 +282,7 @@ public class HistoryService {
 	public ServerChannelSequenceResponseDto getChannelLastSequence(Long channelId) {
 		Long lastSequence = serverRedisRepository.getServerChannelSequence(channelId);
 		if (lastSequence == null) {
-			Optional<ChannelChatMessage> topByChannelIdOrderByIdDesc = channelChatMessageRepository.findTopByChannelIdOrderByIdDesc(channelId);
+			Optional<ChannelChatMessage> topByChannelIdOrderByIdDesc = channelChatMessageRepository.findTopByChannelIdAndDeletedFalseOrderByIdDesc(channelId);
 			if (topByChannelIdOrderByIdDesc.isPresent()) {
 				lastSequence = topByChannelIdOrderByIdDesc.get().getId();
 				serverRedisRepository.saveServerChannelSequence(channelId, lastSequence);
