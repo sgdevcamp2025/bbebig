@@ -56,6 +56,7 @@ export function useSignalingWithSFU(
 
   const senderPcRef = useRef<RTCPeerConnection | null>(null)
   const receiverPcsRef = useRef<Map<string, RTCPeerConnection>>(new Map())
+  const candidateRef = useRef<Record<string, RTCIceCandidate[]>>({})
 
   const paintPeerFace = (peerStream: MediaStream, id: string) => {
     const stream = document.querySelector('#streams')
@@ -125,28 +126,6 @@ export function useSignalingWithSFU(
         }
       })
 
-      pc.onicecandidate = ({ candidate }) => {
-        if (candidate) {
-          console.log('ICE 후보 생성:', {
-            type: candidate.type,
-            protocol: candidate.protocol,
-            address: candidate.address,
-            port: candidate.port
-          })
-
-          send('/pub/stream/group', {
-            messageType: 'CANDIDATE',
-            channelId,
-            senderId: userId,
-            candidate: {
-              candidate: candidate.candidate,
-              sdpMLineIndex: candidate.sdpMLineIndex,
-              sdpMid: candidate.sdpMid
-            }
-          })
-        }
-      }
-
       pc.onconnectionstatechange = () => {
         console.log('Sender connection state:', pc.connectionState)
       }
@@ -163,21 +142,20 @@ export function useSignalingWithSFU(
       }
 
       try {
-        console.log('생성자 제안 생성')
         const offer = await pc.createOffer({
           offerToReceiveAudio: true,
           offerToReceiveVideo: true,
           iceRestart: true
         })
 
-        console.log('Sending offer to SFU')
-
-        send('/pub/stream/group', {
+        const offerMessage = {
           messageType: 'OFFER',
           channelId,
           senderId: userId,
           sdp: offer
-        })
+        }
+
+        send('/pub/stream/group', offerMessage)
       } catch (error) {
         console.error('Sender offer creation failed:', error)
       }
@@ -226,7 +204,6 @@ export function useSignalingWithSFU(
       await pc.setRemoteDescription(new RTCSessionDescription(message.sdp))
 
       if (pc.signalingState === 'stable') {
-        console.log('Creating new offer before setting answer')
         const offer = await pc.createOffer({
           offerToReceiveAudio: true,
           offerToReceiveVideo: true
@@ -315,13 +292,11 @@ export function useSignalingWithSFU(
             channelId,
             senderId: userId,
             receiverId: message.senderId,
-            candidate: {
-              candidate: candidate.candidate,
-              sdpMLineIndex: candidate.sdpMLineIndex,
-              sdpMid: candidate.sdpMid
-            }
+            candidate
           })
         }
+
+        console.log(candidateRef.current, 'candidateRef.current')
       }
 
       try {
@@ -329,20 +304,18 @@ export function useSignalingWithSFU(
           offerToReceiveAudio: true,
           offerToReceiveVideo: true
         })
-        console.log(offer, 'offer')
 
         await pc.setLocalDescription(offer)
 
-        send('/pub/stream/group', {
+        const offerMessage = {
           messageType: 'OFFER',
           channelId,
           senderId: userId,
           receiverId: message.senderId,
-          sdp: {
-            type: 'offer',
-            sdp: offer
-          }
-        })
+          sdp: offer
+        }
+
+        send('/pub/stream/group', offerMessage)
       } catch (error) {
         console.error('Offer creation failed:', error)
       }
@@ -352,11 +325,16 @@ export function useSignalingWithSFU(
   }
 
   const handleCandidate = async (message: SignalingMessage) => {
-    console.log('ICE 후보 수신:', message.candidate)
+    console.log(message, 'handleCandidate')
     if (!message.candidate) return
 
+    candidateRef.current[message.senderId] = [
+      ...(candidateRef.current[message.senderId] || []),
+      message.candidate
+    ]
+
     try {
-      const pc = receiverPcsRef.current.get(message.senderId)
+      const pc = receiverPcsRef.current.get(message.senderId) || senderPcRef.current
       if (!pc || pc.iceConnectionState === 'closed') {
         console.error('유효하지 않은 피어커넥션 상태')
         return

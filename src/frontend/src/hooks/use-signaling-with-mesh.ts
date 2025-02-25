@@ -1,22 +1,19 @@
 import { useEffect, useRef } from 'react'
 
-import { TURN_SERVER_URL } from '@/constants/env'
 import { useSignalingStomp } from '@/stores/use-signaling-stomp-store'
 import useUserStatus from '@/stores/use-user-status'
 
-const PC_CONFIG: RTCConfiguration = {
+const RTC_CONFIGURATION: RTCConfiguration = {
   iceServers: [
     { urls: 'stun:stun.l.google.com:19302' },
     {
-      urls: TURN_SERVER_URL,
+      urls: 'turn:13.125.13.209:3478?transport=udp',
       username: 'kurentouser',
-      credential: 'kurentouser'
+      credential: 'kurentopassword'
     }
   ],
-  iceTransportPolicy: 'relay' as RTCIceTransportPolicy,
-  iceCandidatePoolSize: 0,
-  bundlePolicy: 'max-bundle' as RTCBundlePolicy,
-  rtcpMuxPolicy: 'require' as RTCRtcpMuxPolicy
+  iceTransportPolicy: 'relay',
+  iceCandidatePoolSize: 0
 }
 
 const SUBSCRIPTION_ID = 'signaling-with'
@@ -53,7 +50,7 @@ export const useSignalingWithMesh = (
   }, [])
 
   const createSenderPeerConnection = async (senderId: string) => {
-    const pc = new RTCPeerConnection(PC_CONFIG)
+    const pc = new RTCPeerConnection(RTC_CONFIGURATION)
     pc.ontrack = (event) => {
       paintPeerFace(event.streams[0], senderId)
     }
@@ -72,13 +69,53 @@ export const useSignalingWithMesh = (
 
     senderPcRef.current = pc
 
+    senderPcRef.current.onicecandidate = (event) => {
+      if (event?.candidate) {
+        send('CANDIDATE', {
+          channelId: channelId,
+          senderId: userId,
+          candidate: event.candidate
+        })
+      }
+    }
+  }
+
+  const createOffer = async (pc: RTCPeerConnection, receiverId: string) => {
+    console.log(`${receiverId} 에게 제안 보내기`)
+
     const offer = await pc.createOffer({
       offerToReceiveAudio: true,
-      offerToReceiveVideo: true,
-      iceRestart: true
+      offerToReceiveVideo: true
     })
 
-    await pc.setLocalDescription(offer)
+    await pc.setRemoteDescription(offer)
+
+    send('/pub/stream/mesh-group', {
+      messageType: 'OFFER',
+      channelId: channelId,
+      senderId: userId,
+      receiverId,
+      sdp: offer
+    })
+  }
+
+  const handleOffer = async (message: SignalingMessage) => {
+    console.log(`${message.senderId} 으로부터 offer 수신`)
+    const pc = receiverPcsRef.current.get(message.senderId) || senderPcRef.current
+
+    if (!pc || !message.sdp) return
+
+    await pc.setRemoteDescription(new RTCSessionDescription(message.sdp))
+    const answer = await pc.createAnswer()
+    await pc.setLocalDescription(answer)
+
+    send('/pub/stream/mesh-group', {
+      messageType: 'ANSWER',
+      channelId: channelId,
+      senderId: userId,
+      receiverId: message.receiverId,
+      sdp: answer
+    })
   }
 
   const paintPeerFace = (peerStream: MediaStream, id: string) => {
@@ -94,15 +131,17 @@ export const useSignalingWithMesh = (
   }
 
   const handleUserJoined = (message: SignalingMessage) => {
-    if (message.messageType !== 'USER_JOINED' || !message.sdp || !senderPcRef.current) return
+    if (!message.sdp || !senderPcRef.current) return
     createSenderPeerConnection(message.senderId)
+    const remoteDescription = new RTCSessionDescription(message.sdp)
+    senderPcRef.current?.setRemoteDescription(remoteDescription)
 
-    senderPcRef.current?.setRemoteDescription(new RTCSessionDescription(message.sdp))
     senderPcRef.current?.createAnswer({
       offerToReceiveAudio: true,
       offerToReceiveVideo: true,
       iceRestart: true
     })
+
     senderPcRef.current.onicecandidate = (event) => {
       if (event?.candidate) {
         send('CANDIDATE', {
@@ -116,74 +155,36 @@ export const useSignalingWithMesh = (
   }
 
   const handleUserLeft = (message: SignalingMessage) => {
-    if (message.messageType !== 'USER_LEFT') return
-  }
-
-  const handleOffer = async (message: SignalingMessage) => {
-    if (message.messageType !== 'OFFER' || !message.sdp) return
-
-    const pc = new RTCPeerConnection(PC_CONFIG)
-    await pc.setRemoteDescription(new RTCSessionDescription(message.sdp))
-
-    const answer = await pc.createAnswer({
-      offerToReceiveAudio: true,
-      offerToReceiveVideo: true,
-      iceRestart: true
-    })
-
-    await pc.setLocalDescription(answer)
-
-    send('/pub/stream/mesh-group', {
-      messageType: 'ANSWER',
-      channelId: channelId,
-      senderId: userId,
-      receiverId: message.senderId,
-      sdp: answer
-    })
-
-    pc.onicecandidate = (event) => {
-      if (event.candidate) {
-        send('/pub/stream/mesh-group', {
-          messageType: 'CANDIDATE',
-          channelId: channelId,
-          senderId: userId,
-          receiverId: message.senderId,
-          candidate: event.candidate
-        })
-      }
-    }
+    const pc = receiverPcsRef.current.get(message.senderId)
+    if (!pc) return
+    pc.close()
+    receiverPcsRef.current.delete(message.senderId)
   }
 
   const handleChannelFull = (message: SignalingMessage) => {
-    if (message.messageType !== 'CHANNEL_FULL') return
     cleanup()
     leaveVoiceChannel()
   }
 
   const handleExistUsers = async (message: SignalingMessage) => {
-    if (message.messageType !== 'EXIST_USERS') return
     const participants = message.participants
+
     const offer = await senderPcRef.current?.createOffer({
       offerToReceiveAudio: true,
       offerToReceiveVideo: true,
       iceRestart: true
     })
 
-    if (!offer) return
-
     await senderPcRef.current?.setLocalDescription(offer)
 
     participants?.forEach((participant) => {
-      if (participant.toString() === userId) return
+      if (participant.toString() === userId && !senderPcRef.current) return
+
       createSenderPeerConnection(participant.toString())
-      senderPcRef.current?.setRemoteDescription(new RTCSessionDescription(offer))
-      send('/pub/stream/mesh-group', {
-        messageType: 'OFFER',
-        channelId: channelId,
-        senderId: userId,
-        receiverId: participant.toString(),
-        sdp: senderPcRef.current?.localDescription
-      })
+
+      if (senderPcRef.current) {
+        createOffer(senderPcRef.current, participant.toString())
+      }
     })
   }
 
@@ -206,7 +207,7 @@ export const useSignalingWithMesh = (
       SUBSCRIPTION_ID + '-mesh-group',
       DESTINATION_GROUP + `/${channelId}`,
       (message: SignalingMessage) => {
-        console.log(message, 'message')
+        console.log('서버 이벤트 수신, message-group', message)
         switch (message.messageType) {
           case 'USER_JOINED':
             handleUserJoined(message)
@@ -233,19 +234,13 @@ export const useSignalingWithMesh = (
       SUBSCRIPTION_ID + '-mesh-direct',
       DESTINATION_DIRECT + `/${userId}`,
       (message: SignalingMessage) => {
-        console.log(message, 'message')
+        console.log('서버 이벤트 수신, message-direct', message)
         switch (message.messageType) {
           case 'CHANNEL_FULL':
             handleChannelFull(message)
             break
           case 'EXIST_USERS':
             handleExistUsers(message)
-            break
-          case 'ANSWER':
-            handleAnswer(message)
-            break
-          case 'CANDIDATE':
-            handleCandidate(message)
             break
           default:
             throw new Error(`Unknown message type: ${message.messageType}`)
@@ -257,8 +252,6 @@ export const useSignalingWithMesh = (
   const cleanup = () => {
     unsubscribe(SUBSCRIPTION_ID + '-mesh-group', DESTINATION_GROUP)
     unsubscribe(SUBSCRIPTION_ID + '-mesh-direct', DESTINATION_DIRECT)
-    unsubscribe(SUBSCRIPTION_ID + '-direct', '/pub/stream/direct')
-    unsubscribe(SUBSCRIPTION_ID + '-group', '/pub/stream/group')
 
     receiverPcsRef.current.forEach((pc) => {
       pc.close()

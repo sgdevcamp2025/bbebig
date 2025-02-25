@@ -1,4 +1,4 @@
-import { useChatStore } from '@/hooks/store/use-chat-store'
+import { useChatStore } from '@/stores/use-chat-store'
 import { ServerSubscribeResponse } from '@/types/chat-stomp-event'
 
 export const handleServerEvent = (message: ServerSubscribeResponse) => {

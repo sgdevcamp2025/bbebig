@@ -3,7 +3,7 @@ import { useState } from 'react'
 import ChatArea from '@/components/chat-area'
 import CustomButton from '@/components/custom-button'
 import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
-import { useSignalingWithSFU } from '@/hooks/use-signaling-with-sfu'
+import { useSignalingWithMesh } from '@/hooks/use-signaling-with-mesh'
 import { cn } from '@/libs/cn'
 import useUserStatus from '@/stores/use-user-status'
 import { ChatUser } from '@/types/user'
@@ -29,7 +29,7 @@ function VideoComponent({
   const selfUser = useGetSelfUser()
   const { getCurrentChannelInfo } = useUserStatus()
 
-  const { joinChannel, leaveChannel } = useSignalingWithSFU(
+  const { joinChannel, leaveChannel } = useSignalingWithMesh(
     selfUser?.id.toString(),
     channelId.toString(),
     channelName,
