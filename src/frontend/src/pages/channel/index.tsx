@@ -20,21 +20,15 @@ function ChannelPage() {
 
   const currentUser = {
     memberId: selfUser.id,
-    nickName: selfUser.name,
+    nickName: selfUser.nickname,
     avatarUrl: selfUser.avatarUrl,
     bannerUrl: selfUser.bannerUrl,
     globalStatus: selfUser.customPresenceStatus
   }
 
-  const targetUser = serverMemberList.serverMemberInfoList.find(
+  const targetUsers = serverMemberList.serverMemberInfoList.filter(
     (user) => user.memberId !== selfUser.id
-  ) ?? {
-    memberId: 0,
-    nickName: '',
-    avatarUrl: '',
-    bannerUrl: '',
-    globalStatus: 'OFFLINE'
-  }
+  )
 
   const currentChannel = useMemo(
     () => serverInfo.channelInfoList.find((channel) => channel.channelId === Number(channelId)),
@@ -58,7 +52,7 @@ function ChannelPage() {
         channelName={currentChannel.channelName}
         serverId={Number(serverId)}
         currentUser={currentUser}
-        targetUser={targetUser}
+        targetUsers={targetUsers}
       />
     )
   }
@@ -71,7 +65,7 @@ function ChannelPage() {
         channelName={currentChannel.channelName}
         serverMemberList={serverMemberList.serverMemberInfoList}
         currentUser={currentUser}
-        targetUser={targetUser}
+        targetUser={targetUsers}
       />
     )
   }

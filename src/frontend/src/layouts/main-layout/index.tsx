@@ -1,5 +1,5 @@
-import { Suspense, useEffect, useState } from 'react'
-import { Outlet, useNavigate } from 'react-router-dom'
+import { Suspense, useEffect, useRef, useState } from 'react'
+import { Outlet, useNavigate, useParams } from 'react-router-dom'
 import { useShallow } from 'zustand/shallow'
 
 import serviceService from '@/apis/service/service'
@@ -11,6 +11,7 @@ import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
 import useChattingStomp from '@/hooks/store/use-chatting-stomp'
 import { useMediaSettingsStore } from '@/stores/use-media-setting.store'
 import { useSignalingStomp } from '@/stores/use-signaling-stomp-store'
+import { CustomPresenceStatus } from '@/types/user'
 
 import ProfileCard from './components/profile-card'
 import ProfileStatusButton from './components/profile-status-button'
@@ -22,16 +23,25 @@ const Inner = () => {
   const {
     connect: connectChatting,
     disconnect: disconnectChatting,
-    subscribeToServer
+    subscribeToServer,
+    unsubscribe,
+    checkConnection
   } = useChattingStomp()
-
   const { connect: connectSignaling, disconnect: disconnectSignaling } = useSignalingStomp()
+  const { serverId } = useParams<{ serverId: string }>()
+  const previousServerId = useRef<number | null>(null)
 
   const navigate = useNavigate()
 
   useEffect(function init() {
-    connectChatting()
+    const initChatting = async () => {
+      if (!checkConnection()) {
+        await connectChatting()
+      }
+    }
+
     connectSignaling()
+    initChatting()
 
     return function cleanup() {
       disconnectChatting()
@@ -39,8 +49,33 @@ const Inner = () => {
     }
   }, [])
 
-  const selfUser = useGetSelfUser()
+  useEffect(() => {
+    const subscribeToServerIfConnected = async () => {
+      if (!serverId) return
+
+      await connectChatting()
+
+      if (checkConnection()) {
+        console.log(`[📡] 서버 ${serverId} 자동 구독`)
+        subscribeToServer(Number(serverId), (message) => {
+          console.log(`[📩] 서버 이벤트 수신 (${serverId}):`, message)
+        })
+
+        previousServerId.current = Number(serverId)
+      }
+    }
+
+    subscribeToServerIfConnected()
+
+    return function cleanup() {
+      if (previousServerId.current) {
+        unsubscribe(`/topic/server/${previousServerId.current}`)
+      }
+    }
+  }, [serverId, checkConnection])
+
   const myChannelList = useGetServer()
+  const selfUser = useGetSelfUser()
 
   const { muted, toggleAudioInputMute, toggleAudioOutputMute } = useMediaSettingsStore(
     useShallow((state) => ({
@@ -60,9 +95,12 @@ const Inner = () => {
     const firstChannelId = channelInfoList[0].channelId
     navigate(`/channels/${serverId}/${firstChannelId}`)
 
-    subscribeToServer(serverId.toString(), (message) => {
-      console.log(`[📩] 서버 이벤트 수신 (${serverId}):`, message)
-    })
+    if (checkConnection()) {
+      console.log(`[📡] 서버 클릭 - 서버 ${serverId} 이벤트 구독 요청`)
+      subscribeToServer(serverId, (message) => {
+        console.log(`[📩] 서버 클릭 - 서버 이벤트 수신 (${serverId}):`, message)
+      })
+    }
   }
 
   const [settingModalState, setSettingModalState] = useState({
@@ -155,7 +193,7 @@ const Inner = () => {
                 <div className='h-[13px] overflow-hidden'>
                   <div className='flex flex-col h-[13px] leading-[13px] group-hover:translate-y-[-100%] transition-all duration-300'>
                     <span className='text-[13px] text-left text-gray-10'>
-                      {statusKo[selfUser.customPresenceStatus]} 표시
+                      {statusKo[selfUser.customPresenceStatus as CustomPresenceStatus]} 표시
                     </span>
                     <span className='text-[13px] text-left text-gray-10'>
                       {selfUser.email.split('@')[0]}

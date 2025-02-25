@@ -25,6 +25,7 @@
     "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dayjs": "^1.11.13",
     "isbot": "^5.1.17",
     "lucide-react": "^0.473.0",
     "postcss": "^8.5.1",
@@ -36,7 +37,9 @@
     "sdp-transform": "^2.15.0",
     "tailwind-merge": "^2.6.0",
     "tailwindcss": "^3.4.17",
+    "timezone": "^1.0.23",
     "ua-parser-js": "^2.0.2",
+    "utc": "^0.1.0",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
