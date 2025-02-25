@@ -17,7 +17,7 @@ function DmPage() {
 
   const targetUser = {
     memberId: memberInfo.id,
-    nickName: memberInfo.name,
+    nickName: memberInfo.nickname,
     avatarUrl: memberInfo.avatarUrl,
     bannerUrl: memberInfo.bannerUrl,
     globalStatus: memberInfo.customPresenceStatus
@@ -25,7 +25,7 @@ function DmPage() {
 
   const currentUser = {
     memberId: selfUserInfo.id,
-    nickName: selfUserInfo.name,
+    nickName: selfUserInfo.nickname,
     avatarUrl: selfUserInfo.avatarUrl,
     bannerUrl: selfUserInfo.bannerUrl,
     globalStatus: selfUserInfo.customPresenceStatus
@@ -60,7 +60,7 @@ function DmPage() {
           chatKey={memberId}
           users={{
             currentUser: currentUser,
-            targetUser: targetUser
+            targetUsers: [targetUser]
           }}
         />
       </Suspense>

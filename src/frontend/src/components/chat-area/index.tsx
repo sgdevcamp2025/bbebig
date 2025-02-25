@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom'
 
 import Avatar from '@/components/avatar'
 import CommonHeader from '@/components/common-header'
+import { useChatStore } from '@/hooks/store/use-chat-store'
+import useChattingStomp from '@/hooks/store/use-chatting-stomp'
 import { cn } from '@/libs/cn'
 import DmAreaHeader from '@/pages/dm/components/dm-area-header'
 import useStatusBarStore from '@/stores/use-status-bar-store'
-import { Message } from '@/types/message'
+import { ChannelMessage } from '@/types/message'
 import { ChatUser } from '@/types/user'
 import timeHelper from '@/utils/format-time'
 
@@ -14,12 +16,14 @@ export interface ChatProps {
   chatKey: string | number
   users: {
     currentUser: ChatUser
-    targetUser: ChatUser
+    targetUsers: ChatUser[]
   }
   isVoice?: boolean
   channelName?: string
-  onClose?: () => void
   initialMessage?: string
+  serverId?: number
+  historyMessages?: ChannelMessage[]
+  onClose?: () => void
 }
 
 function ChatArea({
@@ -27,58 +31,57 @@ function ChatArea({
   users,
   isVoice,
   channelName,
+  initialMessage = '',
   onClose,
-  initialMessage = ''
+  serverId,
+  historyMessages
 }: ChatProps) {
-  // const containerRef = useRef<HTMLDivElement>(null)
   const messagesRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-  const [messages, setMessages] = useState<Record<string, Message[]>>({})
-  const [inputValue, setInputValue] = useState(initialMessage)
+  const { messages, setMessages } = useChatStore()
+
   const [searchValue, setSearchValue] = useState('')
   const { isStatusBarOpen, toggleStatusBar } = useStatusBarStore()
-  const currentUser = users.currentUser
-  const targetUser = users.targetUser
+
   const isChannel = channelName !== undefined
   const navigate = useNavigate()
+  const { publishToServerChatting } = useChattingStomp()
 
-  const sendMessage = () => {
-    if (!chatKey) return
-    const text = inputValue.trim()
+  useEffect(() => {
+    if (historyMessages && chatKey) {
+      setMessages(Number(chatKey), historyMessages)
+    }
+  }, [historyMessages, chatKey])
+
+  useEffect(() => {
+    if (messagesRef.current) {
+      messagesRef.current.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [messages])
+
+  const sendMessage = async () => {
+    if (!chatKey || !inputRef.current) return
+    const text = inputRef.current.value.trim()
     if (!text) return
 
     if (!isChannel) {
-      navigate(`/channels/@me/${targetUser.memberId}`, {
+      navigate(`/channels/@me/${users.targetUsers[0].memberId}`, {
         state: { initialMessage: text }
       })
       return
     }
 
-    const newMessage: Message = {
-      id: crypto.randomUUID(),
-      memberId: currentUser?.memberId.toString() ?? '',
-      type: isChannel ? 'CHANNEL' : 'DM',
-      contents: { text },
-      createdAt: new Date(),
-      updatedAt: new Date()
-    }
+    publishToServerChatting({
+      chatType: channelName ? 'CHANNEL' : 'DM',
+      messageType: 'TEXT',
+      type: 'MESSAGE_CREATE',
+      serverId: serverId ?? 0,
+      channelId: Number(chatKey),
+      content: text
+    })
 
-    setMessages((prev) => ({
-      ...prev,
-      [chatKey]: [...(prev[chatKey] || []), newMessage]
-    }))
-
-    setInputValue('')
+    inputRef.current.value = ''
   }
-
-  useEffect(() => {
-    if (messagesRef.current) {
-      const messageContainer = messagesRef.current.parentElement
-      if (messageContainer) {
-        messageContainer.scrollTop = messageContainer.scrollHeight
-      }
-    }
-  }, [messages])
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
@@ -96,7 +99,7 @@ function ChatArea({
   }
 
   return (
-    <div className='flex flex-col h-full relative'>
+    <div className='flex-1 flex flex-col w-full h-full relative'>
       <div className='absolute inset-0 flex flex-col'>
         {isChannel ? (
           <CommonHeader
@@ -118,46 +121,52 @@ function ChatArea({
             <span className='text-discord-font-color-normal font-medium'>{channelName}</span>
           </CommonHeader>
         ) : (
-          targetUser && <DmAreaHeader member={targetUser} />
+          users.targetUsers && <DmAreaHeader member={users.targetUsers[0]} />
         )}
 
         {/* 채팅 영역 */}
-        <div className='flex-1 overflow-y-auto p-4 flex flex-col justify-end'>
-          {messages[chatKey]?.map((msg) => {
-            const { isToday, ampm, hour12, minutes, year, month, day } = timeHelper(
-              msg.createdAt.toISOString()
-            )
-
-            const isMyMessage = msg.memberId === currentUser?.memberId.toString()
-            const messageUser = isMyMessage ? currentUser : targetUser
-
-            return (
-              <div
-                key={msg.id}
-                className='flex items-start gap-3 mb-4'>
-                <Avatar
-                  size='sm'
-                  avatarUrl={messageUser?.avatarUrl ?? '/image/common/default-avatar.png'}
-                  statusColor='black'
-                  status={messageUser?.globalStatus ?? 'ONLINE'}
-                  name={messageUser?.nickName ?? '닉네임'}
-                />
-
-                <div className='flex-1'>
-                  <div className='text-sm font-bold text-discord-font-color-normal'>
-                    {isMyMessage ? messageUser?.nickName : (messageUser?.nickName ?? '닉네임')}
-                    <span className='ml-2 text-xs text-gray-400'>
-                      {isToday
-                        ? `오늘 ${ampm} ${hour12}:${minutes}`
-                        : `${year}. ${month}. ${day}. ${ampm} ${hour12}:${minutes}`}
-                    </span>
-                  </div>
-                  <div className='text-sm text-discord-font-color-normal'>{msg.contents.text}</div>
-                </div>
-              </div>
-            )
-          })}
+        <div className='flex flex-col-reverse w-full h-full overflow-y-auto p-4'>
           <div ref={messagesRef} />
+          {Array.isArray(messages[Number(chatKey)]) &&
+            messages[Number(chatKey)]
+              .sort((a, b) => (b.sequence ?? 0) - (a.sequence ?? 0))
+              .map((msg) => {
+                const { isToday, ampm, hour12, minutes, year, month, day } = timeHelper(
+                  msg.createdAt ?? ''
+                )
+
+                const isMyMessage = msg.sendMemberId === users.currentUser?.memberId
+                const messageUser = isMyMessage
+                  ? users.currentUser
+                  : users.targetUsers.find((user) => user.memberId === msg.sendMemberId) ||
+                    users.targetUsers[0]
+
+                return (
+                  <div
+                    key={`${msg.channelId}-${msg.id}`}
+                    className='flex items-start gap-3 mb-4'>
+                    <Avatar
+                      size='sm'
+                      avatarUrl={messageUser?.avatarUrl ?? '/image/common/default-avatar.png'}
+                      statusColor='black'
+                      status={messageUser?.globalStatus ?? 'ONLINE'}
+                      name={messageUser?.nickName ?? '닉네임'}
+                    />
+
+                    <div className='flex-1'>
+                      <div className='text-sm font-bold text-discord-font-color-normal'>
+                        {isMyMessage ? messageUser?.nickName : (messageUser?.nickName ?? '닉네임')}
+                        <span className='ml-2 text-xs text-gray-400'>
+                          {isToday
+                            ? `오늘 ${ampm} ${hour12}:${minutes}`
+                            : `${year}. ${month}. ${day}. ${ampm} ${hour12}:${minutes}`}
+                        </span>
+                      </div>
+                      <div className='text-sm text-discord-font-color-normal'>{msg.content}</div>
+                    </div>
+                  </div>
+                )
+              })}
         </div>
 
         {/* 입력창 */}
@@ -172,8 +181,7 @@ function ChatArea({
             <input
               type='text'
               ref={inputRef}
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
+              defaultValue={initialMessage}
               placeholder='메시지 보내기'
               className='w-full bg-transparent text-white px-3 py-2 outline-none focus-none'
               onKeyDown={handleKeyDown}
