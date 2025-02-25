@@ -60,19 +60,27 @@ const Inner = () => {
       await connectChatting()
 
       if (checkConnection()) {
-        console.log(`[📡] 서버 ${serverId} 자동 구독`)
-        subscribeToServer(Number(serverId), (message) => {
-          console.log(`[📩] 서버 이벤트 수신 (${serverId}):`, message)
-        })
+        if (previousServerId.current && previousServerId.current !== Number(serverId)) {
+          console.log(`[❌] 서버 (${previousServerId.current}) 구독 해제`)
+          unsubscribe(`/topic/server/${previousServerId.current}`)
+        }
 
-        previousServerId.current = Number(serverId)
+        if (previousServerId.current !== Number(serverId)) {
+          console.log(`[📡] 서버 ${serverId} 자동 구독`)
+          subscribeToServer(Number(serverId), (message) => {
+            console.log(`[📩] 서버 이벤트 수신 (${serverId}):`, message)
+          })
+
+          previousServerId.current = Number(serverId)
+        }
       }
     }
 
     subscribeToServerIfConnected()
 
-    return function cleanup() {
-      if (previousServerId.current) {
+    return () => {
+      if (previousServerId.current !== Number(serverId)) {
+        console.log(`[🔴] ${previousServerId.current} 구독 해제`)
         unsubscribe(`/topic/server/${previousServerId.current}`)
       }
     }

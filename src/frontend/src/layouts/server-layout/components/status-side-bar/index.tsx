@@ -19,6 +19,7 @@ export interface ChannelStatusBarUser {
 }
 
 function StatusSideBar({ channelUserList }: StatusSideBarProps) {
+  console.log('channelUserList', channelUserList)
   const onlineUsers = Array.isArray(channelUserList)
     ? channelUserList.filter((user) => user.globalStatus === 'ONLINE')
     : []

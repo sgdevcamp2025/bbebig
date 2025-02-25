@@ -63,7 +63,7 @@ function ServerLayout() {
         type: 'LEAVE'
       })
     }
-  }, [serverId, channelId])
+  }, [channelId])
 
   return (
     <div className='flex h-screen w-full'>

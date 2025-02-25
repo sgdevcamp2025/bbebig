@@ -53,8 +53,8 @@ export interface ServerMemberActionEvent extends BaseServerEvent {
 export interface ServerMemberPresenceEvent extends BaseServerEvent {
   type: 'SERVER_MEMBER_PRESENCE'
   memberId: number
-  actualStatus: 'ONLINE' | 'OFFLINE' | 'AWAY' | 'BUSY' | 'INVISIBLE'
-  globalStatus: 'ONLINE' | 'OFFLINE' | 'AWAY' | 'BUSY' | 'INVISIBLE'
+  serverId: number
+  globalStatus: 'ONLINE' | 'AWAY' | 'BUSY' | 'INVISIBLE'
 }
 
 // 서버 채팅 메시지 이벤트 (STOMP에서 받는 MESSAGE)
