@@ -22,7 +22,7 @@ fun Modifier.rippleSingleClick(
     val coroutineScope = rememberCoroutineScope()
 
     return this then Modifier.clickable(
-        indication = ripple(bounded = false),
+        indication = ripple(bounded = true),
         interactionSource = remember { MutableInteractionSource() },
     ) {
         if (isClickable) {
@@ -65,7 +65,7 @@ fun Modifier.rippleClick(
     onClick: () -> Unit,
 ): Modifier {
     return this then Modifier.clickable(
-        indication = ripple(bounded = false),
+        indication = ripple(bounded = true),
         interactionSource = remember { MutableInteractionSource() },
     ) {
         onClick()
