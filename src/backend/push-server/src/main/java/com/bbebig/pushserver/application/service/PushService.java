@@ -37,9 +37,19 @@ public class PushService {
 				MemberPresenceStatus memberPresenceStatus = memberRedisPort.getMemberPresenceStatus(serverMemberStatus.getMemberId());
 				List<DeviceInfo> devices = memberPresenceStatus.getDevices();
 
+				boolean isLooking = false;
+
 				for (DeviceInfo device : devices) {
-					if (!Objects.equals(device.getCurrentServerId(), chatMessageDto.getServerId())) {
-						ServerUnreadEventDto serverUnreadEventDto = ServerUnreadEventDto.builder()
+					if (Objects.equals(device.getCurrentServerId(), chatMessageDto.getServerId()) &&
+						Objects.equals(device.getCurrentChannelId(), chatMessageDto.getChannelId())) {
+						isLooking = true;
+						break;
+					}
+				}
+				if (!isLooking) {
+					for (DeviceInfo device : devices) {
+						if (!Objects.equals(device.getCurrentServerId(), chatMessageDto.getServerId())) {
+							ServerUnreadEventDto serverUnreadEventDto = ServerUnreadEventDto.builder()
 								.memberId(memberPresenceStatus.getMemberId())
 								.type(NotificationEventType.SERVER_UNREAD)
 								.serverId(chatMessageDto.getServerId())
@@ -48,9 +58,11 @@ public class PushService {
 								.targetSessionId(device.getSocketSessionId())
 								.status("UNREAD")
 								.build();
-						sendNotificationPort.sendNotification(serverUnreadEventDto);
+							sendNotificationPort.sendNotification(serverUnreadEventDto);
+						}
 					}
 				}
+
 
 			}
 
