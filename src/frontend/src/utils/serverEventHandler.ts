@@ -22,6 +22,7 @@ export const handleServerEvent = (message: ServerSubscribeResponse) => {
       break
     case 'MESSAGE_CREATE':
       if (!message.sendMemberId) return
+      console.log('MESSAGE_CREATE', message)
       addMessage(message.channelId, {
         ...message,
         sendMemberId: message.sendMemberId

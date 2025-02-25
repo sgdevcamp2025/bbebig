@@ -11,19 +11,21 @@ interface ChatState {
 export const useChatStore = create<ChatState>((set) => ({
   messages: {},
 
-  addMessage: (channelId, message) =>
+  addMessage: (channelId, message) => {
     set((state) => ({
       messages: {
         ...state.messages,
         [channelId]: [...(state.messages[channelId] || []), message]
       }
-    })),
+    }))
+  },
 
-  setMessages: (channelId, messages) =>
+  setMessages: (channelId, messages) => {
     set((state) => ({
       messages: {
         ...state.messages,
         [channelId]: messages
       }
     }))
+  }
 }))

@@ -17,8 +17,6 @@ function TextComponent({ channelId, serverId, currentUser, targetUsers, channelN
     limit: 20
   })
 
-  console.log('TextComponent - historyMessages', historyMessages)
-
   return (
     <div className='flex-1 flex flex-col h-screen'>
       <ChatArea

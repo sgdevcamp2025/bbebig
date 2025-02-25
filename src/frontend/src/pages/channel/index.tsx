@@ -20,7 +20,7 @@ function ChannelPage() {
 
   const currentUser = {
     memberId: selfUser.id,
-    nickName: selfUser.name,
+    nickName: selfUser.nickname,
     avatarUrl: selfUser.avatarUrl,
     bannerUrl: selfUser.bannerUrl,
     globalStatus: selfUser.customPresenceStatus
