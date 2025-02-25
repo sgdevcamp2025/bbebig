@@ -28,9 +28,7 @@ function Inner({ channelUserList }: StatusSideBarProps) {
     : []
 
   const offlineUsers = Array.isArray(channelUserList)
-    ? channelUserList.filter(
-        (user) => user.globalStatus === 'INVISIBLE' || user.globalStatus === 'OFFLINE'
-      )
+    ? channelUserList.filter((user) => !onlineUsers.includes(user))
     : []
 
   const [selectedUser, setSelectedUser] = useState<ChannelStatusBarUser | null>(null)
