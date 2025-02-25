@@ -16,7 +16,7 @@ interface ServerSideBarProps {
   serverId: string
 }
 
-function Inner({ serverId }: ServerSideBarProps) {
+export function Inner({ serverId }: ServerSideBarProps) {
   const serverData = useGetServerInfo(serverId)
   const myInfo = useGetSelfUser()
   const navigate = useNavigate()

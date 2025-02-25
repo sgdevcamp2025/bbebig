@@ -1,7 +1,5 @@
-import { lazy, Suspense } from 'react'
+import { lazy } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
-
-import LoadingModal from './components/loading-modal'
 
 // 레이아웃 컴포넌트 동적 임포트
 const RootLayout = lazy(() => import('./layouts/root-layout'))
