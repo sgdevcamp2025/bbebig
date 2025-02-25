@@ -1,4 +1,4 @@
-package com.bbebig.push_server;
+package com.bbebig.pushserver;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

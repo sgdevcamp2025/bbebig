@@ -28,10 +28,13 @@ public class NotificationEventConsumerService {
 				|| notificationEventDto instanceof DmMemberActionEventDto
 				|| notificationEventDto instanceof DmActionEventDto
 				|| notificationEventDto instanceof DmMemberPresenceEventDto
-				|| notificationEventDto instanceof FriendPresenceEventDto
-				|| notificationEventDto instanceof ServerUnreadEventDto) {
+				|| notificationEventDto instanceof FriendPresenceEventDto) {
 			if (sessionManager.isExistMemberId(notificationEventDto.getMemberId())) {
-				messagingTemplate.convertAndSend("/queue/" + notificationEventDto.getMemberId() + "/notification", notificationEventDto);
+				messagingTemplate.convertAndSend("/queue/notification/" + notificationEventDto.getMemberId(), notificationEventDto);
+			}
+		} else if (notificationEventDto instanceof ServerUnreadEventDto) {
+			if (sessionManager.isExistSessionId(((ServerUnreadEventDto) notificationEventDto).getTargetSessionId())) {
+				messagingTemplate.convertAndSend("/queue/notification/" + notificationEventDto.getMemberId(), notificationEventDto);
 			}
 		} else {
 			log.error("[Chat] NotificationEventConsumerService: 알려지지 않은 알림 이벤트 타입 수신. NotificationEventDto: {}", notificationEventDto);
