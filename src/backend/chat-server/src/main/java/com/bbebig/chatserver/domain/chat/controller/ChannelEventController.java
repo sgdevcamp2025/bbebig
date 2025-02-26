@@ -45,8 +45,8 @@ public class ChannelEventController {
 	@MessageMapping("/channel/leave")
 	public void leaveChannel(Message<?> message) throws IOException {
 		ChannelEventDto channelEventDto = extractChannelEventDto(message);
-		log.info("[Chat] ChannelEventController: 채널 퇴장 이벤트. memberId = {}, channelId = {}, sessionId = {}",
-				channelEventDto.getMemberId(), channelEventDto.getChannelId(), channelEventDto.getSessionId());
+		log.info("[Chat] ChannelEventController: 채널 퇴장 이벤트. memberId = {}, channelId = {}, sessionId = {}, channelEventDto = {}",
+				channelEventDto.getMemberId(), channelEventDto.getChannelId(), channelEventDto.getSessionId(), channelEventDto);
 		validateTimestamps(channelEventDto);
 
 		validateLastInfo(channelEventDto);
