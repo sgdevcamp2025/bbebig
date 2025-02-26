@@ -311,6 +311,10 @@ public class HistoryService {
 		if (lastInfo == null) {
 			try {
 				ServerLastInfoResponseDto responseDto = serviceClient.getServerLastInfo(serverId, memberId);
+				if (responseDto == null) {
+					log.error("[Search] ChatMessageService: 서버 마지막 방문 정보 조회 실패. serverId: {}, memberId: {}", serverId, memberId);
+					throw new ErrorHandler(ErrorStatus.SERVER_LAST_INFO_NOT_FOUND);
+				}
 				Map<Long, ChannelLastInfo> channelInfoMap = new HashMap<>();
 				responseDto.getChannelInfoList().forEach(chDto -> {
 					channelInfoMap.put(chDto.getChannelId(), ChannelLastInfo.builder()
@@ -320,10 +324,12 @@ public class HistoryService {
 							.lastAccessAt(chDto.getLastAccessAt())
 							.build());
 				});
-				return ServerLastInfo.builder()
+				ServerLastInfo info = ServerLastInfo.builder()
 						.serverId(serverId)
 						.channelLastInfoMap(channelInfoMap)
 						.build();
+				serverRedisRepository.saveServerLastInfo(memberId, serverId, info);
+				return info;
 			} catch (FeignException e) {
 				log.error("[Search] ChatMessageService: Feign으로 서버 정보 조회 중 오류 발생. serverId: {}, memberId: {}", serverId, memberId);
 				log.error("[Search] ChatMessageService: FeignException: {}", e.getMessage());
