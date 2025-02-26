@@ -139,7 +139,7 @@ public class MemberRedisRepositoryImpl implements MemberRedisRepository {
 	public void saveServerLastInfo(Long memberId, Long serverId, ServerLastInfo lastInfo) {
 		String key = MemberRedisKeys.getServerLastInfoKey(memberId);
 		serverLastInfoValueOperations.put(key, serverId.toString(), lastInfo);
-		serverLastInfoValueOperations.getOperations().expire(key, MemberRedisTTL.SERVER_LAST_INFO_TTL, TimeUnit.SECONDS);
+		serverLastInfoValueOperations.getOperations().expire(key, MemberRedisTTL.SERVER_LAST_INFO_TTL, TimeUnit.DAYS);
 	}
 
 	// 개별 유저의 최근 서버 채널 정보 조회
