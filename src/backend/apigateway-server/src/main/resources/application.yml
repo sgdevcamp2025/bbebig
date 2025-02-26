@@ -140,6 +140,11 @@ spring:
           predicates:
             - Path=/ws-stream/**
 
+        - id: signaling-node-server
+          uri: lb://signaling-node-server
+          predicates:
+              - Path=/socket.io/**
+
         # 미디어 서버(Kurento Server)
         - id: kurento-server
           uri: lb://kurento-server
