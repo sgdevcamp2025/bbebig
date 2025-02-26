@@ -94,7 +94,7 @@ public class StompHandler implements ChannelInterceptor {
 
 		StompCommand command = headerAccessor.getCommand();
 
-		log.info("[Chat] StompHandler Post send: sessionId={}, command={}", sessionId, command);
+		log.info("[Chat] StompHandler Post send: sessionId={}, command={}, memberId={}", sessionId, command);
 
 		if (command == null) {
 			log.error("[Chat] StompHandler: postSend - command 정보 없음. 전체 헤더 정보: {}", headerAccessor.toMap());
@@ -102,6 +102,7 @@ public class StompHandler implements ChannelInterceptor {
 		}
 		if (StompCommand.CONNECT.equals(command)) {
 			Long memberId = Long.parseLong(Objects.requireNonNull(headerAccessor.getFirstNativeHeader("MemberId")));
+			log.info("[Chat] StompHandler Post send - CONNECT: sessionId={}, command={}, memberId={}", sessionId, command, memberId);
 			ConnectionEventDto connectionEventDto = ConnectionEventDto.builder()
 					.memberId(memberId)
 					.type(ConnectionEventType.CONNECT)
@@ -115,6 +116,7 @@ public class StompHandler implements ChannelInterceptor {
 					.build();
 
 			kafkaProducerService.sendMessageForSession(connectionEventDto);
+			sessionManager.saveConnectSessionInfo(sessionId, memberId);
 		} else if (StompCommand.DISCONNECT.equals(command)) {
 			if (sessionId == null) {
 				log.error("[Chat] StompHandler: DISCONNECT 요청 시 세션 ID 없음");
