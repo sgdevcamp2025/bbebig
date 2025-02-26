@@ -20,7 +20,11 @@ public interface ServerMemberRepository extends JpaRepository<ServerMember, Long
 
     Optional<ServerMember> findByMemberIdAndServer(Long memberId, Server server);
 
+    Optional<ServerMember> findByMemberIdAndServerId(Long memberId, Long serverId);
+
     List<ServerMember> findAllByServerId(Long serverId);
 
     void deleteAllByServerId(Long serverId);
+
+
 }

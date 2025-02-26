@@ -52,7 +52,7 @@ public class ChannelEventConsumerService {
 		Long memberId = channelEventDto.getMemberId();
 		Long channelId = channelEventDto.getChannelId();
 
-		ServerMember serverMember = serverMemberRepository.findById(memberId)
+		ServerMember serverMember = serverMemberRepository.findByMemberIdAndServerId(channelEventDto.getMemberId(), channelEventDto.getServerId())
 				.orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_MEMBERS_NOT_FOUND));
 
 		ChannelMember channelMember = channelMemberRepository.findByServerMemberIdAndChannelId(serverMember.getId(), channelId)
