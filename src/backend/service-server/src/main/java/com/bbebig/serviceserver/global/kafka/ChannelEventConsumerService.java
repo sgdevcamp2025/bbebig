@@ -78,7 +78,10 @@ public class ChannelEventConsumerService {
 				}
 			} else {
 				if (channelEventDto.getType() == ChannelEventType.CHANNEL_LEAVE) {
-					serverLastInfo.updateChannelLastInfo(channelId, channelEventDto.getLastReadMessageId(), channelEventDto.getLastReadSequence(),channelEventDto.getEventTime());
+					serverLastInfo.updateChannelLastInfo(channelId,
+							channelEventDto.getLastReadMessageId() == null ? 0 : channelEventDto.getLastReadMessageId(),
+							channelEventDto.getLastReadSequence() == null ? 0 : channelEventDto.getLastReadSequence(),
+							channelEventDto.getEventTime());
 					memberRedisRepositoryImpl.saveServerLastInfo(memberId, channelEventDto.getServerId(), serverLastInfo);
 				}
 			}
