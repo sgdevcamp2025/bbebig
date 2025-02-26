@@ -30,15 +30,15 @@ wsServer.on("connection", (socket) => {
   let myRoomName = null;
   let myNickname = null;
 
-    socket.on("join_room", ({roomName, nickname}) => {
-        myRoomName = roomName;
-        myNickname = nickname;
+    socket.on("join_room", ({roomId, userId}) => {
+        myRoomName = roomId;
+        myNickname = userId;
 
         let isRoomExist = false;
         let targetRoomObj = null;
 
         for (let i = 0; i < roomObjArr.length; ++i) {
-            if (roomObjArr[i].roomName === roomName) {
+            if (roomObjArr[i].roomId === roomId) {
                 if (roomObjArr[i].currentNum >= MAXIMUM) {
                     socket.emit("channel_full"); // 방이 가득 찬 경우 클라이언트에게 알림
                     return;
@@ -51,7 +51,7 @@ wsServer.on("connection", (socket) => {
 
         if (!isRoomExist) {
             targetRoomObj = {
-                roomName,
+                roomId,
                 currentNum: 0,
                 users: [],
             };
@@ -60,26 +60,26 @@ wsServer.on("connection", (socket) => {
 
         targetRoomObj.users.push({
             socketId: socket.id,
-            nickname,
+            userId,
         });
         ++targetRoomObj.currentNum;
 
-        socket.join(roomName);
+        socket.join(roomId);
 
         // 본인에게 기존 멤버 정보 전달 (EXIST_USERS)
-        const participants = targetRoomObj.users.map(user => user.nickname);
+        const participants = targetRoomObj.users.map(user => user.userId);
         socket.emit("exist_users", {
-            channelId: roomName,
+            channelId: roomId,
             participants
         });
 
         // 전체 채널에 새로운 멤버 입장 알림 (USER_JOINED)
-        socket.to(roomName).emit("user_joined", {
-            channelId: roomName,
-            senderId: nickname
+        socket.to(roomId).emit("user_joined", {
+            channelId: roomId,
+            senderId: userId
         });
 
-        console.log(`[NODE-SIGNAL] ${nickname} joined channel: ${roomName}`);
+        console.log(`[NODE-SIGNAL] ${userId} joined channel: ${roomId}`);
     });
 
   socket.on("offer", ({offer, remoteSocketId}) => {
@@ -111,7 +111,7 @@ wsServer.on("connection", (socket) => {
 
       // 현재 방에서 유저 제거
       for (let i = 0; i < roomObjArr.length; ++i) {
-          if (roomObjArr[i].roomName === myRoomName) {
+          if (roomObjArr[i].roomId === myRoomName) {
               roomObjArr[i].users = roomObjArr[i].users.filter(user => user.socketId !== socket.id);
               --roomObjArr[i].currentNum;
 
