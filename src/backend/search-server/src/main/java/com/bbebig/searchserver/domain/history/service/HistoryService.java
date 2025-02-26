@@ -256,7 +256,7 @@ public class HistoryService {
 
 			ServerChannelSequenceResponseDto channelLastSequence = getChannelLastSequence(channelId);
 
-			int unread = (int)(channelLastInfo.getLastReadSequence() - channelLastSequence.getLastSequence());
+			int unread = (int)(channelLastSequence.getLastSequence() - channelLastInfo.getLastReadSequence());
 
 			channelUnreadList.add(ChannelUnreadCountDto.builder()
 					.channelId(channelId)
