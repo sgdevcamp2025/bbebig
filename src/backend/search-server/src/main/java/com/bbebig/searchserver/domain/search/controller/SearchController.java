@@ -14,7 +14,8 @@ import static com.bbebig.searchserver.domain.search.dto.SearchRequestDto.*;
 import static com.bbebig.searchserver.domain.search.dto.SearchResponseDto.*;
 
 @Slf4j
-@RestController("/search")
+@RestController
+@RequestMapping("/search")
 @RequiredArgsConstructor
 public class SearchController {
 
