@@ -393,7 +393,6 @@ public class ServerService {
                 .build();
     }
 
-    @Transactional
     public ServerLastInfo getServerLastInfo(Long memberId, Long serverId) {
         Server server = serverRepository.findById(serverId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
@@ -440,7 +439,6 @@ public class ServerService {
     /**
      * 서버 참여하기
      */
-    @Transactional
     public ServerParticipateResponseDto participateServer(Long memberId, Long serverId) {
         Server server = serverRepository.findById(serverId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
@@ -496,7 +494,6 @@ public class ServerService {
     /**
      * 서버 탈퇴하기
      */
-    @Transactional
     public ServerWithdrawResponseDto withdrawServer(Long memberId, Long serverId) {
         Server server = serverRepository.findById(serverId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
