@@ -430,9 +430,9 @@ public class ServerService {
 
         return ChannelLastInfo.builder()
                 .channelId(channelId)
-                .lastReadMessageId(channelMember.getLastReadMessageId())
-                .lastReadSequence(channelMember.getLastReadSequence())
-                .lastAccessAt(channelMember.getLastAccessAt())
+                .lastReadMessageId(channelMember.getLastReadMessageId() == null ? 0 : channelMember.getLastReadMessageId())
+                .lastReadSequence(channelMember.getLastReadSequence() == null ? 0 : channelMember.getLastReadSequence())
+                .lastAccessAt(channelMember.getLastAccessAt() == null ? channelMember.getCreatedAt() : channelMember.getLastAccessAt())
                 .build();
     }
 
