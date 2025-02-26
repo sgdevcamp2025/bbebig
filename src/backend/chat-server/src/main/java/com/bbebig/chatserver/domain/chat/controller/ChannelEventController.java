@@ -35,8 +35,8 @@ public class ChannelEventController {
 	@MessageMapping("/channel/enter")
 	public void enterChannel(Message<?> message) throws IOException {
 		ChannelEventDto channelEventDto = extractChannelEventDto(message);
-		log.info("[Chat] ChannelEventController: 채널 입장 이벤트. memberId = {}, channelId = {}, sessionId = {}",
-				channelEventDto.getMemberId(), channelEventDto.getChannelId(), channelEventDto.getSessionId());
+		log.info("[Chat] ChannelEventController: 채널 입장 이벤트. memberId = {}, channelId = {}, sessionId = {}, channelEventDto = {}",
+				channelEventDto.getMemberId(), channelEventDto.getChannelId(), channelEventDto.getSessionId(), channelEventDto);
 		validateTimestamps(channelEventDto);
 		kafkaProducerService.sendMessageForChannel(channelEventDto);
 	}
