@@ -311,6 +311,7 @@ public class HistoryService {
 			responseDto = serviceClient.getServerLastInfo(serverId, memberId);
 		} catch (FeignException e) {
 			log.error("[Search] ChatMessageService: Feign으로 서버 정보 조회 중 오류 발생. serverId: {}, memberId: {}", serverId, memberId);
+			log.error("[Search] ChatMessageService: FeignException: {}", e.getMessage());
 		}
 		return responseDto;
 	}
