@@ -30,7 +30,7 @@ wsServer.on("connection", (socket) => {
   let myRoomName = null;
   let myNickname = null;
 
-    socket.on("join_room", (roomName, nickname) => {
+    socket.on("join_room", ({roomName, nickname}) => {
         myRoomName = roomName;
         myNickname = nickname;
 
@@ -82,25 +82,25 @@ wsServer.on("connection", (socket) => {
         console.log(`[NODE-SIGNAL] ${nickname} joined channel: ${roomName}`);
     });
 
-  socket.on("offer", (offer, remoteSocketId, localNickname) => {
+  socket.on("offer", ({offer, remoteSocketId, localNickname}) => {
     socket.to(remoteSocketId).emit("offer", offer, socket.id, localNickname);
 
     console.log("[NODE-SIGNAL] Offer");
   });
 
-  socket.on("answer", (answer, remoteSocketId) => {
+  socket.on("answer", ({answer, remoteSocketId}) => {
     socket.to(remoteSocketId).emit("answer", answer, socket.id);
 
     console.log("[NODE-SIGNAL] Answer");
   });
 
-  socket.on("ice", (ice, remoteSocketId) => {
+  socket.on("ice", ({ice, remoteSocketId}) => {
     socket.to(remoteSocketId).emit("ice", ice, socket.id);
 
     console.log("[NODE-SIGNAL] Ice");
   });
 
-  socket.on("chat", (message, roomName) => {
+  socket.on("chat", ({message, roomName}) => {
     socket.to(roomName).emit("chat", message);
 
     console.log("[NODE-SIGNAL] Chat");
