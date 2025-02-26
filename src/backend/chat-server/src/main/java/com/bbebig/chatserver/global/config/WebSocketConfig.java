@@ -41,7 +41,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 				.setAllowedOrigins("*");
 
 		registry.addEndpoint("/ws-mobile") // 클라이언트가 연결할 엔드포인트 설정
-				.setAllowedOrigins("*");
+				.setAllowedOrigins("*")
+				.withSockJS();
 
 		// 웹소켓을 사용할 수 없는 환경에서 sockJS 지원
 		registry.addEndpoint("/ws-chat") // 클라이언트가 연결할 엔드포인트 설정
