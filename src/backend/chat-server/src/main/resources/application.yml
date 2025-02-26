@@ -69,3 +69,5 @@ logging:
   level:
     org.apache.kafka: WARN
     org.springframework.kafka: WARN
+    org.springframework.web.socket: DEBUG
+    org.springframework.messaging: DEBUG
