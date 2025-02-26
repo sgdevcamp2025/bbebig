@@ -82,8 +82,8 @@ wsServer.on("connection", (socket) => {
         console.log(`[NODE-SIGNAL] ${nickname} joined channel: ${roomName}`);
     });
 
-  socket.on("offer", ({offer, remoteSocketId, localNickname}) => {
-    socket.to(remoteSocketId).emit("offer", offer, socket.id, localNickname);
+  socket.on("offer", ({offer, remoteSocketId}) => {
+    socket.to(remoteSocketId).emit("offer", offer, socket.id);
 
     console.log("[NODE-SIGNAL] Offer");
   });
@@ -98,12 +98,6 @@ wsServer.on("connection", (socket) => {
     socket.to(remoteSocketId).emit("ice", ice, socket.id);
 
     console.log("[NODE-SIGNAL] Ice");
-  });
-
-  socket.on("chat", ({message, roomName}) => {
-    socket.to(roomName).emit("chat", message);
-
-    console.log("[NODE-SIGNAL] Chat");
   });
 
   socket.on("disconnecting", () => {
