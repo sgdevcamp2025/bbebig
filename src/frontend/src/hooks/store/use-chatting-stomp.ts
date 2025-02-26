@@ -84,7 +84,7 @@ export const useChattingStomp = () => {
       (message: IMessage) => {
         try {
           const messageBody = JSON.parse(message.body)
-          console.log(`[📩] 서버 이벤트 수신 (${serverId}):`, messageBody)
+          console.log(`[📩] (${serverId})번 서버 이벤트 수신 :`, messageBody)
           handleServerEvent(messageBody)
           callback?.(messageBody)
         } catch (error) {
@@ -113,14 +113,14 @@ export const useChattingStomp = () => {
   }
 
   // 개인 알림 구독
-  const subscribeToPersonal = async (callback: (message: unknown) => void) => {
+  const subscribeToPersonal = async (callback?: (message: unknown) => void) => {
     if (!checkConnection()) {
       console.log('[❌] 채팅 서버에 연결되지 않음.')
       return
     }
 
     const destination = `/queue/notification/${memberId}`
-    console.log(`[✅] 개인 알림 ${memberId} 구독 시작`)
+    console.log(`[✅] 👤 개인 알림 ${memberId} 구독 시작`)
 
     clientInstance.subscribe(
       destination,
