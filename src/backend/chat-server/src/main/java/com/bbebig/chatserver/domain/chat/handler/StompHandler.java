@@ -14,7 +14,6 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -34,44 +33,44 @@ public class StompHandler implements ChannelInterceptor {
 	@Value("${spring.cloud.client.ip-address}")
 	private String serverIp;
 
-//	@Override
-//	public Message<?> preSend(Message<?> message, MessageChannel channel) {
+	@Override
+	public Message<?> preSend(Message<?> message, MessageChannel channel) {
+
+		StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(message);
+		String sessionId = headerAccessor.getSessionId(); // STOMP 세션 ID
+
+		log.info("[Chat] StompHandler Pre send: sessionId={}, command={}", sessionId, headerAccessor.getCommand());
+
+		// CONNECT 요청
+		if (StompCommand.CONNECT == headerAccessor.getCommand()) {
+			Long memberId = Long.parseLong(Objects.requireNonNull(headerAccessor.getFirstNativeHeader("MemberId")));
+//			Optional<String> accessToken = extractBearerToken(headerAccessor);
+//			if (accessToken.isEmpty()) {
+//				log.error("[Chat] StompHandler: 토큰 정보 없음");
+//				throw new MessageDeliveryException(ErrorStatus._UNAUTHORIZED.getMessage());
+//			}
+
 //
-//		StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(message);
-//		String sessionId = headerAccessor.getSessionId(); // STOMP 세션 ID
-//
-//		log.info("[Chat] StompHandler Pre send: sessionId={}, command={}", sessionId, headerAccessor.getCommand());
-//
-//		// CONNECT 요청
-//		if (StompCommand.CONNECT == headerAccessor.getCommand()) {
-//			Long memberId = Long.parseLong(Objects.requireNonNull(headerAccessor.getFirstNativeHeader("MemberId")));
-////			Optional<String> accessToken = extractBearerToken(headerAccessor);
-////			if (accessToken.isEmpty()) {
-////				log.error("[Chat] StompHandler: 토큰 정보 없음");
-////				throw new MessageDeliveryException(ErrorStatus._UNAUTHORIZED.getMessage());
-////			}
-//
-////
-////			// 2) Auth 서버로 검증
-////			AuthResponseDto authResponseDto = authClient.verifyToken(accessToken.get());
-////			if (authResponseDto == null || !authResponseDto.getCode().equals("AUTH108")) {
-////				log.error("[Chat] StompHandler: 토큰 검증 실패");
-////				throw new MessageDeliveryException(ErrorStatus._FORBIDDEN.getMessage());
-////			}
-//
-////			Long memberId = authResponseDto.getResult().getMemberId();
-////			if (memberId != authResponseDto.getResult().getMemberId()) {
-////				log.error("[Chat] StompHandler: 토큰 정보와 사용자 정보 불일치");
-////				throw new MessageDeliveryException(ErrorStatus._UNAUTHORIZED.getMessage());
-////			}
-//
-//			// 세션 매니저에 (sessionId -> memberId) 저장
-//			sessionManager.saveConnectSessionInfo(sessionId, memberId);
-//			log.info("[Chat] StompHandler Pre send: CONNECT - memberId={}, sessionId={}", memberId, sessionId);
-//
-//		}
-//		return message;
-//	}
+//			// 2) Auth 서버로 검증
+//			AuthResponseDto authResponseDto = authClient.verifyToken(accessToken.get());
+//			if (authResponseDto == null || !authResponseDto.getCode().equals("AUTH108")) {
+//				log.error("[Chat] StompHandler: 토큰 검증 실패");
+//				throw new MessageDeliveryException(ErrorStatus._FORBIDDEN.getMessage());
+//			}
+
+//			Long memberId = authResponseDto.getResult().getMemberId();
+//			if (memberId != authResponseDto.getResult().getMemberId()) {
+//				log.error("[Chat] StompHandler: 토큰 정보와 사용자 정보 불일치");
+//				throw new MessageDeliveryException(ErrorStatus._UNAUTHORIZED.getMessage());
+//			}
+
+			// 세션 매니저에 (sessionId -> memberId) 저장
+			sessionManager.saveConnectSessionInfo(sessionId, memberId);
+			log.info("[Chat] StompHandler Pre send: CONNECT - memberId={}, sessionId={}", memberId, sessionId);
+
+		}
+		return message;
+	}
 
 	@Override
 	public void postSend(Message<?> message, MessageChannel channel, boolean sent) {
@@ -116,7 +115,7 @@ public class StompHandler implements ChannelInterceptor {
 					.build();
 
 			kafkaProducerService.sendMessageForSession(connectionEventDto);
-			sessionManager.saveConnectSessionInfo(sessionId, memberId);
+//			sessionManager.saveConnectSessionInfo(sessionId, memberId);
 		} else if (StompCommand.DISCONNECT.equals(command)) {
 			if (sessionId == null) {
 				log.error("[Chat] StompHandler: DISCONNECT 요청 시 세션 ID 없음");
