@@ -19,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 
 @Slf4j
 @Service
@@ -66,9 +68,9 @@ public class ChannelEventConsumerService {
 				serverLastInfo.addChannelLastInfo(
 						ChannelLastInfo.builder()
 								.channelId(channelId)
-								.lastReadMessageId(channelEventDto.getLastReadMessageId())
-								.lastAccessAt(channelEventDto.getEventTime())
-								.lastReadSequence(channelEventDto.getLastReadSequence())
+								.lastReadMessageId(channelEventDto.getLastReadMessageId() == null ? 0 : channelEventDto.getLastReadMessageId())
+								.lastAccessAt(channelEventDto.getEventTime() == null ? LocalDateTime.now() : channelEventDto.getEventTime())
+								.lastReadSequence(channelEventDto.getLastReadSequence() == null ? 0 : channelEventDto.getLastReadSequence())
 								.build()
 				);
 				memberRedisRepositoryImpl.saveServerLastInfo(memberId, channelEventDto.getServerId(), serverLastInfo);
