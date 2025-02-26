@@ -2,6 +2,9 @@ package com.bbebig.chatserver.domain.chat.controller;
 
 import com.bbebig.chatserver.domain.chat.repository.SessionManager;
 import com.bbebig.chatserver.domain.chat.service.KafkaProducerService;
+import com.bbebig.chatserver.global.util.SequenceRedisGenerator;
+import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
+import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.kafka.dto.ChannelEventDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
@@ -26,6 +29,8 @@ public class ChannelEventController {
 
 	private final ObjectMapper objectMapper;
 
+	private final SequenceRedisGenerator sequenceRedisGenerator;
+
 	// 현재 보고있는 채널 변경 이벤트 처리
 	@MessageMapping("/channel/enter")
 	public void enterChannel(Message<?> message) throws IOException {
@@ -43,6 +48,8 @@ public class ChannelEventController {
 		log.info("[Chat] ChannelEventController: 채널 퇴장 이벤트. memberId = {}, channelId = {}, sessionId = {}",
 				channelEventDto.getMemberId(), channelEventDto.getChannelId(), channelEventDto.getSessionId());
 		validateTimestamps(channelEventDto);
+
+		validateLastInfo(channelEventDto);
 		kafkaProducerService.sendMessageForChannel(channelEventDto);
 	}
 
@@ -51,6 +58,21 @@ public class ChannelEventController {
 		if (channelEventDto.getEventTime() == null || channelEventDto.getEventTime().isAfter(LocalDateTime.now())) {
 			log.warn("[Chat] ChannelEventController: eventTime 값이 유효하지 않아 기본값으로 설정. memberId: {}, received: {}", channelEventDto.getMemberId(), channelEventDto.getEventTime());
 			channelEventDto.setEventTime(LocalDateTime.now());
+		}
+	}
+
+	private void validateLastInfo(ChannelEventDto channelEventDto) {
+		if (channelEventDto.getLastReadMessageId() == null || channelEventDto.getLastReadSequence() == null) {
+			log.warn("[Chat] ChannelEventController: lastReadMessageId 또는 lastReadSequence 값이 null이므로 기본값으로 설정. memberId: {}, channelId: {}", channelEventDto.getMemberId(), channelEventDto.getChannelId());
+			Long seq = sequenceRedisGenerator.getSeqForServerChannel(channelEventDto.getChannelId());
+			if (seq != null) {
+				channelEventDto.setLastReadMessageId(seq);
+				channelEventDto.setLastReadSequence(seq);
+			} else {
+				log.error("[Chat] ChannelEventController: lastReadMessageId 또는 lastReadSequence 값이 null이고 Redis에서 시퀀스를 가져올 수 없음. memberId: {}, channelId: {}", channelEventDto.getMemberId(), channelEventDto.getChannelId());
+			}
+			channelEventDto.setLastReadMessageId(0L);
+			channelEventDto.setLastReadSequence(0L);
 		}
 	}
 
