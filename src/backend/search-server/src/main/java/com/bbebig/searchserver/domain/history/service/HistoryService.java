@@ -285,7 +285,7 @@ public class HistoryService {
 		if (lastSequence == null) {
 			Optional<ChannelChatMessage> topByChannelIdOrderByIdDesc = channelChatMessageRepository.findTopByChannelIdAndDeletedFalseOrderByIdDesc(channelId);
 			if (topByChannelIdOrderByIdDesc.isPresent()) {
-				lastSequence = topByChannelIdOrderByIdDesc.get().getId();
+				lastSequence = topByChannelIdOrderByIdDesc.get().getSequence() == null ? 0L : topByChannelIdOrderByIdDesc.get().getSequence();
 				serverRedisRepository.saveServerChannelSequence(channelId, lastSequence);
 			} else {
 				lastSequence = 0L;
