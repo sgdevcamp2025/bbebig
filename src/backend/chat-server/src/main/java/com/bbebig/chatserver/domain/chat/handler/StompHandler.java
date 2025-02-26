@@ -34,44 +34,44 @@ public class StompHandler implements ChannelInterceptor {
 	@Value("${spring.cloud.client.ip-address}")
 	private String serverIp;
 
-	@Override
-	public Message<?> preSend(Message<?> message, MessageChannel channel) {
-
-		StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(message);
-		String sessionId = headerAccessor.getSessionId(); // STOMP 세션 ID
-
-		log.info("[Chat] StompHandler Pre send: sessionId={}, command={}", sessionId, headerAccessor.getCommand());
-
-		// CONNECT 요청
-		if (StompCommand.CONNECT == headerAccessor.getCommand()) {
-			Long memberId = Long.parseLong(Objects.requireNonNull(headerAccessor.getFirstNativeHeader("MemberId")));
-//			Optional<String> accessToken = extractBearerToken(headerAccessor);
-//			if (accessToken.isEmpty()) {
-//				log.error("[Chat] StompHandler: 토큰 정보 없음");
-//				throw new MessageDeliveryException(ErrorStatus._UNAUTHORIZED.getMessage());
-//			}
-
+//	@Override
+//	public Message<?> preSend(Message<?> message, MessageChannel channel) {
 //
-//			// 2) Auth 서버로 검증
-//			AuthResponseDto authResponseDto = authClient.verifyToken(accessToken.get());
-//			if (authResponseDto == null || !authResponseDto.getCode().equals("AUTH108")) {
-//				log.error("[Chat] StompHandler: 토큰 검증 실패");
-//				throw new MessageDeliveryException(ErrorStatus._FORBIDDEN.getMessage());
-//			}
-
-//			Long memberId = authResponseDto.getResult().getMemberId();
-//			if (memberId != authResponseDto.getResult().getMemberId()) {
-//				log.error("[Chat] StompHandler: 토큰 정보와 사용자 정보 불일치");
-//				throw new MessageDeliveryException(ErrorStatus._UNAUTHORIZED.getMessage());
-//			}
-
-			// 세션 매니저에 (sessionId -> memberId) 저장
-			sessionManager.saveConnectSessionInfo(sessionId, memberId);
-			log.info("[Chat] StompHandler Pre send: CONNECT - memberId={}, sessionId={}", memberId, sessionId);
-
-		}
-		return message;
-	}
+//		StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(message);
+//		String sessionId = headerAccessor.getSessionId(); // STOMP 세션 ID
+//
+//		log.info("[Chat] StompHandler Pre send: sessionId={}, command={}", sessionId, headerAccessor.getCommand());
+//
+//		// CONNECT 요청
+//		if (StompCommand.CONNECT == headerAccessor.getCommand()) {
+//			Long memberId = Long.parseLong(Objects.requireNonNull(headerAccessor.getFirstNativeHeader("MemberId")));
+////			Optional<String> accessToken = extractBearerToken(headerAccessor);
+////			if (accessToken.isEmpty()) {
+////				log.error("[Chat] StompHandler: 토큰 정보 없음");
+////				throw new MessageDeliveryException(ErrorStatus._UNAUTHORIZED.getMessage());
+////			}
+//
+////
+////			// 2) Auth 서버로 검증
+////			AuthResponseDto authResponseDto = authClient.verifyToken(accessToken.get());
+////			if (authResponseDto == null || !authResponseDto.getCode().equals("AUTH108")) {
+////				log.error("[Chat] StompHandler: 토큰 검증 실패");
+////				throw new MessageDeliveryException(ErrorStatus._FORBIDDEN.getMessage());
+////			}
+//
+////			Long memberId = authResponseDto.getResult().getMemberId();
+////			if (memberId != authResponseDto.getResult().getMemberId()) {
+////				log.error("[Chat] StompHandler: 토큰 정보와 사용자 정보 불일치");
+////				throw new MessageDeliveryException(ErrorStatus._UNAUTHORIZED.getMessage());
+////			}
+//
+//			// 세션 매니저에 (sessionId -> memberId) 저장
+//			sessionManager.saveConnectSessionInfo(sessionId, memberId);
+//			log.info("[Chat] StompHandler Pre send: CONNECT - memberId={}, sessionId={}", memberId, sessionId);
+//
+//		}
+//		return message;
+//	}
 
 	@Override
 	public void postSend(Message<?> message, MessageChannel channel, boolean sent) {
