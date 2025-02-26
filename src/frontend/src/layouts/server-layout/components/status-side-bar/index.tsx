@@ -3,7 +3,7 @@ import { Suspense, useEffect, useRef, useState } from 'react'
 import Avatar from '@/components/avatar'
 import LoadingIcon from '@/components/loading-icon'
 import { useGetServerMember } from '@/hooks/queries/server/useGetServerMember'
-import { useStatusStore } from '@/hooks/store/use-status-store'
+import { useStatusStore } from '@/stores/use-status-store'
 import { CustomPresenceStatus } from '@/types/user'
 
 import UserProfileCard from '../user-profile-card'

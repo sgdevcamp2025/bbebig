@@ -1,23 +1,25 @@
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 
 import { useSignalingStomp } from '@/stores/use-signaling-stomp-store'
 import useUserStatus from '@/stores/use-user-status'
+import { errorLog, log } from '@/utils/log'
 
-const RTC_CONFIGURATION: RTCConfiguration = {
+const RTC_CONFIGURATION = {
   iceServers: [
-    { urls: 'stun:stun.l.google.com:19302' },
     {
-      urls: 'turn:13.125.13.209:3478?transport=udp',
-      username: 'kurentouser',
-      credential: 'kurentopassword'
-    }
+      urls: [
+        'stun:stun.l.google.com:19302',
+        'stun:stun1.l.google.com:19302',
+        'stun:stun2.l.google.com:19302'
+      ]
+    },
+    { urls: 'turn:13.125.13.209:3478', username: 'kurentouser', credential: 'kurentopassword' }
   ],
-  iceTransportPolicy: 'relay',
-  iceCandidatePoolSize: 0
-}
+  iceTransportPolicy: 'all',
+  iceCandidatePoolSize: 3
+} as RTCConfiguration
 
 const SUBSCRIPTION_ID = 'signaling-with'
-
 const DESTINATION_GROUP = '/sub/stream/mesh-group'
 const DESTINATION_DIRECT = '/sub/stream/mesh-direct'
 
@@ -39,126 +41,101 @@ export const useSignalingWithMesh = (
 ) => {
   const { send, subscribe, unsubscribe } = useSignalingStomp()
   const { joinVoiceChannel, leaveVoiceChannel } = useUserStatus()
-  const myStreamRef = useRef<MediaStream | null>(null)
-  const senderPcRef = useRef<RTCPeerConnection | null>(null)
-  const receiverPcsRef = useRef<Map<string, RTCPeerConnection>>(new Map())
+  const pcObj = useRef<
+    Record<string, { senderId: string; pc: RTCPeerConnection; stream: MediaStream | null }>
+  >({})
+  const pendingCandidatesRef = useRef(new Map<string, RTCIceCandidate[] | undefined>())
 
-  useEffect(() => {
-    return () => {
-      cleanup()
+  const createConnection = (senderId: string) => {
+    log('Creating sender peer connection for:', senderId)
+    if (pcObj.current[senderId]) {
+      log('Sender peer connection already exists for:', senderId)
+      return pcObj.current[senderId]
     }
-  }, [])
+    const myPeerConnection = new RTCPeerConnection(RTC_CONFIGURATION)
 
-  const createSenderPeerConnection = async (senderId: string) => {
-    const pc = new RTCPeerConnection(RTC_CONFIGURATION)
-    pc.ontrack = (event) => {
-      paintPeerFace(event.streams[0], senderId)
-    }
-
-    if (myStreamRef.current) {
-      myStreamRef.current.getTracks().forEach((track) => {
-        if (myStreamRef.current) pc.addTrack(track, myStreamRef.current)
-      })
+    myPeerConnection.oniceconnectionstatechange = () => {
+      log(`❄️ ICE Connection State Changed: ${myPeerConnection.iceConnectionState}`)
     }
 
-    const oldPc = senderPcRef.current
-
-    if (oldPc) {
-      oldPc.close()
+    myPeerConnection.ontrack = ({ streams }) => {
+      log('Received ontrack event:', streams)
+      streams.forEach((stream) => stream.getTracks().forEach((track) => (track.enabled = true)))
+      paintPeerFace(streams[0], senderId)
     }
 
-    senderPcRef.current = pc
-
-    senderPcRef.current.onicecandidate = (event) => {
-      if (event?.candidate) {
-        send('CANDIDATE', {
-          channelId: channelId,
+    myPeerConnection.onicecandidate = ({ candidate }) => {
+      if (candidate) {
+        send('/pub/stream/mesh-group', {
+          messageType: 'CANDIDATE',
+          channelId,
           senderId: userId,
-          candidate: event.candidate
+          candidate
         })
       }
+    }
+
+    pcObj.current[senderId] = { senderId, pc: myPeerConnection, stream: null }
+
+    return pcObj.current[senderId]
+  }
+
+  const getMedia = async (deviceId?: string) => {
+    const initialConstraints = {
+      audio: true,
+      video: { facingMode: 'user' }
+    }
+    const cameraConstraints = {
+      audio: true,
+      video: { deviceId: { exact: deviceId } }
+    }
+
+    try {
+      if (!pcObj.current[userId]) {
+        pcObj.current[userId] = createConnection(userId)
+      }
+
+      pcObj.current[userId].stream = await navigator.mediaDevices.getUserMedia(
+        deviceId ? cameraConstraints : initialConstraints
+      )
+
+      if (!deviceId) {
+        // mute default
+        pcObj.current[userId].stream //
+          .getAudioTracks()
+          .forEach((track) => (track.enabled = false))
+      }
+    } catch (error) {
+      log(error as string)
     }
   }
 
   const createOffer = async (pc: RTCPeerConnection, receiverId: string) => {
-    console.log(`${receiverId} 에게 제안 보내기`)
-
-    const offer = await pc.createOffer({
-      offerToReceiveAudio: true,
-      offerToReceiveVideo: true
+    console.log(`[Offer] Creating for ${receiverId}, current state:`, {
+      signalingState: pc.signalingState,
+      connectionState: pc.connectionState
     })
 
-    await pc.setRemoteDescription(offer)
+    try {
+      const offer = await pc.createOffer({
+        offerToReceiveAudio: true,
+        offerToReceiveVideo: true
+      })
 
-    send('/pub/stream/mesh-group', {
-      messageType: 'OFFER',
-      channelId: channelId,
-      senderId: userId,
-      receiverId,
-      sdp: offer
-    })
-  }
+      await pc.setLocalDescription(offer)
+      console.log('[Offer] Local description set')
 
-  const handleOffer = async (message: SignalingMessage) => {
-    console.log(`${message.senderId} 으로부터 offer 수신`)
-    const pc = receiverPcsRef.current.get(message.senderId) || senderPcRef.current
-
-    if (!pc || !message.sdp) return
-
-    await pc.setRemoteDescription(new RTCSessionDescription(message.sdp))
-    const answer = await pc.createAnswer()
-    await pc.setLocalDescription(answer)
-
-    send('/pub/stream/mesh-group', {
-      messageType: 'ANSWER',
-      channelId: channelId,
-      senderId: userId,
-      receiverId: message.receiverId,
-      sdp: answer
-    })
-  }
-
-  const paintPeerFace = (peerStream: MediaStream, id: string) => {
-    const stream = document.querySelector('#streams')
-    const video = document.createElement('video')
-    video.srcObject = peerStream
-    video.id = id
-    video.autoplay = true
-    video.playsInline = true
-    video.style.width = '100%'
-    video.style.height = '100%'
-    stream?.appendChild(video)
-  }
-
-  const handleUserJoined = (message: SignalingMessage) => {
-    if (!message.sdp || !senderPcRef.current) return
-    createSenderPeerConnection(message.senderId)
-    const remoteDescription = new RTCSessionDescription(message.sdp)
-    senderPcRef.current?.setRemoteDescription(remoteDescription)
-
-    senderPcRef.current?.createAnswer({
-      offerToReceiveAudio: true,
-      offerToReceiveVideo: true,
-      iceRestart: true
-    })
-
-    senderPcRef.current.onicecandidate = (event) => {
-      if (event?.candidate) {
-        send('CANDIDATE', {
-          channelId: channelId,
-          senderId: userId,
-          receiverId: message.senderId,
-          candidate: event.candidate
-        })
-      }
+      send('/pub/stream/mesh-group', {
+        messageType: 'OFFER',
+        channelId,
+        senderId: userId,
+        receiverId,
+        sdp: offer
+      })
+      console.log('[Offer] Sent to:', receiverId)
+    } catch (error) {
+      console.error('[Offer] Error creating offer:', error)
     }
-  }
-
-  const handleUserLeft = (message: SignalingMessage) => {
-    const pc = receiverPcsRef.current.get(message.senderId)
-    if (!pc) return
-    pc.close()
-    receiverPcsRef.current.delete(message.senderId)
   }
 
   const handleChannelFull = (message: SignalingMessage) => {
@@ -166,117 +143,287 @@ export const useSignalingWithMesh = (
     leaveVoiceChannel()
   }
 
-  const handleExistUsers = async (message: SignalingMessage) => {
-    const participants = message.participants
-
-    const offer = await senderPcRef.current?.createOffer({
-      offerToReceiveAudio: true,
-      offerToReceiveVideo: true,
-      iceRestart: true
-    })
-
-    await senderPcRef.current?.setLocalDescription(offer)
-
-    participants?.forEach((participant) => {
-      if (participant.toString() === userId && !senderPcRef.current) return
-
-      createSenderPeerConnection(participant.toString())
-
-      if (senderPcRef.current) {
-        createOffer(senderPcRef.current, participant.toString())
+  const handleUserLeft = (message: SignalingMessage) => {
+    const senderId = message.senderId
+    const leftUser = pcObj.current[senderId]
+    if (!leftUser) return
+    log(`👋 User ${senderId} left. Cleaning up their connection...`)
+    leftUser.pc.getSenders().forEach((sender) => {
+      if (sender.track) {
+        sender.track.stop()
       }
     })
+    leftUser.pc.close()
+    delete pcObj.current[senderId]
+    const videoElement = document.getElementById(`peer-${senderId}`)
+    if (videoElement) {
+      videoElement.remove()
+      log(`🧹 Removed video element for ${senderId}`)
+    }
+    log(`✅ Cleaned up resources for user: ${senderId}`)
   }
 
-  const handleAnswer = (message: SignalingMessage) => {
-    if (message.messageType !== 'ANSWER' || !message.sdp) return
-    const pc = receiverPcsRef.current.get(message.senderId)
-    if (!pc) return
-    pc.setRemoteDescription(new RTCSessionDescription(message.sdp))
+  const handleExistUsers = async (message: SignalingMessage) => {
+    if (!message.participants) return
+
+    for (const participant of message.participants) {
+      const newUser = createConnection(participant.toString())
+      await createOffer(newUser.pc, participant.toString())
+    }
   }
 
-  const handleCandidate = (message: SignalingMessage) => {
-    if (message.messageType !== 'CANDIDATE' || !message.candidate) return
-    const pc = receiverPcsRef.current.get(message.senderId)
-    if (!pc) return
-    pc.addIceCandidate(message.candidate)
+  const handleUserJoined = (message: SignalingMessage) => {
+    if (!message.sdp) return
+    createConnection(message.senderId)
+  }
+
+  const handleOffer = async (message: SignalingMessage) => {
+    if (!message.sdp || message.senderId === userId) return
+    log(`[Offer] Received from ${message.senderId}, current state:`, {
+      signalingState: pcObj.current[message.senderId]?.pc.signalingState,
+      connectionState: pcObj.current[message.senderId]?.pc.connectionState
+    })
+    let answer: RTCSessionDescriptionInit | undefined
+    const newUser = createConnection(message.senderId)
+
+    try {
+      await newUser.pc.setRemoteDescription(message.sdp)
+      log('[Offer] Remote description set')
+
+      if (newUser.pc.signalingState !== 'stable') {
+        answer = await newUser.pc.createAnswer()
+        await newUser.pc.setLocalDescription(answer)
+        log('[Offer] Local description (answer) set')
+      } else {
+        log('[Offer] Already in stable state')
+      }
+
+      await processPendingCandidates(message.senderId)
+      log('[Offer] Processed pending candidates')
+
+      send('/pub/stream/mesh-group', {
+        messageType: 'ANSWER',
+        channelId,
+        senderId: userId,
+        sdp: answer
+      })
+      log('[Offer] Answer sent')
+    } catch (error) {
+      errorLog('[Offer] Error:', error)
+    }
+  }
+
+  const handleAnswer = async (message: SignalingMessage) => {
+    if (message.messageType !== 'ANSWER' || !message.sdp || message.senderId === userId) return
+    log(`[Answer] Processing from ${message.senderId}`)
+
+    const currentUser = pcObj.current[message.senderId]
+    if (!currentUser) {
+      errorLog('[Answer] No PC found for sender:', message.senderId)
+      return
+    }
+
+    try {
+      log('[Answer] Current state:', {
+        signalingState: currentUser.pc.signalingState,
+        connectionState: currentUser.pc.connectionState,
+        iceConnectionState: currentUser.pc.iceConnectionState
+      })
+
+      // stable 상태가 아닐 때만 answer 처리
+      if (currentUser.pc.signalingState !== 'stable') {
+        await currentUser.pc.setRemoteDescription(new RTCSessionDescription(message.sdp))
+        log('[Answer] Remote description set successfully')
+        await processPendingCandidates(message.senderId)
+      } else {
+        log('[Answer] Already in stable state')
+      }
+    } catch (error) {
+      errorLog('[Answer] Error setting remote description:', error)
+      if (currentUser.pc.signalingState !== 'closed') {
+        currentUser.pc.close()
+        delete pcObj.current[message.senderId]
+        createConnection(message.senderId)
+      }
+    }
+  }
+
+  const handleCandidate = async (message: SignalingMessage) => {
+    if (message.messageType !== 'CANDIDATE' || !message.candidate || message.senderId === userId)
+      return
+
+    const currentUser = pcObj.current[message.senderId]
+
+    if (!currentUser) return
+
+    try {
+      // SDP가 설정되어 있는지 확인
+      if (!currentUser.pc.remoteDescription || !currentUser.pc.localDescription) {
+        log('SDP가 아직 설정되지 않음, candidate 저장')
+
+        // 해당 peer의 candidate 배열이 없으면 생성
+        if (!pendingCandidatesRef.current.has(message.senderId)) {
+          pendingCandidatesRef.current.set(message.senderId, [])
+        }
+
+        // candidate 임시 저장
+        pendingCandidatesRef.current.get(message.senderId)?.push(message.candidate)
+        return
+      }
+
+      await currentUser.pc.addIceCandidate(message.candidate)
+      log('ICE Candidate 추가 성공')
+    } catch (error) {
+      errorLog('ICE Candidate 추가 오류:', error)
+    }
+  }
+
+  // SDP 설정이 완료된 후 저장된 candidate 처리
+  const processPendingCandidates = async (senderId: string) => {
+    const currentUser = pcObj.current[senderId]
+    if (!currentUser || !pendingCandidatesRef.current.has(senderId)) return
+
+    const candidates = pendingCandidatesRef.current.get(senderId) || []
+    log(`Processing ${candidates.length} pending candidates for ${senderId}`)
+
+    for (const candidate of candidates) {
+      try {
+        await currentUser.pc.addIceCandidate(candidate)
+        log('Pending ICE Candidate 추가 성공')
+      } catch (error) {
+        errorLog('Pending ICE Candidate 추가 오류:', error)
+      }
+    }
+
+    // 처리 완료된 candidate 제거
+    pendingCandidatesRef.current.delete(senderId)
+  }
+
+  const paintPeerFace = (peerStream: MediaStream, id: string) => {
+    log(`Painting peer face for ${id}`, peerStream)
+    const existingVideo = document.getElementById(`peer-${id}`)
+    if (existingVideo) existingVideo.remove()
+
+    const streamContainer = document.querySelector('#streams')
+    if (!streamContainer) return errorLog('Stream container not found')
+
+    const videoContainer = document.createElement('div')
+    videoContainer.className = 'peer-video-container'
+    videoContainer.id = `peer-${id}`
+    videoContainer.style.width = '300px'
+    videoContainer.style.height = '200px'
+    videoContainer.style.margin = '10px'
+
+    const video = document.createElement('video')
+    video.srcObject = peerStream
+    video.autoplay = true
+    video.playsInline = true
+    video.muted = id === userId
+    video.style.width = '100%'
+    video.style.height = '100%'
+    video.style.objectFit = 'cover'
+
+    video.onloadedmetadata = () => {
+      log(`Video loaded for peer ${id}`)
+      video.play().catch((e) => errorLog('Video playback failed:', e))
+    }
+
+    videoContainer.appendChild(video)
+    streamContainer.appendChild(videoContainer)
   }
 
   const initialize = () => {
     subscribe(
       SUBSCRIPTION_ID + '-mesh-group',
-      DESTINATION_GROUP + `/${channelId}`,
+      `${DESTINATION_GROUP}/${channelId}`,
       (message: SignalingMessage) => {
-        console.log('서버 이벤트 수신, message-group', message)
-        switch (message.messageType) {
-          case 'USER_JOINED':
-            handleUserJoined(message)
-            break
-          case 'USER_LEFT':
-            handleUserLeft(message)
-            break
-          case 'OFFER':
-            handleOffer(message)
-            break
-          case 'ANSWER':
-            handleAnswer(message)
-            break
-          case 'CANDIDATE':
-            handleCandidate(message)
-            break
-          default:
-            throw new Error(`Unknown message type: ${message.messageType}`)
+        log('🔥 Received message:', message)
+        if (filterMessage(message)) {
+          switch (message.messageType) {
+            case 'USER_JOINED':
+              handleUserJoined(message)
+              break
+            case 'USER_LEFT':
+              handleUserLeft(message)
+              break
+            case 'OFFER':
+              handleOffer(message)
+              break
+            case 'ANSWER':
+              handleAnswer(message)
+              break
+            case 'CANDIDATE':
+              handleCandidate(message)
+              break
+            default:
+              throw new Error(`Unknown message type: ${message.messageType}`)
+          }
+        }
+      }
+    )
+    subscribe(
+      SUBSCRIPTION_ID + '-mesh-direct',
+      `${DESTINATION_DIRECT}/${userId}`,
+      (message: SignalingMessage) => {
+        log('🔥 Received message:', message)
+        if (filterMessage(message)) {
+          switch (message.messageType) {
+            case 'CHANNEL_FULL':
+              handleChannelFull(message)
+              break
+            case 'EXIST_USERS':
+              handleExistUsers(message)
+              break
+            default:
+              throw new Error(`Unknown message type: ${message.messageType}`)
+          }
         }
       }
     )
 
-    subscribe(
-      SUBSCRIPTION_ID + '-mesh-direct',
-      DESTINATION_DIRECT + `/${userId}`,
-      (message: SignalingMessage) => {
-        console.log('서버 이벤트 수신, message-direct', message)
-        switch (message.messageType) {
-          case 'CHANNEL_FULL':
-            handleChannelFull(message)
-            break
-          case 'EXIST_USERS':
-            handleExistUsers(message)
-            break
-          default:
-            throw new Error(`Unknown message type: ${message.messageType}`)
-        }
-      }
-    )
+    getMedia()
+  }
+
+  const filterMessage = (message: SignalingMessage) => {
+    if (
+      message.messageType === 'OFFER' ||
+      message.messageType === 'ANSWER' ||
+      message.messageType === 'CANDIDATE' ||
+      message.messageType === 'USER_JOINED' ||
+      message.messageType === 'USER_LEFT'
+    ) {
+      return message.senderId !== userId
+    }
+    return true
   }
 
   const cleanup = () => {
-    unsubscribe(SUBSCRIPTION_ID + '-mesh-group', DESTINATION_GROUP)
-    unsubscribe(SUBSCRIPTION_ID + '-mesh-direct', DESTINATION_DIRECT)
+    log('🧹 Cleaning up WebRTC connections...')
 
-    receiverPcsRef.current.forEach((pc) => {
-      pc.close()
+    // 🔹 STOMP 구독 취소
+    unsubscribe(`${SUBSCRIPTION_ID}-mesh-group`, DESTINATION_GROUP)
+    unsubscribe(`${SUBSCRIPTION_ID}-mesh-direct`, DESTINATION_DIRECT)
+
+    // 🔹 모든 수신 PeerConnection 정리
+    Object.values(pcObj.current).forEach((user) => {
+      user.pc.getSenders().forEach((sender) => {
+        if (sender.track) {
+          sender.track.stop() // 🎯 트랙 정리
+        }
+      })
+      user.pc.close() // 🎯 연결 종료
+      log(`🛑 Closed receiver PC for: ${user.pc}`)
     })
-    receiverPcsRef.current.clear()
+    pcObj.current = {}
+
+    log('✅ Cleanup completed.')
   }
 
   const joinChannel = () => {
     initialize()
-
-    const message = {
-      messageType: 'JOIN_CHANNEL',
-      channelId,
-      senderId: userId
-    }
-
-    send('/pub/stream/mesh-group', message)
-
-    createSenderPeerConnection(userId)
-
-    joinVoiceChannel({
-      channelId: parseInt(channelId),
-      channelName: channelName,
-      serverName: serverName
-    })
+    send('/pub/stream/mesh-group', { messageType: 'JOIN_CHANNEL', channelId, senderId: userId })
+    createConnection(userId)
+    joinVoiceChannel({ channelId: parseInt(channelId), channelName, serverName })
   }
 
   const leaveChannel = () => {
@@ -285,7 +432,6 @@ export const useSignalingWithMesh = (
       channelId: parseInt(channelId),
       senderId: userId
     })
-
     cleanup()
     leaveVoiceChannel()
   }

@@ -57,7 +57,6 @@ export const useSignalingStomp = create<StompState>((set, get) => ({
     const client = get().client
     if (!client) throw new Error('Client is not connected')
 
-    console.log(body, 'body')
     client.publish({
       destination,
       body: JSON.stringify(body)

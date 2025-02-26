@@ -50,8 +50,6 @@ function VideoComponent({
     return { ...user }
   })
 
-  console.log(voiceUsers, 'voiceUsers')
-
   return (
     <div className='flex flex-1 h-screen'>
       <div
@@ -82,10 +80,6 @@ function VideoComponent({
           </section>
           <div />
           <section className='flex-1 flex flex-col items-center justify-center gap-2'>
-            <ul
-              id='streams'
-              className='flex gap-2 flex-wrap mb-8 w-full justify-center'
-            />
             {!isInVoiceChannel && (
               <>
                 <h4 className='text-gray-10 text-3xl font-bold'>{channelName}</h4>
@@ -103,33 +97,39 @@ function VideoComponent({
               </>
             )}
             {isInVoiceChannel && (
-              <div
-                className={cn(
-                  'absolute bottom-4 opacity-0 flex items-center justify-center gap-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 group-hover:blur-none'
-                )}>
-                <button
-                  type='button'
-                  onClick={() => {
-                    console.log(voiceUsers, 'voiceUsers')
-                  }}
-                  className='w-14 h-14 rounded-full bg-[#282d31] flex items-center justify-center'>
-                  <img
-                    alt='음성 채널 소리 끄기'
-                    src='/icon/channel/microphone-muted.svg'
-                    className='w-6 h-6'
-                  />
-                </button>
-                <button
-                  type='button'
-                  onClick={handleLeaveVoiceChannel}
-                  className='w-14 h-14 rounded-full bg-red-100 flex items-center justify-center'>
-                  <img
-                    alt='음성 채널 나가기'
-                    src='/icon/channel/voice.svg'
-                    className='w-6 h-6'
-                  />
-                </button>
-              </div>
+              <>
+                <div
+                  id='streams'
+                  className='flex gap-2 flex-wrap mb-8 w-full justify-center'
+                />
+                <div
+                  className={cn(
+                    'absolute bottom-4 opacity-0 flex items-center justify-center gap-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 group-hover:blur-none'
+                  )}>
+                  <button
+                    type='button'
+                    onClick={() => {
+                      console.log(voiceUsers, 'voiceUsers')
+                    }}
+                    className='w-14 h-14 rounded-full bg-[#282d31] flex items-center justify-center'>
+                    <img
+                      alt='음성 채널 소리 끄기'
+                      src='/icon/channel/microphone-muted.svg'
+                      className='w-6 h-6'
+                    />
+                  </button>
+                  <button
+                    type='button'
+                    onClick={handleLeaveVoiceChannel}
+                    className='w-14 h-14 rounded-full bg-red-100 flex items-center justify-center'>
+                    <img
+                      alt='음성 채널 나가기'
+                      src='/icon/channel/voice.svg'
+                      className='w-6 h-6'
+                    />
+                  </button>
+                </div>
+              </>
             )}
           </section>
         </div>
