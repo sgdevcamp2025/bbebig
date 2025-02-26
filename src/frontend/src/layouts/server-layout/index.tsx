@@ -47,7 +47,7 @@ function ServerLayout() {
 
   return (
     <div className='flex h-screen w-full'>
-      <ServerSideBar serverId={serverId} />
+      <ServerSideBar serverId={serverId} channelId={channelId} />
 
       <main className='flex-1 bg-discord-gray-600 overflow-hidden'>
         <Outlet />
