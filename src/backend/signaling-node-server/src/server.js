@@ -83,19 +83,19 @@ wsServer.on("connection", (socket) => {
     });
 
   socket.on("offer", ({offer, remoteSocketId}) => {
-    socket.to(remoteSocketId).emit("offer", {offer, remoteSocketId:socket.id});
+    socket.emit(`offer/${remoteSocketId}`, {offer, remoteSocketId:socket.id});
 
     console.log("[NODE-SIGNAL] Offer");
   });
 
   socket.on("answer", ({answer, remoteSocketId}) => {
-    socket.to(remoteSocketId).emit("answer", {answer, remoteSocketId:socket.id});
+    socket.emit(`answer/${remoteSocketId}`, {answer, remoteSocketId:socket.id});
 
     console.log("[NODE-SIGNAL] Answer");
   });
 
   socket.on("ice", ({ice, remoteSocketId}) => {
-    socket.to(remoteSocketId).emit("ice", {ice, remoteSocketId:socket.id});
+    socket.emit(`ice/${remoteSocketId}`, {ice, remoteSocketId:socket.id});
 
     console.log("[NODE-SIGNAL] Ice");
   });
