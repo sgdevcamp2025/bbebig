@@ -1,131 +1,89 @@
-import express from "express";
-// import WebSocket from "ws";
-import SocketIO from "socket.io";
 import http from "http";
+import express from "express";
+import { Server } from "socket.io";
 
-const PORT = process.env.PORT || 9090;
+const PORT = 9090;
 
-const server = express();
+const app = express();
+const httpServer = http.createServer(app);
+const wsServer = new Server(httpServer, {
+    cors: {
+        origin: ["http://localhost:5173", "https://bbebig.netlify.app"], // 클라이언트 주소
+        methods: ["GET", "POST"],
+        credentials: true,
+    },
+});
 
-const httpServer = http.createServer(server);
-const wsServer = SocketIO(httpServer);
+// 메모리 내에서 방 별 유저 관리
+const roomUsers = {};
 
-let roomObjArr = [
-  // {
-  //   roomName,
-  //   currentNum,
-  //   users: [
-  //     {
-  //       socketId,
-  //       nickname,
-  //     },
-  //   ],
-  // },
-];
-const MAXIMUM = 5;
+// 기본 API 라우트
+app.get("/", (req, res) => {
+    res.send("Hello from Express server with CORS enabled!");
+});
+
+// 특정 방의 유저 목록 조회 API
+app.get("/api/signal/participants/:roomId", (req, res) => {
+    const { roomId } = req.params;
+    console.log("API CALL");
+    const users = roomUsers[roomId] || [];
+    res.json({ roomId, users });
+});
 
 wsServer.on("connection", (socket) => {
-  console.log("[NODE-SIGNAL] 연결 완료");
+    console.log("✅ A client connected:", socket.id);
 
-  let myRoomName = null;
-  let myNickname = null;
-
-    socket.on("join_room", ({roomId, userId}) => {
-        myRoomName = roomId;
-        myNickname = userId;
-
-        let isRoomExist = false;
-        let targetRoomObj = null;
-
-        for (let i = 0; i < roomObjArr.length; ++i) {
-            if (roomObjArr[i].roomId === roomId) {
-                if (roomObjArr[i].currentNum >= MAXIMUM) {
-                    socket.emit("channel_full"); // 방이 가득 찬 경우 클라이언트에게 알림
-                    return;
-                }
-                isRoomExist = true;
-                targetRoomObj = roomObjArr[i];
-                break;
-            }
-        }
-
-        if (!isRoomExist) {
-            targetRoomObj = {
-                roomId,
-                currentNum: 0,
-                users: [],
-            };
-            roomObjArr.push(targetRoomObj);
-        }
-
-        targetRoomObj.users.push({
-            socketId: socket.id,
-            userId,
-        });
-        ++targetRoomObj.currentNum;
-
+    socket.on("join_room", ({ roomId, userId }) => {
         socket.join(roomId);
+        socket.roomId = roomId;
+        socket.userId = userId;
 
-        // 본인에게 기존 멤버 정보 전달 (EXIST_USERS)
-        const participants = targetRoomObj.users.map(user => user.userId);
-        socket.emit("exist_users", {
-            channelId: roomId,
-            participants
-        });
+        // 메모리에서 방에 속한 유저 목록 관리
+        if (!roomUsers[roomId]) {
+            roomUsers[roomId] = [];
+        }
+        roomUsers[roomId].push(userId);
 
-        // 전체 채널에 새로운 멤버 입장 알림 (USER_JOINED)
-        socket.to(roomId).emit("user_joined", {
-            channelId: roomId,
-            senderId: userId
-        });
+        // 해당 방의 모든 사용자 목록을 새로고침하도록 emit
+        wsServer.to(roomId).emit("update_user_list", roomUsers[roomId]);
 
-        console.log(`[NODE-SIGNAL] ${userId} joined channel: ${roomId}`);
+        socket.to(roomId).emit("welcome", socket.id, userId);
     });
 
-  socket.on("offer", ({offer, remoteSocketId}) => {
-    socket.emit(`offer/${remoteSocketId}`, {offer, remoteSocketId:socket.id});
+    // WebRTC offer
+    socket.on("offer", (offer, remoteId) => {
+        wsServer.to(remoteId).emit("offer", offer, socket.id, socket.userId);
+    });
 
-    console.log("[NODE-SIGNAL] Offer");
-  });
+    // WebRTC answer
+    socket.on("answer", (answer, remoteId) => {
+        wsServer.to(remoteId).emit("answer", answer, socket.id, socket.userId);
+    });
 
-  socket.on("answer", ({answer, remoteSocketId}) => {
-    socket.emit(`answer/${remoteSocketId}`, {answer, remoteSocketId:socket.id});
+    // ICE candidate
+    socket.on("ice", (ice, remoteId) => {
+        wsServer.to(remoteId).emit("ice", ice, socket.id, socket.userId);
+    });
 
-    console.log("[NODE-SIGNAL] Answer");
-  });
+    socket.on("disconnect", () => {
+        console.log("❌ Client disconnected:", socket.id);
 
-  socket.on("ice", ({ice, remoteSocketId}) => {
-    socket.emit(`ice/${remoteSocketId}`, {ice, remoteSocketId:socket.id});
+        if (socket.roomId && socket.userId) {
+            // 해당 방에서 유저 제거
+            if (roomUsers[socket.roomId]) {
+                roomUsers[socket.roomId] = roomUsers[socket.roomId].filter(user => user !== socket.userId);
+                if (roomUsers[socket.roomId].length === 0) {
+                    delete roomUsers[socket.roomId]; // 방이 비면 삭제
+                }
+            }
 
-    console.log("[NODE-SIGNAL] Ice");
-  });
-
-  socket.on("disconnecting", () => {
-      if (!myRoomName) return;
-
-      // 퇴장 이벤트 전송
-      socket.to(myRoomName).emit("user_left", {
-          channelId: myRoomName,
-          senderId: myNickname
-      });
-
-      // 현재 방에서 유저 제거
-      for (let i = 0; i < roomObjArr.length; ++i) {
-          if (roomObjArr[i].roomId === myRoomName) {
-              roomObjArr[i].users = roomObjArr[i].users.filter(user => user.socketId !== socket.id);
-              --roomObjArr[i].currentNum;
-
-              if (roomObjArr[i].currentNum === 0) {
-                  roomObjArr.splice(i, 1); // 방 삭제
-              }
-              break;
-          }
-      }
-
-      console.log(`[NODE-SIGNAL] ${myNickname} left channel: ${myRoomName}`);
+            // 방의 새로운 사용자 목록을 클라이언트에 업데이트
+            wsServer.to(socket.roomId).emit("update_user_list", roomUsers[socket.roomId] || []);
+            socket.to(socket.roomId).emit("user_left", socket.id);
+        }
     });
 });
 
-const handleListen = () =>
-    console.log(`✅ Listening on http://localhost:${PORT}`);
-httpServer.listen(PORT, handleListen);
+httpServer.listen(PORT, () => {
+    console.log(`✅ Server is running on http://localhost:${PORT}`);
+});
