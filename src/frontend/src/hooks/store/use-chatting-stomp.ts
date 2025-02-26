@@ -10,6 +10,7 @@ import { chattingStompInstance } from '@/apis/config/stomp-instance'
 import { COOKIE_KEYS } from '@/constants/keys'
 import { ChannelVisitEventRequest, ChattingMessageEvent } from '@/types/chat-stomp-event'
 import cookie from '@/utils/cookie'
+import { handlePersonalNotificationEvent } from '@/utils/personal-notification-event-handler'
 import { handleServerEvent } from '@/utils/server-event-handler'
 
 import useGetSelfUser from '../queries/user/useGetSelfUser'
@@ -112,20 +113,29 @@ export const useChattingStomp = () => {
   }
 
   // 개인 알림 구독
-  const subscribeToPersonal = (callback: (message: unknown) => void) => {
-    if (checkConnection() && clientInstance) {
-      const destination = `/queue/${memberId}`
-      console.log(`[✅] 개인 알림 ${memberId} 구독 시작`)
-
-      clientInstance.subscribe(
-        destination,
-        (message: IMessage) => {
-          console.log(`[📩] 개인 알림 ${memberId} 메시지 수신:`, message.body)
-          callback(JSON.parse(message.body))
-        },
-        { id: `chat-${memberId}`, MemberId: memberId }
-      )
+  const subscribeToPersonal = async (callback: (message: unknown) => void) => {
+    if (!checkConnection()) {
+      console.log('[❌] 채팅 서버에 연결되지 않음.')
+      return
     }
+
+    const destination = `/queue/notification/${memberId}`
+    console.log(`[✅] 개인 알림 ${memberId} 구독 시작`)
+
+    clientInstance.subscribe(
+      destination,
+      (message: IMessage) => {
+        try {
+          const messageBody = JSON.parse(message.body)
+          console.log(`[📩] 개인 알림 ${memberId} 메시지 수신:`, message.body)
+          handlePersonalNotificationEvent(messageBody)
+          callback?.(messageBody)
+        } catch (error) {
+          console.error('[❌] 개인 알림 이벤트 처리 중 오류 발생:', error)
+        }
+      },
+      { id: `chat-${memberId}`, MemberId: memberId }
+    )
   }
 
   // 연결 종료

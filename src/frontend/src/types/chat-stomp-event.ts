@@ -14,6 +14,8 @@ export interface BaseServerEvent {
   type: string
 }
 
+export type PersonalNotificationEvent = FriendActionEvent | FriendPresenceEvent | ServerUnreadEvent
+
 // 🛜 SUBSCRIBE
 // 서버 채널 생성/수정/삭제 이벤트
 export interface ServerChannelEvent extends BaseServerEvent {
@@ -82,4 +84,36 @@ export interface ChannelVisitEventRequest extends BaseServerEvent {
   channelId: number
   lastReadMessageId?: string
   eventTime?: string
+}
+
+// 친구 관련 이벤트 (친구 요청, 수신, 수락, 거절 등)
+export interface FriendActionEvent {
+  memberId: number
+  type: 'FRIEND_ACTION'
+  friendId: number
+  friendMemberId: number
+  friendNickName: string
+  friendAvatarUrl: string
+  friendBannerUrl: string
+  status: 'RECEIVE' | 'PENDING' | 'ACCEPT' | 'REJECT' | 'CANCEL' | 'DELETE' | 'UPDATE'
+}
+
+// 친구 활성화 상태 이벤트
+export interface FriendPresenceEvent {
+  memberId: number
+  type: 'FRIEND_PRESENCE'
+  friendId: number
+  friendMemberId: number
+  globalStatus: CustomPresenceStatus
+}
+
+// 서버 안 읽은 메세지 이벤트
+export interface ServerUnreadEvent {
+  memberId: number
+  type: 'SERVER_UNREAD'
+  serverId: number
+  channelId: number
+  sequence: number
+  status: 'UNREAD' | 'READ'
+  unreadCount: number
 }

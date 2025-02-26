@@ -33,7 +33,7 @@ function ServerIcon({
       className='flex items-center w-full justify-center relative'
       {...props}>
       {unreadCount !== undefined && unreadCount > 0 && (
-        <span className='absolute top-0 right-0 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full'>
+        <span className='absolute bottom-0 right-1 bg-red-500 border-2 border-black-80 text-white text-[10px] font-medium min-w-[18px] h-[168x] flex items-center justify-center rounded-full z-10'>
           {unreadCount > 99 ? '99+' : unreadCount}
         </span>
       )}
