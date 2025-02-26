@@ -65,18 +65,22 @@ public class ChannelEventConsumerService {
 		if (memberRedisRepositoryImpl.existsServerLastInfo(memberId, channelEventDto.getServerId())) {
 			ServerLastInfo serverLastInfo = memberRedisRepositoryImpl.getServerLastInfo(memberId, channelEventDto.getServerId());
 			if (!serverLastInfo.existChannelLastInfo(channelId)) {
-				serverLastInfo.addChannelLastInfo(
-						ChannelLastInfo.builder()
-								.channelId(channelId)
-								.lastReadMessageId(channelEventDto.getLastReadMessageId() == null ? 0 : channelEventDto.getLastReadMessageId())
-								.lastAccessAt(channelEventDto.getEventTime() == null ? LocalDateTime.now() : channelEventDto.getEventTime())
-								.lastReadSequence(channelEventDto.getLastReadSequence() == null ? 0 : channelEventDto.getLastReadSequence())
-								.build()
-				);
-				memberRedisRepositoryImpl.saveServerLastInfo(memberId, channelEventDto.getServerId(), serverLastInfo);
+				if (channelEventDto.getType() == ChannelEventType.CHANNEL_LEAVE) {
+					serverLastInfo.addChannelLastInfo(
+							ChannelLastInfo.builder()
+									.channelId(channelId)
+									.lastReadMessageId(channelEventDto.getLastReadMessageId() == null ? 0 : channelEventDto.getLastReadMessageId())
+									.lastAccessAt(channelEventDto.getEventTime() == null ? LocalDateTime.now() : channelEventDto.getEventTime())
+									.lastReadSequence(channelEventDto.getLastReadSequence() == null ? 0 : channelEventDto.getLastReadSequence())
+									.build()
+					);
+					memberRedisRepositoryImpl.saveServerLastInfo(memberId, channelEventDto.getServerId(), serverLastInfo);
+				}
 			} else {
-				serverLastInfo.updateChannelLastInfo(channelId, channelEventDto.getLastReadMessageId(), channelEventDto.getLastReadSequence(),channelEventDto.getEventTime());
-				memberRedisRepositoryImpl.saveServerLastInfo(memberId, channelEventDto.getServerId(), serverLastInfo);
+				if (channelEventDto.getType() == ChannelEventType.CHANNEL_LEAVE) {
+					serverLastInfo.updateChannelLastInfo(channelId, channelEventDto.getLastReadMessageId(), channelEventDto.getLastReadSequence(),channelEventDto.getEventTime());
+					memberRedisRepositoryImpl.saveServerLastInfo(memberId, channelEventDto.getServerId(), serverLastInfo);
+				}
 			}
 		} else {
 			ServerLastInfo serverLastInfo = serverService.getServerLastInfo(memberId, channelEventDto.getServerId());
