@@ -411,7 +411,7 @@ public class ServerService {
        Map<Long, ChannelLastInfo> result = new HashMap<>();
 
         for (Long channelId : channelIdList) {
-            result.put(channelId, getChannelLastInfo(channelId, memberId));
+            result.put(channelId, getChannelLastInfo(channelId, serverMember.getId()));
         }
         ServerLastInfo lastInfo = ServerLastInfo.builder()
                 .serverId(serverId)
@@ -424,8 +424,8 @@ public class ServerService {
         return lastInfo;
     }
 
-    private ChannelLastInfo getChannelLastInfo(Long channelId, Long memberId) {
-        ChannelMember channelMember = channelMemberRepository.findByServerMemberIdAndChannelId(memberId, channelId)
+    private ChannelLastInfo getChannelLastInfo(Long channelId, Long serverMemberId) {
+        ChannelMember channelMember = channelMemberRepository.findByServerMemberIdAndChannelId(serverMemberId, channelId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.CHANNEL_MEMBER_NOT_FOUND));
 
         return ChannelLastInfo.builder()

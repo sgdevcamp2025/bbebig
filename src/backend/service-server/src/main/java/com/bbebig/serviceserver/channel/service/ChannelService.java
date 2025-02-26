@@ -193,7 +193,10 @@ public class ChannelService {
     }
 
     public ChannelLastInfo getChannelLastInfo(Long channelId, Long memberId) {
-        ChannelMember channelMember = channelMemberRepository.findByServerMemberIdAndChannelId(memberId, channelId)
+        ServerMember serverMember = serverMemberRepository.findById(memberId)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_MEMBERS_NOT_FOUND));
+
+        ChannelMember channelMember = channelMemberRepository.findByServerMemberIdAndChannelId(serverMember.getId(), channelId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.CHANNEL_MEMBER_NOT_FOUND));
 
         return ChannelLastInfo.builder()
