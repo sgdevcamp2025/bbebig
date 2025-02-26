@@ -401,6 +401,7 @@ public class ServerService {
         ServerMember serverMember = serverMemberRepository.findByMemberIdAndServer(memberId, server)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_MEMBERS_NOT_FOUND));
 
+        log.info("[Service] ServerService : 캐싱된 서버 마지막 정보: {}", memberRedisRepository.existsServerLastInfo(memberId, serverId));
         if (memberRedisRepository.existsServerLastInfo(memberId, serverId)) {
             return memberRedisRepository.getServerLastInfo(memberId, serverId);
         }
