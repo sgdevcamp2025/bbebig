@@ -89,6 +89,7 @@ public enum ErrorStatus implements BaseErrorCode {
     MESSAGE_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "SEARCH403", "이미 삭제된 메시지입니다."),
     SEARCH_OPTION_INVALID(HttpStatus.BAD_REQUEST, "SEARCH404", "검색 옵션을 확인해주세요."),
     CHAT_TYPE_INVALID(HttpStatus.BAD_REQUEST, "SEARCH405", "채팅 타입을 확인해주세요."),
+    CHANNEL_LAST_INFO_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH406", "채널 마지막 정보를 찾을 수 없습니다.")
     ;
 
     private final HttpStatus httpStatus;
