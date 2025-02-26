@@ -25,112 +25,111 @@ let roomObjArr = [
 const MAXIMUM = 5;
 
 wsServer.on("connection", (socket) => {
-  console.log("[Node-Signal] 연결 완료");
+  console.log("[NODE-SIGNAL] 연결 완료");
 
   let myRoomName = null;
   let myNickname = null;
 
-  socket.on("join_room", (roomName, nickname) => {
-    myRoomName = roomName;
-    myNickname = nickname;
+    socket.on("join_room", (roomName, nickname) => {
+        myRoomName = roomName;
+        myNickname = nickname;
 
-    let isRoomExist = false;
-    let targetRoomObj = null;
+        let isRoomExist = false;
+        let targetRoomObj = null;
 
-    console.log("[Node-Signal] 방 참여");
-
-    // forEach를 사용하지 않는 이유: callback함수를 사용하기 때문에 return이 효용없음.
-    for (let i = 0; i < roomObjArr.length; ++i) {
-      if (roomObjArr[i].roomName === roomName) {
-        // Reject join the room
-        if (roomObjArr[i].currentNum >= MAXIMUM) {
-          socket.emit("reject_join");
-
-          console.log("[Node-Signal] 방 참여자가 최대, 참여 거부");
-          return;
+        for (let i = 0; i < roomObjArr.length; ++i) {
+            if (roomObjArr[i].roomName === roomName) {
+                if (roomObjArr[i].currentNum >= MAXIMUM) {
+                    socket.emit("channel_full"); // 방이 가득 찬 경우 클라이언트에게 알림
+                    return;
+                }
+                isRoomExist = true;
+                targetRoomObj = roomObjArr[i];
+                break;
+            }
         }
 
-        isRoomExist = true;
-        targetRoomObj = roomObjArr[i];
-        break;
-      }
-    }
+        if (!isRoomExist) {
+            targetRoomObj = {
+                roomName,
+                currentNum: 0,
+                users: [],
+            };
+            roomObjArr.push(targetRoomObj);
+        }
 
-    // Create room
-    if (!isRoomExist) {
-      targetRoomObj = {
-        roomName,
-        currentNum: 0,
-        users: [],
-      };
-      roomObjArr.push(targetRoomObj);
-    }
+        targetRoomObj.users.push({
+            socketId: socket.id,
+            nickname,
+        });
+        ++targetRoomObj.currentNum;
 
-    //Join the room
-    targetRoomObj.users.push({
-      socketId: socket.id,
-      nickname,
+        socket.join(roomName);
+
+        // 본인에게 기존 멤버 정보 전달 (EXIST_USERS)
+        const participants = targetRoomObj.users.map(user => user.nickname);
+        socket.emit("exist_users", {
+            channelId: roomName,
+            participants
+        });
+
+        // 전체 채널에 새로운 멤버 입장 알림 (USER_JOINED)
+        socket.to(roomName).emit("user_joined", {
+            channelId: roomName,
+            senderId: nickname
+        });
+
+        console.log(`[NODE-SIGNAL] ${nickname} joined channel: ${roomName}`);
     });
-    ++targetRoomObj.currentNum;
-
-    socket.join(roomName);
-    socket.emit("accept_join", targetRoomObj.users);
-
-    console.log("[Node-Signal] 방 참여 승인");
-  });
 
   socket.on("offer", (offer, remoteSocketId, localNickname) => {
     socket.to(remoteSocketId).emit("offer", offer, socket.id, localNickname);
 
-    console.log("[Node-Signal] Offer");
+    console.log("[NODE-SIGNAL] Offer");
   });
 
   socket.on("answer", (answer, remoteSocketId) => {
     socket.to(remoteSocketId).emit("answer", answer, socket.id);
 
-    console.log("[Node-Signal] Answer");
+    console.log("[NODE-SIGNAL] Answer");
   });
 
   socket.on("ice", (ice, remoteSocketId) => {
     socket.to(remoteSocketId).emit("ice", ice, socket.id);
 
-    console.log("[Node-Signal] Ice");
+    console.log("[NODE-SIGNAL] Ice");
   });
 
   socket.on("chat", (message, roomName) => {
     socket.to(roomName).emit("chat", message);
 
-    console.log("[Node-Signal] Chat");
+    console.log("[NODE-SIGNAL] Chat");
   });
 
   socket.on("disconnecting", () => {
-    socket.to(myRoomName).emit("leave_room", socket.id, myNickname);
+      if (!myRoomName) return;
 
-    let isRoomEmpty = false;
-    for (let i = 0; i < roomObjArr.length; ++i) {
-      if (roomObjArr[i].roomName === myRoomName) {
-        const newUsers = roomObjArr[i].users.filter(
-            (user) => user.socketId != socket.id
-        );
-        roomObjArr[i].users = newUsers;
-        --roomObjArr[i].currentNum;
+      // 퇴장 이벤트 전송
+      socket.to(myRoomName).emit("user_left", {
+          channelId: myRoomName,
+          senderId: myNickname
+      });
 
-        if (roomObjArr[i].currentNum == 0) {
-          isRoomEmpty = true;
-        }
+      // 현재 방에서 유저 제거
+      for (let i = 0; i < roomObjArr.length; ++i) {
+          if (roomObjArr[i].roomName === myRoomName) {
+              roomObjArr[i].users = roomObjArr[i].users.filter(user => user.socketId !== socket.id);
+              --roomObjArr[i].currentNum;
+
+              if (roomObjArr[i].currentNum === 0) {
+                  roomObjArr.splice(i, 1); // 방 삭제
+              }
+              break;
+          }
       }
-    }
 
-    // Delete room
-    if (isRoomEmpty) {
-      const newRoomObjArr = roomObjArr.filter(
-          (roomObj) => roomObj.currentNum != 0
-      );
-      roomObjArr = newRoomObjArr;
-    }
-
-    console.log("[Node-Signal] 방 떠나기");
-  });
+      console.log(`[NODE-SIGNAL] ${myNickname} left channel: ${myRoomName}`);
+    });
 });
 
 const handleListen = () =>
