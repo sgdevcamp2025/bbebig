@@ -8,9 +8,18 @@ type Props = {
   label: string
   isActive: boolean
   hasAlarm?: boolean
+  unreadCount?: number
 } & ComponentPropsWithoutRef<'button'>
 
-function ServerIcon({ imageUrl, imageSize = 48, label, isActive, hasAlarm, ...props }: Props) {
+function ServerIcon({
+  imageUrl,
+  imageSize = 48,
+  label,
+  isActive,
+  hasAlarm,
+  unreadCount,
+  ...props
+}: Props) {
   const [isFocused, setIsFocused] = useState(false)
 
   const handleMouseEnter = () => setIsFocused(true)
@@ -23,6 +32,11 @@ function ServerIcon({ imageUrl, imageSize = 48, label, isActive, hasAlarm, ...pr
       type='button'
       className='flex items-center w-full justify-center relative'
       {...props}>
+      {unreadCount !== undefined && unreadCount > 0 && (
+        <span className='absolute top-0 right-0 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full'>
+          {unreadCount > 99 ? '99+' : unreadCount}
+        </span>
+      )}
       <div
         className={cn(
           'absolute top-1/2 translate-y-[-50%] left-[-4px] w-2 h-10  rounded-r-[4px] overflow-hidden transition-all duration-300 bg-white',
