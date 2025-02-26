@@ -115,7 +115,7 @@ spring:
         - id: chat-server-socket
           uri: lb://chat-server
           predicates:
-            - Path=/ws-chat/**
+            - Path=/ws-chat/**, /ws-mobile/**
 
         # 푸시 서버(Push Server)
         - id: push-server
