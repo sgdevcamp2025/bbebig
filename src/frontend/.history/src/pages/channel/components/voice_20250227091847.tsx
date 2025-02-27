@@ -106,7 +106,7 @@ function VideoComponent({
                     gap: '10px',
                     marginTop: '20px'
                   }}>
-                  <div className='m-[10px]'>
+                  <div>
                     <video
                       className='w-[400px] h-[300px]'
                       ref={myFaceRef}

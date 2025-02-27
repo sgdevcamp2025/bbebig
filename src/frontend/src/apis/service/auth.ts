@@ -18,7 +18,12 @@ export interface CustomAxiosRequestConfig extends AxiosRequestConfig {
 
 const authService = () => {
   const statusCheck = async () => {
-    const res = await axiosInstance.get<StatusCheckResponseSchema>(`${BASE_PATH}/status-check`)
+    const res = await axiosInstance.get<StatusCheckResponseSchema>(`${BASE_PATH}/status-check`, {
+      headers: {
+        Authorization: `Bearer ${cookie.getCookie(COOKIE_KEYS.ACCESS_TOKEN)}`
+      },
+      useAuth: false
+    } as CustomAxiosRequestConfig)
     return res.data
   }
 

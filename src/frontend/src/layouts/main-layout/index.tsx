@@ -10,6 +10,7 @@ import { useGetServer } from '@/hooks/queries/server/useGetServer'
 import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
 import { useChattingStomp } from '@/stores/use-chatting-stomp'
 import { useMediaSettingsStore } from '@/stores/use-media-setting.store'
+import { useSignalingSocketStore } from '@/stores/use-signaling-socket-store'
 import { useSignalingStomp } from '@/stores/use-signaling-stomp-store'
 
 import ProfileCard from './components/profile-card'
@@ -27,6 +28,8 @@ const Inner = () => {
     checkConnection
   } = useChattingStomp()
   const { connect: connectSignaling, disconnect: disconnectSignaling } = useSignalingStomp()
+  const { connect: connectSignalingSocket, disconnect: disconnectSignalingSocket } =
+    useSignalingSocketStore()
   const { serverId } = useParams<{ serverId: string }>()
   const previousServerId = useRef<number | null>(null)
 
@@ -41,10 +44,12 @@ const Inner = () => {
 
     connectSignaling()
     initChatting()
+    connectSignalingSocket()
 
     return function cleanup() {
       disconnectChatting()
       disconnectSignaling()
+      disconnectSignalingSocket()
     }
   }, [])
 

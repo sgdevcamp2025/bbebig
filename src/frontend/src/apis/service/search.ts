@@ -1,7 +1,6 @@
 import axiosInstance from '../config/axios-instance'
 import { CommonResponseType } from '../schema/types/common'
 import {
-  GetAllServersUnreadCountRequestSchema,
   GetAllServerUnreadCountResponseSchema,
   GetHistoryChattingMessageResponseSchema,
   GetHistoryChattingMessagesRequestSchema,
@@ -12,7 +11,7 @@ import {
 } from '../schema/types/search'
 
 const SEARCH_SERVER_PATH = `/search-server/server`
-const HISTORY_MEMBER_PATH = `/search-server/member`
+const SEARCH_HISTORY_PATH = `/search-server/history`
 
 const searchService = () => {
   // 서버 채팅 채널 검색
@@ -27,7 +26,7 @@ const searchService = () => {
   const getHistoryChattingMessages = async (data: GetHistoryChattingMessagesRequestSchema) => {
     const response = await axiosInstance.get<
       CommonResponseType<GetHistoryChattingMessageResponseSchema>
-    >(`${SEARCH_SERVER_PATH}/${data.serverId}/channel/${data.channelId}/messages`, {
+    >(`${SEARCH_HISTORY_PATH}/server/${data.serverId}/channel/${data.channelId}/messages`, {
       params: {
         messageId: data.messageId,
         limit: data.limit
@@ -40,15 +39,15 @@ const searchService = () => {
   const getSingleServerUnreadCount = async (data: GetSingleServerUnreadCountRequestSchema) => {
     const response = await axiosInstance.get<
       CommonResponseType<GetSingleServerUnreadCountResponseSchema>
-    >(`${HISTORY_MEMBER_PATH}/${data.memberId}/unread/server/${data.serverId}`)
+    >(`${SEARCH_HISTORY_PATH}/unread/server/${data.serverId}`)
     return response.data
   }
 
   // 멤버별 모든 서버 안 읽은 메시지 수 조회
-  const getAllServersUnreadCount = async (data: GetAllServersUnreadCountRequestSchema) => {
+  const getAllServersUnreadCount = async () => {
     const response = await axiosInstance.get<
       CommonResponseType<GetAllServerUnreadCountResponseSchema>
-    >(`${HISTORY_MEMBER_PATH}/${data.memberId}/unread/server/all`)
+    >(`${SEARCH_HISTORY_PATH}/unread/server/all`)
     return response.data
   }
 

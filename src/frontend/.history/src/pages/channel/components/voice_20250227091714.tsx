@@ -106,14 +106,12 @@ function VideoComponent({
                     gap: '10px',
                     marginTop: '20px'
                   }}>
-                  <div className='m-[10px]'>
-                    <video
-                      className='w-[400px] h-[300px]'
-                      ref={myFaceRef}
-                      autoPlay
-                      playsInline
-                    />
-                  </div>
+                  <video
+                    className='w-14 h-14 rounded-full bg-[#282d31] flex items-center justify-center'
+                    ref={myFaceRef}
+                    autoPlay
+                    playsInline
+                  />
                 </div>
                 <div
                   className={cn(

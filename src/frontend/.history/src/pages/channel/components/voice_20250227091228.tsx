@@ -3,7 +3,6 @@ import { useState } from 'react'
 import ChatArea from '@/components/chat-area'
 import CustomButton from '@/components/custom-button'
 import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
-import { useSignalingWithMeshSocket } from '@/hooks/use-singaling-with-mesh-socket'
 import { cn } from '@/libs/cn'
 import useUserStatus from '@/stores/use-user-status'
 import { ChatUser } from '@/types/user'
@@ -30,13 +29,6 @@ function VideoComponent({
   const { getCurrentChannelInfo } = useUserStatus()
 
   const isInVoiceChannel = getCurrentChannelInfo()?.channelId === channelId
-
-  const { handleSubmit, handleLeaveClick, myFaceRef, callRef } = useSignalingWithMeshSocket({
-    myUserId: String(selfUser.id),
-    channelId: String(channelId),
-    channelName: channelName,
-    serverName: serverName
-  })
 
   const handleJoinVoiceChannel = () => {
     handleSubmit()
@@ -98,6 +90,11 @@ function VideoComponent({
             )}
             {isInVoiceChannel && (
               <>
+                <video
+                  ref={myFaceRef}
+                  autoPlay
+                  playsInline
+                />
                 <div
                   ref={callRef}
                   style={{
@@ -105,16 +102,8 @@ function VideoComponent({
                     flexWrap: 'wrap',
                     gap: '10px',
                     marginTop: '20px'
-                  }}>
-                  <div className='m-[10px]'>
-                    <video
-                      className='w-[400px] h-[300px]'
-                      ref={myFaceRef}
-                      autoPlay
-                      playsInline
-                    />
-                  </div>
-                </div>
+                  }}
+                />
                 <div
                   className={cn(
                     'absolute bottom-4 opacity-0 flex items-center justify-center gap-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 group-hover:blur-none'

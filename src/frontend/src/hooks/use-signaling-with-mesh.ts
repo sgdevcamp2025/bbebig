@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 
+import { TURN_SERVER_URL } from '@/constants/env'
 import { useSignalingStomp } from '@/stores/use-signaling-stomp-store'
 import useUserStatus from '@/stores/use-user-status'
 import { errorLog, log } from '@/utils/log'
@@ -13,7 +14,7 @@ const RTC_CONFIGURATION = {
         'stun:stun2.l.google.com:19302'
       ]
     },
-    { urls: 'turn:13.125.13.209:3478', username: 'kurentouser', credential: 'kurentopassword' }
+    { urls: TURN_SERVER_URL, username: 'kurentouser', credential: 'kurentopassword' }
   ],
   iceTransportPolicy: 'all',
   iceCandidatePoolSize: 3
@@ -163,18 +164,29 @@ export const useSignalingWithMesh = (
     log(`✅ Cleaned up resources for user: ${senderId}`)
   }
 
-  const handleExistUsers = async (message: SignalingMessage) => {
-    if (!message.participants) return
+  const handleUserJoined = async (message: SignalingMessage) => {
+    console.log(`[Join] User joined: ${message.senderId}`)
 
-    for (const participant of message.participants) {
-      const newUser = createConnection(participant.toString())
-      await createOffer(newUser.pc, participant.toString())
+    // 새로 들어온 유저가 자신이 아닐 경우에만 offer 생성
+    if (message.senderId !== userId) {
+      const pc = createConnection(message.senderId)
+      await createOffer(pc.pc, message.senderId)
+      console.log(`[Join] Created offer for new user: ${message.senderId}`)
     }
   }
 
-  const handleUserJoined = (message: SignalingMessage) => {
-    if (!message.sdp) return
-    createConnection(message.senderId)
+  const handleExistUsers = async (message: SignalingMessage) => {
+    if (!message.participants) return
+    console.log('[ExistUsers] Current participants:', message.participants)
+
+    // 자신을 제외한 기존 참가자들에 대해 offer 생성
+    for (const participantId of message.participants) {
+      if (participantId.toString() === userId) continue
+
+      console.log(`[ExistUsers] Creating connection for: ${participantId}`)
+      const pc = createConnection(participantId.toString())
+      await createOffer(pc.pc, participantId.toString())
+    }
   }
 
   const handleOffer = async (message: SignalingMessage) => {
