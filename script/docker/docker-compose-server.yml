@@ -1,0 +1,121 @@
+version: '3.8'
+
+services:
+  chat-server1:
+    image: soeun2537/chat-server:latest
+    container_name: chat-server1
+    volumes:
+      - ./envs/chat-server1.env:/apps/src/main/resources/.env
+    networks:
+      - bbebig-network
+    ports:
+      - "9050:9050"
+      
+  chat-server2:
+    image: soeun2537/chat-server:latest
+    container_name: chat-server2
+    volumes:
+      - ./envs/chat-server2.env:/apps/src/main/resources/.env
+    networks:
+      - bbebig-network
+    ports:
+      - "9051:9050"
+
+  state-server:
+    image: soeun2537/state-server:latest
+    container_name: state-server
+    volumes:
+      - ./envs/state-server.env:/apps/src/main/resources/.env
+    networks:
+      - bbebig-network
+    ports:
+      - "9040:9040"
+
+  user-server:
+    image: soeun2537/user-server:latest
+    container_name: user-server
+    volumes:
+      - ./envs/user-server.env:/apps/src/main/resources/.env
+    networks:
+      - bbebig-network
+    ports:
+      - "9010:9010"
+
+  service-server:
+    image: soeun2537/service-server:latest
+    container_name: service-server
+    volumes:
+      - ./envs/service-server.env:/apps/src/main/resources/.env
+    networks:
+      - bbebig-network
+    ports:
+      - "9020:9020"
+
+  search-server:
+    image: soeun2537/search-server:latest
+    container_name: search-server
+    volumes:
+      - ./envs/search-server.env:/apps/src/main/resources/.env
+    networks:
+      - bbebig-network
+    ports:
+      - "9030:9030"
+
+  push-server:
+    image: soeun2537/push-server:latest
+    container_name: push-server
+    volumes:
+      - ./envs/push-server.env:/apps/src/main/resources/.env
+    networks:
+      - bbebig-network
+    ports:
+      - "9060:9060"
+      
+  apigateway-server:
+    image: soeun2537/apigateway-server:latest
+    container_name: apigateway-server
+    volumes:
+      - ./envs/apigateway-server.env:/apps/src/main/resources/.env
+    networks:
+      - bbebig-network
+    ports:
+      - "8080:8080"
+    
+  discovery-server:
+    image: soeun2537/discovery-server:latest
+    container_name: discovery-server
+    networks:
+      - bbebig-network
+    ports:
+      - "8761:8761"
+      
+  auth-server:
+    image: soeun2537/auth-server:latest
+    container_name: auth-server
+    restart: unless-stopped
+    networks:
+      - bbebig-network
+    ports:
+      - "9000:9000"
+    env_file:
+      - ./envs/auth-server.env
+    environment:
+      - SERVER_PORT=9000
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      
+  passport-server:
+    image: soeun2537/passport-server:latest
+    container_name: passport-server
+    volumes:
+      - ./envs/passport-server.env:/apps/src/main/resources/.env
+    networks:
+      - bbebig-network
+    ports:
+      - "9080:9080"
+
+networks:
+  bbebig-network:
+    external: true
+
+
