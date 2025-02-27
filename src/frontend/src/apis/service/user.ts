@@ -1,5 +1,7 @@
 import axiosInstance from '../config/axios-instance'
 import { CommonResponseType } from '../schema/types/common'
+import { ZInviteUserRequestSchema } from '../schema/types/service'
+import { ZInviteUserResponseSchema } from '../schema/types/service'
 import {
   AcceptFriendRequestSchema,
   AcceptFriendResponseSchema,
@@ -120,6 +122,24 @@ const userService = () => {
     return response.data
   }
 
+  const postFriendWithNickname = async (data: ZInviteUserRequestSchema) => {
+    const response = await axiosInstance.get<ZInviteUserResponseSchema>(`${FRIEND_PATH}/invite`, {
+      params: {
+        nickname: data.inviteUserName
+      }
+    })
+
+    const createRequest = await createRequestForFriend({
+      toMemberId: response.data.result.id
+    })
+
+    const acceptResponse = await acceptFriend({
+      friendId: createRequest.result.friendId
+    })
+
+    return acceptResponse.result
+  }
+
   return {
     deleteMember,
     getUser,
@@ -133,7 +153,8 @@ const userService = () => {
     declineFriend,
     acceptFriend,
     deleteFriendInRequestList,
-    createRequestForFriend
+    createRequestForFriend,
+    postFriendWithNickname
   }
 }
 

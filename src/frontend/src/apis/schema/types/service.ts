@@ -7,7 +7,9 @@ import {
   createCategoryRequestSchema,
   createCategoryResponseSchema,
   createChannelRequestSchema,
-  createChannelResponseSchema
+  createChannelResponseSchema,
+  inviteUserRequestSchema,
+  inviteUserResponseSchema
 } from '../server'
 
 export interface DeleteServerRequestSchema {
@@ -320,3 +322,5 @@ export type ZCreateChannelRequestSchema = z.infer<typeof createChannelRequestSch
 export type ZCreateChannelResponseSchema = z.infer<typeof createChannelResponseSchema>
 export type ZCreateCategoryRequestSchema = z.infer<typeof createCategoryRequestSchema>
 export type ZCreateCategoryResponseSchema = z.infer<typeof createCategoryResponseSchema>
+export type ZInviteUserRequestSchema = z.infer<typeof inviteUserRequestSchema>
+export type ZInviteUserResponseSchema = z.infer<typeof inviteUserResponseSchema>
