@@ -15,7 +15,7 @@ export const useGetAllServerUnreadCount = (
   const { data } = useSuspenseQuery({
     ...config,
     queryKey: ['unreadMessageCounts', params.memberId],
-    queryFn: () => searchService.getAllServersUnreadCount(params)
+    queryFn: () => searchService.getAllServersUnreadCount()
   })
 
   return data.result
