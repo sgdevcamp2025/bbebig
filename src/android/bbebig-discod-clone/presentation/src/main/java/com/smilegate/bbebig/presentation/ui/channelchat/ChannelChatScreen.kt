@@ -39,6 +39,7 @@ import com.smilegate.bbebig.presentation.component.DiscordTopBar
 import com.smilegate.bbebig.presentation.component.DiscordUserChatBox
 import com.smilegate.bbebig.presentation.theme.Gray15
 import com.smilegate.bbebig.presentation.theme.Gray50
+import com.smilegate.bbebig.presentation.theme.Gray90
 import com.smilegate.bbebig.presentation.theme.White
 import com.smilegate.bbebig.presentation.ui.home.model.MessageContent
 import com.smilegate.bbebig.presentation.utils.ImmutableList
@@ -71,7 +72,7 @@ fun ChannelChatScreen(
             DiscordTopBar(
                 modifier = Modifier.fillMaxWidth(),
                 title = channelName,
-                backButtonColor = White,
+                backButtonColor = Gray90,
                 onBackClick = onClickBack,
                 onClickSearch = onClickSearch,
             )

@@ -1,6 +1,8 @@
 package com.smilegate.bbebig.presentation.ui.signup.nickname
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -17,6 +19,8 @@ import com.smilegate.bbebig.presentation.component.DiscordInputContainer
 import com.smilegate.bbebig.presentation.component.DiscordRoundButton
 import com.smilegate.bbebig.presentation.component.DiscordTopBar
 import com.smilegate.bbebig.presentation.theme.Blue70
+import com.smilegate.bbebig.presentation.theme.Gray20
+import com.smilegate.bbebig.presentation.theme.Gray90
 import com.smilegate.bbebig.presentation.theme.White
 import com.smilegate.devcamp.presentation.R
 
@@ -28,7 +32,7 @@ fun NicknameScreen(
     val nicknameState = rememberTextFieldState()
 
     Column(
-        modifier = Modifier.padding(horizontal = 10.dp),
+        modifier = Modifier.background(Gray20).fillMaxSize().padding(horizontal = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         DiscordTopBar(
@@ -41,6 +45,7 @@ fun NicknameScreen(
             text = stringResource(R.string.nickname_title),
             fontSize = 24.sp,
             textAlign = TextAlign.Center,
+            color = Gray90,
         )
         DiscordInputContainer(
             modifier = Modifier.padding(top = 20.dp),

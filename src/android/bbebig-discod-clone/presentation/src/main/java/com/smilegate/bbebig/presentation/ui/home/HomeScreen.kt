@@ -53,9 +53,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -68,12 +68,13 @@ import com.smilegate.bbebig.presentation.component.DiscordTitleContainer
 import com.smilegate.bbebig.presentation.theme.Blue70
 import com.smilegate.bbebig.presentation.theme.Gray10
 import com.smilegate.bbebig.presentation.theme.Gray15
-import com.smilegate.bbebig.presentation.theme.Gray30
+import com.smilegate.bbebig.presentation.theme.Gray20
 import com.smilegate.bbebig.presentation.theme.Gray40
 import com.smilegate.bbebig.presentation.theme.Gray50
 import com.smilegate.bbebig.presentation.theme.Gray60
 import com.smilegate.bbebig.presentation.theme.Gray70
 import com.smilegate.bbebig.presentation.theme.Gray80
+import com.smilegate.bbebig.presentation.theme.Gray90
 import com.smilegate.bbebig.presentation.theme.White
 import com.smilegate.bbebig.presentation.ui.channelchat.ChannelChatScreen
 import com.smilegate.bbebig.presentation.ui.home.model.CategoryInfo
@@ -105,7 +106,7 @@ fun HomeScreen(
     Row(
         modifier = Modifier
             .fillMaxSize()
-            .background(Gray10)
+            .background(Gray15)
             .statusBarsPadding(),
     ) {
         ServerListContainer(
@@ -115,7 +116,7 @@ fun HomeScreen(
             onServerClick = onServerClick,
         )
         ServerChannelContainer(
-            modifier = Modifier.background(color = Gray30),
+            modifier = Modifier.background(color = Gray20),
             serverInfo = uiState.serverInfo,
             onMakeServerClick = onMakeServerClick,
             onServerJoinClick = onServerJoinClick,
@@ -184,10 +185,8 @@ private fun ServerListContainer(
                     selectedServerId.intValue = clickedIndex
                     onServerClick(server.serverId)
                 },
+                serverName = server.serverName,
             )
-        }
-        item {
-            MakeServerItem(modifier = Modifier, onMakeServerClick = onMakeServerClick)
         }
     }
 }
@@ -204,6 +203,7 @@ private fun TopTitleContainer(modifier: Modifier, title: String, onClickSearch: 
             fontSize = 20.sp,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
+            color = Gray90,
         )
         StableImage(
             modifier = Modifier
@@ -222,13 +222,19 @@ private fun EmptyServerContent(
     onServerJoinClick: () -> Unit,
 ) {
     Box(modifier = modifier) {
-        Text(modifier = Modifier.align(Alignment.TopStart), fontSize = 24.sp, text = "서버")
+        Text(
+            modifier = Modifier.align(Alignment.TopStart),
+            fontSize = 24.sp,
+            text = "서버",
+            color = Gray90,
+        )
         DiscordTitleContainer(
             modifier = Modifier
                 .align(Alignment.Center)
                 .padding(vertical = 20.dp),
             firstTitleResId = R.string.empty_title,
             secondTitleResId = R.string.empty_sub_title,
+            fontColor = Gray90,
         )
         ButtonContainer(
             modifier = Modifier.align(Alignment.BottomCenter),
@@ -270,6 +276,7 @@ private fun ServerItem(
     onServerClick: (Int) -> Unit,
     imageUrl: String? = null,
     drawableResId: Int? = null,
+    serverName: String,
 ) {
     val cornerRadius by animateDpAsState(
         targetValue = if (isSelected) 15.dp else 50.dp,
@@ -278,20 +285,34 @@ private fun ServerItem(
     )
 
     Box(modifier = modifier) {
-        AsyncImage(
+        Box(
             modifier = Modifier
                 .padding(horizontal = 10.dp)
-                .graphicsLayer {
-                    clip = true
-                    shape = RoundedCornerShape(cornerRadius)
-                }
                 .size(50.dp)
-                .background(color = if (isSelected) Blue70 else Gray60)
+                .background(color = if (isSelected) Blue70 else Gray60, shape = RoundedCornerShape(cornerRadius))
                 .clickable { onServerClick(index) },
-            model = drawableResId ?: imageUrl,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-        )
+            contentAlignment = Alignment.Center,
+        ) {
+            if (imageUrl.isNullOrEmpty()) {
+                Text(
+                    text = serverName.trimIndent().take(4),
+                    color = Gray80,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            } else {
+                AsyncImage(
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(RoundedCornerShape(cornerRadius)),
+                    model = imageUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                )
+            }
+        }
         ServerItemIndicator(
             modifier = Modifier.align(Alignment.CenterStart),
             isSelect = isSelected,
@@ -322,7 +343,7 @@ private fun ServerItemIndicator(modifier: Modifier, isSelect: Boolean) {
                 .width(4.dp)
                 .height(40.dp)
                 .background(
-                    color = Color.Blue,
+                    color = Gray90,
                     shape = RoundedCornerShape(topEnd = 100.dp, bottomEnd = 100.dp),
                 ),
             content = { Unit },
@@ -453,6 +474,7 @@ private fun EmptyFriendListContainer(modifier: Modifier, onClickAddFriend: () ->
             modifier = Modifier.wrapContentSize(),
             firstTitleResId = R.string.dm_empty_title,
             secondTitleResId = R.string.dm_sub_title,
+            fontColor = Gray90,
         )
         DiscordRoundButton(
             modifier = Modifier
@@ -541,7 +563,7 @@ private fun ChannelItem(
                         .rotate(if (isChannelSelected) -90f else 0f),
                     drawableResId = R.drawable.ic_dropdown_menu,
                 )
-                Text(text = categoryName)
+                Text(text = categoryName, color = Gray90, fontWeight = FontWeight.Bold)
             }
         }
 
@@ -556,6 +578,7 @@ private fun ChannelItem(
                             .fillMaxWidth()
                             .rippleClick { onSubChannelClick(subChannel) },
                         text = subChannel.channelName,
+                        color = Gray90,
                     )
                 }
             }

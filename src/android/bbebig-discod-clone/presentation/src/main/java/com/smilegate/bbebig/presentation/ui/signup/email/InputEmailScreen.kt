@@ -1,5 +1,6 @@
 package com.smilegate.bbebig.presentation.ui.signup.email
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +20,8 @@ import com.smilegate.bbebig.presentation.component.DiscordInputContainer
 import com.smilegate.bbebig.presentation.component.DiscordRoundButton
 import com.smilegate.bbebig.presentation.component.DiscordTopBar
 import com.smilegate.bbebig.presentation.theme.Blue70
+import com.smilegate.bbebig.presentation.theme.Gray20
+import com.smilegate.bbebig.presentation.theme.Gray90
 import com.smilegate.bbebig.presentation.theme.White
 import com.smilegate.devcamp.presentation.R
 
@@ -32,6 +35,7 @@ fun InputEmailScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(Gray20)
             .padding(horizontal = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -45,6 +49,7 @@ fun InputEmailScreen(
             text = stringResource(R.string.input_email_title),
             fontSize = 24.sp,
             textAlign = TextAlign.Center,
+            color = Gray90,
         )
         DiscordInputContainer(
             modifier = Modifier.padding(top = 20.dp),
@@ -57,7 +62,7 @@ fun InputEmailScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 15.dp),
-            textResId = R.string.auth,
+            textResId = R.string.next,
             backgroundColor = Blue70,
             onClick = {
                 onClickConfirm(emailTextState.text.toString())

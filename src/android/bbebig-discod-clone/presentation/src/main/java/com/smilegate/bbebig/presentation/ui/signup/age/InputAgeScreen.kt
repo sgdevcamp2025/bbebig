@@ -25,6 +25,7 @@ import com.smilegate.bbebig.presentation.component.DiscordDatePicker
 import com.smilegate.bbebig.presentation.component.DiscordRoundButton
 import com.smilegate.bbebig.presentation.component.DiscordTopBar
 import com.smilegate.bbebig.presentation.theme.Blue70
+import com.smilegate.bbebig.presentation.theme.Gray20
 import com.smilegate.bbebig.presentation.theme.Gray25
 import com.smilegate.bbebig.presentation.theme.Gray90
 import com.smilegate.bbebig.presentation.theme.White
@@ -42,6 +43,7 @@ fun AgeScreen(
 
     Column(
         modifier = Modifier
+            .background(Gray20)
             .fillMaxSize()
             .padding(horizontal = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -56,6 +58,7 @@ fun AgeScreen(
             text = stringResource(R.string.age_title),
             fontSize = 24.sp,
             textAlign = TextAlign.Center,
+            color = Gray90,
         )
         DateContainer(
             modifier = Modifier,
@@ -103,6 +106,7 @@ private fun DateContainer(modifier: Modifier, selectedDate: String, onDateAreaCl
         Text(
             modifier = Modifier.padding(top = 20.dp),
             text = stringResource(R.string.birth_sub_title),
+            color = Gray90,
         )
         Text(
             modifier = Modifier

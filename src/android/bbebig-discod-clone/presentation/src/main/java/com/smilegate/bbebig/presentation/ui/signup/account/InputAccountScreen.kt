@@ -1,5 +1,6 @@
 package com.smilegate.bbebig.presentation.ui.signup.account
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +19,8 @@ import com.smilegate.bbebig.presentation.component.DiscordInputContainer
 import com.smilegate.bbebig.presentation.component.DiscordRoundButton
 import com.smilegate.bbebig.presentation.component.DiscordTopBar
 import com.smilegate.bbebig.presentation.theme.Blue70
+import com.smilegate.bbebig.presentation.theme.Gray20
+import com.smilegate.bbebig.presentation.theme.Gray90
 import com.smilegate.bbebig.presentation.theme.White
 import com.smilegate.bbebig.presentation.ui.signup.account.mvi.InputAccountUiState
 import com.smilegate.devcamp.presentation.R
@@ -32,19 +35,20 @@ fun AccountScreen(
     val passwordState = rememberTextFieldState()
 
     Column(
-        modifier = Modifier.padding(horizontal = 10.dp),
+        modifier = Modifier.background(Gray20).padding(horizontal = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         DiscordTopBar(
             modifier = Modifier.fillMaxWidth(),
             onBackClick = onBackClick,
-            backButtonColor = White,
+            backButtonColor = Gray90,
         )
         Text(
             modifier = Modifier.padding(top = 20.dp),
             text = stringResource(R.string.user_info_title),
             fontSize = 24.sp,
             textAlign = TextAlign.Center,
+            color = Gray90,
         )
         DiscordInputContainer(
             modifier = Modifier.padding(top = 20.dp),
@@ -92,6 +96,7 @@ fun PasswordIntroContainer(modifier: Modifier) {
             modifier = Modifier.padding(top = 5.dp),
             text = stringResource(R.string.require_pw),
             textAlign = TextAlign.Center,
+            color = Gray90,
         )
     }
 }

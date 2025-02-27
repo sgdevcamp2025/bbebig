@@ -1,5 +1,6 @@
 package com.smilegate.bbebig.presentation.ui.intro
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -13,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -20,6 +22,8 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.smilegate.bbebig.presentation.component.DiscordRoundButton
 import com.smilegate.bbebig.presentation.theme.Blue50
+import com.smilegate.bbebig.presentation.theme.Gray20
+import com.smilegate.bbebig.presentation.theme.Gray90
 import com.smilegate.bbebig.presentation.theme.White
 import com.smilegate.devcamp.presentation.R
 
@@ -30,7 +34,9 @@ fun IntroScreen(
     onNavigateToSignUpClick: () -> Unit,
 ) {
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .background(Gray20)
+            .fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
         IntroTitleContainer(
@@ -53,12 +59,22 @@ private fun IntroTitleContainer(modifier: Modifier) {
             modifier = Modifier
                 .width(200.dp)
                 .aspectRatio(1f),
-            model = "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png",
+            model = R.drawable.ic_logo,
             contentScale = ContentScale.Crop,
             contentDescription = "Discord Logo",
         )
-        Text(text = stringResource(R.string.intro_title), textAlign = TextAlign.Center, fontSize = 30.sp)
-        Text(text = stringResource(R.string.intro_sub_title), textAlign = TextAlign.Center)
+        Text(
+            text = stringResource(R.string.intro_title),
+            textAlign = TextAlign.Center,
+            fontSize = 30.sp,
+            fontWeight = FontWeight.Bold,
+            color = Gray90,
+        )
+        Text(
+            text = stringResource(R.string.intro_sub_title),
+            textAlign = TextAlign.Center,
+            color = Gray90,
+        )
     }
 }
 
