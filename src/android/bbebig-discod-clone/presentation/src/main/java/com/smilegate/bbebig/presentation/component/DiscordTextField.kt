@@ -36,17 +36,24 @@ fun DiscordTextField(
     keyboardType: KeyboardType = KeyboardType.Text,
     radius: Dp = 8.dp,
     isPasswordType: Boolean = false,
+    onClickSendChat: () -> Unit = {},
 ) {
     BasicTextField(
         modifier = modifier,
         state = textFieldState,
-        lineLimits = if (isSingLine) TextFieldLineLimits.SingleLine else TextFieldLineLimits.MultiLine(maxHeightInLines = 5),
+        lineLimits = if (isSingLine) {
+            TextFieldLineLimits.SingleLine
+        } else {
+            TextFieldLineLimits.MultiLine(
+                maxHeightInLines = 5,
+            )
+        },
         textStyle = TextStyle.Default.copy(
             color = Gray90,
             fontSize = 16.sp,
         ),
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-        onKeyboardAction = { /*완료버튼을 눌렀을때 실행할 함수*/ },
+        onKeyboardAction = { onClickSendChat() },
         cursorBrush = Brush.linearGradient(
             colors = listOf(Gray40, Color.Transparent),
         ),
