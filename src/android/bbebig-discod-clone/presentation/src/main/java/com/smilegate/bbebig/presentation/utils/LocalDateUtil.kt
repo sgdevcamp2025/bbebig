@@ -17,4 +17,11 @@ object LocalDateUtil {
 
         return LocalDate.parse(date, inputFormatter).format(DateTimeFormatter.ISO_DATE)
     }
+
+    fun chatTime(date: String): String {
+        date.split("T")
+        val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val outputFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
+        return LocalDate.parse(date.split("T")[0], inputFormatter).format(outputFormatter)
+    }
 }
