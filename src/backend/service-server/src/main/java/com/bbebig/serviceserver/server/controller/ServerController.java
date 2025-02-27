@@ -153,8 +153,6 @@ public class ServerController {
         return CommonResponse.onSuccess(serverService.participateServer(memberId, serverId));
     }
 
-
-
     @Operation(summary = "서버 탈퇴", description = "서버를 탈퇴합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "서버 탈퇴 성공", useReturnTypeSchema = true),
