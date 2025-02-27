@@ -1,7 +1,10 @@
 package com.bbebig.searchserver.global.repository;
 
+import com.bbebig.commonmodule.redis.domain.ServerLastInfo;
 import com.bbebig.commonmodule.redis.domain.ServerMemberStatus;
 import com.bbebig.commonmodule.redis.repository.ServerRedisRepository;
+import com.bbebig.commonmodule.redis.util.MemberRedisKeys;
+import com.bbebig.commonmodule.redis.util.MemberRedisTTL;
 import com.bbebig.commonmodule.redis.util.ServerRedisKeys;
 import com.bbebig.searchserver.domain.history.domain.ChannelChatMessage;
 import jakarta.annotation.PostConstruct;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Repository
@@ -33,6 +37,9 @@ public class ServerRedisRepositoryImpl implements ServerRedisRepository {
 	private final RedisTemplate<String, ChannelChatMessage> redisChannelChatMessageTemplate;
 	private ListOperations<String, ChannelChatMessage> listOperations;
 
+	private final RedisTemplate<String, ServerLastInfo> redisServerLastInfoTemplate;
+	private HashOperations<String, String, ServerLastInfo> serverLastInfoValueOperations;
+
 	private static final int MAX_CACHE_SIZE = 100;
 
 	@PostConstruct
@@ -40,6 +47,7 @@ public class ServerRedisRepositoryImpl implements ServerRedisRepository {
 		this.setOperations = redisSetTemplate.opsForSet();
 		this.hashOperations = redisServerStatusTemplate.opsForHash();
 		this.listOperations = redisChannelChatMessageTemplate.opsForList();
+		this.serverLastInfoValueOperations = redisServerLastInfoTemplate.opsForHash();
 	}
 
 	/**
@@ -199,13 +207,6 @@ public class ServerRedisRepositoryImpl implements ServerRedisRepository {
 		return Boolean.TRUE.equals(redisChannelChatMessageTemplate.hasKey(key));
 	}
 
-	public long getUnreadCount(Long channelId, Long lastReadMessageId) {
-		List<ChannelChatMessage> cachedMessageList = getChannelMessageList(channelId);
-		return cachedMessageList.stream()
-				.filter(msg -> msg.getId() != null && msg.getId() > lastReadMessageId)
-				.count();
-	}
-
 	/**
 	 * 서버별 채널 시퀀스 정보를 저장
 	 * (serverChannel:{serverId}:channelSequence) => ChannelId, Sequence
@@ -219,6 +220,22 @@ public class ServerRedisRepositoryImpl implements ServerRedisRepository {
 	public Long getServerChannelSequence(Long channelId) {
 		String redisKey = ServerRedisKeys.getServerChannelSequenceKey(channelId);
 		return redisSetTemplate.opsForValue().get(redisKey);
+	}
+
+	/**
+	 * 개별 유저의 최근 서버 채널 정보를 저장
+	 * ex) member:{memberId}:serverLastInfo => ServerLastInfo
+	 */
+	public void saveServerLastInfo(Long memberId, Long serverId, ServerLastInfo lastInfo) {
+		String key = MemberRedisKeys.getServerLastInfoKey(memberId);
+		serverLastInfoValueOperations.put(key, serverId.toString(), lastInfo);
+		serverLastInfoValueOperations.getOperations().expire(key, MemberRedisTTL.SERVER_LAST_INFO_TTL, TimeUnit.SECONDS);
+	}
+
+	// 개별 유저의 최근 서버 채널 정보 조회
+	public ServerLastInfo getServerLastInfo(Long memberId, Long serverId) {
+		String key = MemberRedisKeys.getServerLastInfoKey(memberId);
+		return serverLastInfoValueOperations.get(key, serverId.toString());
 	}
 
 }
