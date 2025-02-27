@@ -7,6 +7,8 @@ import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
 import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.kafka.dto.ChatMessageDto;
 import com.bbebig.commonmodule.kafka.dto.model.ChatType;
+import com.bbebig.commonmodule.redis.domain.ChannelLastInfo;
+import com.bbebig.commonmodule.redis.domain.ServerLastInfo;
 import com.bbebig.searchserver.domain.history.repository.ChannelChatMessageRepository;
 import com.bbebig.searchserver.domain.history.repository.DmChatMessageRepository;
 import com.bbebig.searchserver.global.client.ServiceClient;
@@ -26,10 +28,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static com.bbebig.searchserver.domain.history.dto.HistoryResponseDto.*;
 
@@ -238,9 +237,9 @@ public class HistoryService {
 	}
 
 	public ServerUnreadCountDto getServerUnreadCount(Long memberId, Long serverId) {
-		ServerLastInfoResponseDto serverLastInfo = getServerLastInfo(memberId, serverId);
+		ServerLastInfo memberServerLastInfo = getServerLastInfo(memberId, serverId);
 
-		if (serverLastInfo == null) {
+		if (memberServerLastInfo == null) {
 			log.error("[Search] ChatMessageService: 서버 마지막 방문 정보 조회 실패. serverId: {}, memberId: {}", serverId, memberId);
 			throw new ErrorHandler(ErrorStatus.SERVER_LAST_INFO_NOT_FOUND);
 		}
@@ -248,17 +247,19 @@ public class HistoryService {
 		List<ChannelUnreadCountDto> channelUnreadList = new ArrayList<>();
 		int serverTotalUnread = 0;
 
-		for (ChannelLastInfoResponseDto chDto : serverLastInfo.getChannelInfoList()) {
-			long lastReadId = (chDto.getLastReadMessageId() == null) ? 0L : chDto.getLastReadMessageId();
+		for (Long channelId : memberServerLastInfo.getChannelLastInfoMap().keySet()) {
+			ChannelLastInfo channelLastInfo = memberServerLastInfo.getChannelLastInfoMap().get(channelId);
+			if (channelLastInfo == null) {
+				log.error("[Search] ChatMessageService: 채널 마지막 방문 정보 조회 실패. serverId: {}, memberId: {}, channelId: {}", serverId, memberId, channelId);
+				throw new ErrorHandler(ErrorStatus.CHANNEL_LAST_INFO_NOT_FOUND);
+			}
 
-			List<ChannelChatMessage> cachedMessages = getCachedChannelMessages(chDto.getChannelId());
+			ServerChannelSequenceResponseDto channelLastSequence = getChannelLastSequence(channelId);
 
-			int unread = (int) cachedMessages.stream()
-					.filter(msg -> msg.getId() != null && msg.getId() > lastReadId)
-					.count();
+			int unread = (int)(channelLastSequence.getLastSequence() - channelLastInfo.getLastReadSequence());
 
 			channelUnreadList.add(ChannelUnreadCountDto.builder()
-					.channelId(chDto.getChannelId())
+					.channelId(channelId)
 					.unreadCount(unread)
 					.build());
 
@@ -282,9 +283,9 @@ public class HistoryService {
 	public ServerChannelSequenceResponseDto getChannelLastSequence(Long channelId) {
 		Long lastSequence = serverRedisRepository.getServerChannelSequence(channelId);
 		if (lastSequence == null) {
-			Optional<ChannelChatMessage> topByChannelIdOrderByIdDesc = channelChatMessageRepository.findTopByChannelIdOrderByIdDesc(channelId);
+			Optional<ChannelChatMessage> topByChannelIdOrderByIdDesc = channelChatMessageRepository.findTopByChannelIdAndDeletedFalseOrderByIdDesc(channelId);
 			if (topByChannelIdOrderByIdDesc.isPresent()) {
-				lastSequence = topByChannelIdOrderByIdDesc.get().getId();
+				lastSequence = topByChannelIdOrderByIdDesc.get().getSequence() == null ? 0L : topByChannelIdOrderByIdDesc.get().getSequence();
 				serverRedisRepository.saveServerChannelSequence(channelId, lastSequence);
 			} else {
 				lastSequence = 0L;
@@ -305,13 +306,36 @@ public class HistoryService {
 		}
 	}
 
-	private ServerLastInfoResponseDto getServerLastInfo(Long memberId, Long serverId) {
-		ServerLastInfoResponseDto responseDto = null;
-		try {
-			responseDto = serviceClient.getServerLastInfo(serverId, memberId);
-		} catch (FeignException e) {
-			log.error("[Search] ChatMessageService: Feign으로 서버 정보 조회 중 오류 발생. serverId: {}, memberId: {}", serverId, memberId);
+	private ServerLastInfo getServerLastInfo(Long memberId, Long serverId) {
+		ServerLastInfo lastInfo = serverRedisRepository.getServerLastInfo(serverId, memberId);
+		if (lastInfo == null) {
+			try {
+				ServerLastInfoResponseDto responseDto = serviceClient.getServerLastInfo(serverId, memberId);
+				if (responseDto == null) {
+					log.error("[Search] ChatMessageService: 서버 마지막 방문 정보 조회 실패. serverId: {}, memberId: {}", serverId, memberId);
+					throw new ErrorHandler(ErrorStatus.SERVER_LAST_INFO_NOT_FOUND);
+				}
+				Map<Long, ChannelLastInfo> channelInfoMap = new HashMap<>();
+				responseDto.getChannelInfoList().forEach(chDto -> {
+					channelInfoMap.put(chDto.getChannelId(), ChannelLastInfo.builder()
+							.channelId(chDto.getChannelId())
+							.lastReadMessageId(chDto.getLastReadMessageId())
+							.lastReadSequence(chDto.getLastReadSequence())
+							.lastAccessAt(chDto.getLastAccessAt())
+							.build());
+				});
+				ServerLastInfo info = ServerLastInfo.builder()
+						.serverId(serverId)
+						.channelLastInfoMap(channelInfoMap)
+						.build();
+				serverRedisRepository.saveServerLastInfo(memberId, serverId, info);
+				return info;
+			} catch (FeignException e) {
+				log.error("[Search] ChatMessageService: Feign으로 서버 정보 조회 중 오류 발생. serverId: {}, memberId: {}", serverId, memberId);
+				log.error("[Search] ChatMessageService: FeignException: {}", e.getMessage());
+			}
 		}
-		return responseDto;
+
+		return lastInfo;
 	}
 }
