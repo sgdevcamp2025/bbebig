@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 import static com.bbebig.commonmodule.proto.PassportProto.*;
 
 @Slf4j
@@ -90,6 +92,7 @@ public class HistoryController {
 
 	@PostMapping("/test/send")
 	public CommonResponse<?> testSend(ChatMessageDto chatMessageDto) {
+		chatMessageDto.setCreatedAt(LocalDateTime.now());
 		historyService.saveChannelMessage(chatMessageDto);
 		return CommonResponse.onSuccess(null);
 	}
