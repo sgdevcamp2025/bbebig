@@ -2,6 +2,7 @@ import http from "http";
 import express from "express";
 import cors from "cors";
 import { Server } from "socket.io";
+import { EurekaClient } from "./libs/eureka";
 
 const app = express();
 const PORT = 9090;
@@ -27,6 +28,32 @@ const wsServer = new Server(httpServer, {
     credentials: true,
   },
 });
+
+const eurekaConfig = {
+  instance: {
+    app: "SIGNALING-NODE-SERVER",
+    hostName: "signaling—node-server",
+    ipAddr: "signaling-node-server",
+    status: "UP",
+    port: {
+      $: 9090,
+      "@enabled": "true",
+    },
+    vipAddress: "signaling-node-server",
+    statusPageUrl: "http://signaling-node-server:9090/",
+    dataCenterInfo: {
+      "@class": "com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo",
+      name: "MyOwn",
+    },
+  },
+  eureka: {
+    host: "discovery-server",
+    port: 8761,
+    servicePath: "/eureka/apps",
+  },
+};
+
+const eurekaClient = new EurekaClient(eurekaConfig);
 
 wsServer.on("connection", (socket) => {
   console.log("✅ A client connected:", socket.id);
@@ -65,6 +92,16 @@ wsServer.on("connection", (socket) => {
   });
 });
 
-httpServer.listen(PORT, () => {
-  console.log(`✅ Server is running on http://localhost:${PORT}`);
-});
+const start = async () => {
+  try {
+    await eurekaClient.register();
+    httpServer.listen(PORT, () => {
+      console.log(`✅ Server is running on http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    eurekaClient.deregister();
+    process.exit(1);
+  }
+};
+
+start();
