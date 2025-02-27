@@ -16,6 +16,8 @@ export interface CustomAxiosRequestConfig extends AxiosRequestConfig {
   useAuth?: boolean
 }
 
+const LOGIN_STATUS_DISABLED_CODE = 'AUTH110'
+
 const authService = () => {
   const statusCheck = async () => {
     const res = await axiosInstance.get<StatusCheckResponseSchema>(`${BASE_PATH}/status-check`, {
@@ -24,6 +26,11 @@ const authService = () => {
       },
       useAuth: false
     } as CustomAxiosRequestConfig)
+
+    if (res.data.code === LOGIN_STATUS_DISABLED_CODE) {
+      cookie.deleteCookie(COOKIE_KEYS.ACCESS_TOKEN)
+    }
+
     return res.data
   }
 

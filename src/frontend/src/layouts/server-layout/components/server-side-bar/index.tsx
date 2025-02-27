@@ -69,6 +69,8 @@ export function Inner({ serverId, channelId }: ServerSideBarProps) {
 
   useClickOutside(serverMenuRef, () => setServerMenuOpen(false))
 
+  const isAdmin = serverData.ownerId === myInfo.id
+
   const ServerMenu = [
     {
       name: '초대하기',
@@ -109,11 +111,7 @@ export function Inner({ serverId, channelId }: ServerSideBarProps) {
     }
   ] as const
 
-  const isAdmin = serverData.ownerId === myInfo.id
-
-  if (!isAdmin) {
-    ServerMenu.concat(AdminMenu)
-  }
+  const openMenu = [...ServerMenu, ...(isAdmin ? AdminMenu : [])]
 
   return (
     <>
@@ -136,7 +134,7 @@ export function Inner({ serverId, channelId }: ServerSideBarProps) {
             ref={serverMenuRef}
             className='absolute z-10 top-14 left-[10px] w-[220px] bg-[#0F1013] rounded-md'>
             <ul className='flex flex-col p-1 py-2'>
-              {ServerMenu.map((menu) => (
+              {openMenu.map((menu) => (
                 <li
                   key={menu.name}
                   className='group'>
