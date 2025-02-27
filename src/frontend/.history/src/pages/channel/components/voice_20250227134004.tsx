@@ -227,7 +227,9 @@ function VideoComponent({
           username: 'kurentouser',
           credential: 'kurentopassword'
         }
-      ]
+      ],
+      iceTransportPolicy: 'relay',
+      iceCandidatePoolSize: 0
     })
 
     // ICE candidate

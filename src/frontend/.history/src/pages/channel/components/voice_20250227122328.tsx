@@ -3,7 +3,6 @@ import { io } from 'socket.io-client'
 
 import ChatArea from '@/components/chat-area'
 import CustomButton from '@/components/custom-button'
-import { SIGNALING_NODE_SERVER_URL } from '@/constants/env'
 import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
 import { cn } from '@/libs/cn'
 import useUserStatus from '@/stores/use-user-status'
@@ -18,11 +17,7 @@ interface Props {
   targetUser: ChatUser[]
 }
 
-const socket = io(SIGNALING_NODE_SERVER_URL, {
-  path: '/socket.io',
-  transports: ['websocket'],
-  withCredentials: true
-})
+const socket = io('ws://localhost:9000')
 
 function VideoComponent({
   channelId,
@@ -218,16 +213,7 @@ function VideoComponent({
     if (peersRef.current[socketId]) return
 
     const pc = new RTCPeerConnection({
-      iceServers: [
-        {
-          urls: 'stun:stun.l.google.com:19302'
-        },
-        {
-          urls: 'turn:13.125.13.209:3478?transport=udp',
-          username: 'kurentouser',
-          credential: 'kurentopassword'
-        }
-      ]
+      iceServers: [{ urls: ['stun:stun.l.google.com:19302'] }]
     })
 
     // ICE candidate
@@ -240,6 +226,7 @@ function VideoComponent({
     // track 이벤트 (상대방 비디오)
     pc.addEventListener('track', (event) => {
       // userId 라벨 표시를 위해 userMapRef 조회
+      const remoteUserId = userMapRef.current[socketId] || 'Unknown'
       const containerId = `container_${socketId}`
       let videoContainer = document.getElementById(containerId)
 
@@ -257,6 +244,7 @@ function VideoComponent({
       if (!peerVideo) {
         peerVideo = document.createElement('video')
         peerVideo.id = socketId
+        peerVideo.muted = true
         peerVideo.autoplay = true
         peerVideo.playsInline = true
         peerVideo.width = 400
@@ -264,7 +252,18 @@ function VideoComponent({
       }
       peerVideo.srcObject = event.streams[0]
 
+      // 아래에 userId 라벨 표시
+      let label = document.getElementById(`label_${socketId}`)
+      if (!label) {
+        label = document.createElement('div')
+        label.id = `label_${socketId}`
+        label.style.color = 'blue'
+        label.style.fontWeight = 'bold'
+      }
+      label.innerText = `User ID: ${remoteUserId}`
+
       videoContainer.appendChild(peerVideo)
+      videoContainer.appendChild(label)
 
       // callRef에 최종 삽입
       if (callRef.current && !document.getElementById(containerId)) {
@@ -300,8 +299,8 @@ function VideoComponent({
   // -----------------------------
   // (8) 카메라 변경
   // -----------------------------
-  async function handleCameraChange() {
-    await getMedia()
+  async function handleCameraChange(e) {
+    await getMedia(e.target.value)
   }
 
   // -----------------------------
@@ -418,9 +417,19 @@ function VideoComponent({
             )}
             {isInVoiceChannel && (
               <>
+                <video
+                  ref={myFaceRef}
+                  autoPlay
+                  playsInline
+                />
                 <div
                   ref={callRef}
-                  className='flex flex-wrap gap-[10px]'>
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: '10px',
+                    marginTop: '20px'
+                  }}>
                   <div className='m-[10px]'>
                     <video
                       className='w-[400px] h-[300px]'

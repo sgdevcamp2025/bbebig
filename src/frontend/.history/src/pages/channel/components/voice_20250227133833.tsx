@@ -23,6 +23,17 @@ const socket = io(SIGNALING_NODE_SERVER_URL, {
   transports: ['websocket'],
   withCredentials: true
 })
+const RTC_CONFIGURATION = {
+  iceServers: [
+    {
+      urls: 'turn:13.125.13.209:3478?transport=udp',
+      username: 'kurentouser',
+      credential: 'kurentopassword'
+    }
+  ],
+  iceTransportPolicy: 'relay',
+  iceCandidatePoolSize: 0
+}
 
 function VideoComponent({
   channelId,
@@ -218,16 +229,7 @@ function VideoComponent({
     if (peersRef.current[socketId]) return
 
     const pc = new RTCPeerConnection({
-      iceServers: [
-        {
-          urls: 'stun:stun.l.google.com:19302'
-        },
-        {
-          urls: 'turn:13.125.13.209:3478?transport=udp',
-          username: 'kurentouser',
-          credential: 'kurentopassword'
-        }
-      ]
+      iceServers: [{ urls: ['stun:stun.l.google.com:19302'] }]
     })
 
     // ICE candidate

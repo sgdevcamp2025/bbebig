@@ -19,9 +19,7 @@ interface Props {
 }
 
 const socket = io(SIGNALING_NODE_SERVER_URL, {
-  path: '/socket.io',
-  transports: ['websocket'],
-  withCredentials: true
+  transports: ['websocket']
 })
 
 function VideoComponent({
@@ -218,16 +216,7 @@ function VideoComponent({
     if (peersRef.current[socketId]) return
 
     const pc = new RTCPeerConnection({
-      iceServers: [
-        {
-          urls: 'stun:stun.l.google.com:19302'
-        },
-        {
-          urls: 'turn:13.125.13.209:3478?transport=udp',
-          username: 'kurentouser',
-          credential: 'kurentopassword'
-        }
-      ]
+      iceServers: [{ urls: ['stun:stun.l.google.com:19302'] }]
     })
 
     // ICE candidate
@@ -300,8 +289,8 @@ function VideoComponent({
   // -----------------------------
   // (8) 카메라 변경
   // -----------------------------
-  async function handleCameraChange() {
-    await getMedia()
+  async function handleCameraChange(e) {
+    await getMedia(e.target.value)
   }
 
   // -----------------------------

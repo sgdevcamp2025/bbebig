@@ -3,7 +3,6 @@ import { io } from 'socket.io-client'
 
 import ChatArea from '@/components/chat-area'
 import CustomButton from '@/components/custom-button'
-import { SIGNALING_NODE_SERVER_URL } from '@/constants/env'
 import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
 import { cn } from '@/libs/cn'
 import useUserStatus from '@/stores/use-user-status'
@@ -18,11 +17,7 @@ interface Props {
   targetUser: ChatUser[]
 }
 
-const socket = io(SIGNALING_NODE_SERVER_URL, {
-  path: '/socket.io',
-  transports: ['websocket'],
-  withCredentials: true
-})
+const socket = io('http://localhost:9000')
 
 function VideoComponent({
   channelId,
@@ -34,19 +29,34 @@ function VideoComponent({
 }: Props) {
   const [sideBar, setSideBar] = useState(false)
   const selfUser = useGetSelfUser()
-  const { getCurrentChannelInfo, joinVoiceChannel, leaveVoiceChannel } = useUserStatus()
+  const { getCurrentChannelInfo } = useUserStatus()
+
+  const isInVoiceChannel = getCurrentChannelInfo()?.channelId === channelId
+  // 입력값 상태
+  const [roomId, setRoomId] = useState('')
+  const [userId, setUserId] = useState('')
+
+  // 방 참여 여부
+  const [joined, setJoined] = useState(false)
+
+  // 오디오/비디오 토글
+  const [muted, setMuted] = useState(false)
+  const [cameraOff, setCameraOff] = useState(false)
+
+  // 카메라 선택
+  const [cameras, setCameras] = useState([])
 
   // 레퍼런스
-  const myFaceRef = useRef<HTMLVideoElement | null>(null) // 내 비디오 엘리먼트
-  const callRef = useRef<HTMLDivElement | null>(null) // 상대방(원격) 비디오 담을 컨테이너
-  const myStreamRef = useRef<MediaStream | null>(null) // 내 로컬 미디어 스트림
-  const peersRef = useRef<Record<string, RTCPeerConnection>>({}) // socketId -> RTCPeerConnection
-  const userMapRef = useRef<Record<string, string>>({}) // socketId -> userId (상대방 표시용)
+  const myFaceRef = useRef(null) // 내 비디오 엘리먼트
+  const callRef = useRef(null) // 상대방(원격) 비디오 담을 컨테이너
+  const myStreamRef = useRef(null) // 내 로컬 미디어 스트림
+  const peersRef = useRef({}) // socketId -> RTCPeerConnection
+  const userMapRef = useRef({}) // socketId -> userId (상대방 표시용)
 
   // -----------------------------
   // (1) 미디어 스트림 획득
   // -----------------------------
-  async function getMedia(deviceId?: string) {
+  async function getMedia(deviceId) {
     const initialConstraints = {
       audio: true,
       video: { facingMode: 'user' }
@@ -84,7 +94,7 @@ function VideoComponent({
     try {
       const devices = await navigator.mediaDevices.enumerateDevices()
       const videoInputs = devices.filter((d) => d.kind === 'videoinput')
-      // setCameras(videoInputs)
+      setCameras(videoInputs)
     } catch (err) {
       console.error('getCameras error:', err)
     }
@@ -94,7 +104,7 @@ function VideoComponent({
   // (3) user_left 처리
   // -----------------------------
   useEffect(() => {
-    const handleUserLeft = (socketId: string) => {
+    const handleUserLeft = (socketId) => {
       // 상대방 비디오 태그 제거
       const videoContainer = document.getElementById(`container_${socketId}`)
       if (videoContainer && callRef.current) {
@@ -123,7 +133,7 @@ function VideoComponent({
   // -----------------------------
   useEffect(() => {
     // 새 유저가 들어옴 (내가 먼저 방에 있었을 때)
-    const handleWelcome = async (newSocketId: string, newUserId: string) => {
+    const handleWelcome = async (newSocketId, newUserId) => {
       // userMapRef에 저장 (표시용)
       userMapRef.current[newSocketId] = newUserId
 
@@ -139,11 +149,7 @@ function VideoComponent({
     }
 
     // offer 수신 (내가 나중에 들어왔을 때)
-    const handleOffer = async (
-      offer: RTCSessionDescriptionInit,
-      remoteId: string,
-      remoteUserId: string
-    ) => {
+    const handleOffer = async (offer, remoteId, remoteUserId) => {
       // userMapRef에 저장
       userMapRef.current[remoteId] = remoteUserId
 
@@ -162,11 +168,7 @@ function VideoComponent({
     }
 
     // answer 수신
-    const handleAnswer = (
-      answer: RTCSessionDescriptionInit,
-      remoteId: string,
-      remoteUserId: string
-    ) => {
+    const handleAnswer = (answer, remoteId, remoteUserId) => {
       // userMapRef에 저장
       userMapRef.current[remoteId] = remoteUserId
 
@@ -177,7 +179,7 @@ function VideoComponent({
     }
 
     // ICE candidate 수신
-    const handleIce = (ice: RTCIceCandidate, remoteId: string, remoteUserId: string) => {
+    const handleIce = (ice, remoteId, remoteUserId) => {
       // userMapRef에 저장 (중복이어도 문제 없음)
       userMapRef.current[remoteId] = remoteUserId
 
@@ -204,30 +206,22 @@ function VideoComponent({
   // (5) 방 입장
   // -----------------------------
   useEffect(() => {
-    if (getCurrentChannelInfo()?.channelId === channelId) {
+    if (joined && roomId && userId) {
       // 로컬 미디어 가져오기
       getMedia()
       // 서버에 join_room
+      socket.emit('join_room', { roomId, userId })
     }
-  }, [getCurrentChannelInfo])
+  }, [joined, roomId, userId])
 
   // -----------------------------
   // (6) PeerConnection 생성
   // -----------------------------
-  function makeConnection(socketId: string) {
+  function makeConnection(socketId) {
     if (peersRef.current[socketId]) return
 
     const pc = new RTCPeerConnection({
-      iceServers: [
-        {
-          urls: 'stun:stun.l.google.com:19302'
-        },
-        {
-          urls: 'turn:13.125.13.209:3478?transport=udp',
-          username: 'kurentouser',
-          credential: 'kurentopassword'
-        }
-      ]
+      iceServers: [{ urls: ['stun:stun.l.google.com:19302'] }]
     })
 
     // ICE candidate
@@ -240,6 +234,7 @@ function VideoComponent({
     // track 이벤트 (상대방 비디오)
     pc.addEventListener('track', (event) => {
       // userId 라벨 표시를 위해 userMapRef 조회
+      const remoteUserId = userMapRef.current[socketId] || 'Unknown'
       const containerId = `container_${socketId}`
       let videoContainer = document.getElementById(containerId)
 
@@ -253,7 +248,7 @@ function VideoComponent({
         videoContainer.style.margin = '10px'
       }
 
-      let peerVideo = document.getElementById(socketId) as HTMLVideoElement
+      let peerVideo = document.getElementById(socketId)
       if (!peerVideo) {
         peerVideo = document.createElement('video')
         peerVideo.id = socketId
@@ -264,7 +259,18 @@ function VideoComponent({
       }
       peerVideo.srcObject = event.streams[0]
 
+      // 아래에 userId 라벨 표시
+      let label = document.getElementById(`label_${socketId}`)
+      if (!label) {
+        label = document.createElement('div')
+        label.id = `label_${socketId}`
+        label.style.color = 'blue'
+        label.style.fontWeight = 'bold'
+      }
+      label.innerText = `User ID: ${remoteUserId}`
+
       videoContainer.appendChild(peerVideo)
+      videoContainer.appendChild(label)
 
       // callRef에 최종 삽입
       if (callRef.current && !document.getElementById(containerId)) {
@@ -275,7 +281,7 @@ function VideoComponent({
     // 로컬 스트림 트랙을 PeerConnection에 추가
     if (myStreamRef.current) {
       myStreamRef.current.getTracks().forEach((track) => {
-        if (myStreamRef.current) pc.addTrack(track, myStreamRef.current)
+        pc.addTrack(track, myStreamRef.current)
       })
     }
 
@@ -285,40 +291,34 @@ function VideoComponent({
   // -----------------------------
   // (7) 음소거 / 카메라 Off
   // -----------------------------
-  // function handleMuteClick() {
-  //   if (!myStreamRef.current) return
-  //   myStreamRef.current.getAudioTracks().forEach((track) => (track.enabled = !track.enabled))
-  //   setMuted((prev) => !prev)
-  // }
+  function handleMuteClick() {
+    if (!myStreamRef.current) return
+    myStreamRef.current.getAudioTracks().forEach((track) => (track.enabled = !track.enabled))
+    setMuted((prev) => !prev)
+  }
 
-  // function handleCameraClick() {
-  //   if (!myStreamRef.current) return
-  //   myStreamRef.current.getVideoTracks().forEach((track) => (track.enabled = !track.enabled))
-  //   setCameraOff((prev) => !prev)
-  // }
+  function handleCameraClick() {
+    if (!myStreamRef.current) return
+    myStreamRef.current.getVideoTracks().forEach((track) => (track.enabled = !track.enabled))
+    setCameraOff((prev) => !prev)
+  }
 
   // -----------------------------
   // (8) 카메라 변경
   // -----------------------------
-  async function handleCameraChange() {
-    await getMedia()
+  async function handleCameraChange(e) {
+    await getMedia(e.target.value)
   }
 
   // -----------------------------
   // (9) 방 입장 / 퇴장
   // -----------------------------
   function handleSubmit() {
-    socket.connect()
-
-    getMedia()
-
-    joinVoiceChannel({
-      channelId,
-      channelName,
-      serverName
-    })
-
-    socket.emit('join_room', { roomName: channelId, userId: selfUser.id })
+    if (!roomId || !userId) {
+      alert('Room Name과 User ID를 입력하세요!')
+      return
+    }
+    setJoined(true)
   }
 
   function handleLeaveClick() {
@@ -340,7 +340,7 @@ function VideoComponent({
     peersRef.current = {}
     userMapRef.current = {}
 
-    leaveVoiceChannel()
+    setJoined(false)
   }
 
   // -----------------------------
@@ -363,8 +363,6 @@ function VideoComponent({
   const handleLeaveVoiceChannel = () => {
     handleLeaveClick()
   }
-
-  const isInVoiceChannel = getCurrentChannelInfo()?.channelId === channelId
 
   const voiceUsers = serverMemberList.map((user) => {
     return { ...user }
@@ -420,7 +418,12 @@ function VideoComponent({
               <>
                 <div
                   ref={callRef}
-                  className='flex flex-wrap gap-[10px]'>
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: '10px',
+                    marginTop: '20px'
+                  }}>
                   <div className='m-[10px]'>
                     <video
                       className='w-[400px] h-[300px]'
