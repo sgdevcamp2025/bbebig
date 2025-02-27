@@ -10,7 +10,7 @@ import {
   createChannelResponseSchema,
   inviteUserRequestSchema,
   inviteUserResponseSchema
-} from '../server'
+} from '../service'
 
 export interface DeleteServerRequestSchema {
   serverId: number

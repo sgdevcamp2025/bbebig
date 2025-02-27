@@ -1,7 +1,5 @@
 import axiosInstance from '../config/axios-instance'
 import { CommonResponseType } from '../schema/types/common'
-import { ZInviteUserRequestSchema } from '../schema/types/service'
-import { ZInviteUserResponseSchema } from '../schema/types/service'
 import {
   AcceptFriendRequestSchema,
   AcceptFriendResponseSchema,
@@ -20,6 +18,8 @@ import {
   GetUserRequestSchema,
   GetUserResponseSchema,
   GetUserSelfResponseSchema,
+  SelectUserByNicknameRequestSchema,
+  SelectUserByNicknameResponseSchema,
   UpdateUserPresenceStatusRequestSchema,
   UpdateUserPresenceStatusResponseSchema,
   UpdateUserRequestSchema,
@@ -122,15 +122,29 @@ const userService = () => {
     return response.data
   }
 
-  const postFriendWithNickname = async (data: ZInviteUserRequestSchema) => {
-    const response = await axiosInstance.get<ZInviteUserResponseSchema>(`${FRIEND_PATH}/invite`, {
+  const selectUserByNickname = async (data: SelectUserByNicknameRequestSchema) => {
+    const response = await axiosInstance.get<
+      CommonResponseType<SelectUserByNicknameResponseSchema>
+    >(`${MEMBER_PATH}/search`, {
       params: {
-        nickname: data.inviteUserName
+        nickName: data.nickName
       }
     })
 
+    return response.data
+  }
+
+  const createFriendWithNickname = async (data: SelectUserByNicknameRequestSchema) => {
+    const selectUserId = await selectUserByNickname({
+      nickName: data.nickName
+    }).then((res) => res?.result.id)
+
+    if (!selectUserId) {
+      return
+    }
+
     const createRequest = await createRequestForFriend({
-      toMemberId: response.data.result.id
+      toMemberId: selectUserId
     })
 
     const acceptResponse = await acceptFriend({
@@ -154,7 +168,8 @@ const userService = () => {
     acceptFriend,
     deleteFriendInRequestList,
     createRequestForFriend,
-    postFriendWithNickname
+    selectUserByNickname,
+    createFriendWithNickname
   }
 }
 

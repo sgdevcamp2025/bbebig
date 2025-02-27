@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 
-import { createChannelRequestSchema } from '@/apis/schema/server'
+import { createChannelRequestSchema } from '@/apis/schema/service'
 import { ZCreateChannelRequestSchema } from '@/apis/schema/types/service'
 import CustomButton from '@/components/custom-button'
 import CustomModal from '@/components/custom-modal'

@@ -6,7 +6,7 @@ import { useGetServerMember } from '@/hooks/queries/server/useGetServerMember'
 import { useStatusStore } from '@/stores/use-status-store'
 import { CustomPresenceStatus } from '@/types/user'
 
-import UserProfileCard from '../user-profile-card'
+import { UserProfileCard } from './user-profile-card'
 
 interface StatusSideBarProps {
   channelUserList: ChannelStatusBarUser[]

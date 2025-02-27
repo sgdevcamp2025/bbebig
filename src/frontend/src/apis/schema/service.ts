@@ -35,15 +35,7 @@ const inviteUserRequestSchema = z.object({
 
 const inviteUserResponseSchema = commonResponseSchema.extend({
   result: z.object({
-    id: z.number(),
-    name: z.string(),
-    nickName: z.string(),
-    email: z.string(),
-    avatarUrl: z.string().nullable(),
-    bannerUrl: z.string().nullable(),
-    introduce: z.string().nullable(),
-    customPresenceStatus: z.string().nullable(),
-    lastAccessAt: z.string().nullable()
+    id: z.number()
   })
 })
 

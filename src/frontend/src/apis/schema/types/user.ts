@@ -134,3 +134,24 @@ export interface CreateResponseForFriendResponseSchema {
   toMemeberId: number
   createdAt: number
 }
+
+export interface SelectUserByNicknameRequestSchema {
+  nickName: string
+}
+
+export interface SelectUserByNicknameResponseSchema {
+  id: number
+  name: string
+  nickname: string
+  email: string
+  birthdate: string
+  avatarUrl: string | null
+  bannerUrl: string | null
+  introduce: string | null
+  customPresenceStatus: CustomPresenceStatus | null
+  lastAccessAt: string | null
+}
+
+export interface InviteServerWithUserNicknameResponseSchema {
+  id: number
+}

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router'
 
 import Avatar from '@/components/avatar'
 
-import { ChannelStatusBarUser } from '../status-side-bar'
+import { ChannelStatusBarUser } from '.'
 
 interface InnerProps {
   user: ChannelStatusBarUser
@@ -105,7 +105,11 @@ interface UserProfileCardProps {
   onMoreButtonClick: () => void
 }
 
-function UserProfileCard({ user, onSendFriendRequest, onMoreButtonClick }: UserProfileCardProps) {
+export function UserProfileCard({
+  user,
+  onSendFriendRequest,
+  onMoreButtonClick
+}: UserProfileCardProps) {
   return (
     <Inner
       user={user}
@@ -114,5 +118,3 @@ function UserProfileCard({ user, onSendFriendRequest, onMoreButtonClick }: UserP
     />
   )
 }
-
-export default UserProfileCard
