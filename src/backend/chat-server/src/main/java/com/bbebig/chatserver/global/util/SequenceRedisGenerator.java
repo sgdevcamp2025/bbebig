@@ -23,5 +23,10 @@ public class SequenceRedisGenerator {
 		return redisSetTemplate.opsForValue().increment(redisKey);
 	}
 
+	public Long getSeqForServerChannel(Long channelId) {
+		String redisKey = ServerRedisKeys.getServerChannelSequenceKey(channelId);
+		return redisSetTemplate.opsForValue().get(redisKey);
+	}
+
 }
 
