@@ -22,6 +22,18 @@ export function Inner({ serverId, channelId }: ServerSideBarProps) {
   const serverData = useGetServerInfo(serverId)
   const myInfo = useGetSelfUser()
   const navigate = useNavigate()
+  const [serverMenu, setServerMenu] = useState<
+    { name: string; icon: React.ReactNode; color: string; onClick: () => void }[]
+  >([
+    {
+      name: '초대하기',
+      icon: <UserRoundPlus className='w-4 h-4' />,
+      color: 'text-brand-20',
+      onClick: () => {
+        setInviteModalOpen(true)
+      }
+    }
+  ])
 
   const { serverName, categoryInfoList, channelInfoList } = serverData
 
@@ -111,7 +123,7 @@ export function Inner({ serverId, channelId }: ServerSideBarProps) {
 
   const isAdmin = serverData.ownerId === myInfo.id
 
-  if (!isAdmin) {
+  if (isAdmin) {
     ServerMenu.concat(AdminMenu)
   }
 

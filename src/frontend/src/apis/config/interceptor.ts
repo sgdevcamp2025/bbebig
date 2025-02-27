@@ -33,5 +33,9 @@ export async function handleApiError(error: AxiosError) {
 }
 
 export async function handleTokenError(error: AxiosError) {
+  if (error.response?.status === 401) {
+    cookie.deleteCookie(COOKIE_KEYS.ACCESS_TOKEN)
+    window.location.href = '/login'
+  }
   return Promise.reject(error)
 }
