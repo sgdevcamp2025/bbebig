@@ -32,7 +32,7 @@ const wsServer = new Server(httpServer, {
 const eurekaConfig = {
   instance: {
     app: "SIGNALING-NODE-SERVER",
-    hostName: "signaling—node-server",
+    hostName: "signaling-node-server",
     ipAddr: "signaling-node-server",
     status: "UP",
     port: {
