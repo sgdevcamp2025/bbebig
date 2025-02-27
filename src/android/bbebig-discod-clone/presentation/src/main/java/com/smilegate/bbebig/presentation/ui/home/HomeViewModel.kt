@@ -270,7 +270,6 @@ class HomeViewModel @Inject constructor(
                         }
                 }
                 .toList()
-                .reversed()
             reduce {
                 copy(
                     receiveChatMessageList = ImmutableList(list),

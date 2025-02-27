@@ -4,7 +4,7 @@
     <string name="sign_up">가입하기</string>
     <string name="desc_back">뒤로가기</string>
     <string name="account_info_title">계정 정보</string>
-    <string name="email_pw_hint">이메일 또는 전화번호</string>
+    <string name="email_pw_hint">이메일</string>
     <string name="pw_hint">비밀번호</string>
     <string name="login_welcome_title">돌아오신 것을 환영해요!</string>
     <string name="login_welcome_sub_title">다시 만나다니 너무 반가워요!</string>

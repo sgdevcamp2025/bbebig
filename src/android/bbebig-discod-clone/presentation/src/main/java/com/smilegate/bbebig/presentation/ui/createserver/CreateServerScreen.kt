@@ -24,6 +24,7 @@ import com.smilegate.bbebig.presentation.component.DiscordRoundButton
 import com.smilegate.bbebig.presentation.component.DiscordTitleContainer
 import com.smilegate.bbebig.presentation.component.DiscordTopBar
 import com.smilegate.bbebig.presentation.theme.Blue70
+import com.smilegate.bbebig.presentation.theme.Gray90
 import com.smilegate.bbebig.presentation.theme.White
 import com.smilegate.bbebig.presentation.utils.StableImage
 import com.smilegate.bbebig.presentation.utils.rippleSingleClick
@@ -55,6 +56,7 @@ fun CreateServerScreen(
                     .padding(vertical = 20.dp),
                 firstTitleResId = R.string.create_server_title,
                 secondTitleResId = R.string.create_server_sub_title,
+                fontColor = Gray90,
             )
             ServerThumbnail(
                 modifier = Modifier

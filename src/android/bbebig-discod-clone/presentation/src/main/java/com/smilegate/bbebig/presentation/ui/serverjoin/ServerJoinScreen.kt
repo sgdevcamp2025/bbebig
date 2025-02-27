@@ -18,6 +18,7 @@ import com.smilegate.bbebig.presentation.component.DiscordRoundButton
 import com.smilegate.bbebig.presentation.component.DiscordTitleContainer
 import com.smilegate.bbebig.presentation.component.DiscordTopBar
 import com.smilegate.bbebig.presentation.theme.Blue70
+import com.smilegate.bbebig.presentation.theme.Gray90
 import com.smilegate.bbebig.presentation.theme.White
 import com.smilegate.devcamp.presentation.R
 
@@ -43,6 +44,7 @@ fun ServerJoinScreen(onClickBack: () -> Unit, onClickServerJoin: (String) -> Uni
                     .padding(vertical = 20.dp),
                 firstTitleResId = R.string.server_join_title,
                 secondTitleResId = R.string.server_join_sub_title,
+                fontColor = Gray90,
             )
             DiscordInputContainer(
                 modifier = Modifier.fillMaxWidth(),
