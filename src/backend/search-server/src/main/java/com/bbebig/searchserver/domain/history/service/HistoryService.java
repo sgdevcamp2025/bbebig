@@ -336,6 +336,7 @@ public class HistoryService {
 			}
 		}
 
+
 		return lastInfo;
 	}
 }
