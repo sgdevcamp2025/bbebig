@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 
 import Avatar from '@/components/avatar'
 import CommonHeader from '@/components/common-header'
-import { useGetServerMember } from '@/hooks/queries/server/useGetServerMember'
 import { cn } from '@/libs/cn'
 import DmAreaHeader from '@/pages/dm/components/dm-area-header'
 import { useChatStore } from '@/stores/use-chat-store'
@@ -43,7 +42,6 @@ function ChatArea({
 
   const [searchValue, setSearchValue] = useState('')
   const { isStatusBarOpen, toggleStatusBar } = useStatusBarStore()
-  const { serverMemberInfoList } = useGetServerMember(String(serverId ?? -1))
 
   const isChannel = channelName !== undefined
   const navigate = useNavigate()
@@ -144,8 +142,9 @@ function ChatArea({
                     users.targetUsers[0]
 
                 const status =
-                  serverMemberInfoList.find((member) => member.memberId === messageUser?.memberId)
-                    ?.globalStatus ||
+                  [...users.targetUsers, users.currentUser]?.find(
+                    (member) => member.memberId === messageUser?.memberId
+                  )?.globalStatus ||
                   messageUser?.globalStatus ||
                   'ONLINE'
 
