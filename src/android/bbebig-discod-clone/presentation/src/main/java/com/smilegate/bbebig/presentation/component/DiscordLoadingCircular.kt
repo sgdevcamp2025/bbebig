@@ -9,14 +9,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import com.smilegate.bbebig.presentation.theme.Blue70
+import com.smilegate.bbebig.presentation.theme.MainColor
+import com.smilegate.bbebig.presentation.theme.White
 
 @Composable
-fun DiscordLoadingCircular(modifier: Modifier = Modifier) {
-    Box(modifier = modifier.background(Color.White), contentAlignment = Alignment.Center) {
+fun DiscordLoadingCircular(modifier: Modifier = Modifier, backgroundColor: Color = White) {
+    Box(modifier = modifier.background(backgroundColor), contentAlignment = Alignment.Center) {
         CircularProgressIndicator(
             modifier = Modifier.align(Alignment.Center),
-            color = Blue70,
+            color = MainColor,
         )
     }
 }
