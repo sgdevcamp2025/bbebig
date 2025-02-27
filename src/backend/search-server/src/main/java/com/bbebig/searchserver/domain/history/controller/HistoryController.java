@@ -88,7 +88,7 @@ public class HistoryController {
 		return CommonResponse.onSuccess(null);
 	}
 
-	@GetMapping("/test/send")
+	@PostMapping("/test/send")
 	public CommonResponse<?> testSend(ChatMessageDto chatMessageDto) {
 		historyService.saveChannelMessage(chatMessageDto);
 		return CommonResponse.onSuccess(null);
