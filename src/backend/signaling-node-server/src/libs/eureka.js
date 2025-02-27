@@ -1,5 +1,3 @@
-import { EUREKA_DISABLED } from "./constants";
-
 export class EurekaClient {
   config;
   heartbeatInterval;
@@ -13,11 +11,6 @@ export class EurekaClient {
 
   async register() {
     try {
-      if (EUREKA_DISABLED) {
-        console.log("Eureka 등록 비활성화");
-        return;
-      }
-
       const response = await fetch(
         `${this.baseUrl}/${this.config.instance.app}`,
         {
