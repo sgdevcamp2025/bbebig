@@ -97,4 +97,9 @@ public class HistoryController {
 		return CommonResponse.onSuccess(null);
 	}
 
+	@GetMapping("/test/unread/all/{memberId}")
+	public CommonResponse<?> testUnreadAll(@PathVariable Long memberId) {
+		return CommonResponse.onSuccess(historyService.getAllServerUnreadCount(memberId));
+	}
+
 }
