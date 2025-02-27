@@ -53,6 +53,15 @@ public class PassportService {
         return PassportResponseDto.convertToIssuePassportResponse(passport);
     }
 
+    public Long getMemberIdByJWT(String jwt) {
+        JwtResponseDto jwtResponseDto = parseJwt(jwt);
+        if (jwtResponseDto.getMemberId() == null) {
+            throw new ErrorHandler(ErrorStatus.INVALID_JWT);
+        }
+
+        return jwtResponseDto.getMemberId();
+    }
+
     /**
      * 사용자 정보를 받아 Passport 생성 + HMAC 서명 + Base64
      */
