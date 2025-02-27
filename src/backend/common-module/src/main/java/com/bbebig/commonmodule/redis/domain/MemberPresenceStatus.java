@@ -35,6 +35,15 @@ public class MemberPresenceStatus {
 		calculateGlobalStatus();
 	}
 
+	public boolean existsDevice(String sessionId) {
+		for (DeviceInfo deviceInfo : devices) {
+			if (deviceInfo.getSocketSessionId().equals(sessionId)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public void updateCustomStatus(PresenceType customStatus) {
 		this.customStatus = customStatus;
 		calculateGlobalStatus();
@@ -48,7 +57,7 @@ public class MemberPresenceStatus {
 		calculateGlobalStatus();
 	}
 
-	private void calculateGlobalStatus() {
+	public void calculateGlobalStatus() {
 		if (devices == null || devices.isEmpty() || actualStatus == PresenceType.OFFLINE) {
 			actualStatus = PresenceType.OFFLINE;
 			globalStatus = PresenceType.OFFLINE;
