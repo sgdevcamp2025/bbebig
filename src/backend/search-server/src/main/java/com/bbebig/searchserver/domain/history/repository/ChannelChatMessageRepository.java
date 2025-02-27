@@ -16,10 +16,19 @@ public interface ChannelChatMessageRepository extends MongoRepository<ChannelCha
 
 	// Using 'id < messageId'
 	@Query(value = "{ 'channelId': ?0, 'isDeleted': false, 'id': { $lt: ?1 } }",
-			sort = "{ 'id': -1 }")
+			sort = "{ 'sequence': -1 }")
 	List<ChannelChatMessage> findByChannelIdAndIdLessThan(
 			Long channelId,
 			Long messageId,
+			Pageable pageable
+	);
+
+	// Using 'sequence < sequence'
+	@Query(value = "{ 'channelId': ?0, 'isDeleted': false, 'sequence': { $lt: ?1 } }",
+			sort = "{ 'sequence': -1 }")
+	List<ChannelChatMessage> findPreviousMessages(
+			Long channelId,
+			Long sequence,
 			Pageable pageable
 	);
 
