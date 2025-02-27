@@ -98,7 +98,7 @@ public class ConnectionEventConsumerService {
 			memberPresenceStatus.updateLastActivityTime(LocalDateTime.now());
 		}
 
-		if (memberPresenceStatus.existsDevice(connectionEventDto.getSocketSessionId())) {
+		if (!memberPresenceStatus.existsDevice(connectionEventDto.getSocketSessionId())) {
 			DeviceInfo deviceInfo = DeviceInfo.builder()
 					.platform(connectionEventDto.getPlatform())
 					.socketSessionId(connectionEventDto.getSocketSessionId())
