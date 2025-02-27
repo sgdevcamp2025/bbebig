@@ -1,21 +1,39 @@
 import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import {
+  healthCheckSchema,
   logoutSchema,
+  mobileSignInSchema,
+  refreshTokenMobileSchema,
   refreshTokenSchema,
   registerSchema,
   signInSchema,
-  tokenDecodeSchema,
+  verifyTokenSchema,
+  loginStatusCheckSchema,
 } from '../../schema/authSchema';
 import { verifySignIn } from '../../libs/authHelper';
 import { authController } from '../../controllers';
 
 const authRoute = async (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().route({
+    method: 'GET',
+    url: '/status-check',
+    schema: loginStatusCheckSchema,
+    handler: authController.loginStatusCheck,
+  });
+
+  app.withTypeProvider<ZodTypeProvider>().route({
     method: 'POST',
     url: '/login',
     schema: signInSchema,
     handler: authController.login,
+  });
+
+  app.withTypeProvider<ZodTypeProvider>().route({
+    method: 'POST',
+    url: '/mobile-login',
+    schema: mobileSignInSchema,
+    handler: authController.mobileLogin,
   });
 
   app.withTypeProvider<ZodTypeProvider>().route({
@@ -34,7 +52,7 @@ const authRoute = async (app: FastifyInstance) => {
   });
 
   app.withTypeProvider<ZodTypeProvider>().route({
-    method: 'PUT',
+    method: 'POST',
     url: '/refresh',
     schema: refreshTokenSchema,
     preHandler: [verifySignIn],
@@ -42,10 +60,25 @@ const authRoute = async (app: FastifyInstance) => {
   });
 
   app.withTypeProvider<ZodTypeProvider>().route({
+    method: 'POST',
+    url: '/refresh-mobile',
+    schema: refreshTokenMobileSchema,
+    handler: authController.refreshMobile,
+  });
+
+  app.withTypeProvider<ZodTypeProvider>().route({
     method: 'GET',
     url: '/verify-token',
-    schema: tokenDecodeSchema,
+    schema: verifyTokenSchema,
+    preHandler: [verifySignIn],
     handler: authController.verifyToken,
+  });
+
+  app.withTypeProvider<ZodTypeProvider>().route({
+    method: 'GET',
+    url: '/health-check',
+    schema: healthCheckSchema,
+    handler: authController.healthCheck,
   });
 };
 

@@ -67,23 +67,62 @@ function authController() {
     }
   };
 
-  const register = async (req: FastifyRequest, res: FastifyReply) => {
-    const { email, password, name, nickname, birthDate } = req.body as {
-      email: string;
-      password: string;
-      name: string;
-      nickname: string;
-      birthDate: string;
+  const mobileLogin = async (req: FastifyRequest, res: FastifyReply) => {
+    const { email, password } = req.body as { email: string; password: string };
+
+    const values = await authService.loginWithPassword(email, password);
+
+    if (!values) {
+      handleError(res, ERROR_MESSAGE.notFound);
+      return;
+    }
+
+    const result = {
+      accessToken: values.accessToken,
+      refreshToken: values.refreshToken,
     };
 
-    try {
-      const hashedPassword = generateHash(password);
+    await redis.set(REDIS_KEY.refreshToken(values.id), values.refreshToken);
 
-      await authService.register(email, hashedPassword, name, nickname, new Date(birthDate));
+    handleSuccess(
+      res,
+      {
+        ...SUCCESS_MESSAGE.loginOk,
+        result,
+      },
+      200,
+    );
+  };
+
+  const register = async (
+    req: FastifyRequest<{
+      Body: { email: string; password: string; name: string; nickname: string; birthdate: string };
+    }>,
+    res: FastifyReply,
+  ) => {
+    const { email, password, name, nickname, birthdate } = req.body;
+
+    const hashedPassword = generateHash(password);
+
+    const isEmailExists = await authService.findUserByEmail(email);
+    const isNicknameExists = await authService.findUserByNickname(nickname);
+
+    if (isEmailExists) {
+      handleError(res, ERROR_MESSAGE.duplicateEmail);
+      return;
+    }
+
+    if (isNicknameExists) {
+      handleError(res, ERROR_MESSAGE.duplicateNickname);
+      return;
+    }
+
+    try {
+      await authService.register(email, hashedPassword, name, nickname, birthdate);
 
       handleSuccess(res, SUCCESS_MESSAGE.registerOk, 201);
     } catch (error) {
-      handleError(res, ERROR_MESSAGE.duplicateEmail, error);
+      handleError(res, ERROR_MESSAGE.serverError, error);
     }
   };
 
@@ -128,6 +167,54 @@ function authController() {
 
       const result = await authService.refresh(refreshToken, redisRefreshToken);
 
+      res.setCookie('refresh_token', result.refreshToken, {
+        sameSite: 'lax',
+        httpOnly: true,
+        secure: false,
+        path: '/',
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+      });
+
+      await redis.set(REDIS_KEY.refreshToken(id), result.refreshToken);
+
+      handleSuccess(res, {
+        ...SUCCESS_MESSAGE.refreshToken,
+        result: {
+          accessToken: result.accessToken,
+        },
+      });
+    } catch (error) {
+      handleError(res, ERROR_MESSAGE.unauthorized, error);
+    }
+  };
+
+  const refreshMobile = async (req: FastifyRequest, res: FastifyReply) => {
+    const id = req.user?.id;
+    const refreshToken = req.cookies.refresh_token;
+
+    if (!refreshToken || !id) {
+      handleError(res, ERROR_MESSAGE.unauthorized);
+      return;
+    }
+
+    try {
+      const redisRefreshToken = await redis.get(REDIS_KEY.refreshToken(id));
+
+      if (!redisRefreshToken) {
+        handleError(res, ERROR_MESSAGE.unauthorized);
+        return;
+      }
+
+      const result = await authService.refresh(refreshToken, redisRefreshToken);
+
+      res.setCookie('refresh_token', result.refreshToken, {
+        sameSite: 'lax',
+        httpOnly: true,
+        secure: false,
+        path: '/',
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+      });
+
       await redis.set(REDIS_KEY.refreshToken(id), result.refreshToken);
 
       handleSuccess(res, {
@@ -162,12 +249,32 @@ function authController() {
     }
   };
 
+  const healthCheck = async (req: FastifyRequest, res: FastifyReply) => {
+    handleSuccess(res, SUCCESS_MESSAGE.healthCheckOk, 200);
+  };
+
+  const loginStatusCheck = async (req: FastifyRequest, res: FastifyReply) => {
+    const id = req.user?.id;
+    const refreshToken = req.cookies.refresh_token;
+
+    if (!id || !refreshToken) {
+      handleSuccess(res, SUCCESS_MESSAGE.loginStatusDisabled, 200);
+      return;
+    }
+
+    handleSuccess(res, SUCCESS_MESSAGE.loginStatusOK, 200);
+  };
+
   return {
     login,
     register,
     logout,
     refresh,
     verifyToken,
+    healthCheck,
+    mobileLogin,
+    refreshMobile,
+    loginStatusCheck,
   };
 }
 

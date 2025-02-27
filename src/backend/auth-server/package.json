@@ -5,11 +5,14 @@
   "scripts": {
     "build": "tsc",
     "generate": "prisma generate",
+    "typecheck": "tsc --noEmit",
     "start": "yarn generate && node dist/main.js",
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'tsx' main.ts",
     "test": "jest --config jest.config.cjs",
     "test:watch": "jest --config jest.config.cjs --watch",
     "lint": "lint-staged",
+    "db:pull": "npx prisma db pull",
+    "db:generate": "npx prisma generate",
     "docker:clean": "docker-compose down --rmi all --volumes --remove-orphans",
     "docker:start": "yarn docker:clean && docker-compose up --build",
     "docker:start:detach": "yarn docker:clean && docker-compose up --build -d"
@@ -26,9 +29,9 @@
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.7",
     "fastify": "^5.0.0",
+    "fastify-type-provider-zod": "^4.0.2",
     "jsonwebtoken": "^9.0.2",
-    "zod": "^3.24.1",
-    "fastify-type-provider-zod": "^4.0.2"
+    "zod": "^3.24.1"
   },
   "packageManager": "yarn@1.22.1",
   "devDependencies": {

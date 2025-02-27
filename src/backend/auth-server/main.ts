@@ -12,7 +12,13 @@ import { FastifyCookieOptions } from '@fastify/cookie';
 import routes from './src/routes';
 import cors from '@fastify/cors';
 import fastifyCookie from '@fastify/cookie';
-import { ERROR_MESSAGE, isDevelopment, SECRET_KEY, SERVER_PORT } from './src/libs/constants';
+import {
+  ERROR_MESSAGE,
+  SECRET_KEY,
+  SERVER_IP,
+  SERVER_PORT,
+  EUREKA_DISABLED,
+} from './src/libs/constants';
 import fastifyRedis from '@fastify/redis';
 import { currentAuthPlugin } from './src/plugin/authPlugin';
 import { fastifySwagger } from '@fastify/swagger';
@@ -21,10 +27,59 @@ import { z } from 'zod';
 import { hasZodFastifySchemaValidationErrors } from 'fastify-type-provider-zod';
 import { handleError } from './src/libs/errorHelper';
 import redis from './src/libs/redis';
-import db from './src/libs/db';
+import EurekaClient from './src/libs/eureka';
+
+const eurekaConfig = {
+  instance: {
+    app: 'AUTH-SERVER',
+    hostName: 'auth-server',
+    ipAddr: 'auth-server',
+    status: 'UP',
+    port: {
+      $: 9000,
+      '@enabled': 'true',
+    },
+    vipAddress: 'auth-server',
+    statusPageUrl: 'http://auth-server:9000/',
+    dataCenterInfo: {
+      '@class': 'com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo',
+      name: 'MyOwn',
+    },
+  },
+  eureka: {
+    host: 'discovery-server',
+    port: 8761,
+    servicePath: '/eureka/apps',
+  },
+};
+
+const eurekaClient = new EurekaClient(eurekaConfig);
+
+eurekaClient.register();
 
 const app = Fastify({
-  logger: true,
+  logger: {
+    level: 'debug',
+    serializers: {
+      req(request) {
+        return {
+          method: request.method,
+          url: request.url,
+          headers: request.headers,
+          hostname: request.hostname,
+          remoteAddress: request.ip,
+          remotePort: request.socket.remotePort,
+        };
+      },
+      err(error) {
+        return {
+          type: error.name,
+          message: error.message,
+          stack: error.stack || '',
+        };
+      },
+    },
+  },
   pluginTimeout: 20000,
 }).withTypeProvider<ZodTypeProvider>();
 
@@ -43,7 +98,25 @@ app.register(fastifySwagger, {
       description: 'Bbebig auth service',
       version: '1.0.0',
     },
-    servers: [],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'apiKey',
+          name: 'Authorization',
+          in: 'header',
+        },
+      },
+    },
+    servers: [
+      {
+        url: 'http://localhost:9000',
+        description: 'Local',
+      },
+      {
+        url: `http://${SERVER_IP}:${SERVER_PORT}`,
+        description: 'Auth Server',
+      },
+    ],
   },
   transform: jsonSchemaTransform,
   transformObject: createJsonSchemaTransformObject({
@@ -76,10 +149,6 @@ app
     }
   });
 
-app.register(cors, {
-  origin: true,
-  credentials: true,
-});
 app.register(fastifyCookie, {
   secret: SECRET_KEY,
 } as FastifyCookieOptions);
@@ -99,6 +168,18 @@ app.setErrorHandler((err, req, reply) => {
   if (isResponseSerializationError(err)) {
     return handleError(reply, ERROR_MESSAGE.serverError, err);
   }
+
+  if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
+    return reply.status(401).send({
+      code: 'AUTH004',
+      message: 'Token expired or invalid',
+    });
+  }
+
+  return reply.status(401).send({
+    code: err.code || 'AUTH004',
+    message: err.message || 'Unauthorized',
+  });
 });
 
 // 데이터베이스 연결 테스트 함수
@@ -129,6 +210,7 @@ const start = async () => {
     console.log(`listening on port ${SERVER_PORT}`);
   } catch (error) {
     app.log.error(error);
+    eurekaClient.deregister();
     process.exit(1);
   }
 };

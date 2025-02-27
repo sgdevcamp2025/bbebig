@@ -1,8 +1,11 @@
 import { Secret } from 'jsonwebtoken';
+import { CommonResponseType } from 'src/schema/type';
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 const isProduction = process.env.NODE_ENV === 'production';
 
+const EUREKA_DISABLED = process.env.EUREKA_DISABLED === 'true' || false;
+const SERVER_IP = process.env.SERVER_IP;
 const SERVER_PORT = Number(process.env.SERVER_PORT);
 const SERVER_URL = process.env.SERVER_URL;
 const ROUND = Number(process.env.HASH_ROUND);
@@ -19,7 +22,7 @@ const REDIS_VOLUME = process.env.REDIS_VOLUME;
 
 const AUTH_PREFIX = 'AUTH';
 
-const ERROR_MESSAGE = {
+const ERROR_MESSAGE: Record<string, CommonResponseType> = {
   badRequest: {
     code: `${AUTH_PREFIX}001`,
     message: 'Bad Request',
@@ -72,9 +75,29 @@ const ERROR_MESSAGE = {
     code: `${AUTH_PREFIX}013`,
     message: 'Too Many Requests',
   },
+  authHeaderRequired: {
+    code: `${AUTH_PREFIX}014`,
+    message: 'Authorization header is required',
+  },
+  verifyAccessTokenFailed: {
+    code: `${AUTH_PREFIX}015`,
+    message: 'Verify Access Token Failed',
+  },
+  verifyRefreshTokenFailed: {
+    code: `${AUTH_PREFIX}016`,
+    message: 'Verify Refresh Token Failed',
+  },
+  accessTokenDecodeFailed: {
+    code: `${AUTH_PREFIX}017`,
+    message: 'Access Token Decode Failed',
+  },
+  duplicateNickname: {
+    code: `${AUTH_PREFIX}018`,
+    message: 'Duplicate Nickname',
+  },
 } as const;
 
-const SUCCESS_MESSAGE = {
+const SUCCESS_MESSAGE: Record<string, CommonResponseType> = {
   loginOk: {
     code: `${AUTH_PREFIX}100`,
     message: 'Login Ok!',
@@ -107,6 +130,24 @@ const SUCCESS_MESSAGE = {
     code: `${AUTH_PREFIX}107`,
     message: 'token decode success!',
   },
+  healthCheckOk: {
+    code: `${AUTH_PREFIX}108`,
+    message: 'health check success!',
+  },
+  loginStatusOK: {
+    code: `${AUTH_PREFIX}109`,
+    message: 'login status is enabled',
+    result: {
+      status: true,
+    },
+  },
+  loginStatusDisabled: {
+    code: `${AUTH_PREFIX}110`,
+    message: 'login status is disabled',
+    result: {
+      status: false,
+    },
+  },
 } as const;
 
 const REDIS_KEY = {
@@ -118,6 +159,7 @@ const REDIS_KEY = {
 export {
   isDevelopment,
   isProduction,
+  SERVER_IP,
   SERVER_PORT,
   SERVER_URL,
   DATABASE_URL,
@@ -134,4 +176,5 @@ export {
   REDIS_CONTAINER_NAME,
   REDIS_IMAGE,
   REDIS_VOLUME,
+  EUREKA_DISABLED,
 };

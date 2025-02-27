@@ -90,7 +90,7 @@ const verifyRefreshToken = async (refreshToken: string, redisRefreshToken?: stri
     const decoded = jwt.verify(refreshToken, SECRET_KEY) as JwtPayload;
     return decoded;
   } else {
-    throw ERROR_MESSAGE.notFound;
+    throw ERROR_MESSAGE.verifyRefreshTokenFailed;
   }
 };
 
@@ -99,7 +99,7 @@ const shortVerifyRefreshToken = async (refreshToken: string) => {
     const decoded = jwt.verify(refreshToken, SECRET_KEY) as JwtPayload;
     return Boolean(decoded);
   } catch (error) {
-    throw ERROR_MESSAGE.unauthorized;
+    throw ERROR_MESSAGE.verifyRefreshTokenFailed;
   }
 };
 
@@ -109,7 +109,7 @@ const verifyAccessToken = async (accessToken: string) => {
     const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
     return decoded;
   } catch (error) {
-    throw ERROR_MESSAGE.unauthorized;
+    throw ERROR_MESSAGE.verifyAccessTokenFailed;
   }
 };
 
@@ -119,7 +119,7 @@ const shortAccessTokenDecode = async (accessToken: string) => {
     const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
     return Boolean(decoded);
   } catch (error) {
-    throw ERROR_MESSAGE.unauthorized;
+    throw ERROR_MESSAGE.verifyAccessTokenFailed;
   }
 };
 
@@ -129,7 +129,7 @@ const accessTokenDecode = async (accessToken: string) => {
     const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
     return decoded;
   } catch (error) {
-    throw ERROR_MESSAGE.unauthorized;
+    throw ERROR_MESSAGE.accessTokenDecodeFailed;
   }
 };
 

@@ -10,12 +10,30 @@ import { ERROR_MESSAGE } from '../libs/constants';
 import db from '../libs/db';
 
 function authService() {
+  const findUserByEmail = async (email: string) => {
+    const user = await db.member.findFirst({
+      where: {
+        email,
+      },
+    });
+    return user;
+  };
+
+  const findUserByNickname = async (nickname: string) => {
+    const user = await db.member.findFirst({
+      where: {
+        nickname,
+      },
+    });
+    return user;
+  };
+
   const register = async (
     email: string,
     password: string,
     name: string,
     nickname: string,
-    birth_date: Date,
+    birthdate: string,
   ) => {
     const result = await db.member.create({
       data: {
@@ -23,7 +41,8 @@ function authService() {
         password,
         name,
         nickname,
-        birth_date,
+        birthdate: new Date(birthdate),
+        custom_presence_status: 'ONLINE',
       },
     });
 
@@ -114,6 +133,8 @@ function authService() {
   };
 
   return {
+    findUserByEmail,
+    findUserByNickname,
     register,
     loginWithPassword,
     refresh,
