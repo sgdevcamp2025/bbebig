@@ -98,7 +98,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: "health,info,metrics"  # metrics 포함 확인
+        include: "health,info,metrics,prometheus,logfile"  # metrics 포함 확인
   metrics:
     enable:
       http: true  # HTTP 요청 메트릭 활성화
