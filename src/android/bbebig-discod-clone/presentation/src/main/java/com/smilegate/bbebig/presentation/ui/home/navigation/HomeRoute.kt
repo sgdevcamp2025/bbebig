@@ -6,6 +6,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.smilegate.bbebig.presentation.model.MessageType
 import com.smilegate.bbebig.presentation.ui.home.HomeScreen
 import com.smilegate.bbebig.presentation.ui.home.HomeViewModel
 import com.smilegate.bbebig.presentation.ui.home.mvi.HomeIntent
@@ -64,6 +65,14 @@ fun HomeRoute(
         },
         onDisMissSheet = {
             viewModel.handleIntent(HomeIntent.DisMissSheet)
+        },
+        onClickSendChat = {
+            viewModel.handleIntent(
+                HomeIntent.ClickSendChat(
+                    message = it,
+                    messageType = MessageType.TEXT,
+                ),
+            )
         },
     )
 }
