@@ -393,7 +393,6 @@ public class ServerService {
                 .build();
     }
 
-    @Transactional
     public ServerLastInfo getServerLastInfo(Long memberId, Long serverId) {
         Server server = serverRepository.findById(serverId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
@@ -401,6 +400,7 @@ public class ServerService {
         ServerMember serverMember = serverMemberRepository.findByMemberIdAndServer(memberId, server)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_MEMBERS_NOT_FOUND));
 
+        log.info("[Service] ServerService : 캐싱된 서버 마지막 정보: {}", memberRedisRepository.existsServerLastInfo(memberId, serverId));
         if (memberRedisRepository.existsServerLastInfo(memberId, serverId)) {
             return memberRedisRepository.getServerLastInfo(memberId, serverId);
         }
@@ -411,7 +411,7 @@ public class ServerService {
        Map<Long, ChannelLastInfo> result = new HashMap<>();
 
         for (Long channelId : channelIdList) {
-            result.put(channelId, getChannelLastInfo(channelId, memberId));
+            result.put(channelId, getChannelLastInfo(channelId, serverMember.getId()));
         }
         ServerLastInfo lastInfo = ServerLastInfo.builder()
                 .serverId(serverId)
@@ -424,22 +424,21 @@ public class ServerService {
         return lastInfo;
     }
 
-    private ChannelLastInfo getChannelLastInfo(Long channelId, Long memberId) {
-        ChannelMember channelMember = channelMemberRepository.findByServerMemberIdAndChannelId(memberId, channelId)
+    private ChannelLastInfo getChannelLastInfo(Long channelId, Long serverMemberId) {
+        ChannelMember channelMember = channelMemberRepository.findByServerMemberIdAndChannelId(serverMemberId, channelId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.CHANNEL_MEMBER_NOT_FOUND));
 
         return ChannelLastInfo.builder()
                 .channelId(channelId)
-                .lastReadMessageId(channelMember.getLastReadMessageId())
-                .lastReadSequence(channelMember.getLastReadSequence())
-                .lastAccessAt(channelMember.getLastAccessAt())
+                .lastReadMessageId(channelMember.getLastReadMessageId() == null ? 0 : channelMember.getLastReadMessageId())
+                .lastReadSequence(channelMember.getLastReadSequence() == null ? 0 : channelMember.getLastReadSequence())
+                .lastAccessAt(channelMember.getLastAccessAt() == null ? channelMember.getCreatedAt() : channelMember.getLastAccessAt())
                 .build();
     }
 
     /**
      * 서버 참여하기
      */
-    @Transactional
     public ServerParticipateResponseDto participateServer(Long memberId, Long serverId) {
         Server server = serverRepository.findById(serverId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));
@@ -495,7 +494,6 @@ public class ServerService {
     /**
      * 서버 탈퇴하기
      */
-    @Transactional
     public ServerWithdrawResponseDto withdrawServer(Long memberId, Long serverId) {
         Server server = serverRepository.findById(serverId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.SERVER_NOT_FOUND));

@@ -87,8 +87,8 @@ public class FeignController {
 			@ApiResponse(responseCode = "400", description = "", content = @Content)
 	})
 	@GetMapping("/channels/{channelId}/lastInfo/member/{memberId}")
-	public CommonResponse<ChannelLastInfo> getChannelLastInfo(@PathVariable Long channelId, @PathVariable Long memberId) {
+	public ChannelLastInfo getChannelLastInfo(@PathVariable Long channelId, @PathVariable Long memberId) {
 		log.info("[Service] 채널 마지막 방문 정보 조회 요청: channelId = {}, memberId = {}", channelId, memberId);
-		return CommonResponse.onSuccess(channelService.getChannelLastInfo(channelId, memberId));
+		return channelService.getChannelLastInfo(channelId, memberId);
 	}
 }
