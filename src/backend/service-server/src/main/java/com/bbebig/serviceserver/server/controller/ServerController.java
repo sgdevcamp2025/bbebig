@@ -1,6 +1,5 @@
 package com.bbebig.serviceserver.server.controller;
 
-import com.bbebig.commonmodule.clientDto.ServiceFeignResponseDto;
 import com.bbebig.commonmodule.clientDto.ServiceFeignResponseDto.ServerLastInfoResponseDto;
 import com.bbebig.commonmodule.global.response.code.CommonResponse;
 import com.bbebig.commonmodule.passport.annotation.PassportUser;
