@@ -4,7 +4,7 @@ import cors from "cors";
 import { Server } from "socket.io";
 
 const app = express();
-const PORT = 9000;
+const PORT = 9090;
 
 // CORS 설정
 app.use(
