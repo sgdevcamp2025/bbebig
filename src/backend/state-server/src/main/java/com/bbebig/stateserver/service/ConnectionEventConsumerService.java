@@ -98,20 +98,22 @@ public class ConnectionEventConsumerService {
 			memberPresenceStatus.updateLastActivityTime(LocalDateTime.now());
 		}
 
-		DeviceInfo deviceInfo = DeviceInfo.builder()
-				.platform(connectionEventDto.getPlatform())
-				.socketSessionId(connectionEventDto.getSocketSessionId())
-				.connectedServerIp(connectionEventDto.getConnectedServerIp())
-				.lastActiveTime(LocalDateTime.now())
-				.build();
+		if (memberPresenceStatus.existsDevice(connectionEventDto.getSocketSessionId())) {
+			DeviceInfo deviceInfo = DeviceInfo.builder()
+					.platform(connectionEventDto.getPlatform())
+					.socketSessionId(connectionEventDto.getSocketSessionId())
+					.connectedServerIp(connectionEventDto.getConnectedServerIp())
+					.lastActiveTime(LocalDateTime.now())
+					.build();
 
-		// 안드로이드 기기인 경우, 로컬에 있던 정보가 있다면 현재 채널 정보를 업데이트
-		if (deviceInfo.getPlatform().equals("ANDROID") && connectionEventDto.getCurrentChannelType() != null) {
-			deviceInfo.updateCurrent(connectionEventDto.getCurrentChannelType(),
-					connectionEventDto.getCurrentChannelId(), connectionEventDto.getCurrentServerId());
+			// 안드로이드 기기인 경우, 로컬에 있던 정보가 있다면 현재 채널 정보를 업데이트
+			if (deviceInfo.getPlatform().equals("ANDROID") && connectionEventDto.getCurrentChannelType() != null) {
+				deviceInfo.updateCurrent(connectionEventDto.getCurrentChannelType(),
+						connectionEventDto.getCurrentChannelId(), connectionEventDto.getCurrentServerId());
+			}
+
+			memberPresenceStatus.getDevices().add(deviceInfo);
 		}
-
-		memberPresenceStatus.getDevices().add(deviceInfo);
 
 		memberRedisRepositoryImpl.saveMemberPresenceStatus(connectionEventDto.getMemberId(), memberPresenceStatus);
 
