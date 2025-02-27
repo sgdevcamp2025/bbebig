@@ -381,7 +381,7 @@ export const useSignalingWithMesh = (
         if (filterMessage(message)) {
           switch (message.messageType) {
             case 'CHANNEL_FULL':
-              handleChannelFull()
+              handleChannelFull(message)
               break
             case 'EXIST_USERS':
               handleExistUsers(message)

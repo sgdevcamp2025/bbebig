@@ -1,10 +1,24 @@
 import { useEffect, useRef } from 'react'
 import io from 'socket.io-client'
 
-import { SIGNALING_NODE_SERVER_URL } from '@/constants/env'
+import { SIGNALING_NODE_SERVER_URL, TURN_SERVER_URL } from '@/constants/env'
 import useUserStatus from '@/stores/use-user-status'
 
 const socket = io(SIGNALING_NODE_SERVER_URL)
+const RTC_CONFIGURATION = {
+  iceServers: [
+    {
+      urls: [
+        'stun:stun.l.google.com:19302',
+        'stun:stun1.l.google.com:19302',
+        'stun:stun2.l.google.com:19302'
+      ]
+    },
+    { urls: TURN_SERVER_URL, username: 'kurentouser', credential: 'kurentopassword' }
+  ],
+  iceTransportPolicy: 'all',
+  iceCandidatePoolSize: 10
+} as RTCConfiguration
 
 export const useSignalingWithMeshSocket = ({
   myUserId,

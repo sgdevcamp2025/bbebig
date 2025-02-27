@@ -17,13 +17,13 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Primary: Story = {
-  render: () => {
+  render: (args) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [isOpen, setIsOpen] = useState(false)
     return (
       <div className='w-[480px]'>
         <button onClick={() => setIsOpen(true)}>Open Modal</button>
-        {isOpen && <LoadingModal />}
+        <LoadingModal onClose={() => setIsOpen(false)} />
       </div>
     )
   }

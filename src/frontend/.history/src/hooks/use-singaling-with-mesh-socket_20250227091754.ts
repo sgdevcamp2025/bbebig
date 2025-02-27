@@ -1,10 +1,24 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import io from 'socket.io-client'
 
-import { SIGNALING_NODE_SERVER_URL } from '@/constants/env'
+import { SIGNALING_NODE_SERVER_URL, TURN_SERVER_URL } from '@/constants/env'
 import useUserStatus from '@/stores/use-user-status'
 
 const socket = io(SIGNALING_NODE_SERVER_URL)
+const RTC_CONFIGURATION = {
+  iceServers: [
+    {
+      urls: [
+        'stun:stun.l.google.com:19302',
+        'stun:stun1.l.google.com:19302',
+        'stun:stun2.l.google.com:19302'
+      ]
+    },
+    { urls: TURN_SERVER_URL, username: 'kurentouser', credential: 'kurentopassword' }
+  ],
+  iceTransportPolicy: 'all',
+  iceCandidatePoolSize: 10
+} as RTCConfiguration
 
 export const useSignalingWithMeshSocket = ({
   myUserId,
@@ -20,6 +34,7 @@ export const useSignalingWithMeshSocket = ({
   const myFaceRef = useRef<HTMLVideoElement | null>(null) // 내 비디오 엘리먼트
   const callRef = useRef<HTMLDivElement | null>(null) // 상대방(원격) 비디오 담을 컨테이너
   const myStreamRef = useRef<MediaStream | null>(null) // 내 로컬 미디어 스트림
+  const [cameras, setCameras] = useState<MediaDeviceInfo[]>([]) // 카메라 목록
   const peersRef = useRef<Record<string, RTCPeerConnection>>({}) // socketId -> RTCPeerConnection
   const userMapRef = useRef<Record<string, string>>({}) // socketId -> userId (상대방 표시용)
   const { getCurrentChannelInfo, joinVoiceChannel, leaveVoiceChannel } = useUserStatus()
@@ -61,9 +76,9 @@ export const useSignalingWithMeshSocket = ({
   // -----------------------------
   async function getCameras() {
     try {
-      // const devices = await navigator.mediaDevices.enumerateDevices()
-      // const videoInputs = devices.filter((d) => d.kind === 'videoinput')
-      // setCameras(videoInputs)
+      const devices = await navigator.mediaDevices.enumerateDevices()
+      const videoInputs = devices.filter((d) => d.kind === 'videoinput')
+      setCameras(videoInputs)
     } catch (err) {
       console.error('getCameras error:', err)
     }
@@ -188,6 +203,7 @@ export const useSignalingWithMeshSocket = ({
     // track 이벤트 (상대방 비디오)
     pc.addEventListener('track', (event) => {
       // userId 라벨 표시를 위해 userMapRef 조회
+      const remoteUserId = userMapRef.current[socketId] || 'Unknown'
       const containerId = `container_${socketId}`
       let videoContainer = document.getElementById(containerId)
       // 비디오+라벨 묶음을 담을 div
@@ -230,22 +246,22 @@ export const useSignalingWithMeshSocket = ({
   // -----------------------------
   // (7) 음소거 / 카메라 Off
   // -----------------------------
-  // function handleMuteClick() {
-  //   if (!myStreamRef.current) return
-  //   myStreamRef.current.getAudioTracks().forEach((track) => (track.enabled = !track.enabled))
-  //   // setMuted((prev) => !prev)
-  // }
-  // function handleCameraClick() {
-  //   if (!myStreamRef.current) return
-  //   myStreamRef.current.getVideoTracks().forEach((track) => (track.enabled = !track.enabled))
-  //   // setCameraOff((prev) => !prev)
-  // }
+  function handleMuteClick() {
+    if (!myStreamRef.current) return
+    myStreamRef.current.getAudioTracks().forEach((track) => (track.enabled = !track.enabled))
+    // setMuted((prev) => !prev)
+  }
+  function handleCameraClick() {
+    if (!myStreamRef.current) return
+    myStreamRef.current.getVideoTracks().forEach((track) => (track.enabled = !track.enabled))
+    // setCameraOff((prev) => !prev)
+  }
   // -----------------------------
   // (8) 카메라 변경
   // -----------------------------
-  // async function handleCameraChange(e: React.ChangeEvent<HTMLSelectElement>) {
-  //   await getMedia(e.target.value)
-  // }
+  async function handleCameraChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    await getMedia(e.target.value)
+  }
   // -----------------------------
   // (9) 방 입장 / 퇴장
   // -----------------------------

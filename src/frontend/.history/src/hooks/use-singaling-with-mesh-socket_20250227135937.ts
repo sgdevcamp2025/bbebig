@@ -1,10 +1,24 @@
 import { useEffect, useRef } from 'react'
 import io from 'socket.io-client'
 
-import { SIGNALING_NODE_SERVER_URL } from '@/constants/env'
+import { SIGNALING_NODE_SERVER_URL, TURN_SERVER_URL } from '@/constants/env'
 import useUserStatus from '@/stores/use-user-status'
 
 const socket = io(SIGNALING_NODE_SERVER_URL)
+const RTC_CONFIGURATION = {
+  iceServers: [
+    {
+      urls: [
+        'stun:stun.l.google.com:19302',
+        'stun:stun1.l.google.com:19302',
+        'stun:stun2.l.google.com:19302'
+      ]
+    },
+    { urls: TURN_SERVER_URL, username: 'kurentouser', credential: 'kurentopassword' }
+  ],
+  iceTransportPolicy: 'all',
+  iceCandidatePoolSize: 10
+} as RTCConfiguration
 
 export const useSignalingWithMeshSocket = ({
   myUserId,
@@ -61,8 +75,8 @@ export const useSignalingWithMeshSocket = ({
   // -----------------------------
   async function getCameras() {
     try {
-      // const devices = await navigator.mediaDevices.enumerateDevices()
-      // const videoInputs = devices.filter((d) => d.kind === 'videoinput')
+      const devices = await navigator.mediaDevices.enumerateDevices()
+      const videoInputs = devices.filter((d) => d.kind === 'videoinput')
       // setCameras(videoInputs)
     } catch (err) {
       console.error('getCameras error:', err)
@@ -230,22 +244,22 @@ export const useSignalingWithMeshSocket = ({
   // -----------------------------
   // (7) 음소거 / 카메라 Off
   // -----------------------------
-  // function handleMuteClick() {
-  //   if (!myStreamRef.current) return
-  //   myStreamRef.current.getAudioTracks().forEach((track) => (track.enabled = !track.enabled))
-  //   // setMuted((prev) => !prev)
-  // }
-  // function handleCameraClick() {
-  //   if (!myStreamRef.current) return
-  //   myStreamRef.current.getVideoTracks().forEach((track) => (track.enabled = !track.enabled))
-  //   // setCameraOff((prev) => !prev)
-  // }
+  function handleMuteClick() {
+    if (!myStreamRef.current) return
+    myStreamRef.current.getAudioTracks().forEach((track) => (track.enabled = !track.enabled))
+    // setMuted((prev) => !prev)
+  }
+  function handleCameraClick() {
+    if (!myStreamRef.current) return
+    myStreamRef.current.getVideoTracks().forEach((track) => (track.enabled = !track.enabled))
+    // setCameraOff((prev) => !prev)
+  }
   // -----------------------------
   // (8) 카메라 변경
   // -----------------------------
-  // async function handleCameraChange(e: React.ChangeEvent<HTMLSelectElement>) {
-  //   await getMedia(e.target.value)
-  // }
+  async function handleCameraChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    await getMedia(e.target.value)
+  }
   // -----------------------------
   // (9) 방 입장 / 퇴장
   // -----------------------------
