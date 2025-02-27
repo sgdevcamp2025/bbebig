@@ -52,5 +52,6 @@
     <string name="bottom_join_chat">음성 채널 참가하기</string>
     <string name="invite">초대하기</string>
     <string name="sign_up_email_label">이메일</string>
+    <string name="empty_chat">대화를 시작해보세요!</string>
 
 </resources>
