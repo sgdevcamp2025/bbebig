@@ -100,6 +100,7 @@ fun HomeScreen(
     onClickBackChatRoom: () -> Unit,
     onServerClick: (Long) -> Unit,
     onDisMissSheet: () -> Unit,
+    onClickSendChat: (String) -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -136,12 +137,16 @@ fun HomeScreen(
     )
     if (uiState.isChatRoomVisible) {
         ChannelChatScreen(
-            modifier = Modifier.fillMaxSize().background(Gray15),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Gray15),
             channelName = uiState.selectedChannelInfo.channelName,
+            chatList = uiState.receiveChatMessageList,
             onClickBack = onClickBackChatRoom,
+            isLoading = uiState.isLoading,
             onClickSearch = {},
             onClickAddPhoto = {},
-            onClickSendChat = {},
+            onClickSendChat = onClickSendChat,
         )
     }
 }
@@ -799,5 +804,6 @@ private fun HomeScreenPreView() {
         onClickBackChatRoom = {},
         onServerClick = {},
         onDisMissSheet = {},
+        onClickSendChat = {},
     )
 }

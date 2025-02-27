@@ -1,6 +1,6 @@
 package com.smilegate.bbebig.presentation.component
 
-import androidx.annotation.DrawableRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,11 +13,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.smilegate.bbebig.presentation.utils.StableImage
+import coil.compose.AsyncImage
+import com.smilegate.bbebig.presentation.utils.RandomUtil
 import com.smilegate.devcamp.presentation.R
 
 @Composable
@@ -26,14 +29,33 @@ fun DiscordUserChatBox(
     userName: String,
     date: String,
     chatContent: String,
-    @DrawableRes userIconResId: Int,
+    userIconUrl: String,
+    colorNumber: Int? = null,
 ) {
     Row(modifier = modifier) {
-        StableImage(
+        AsyncImage(
             modifier = Modifier
                 .clip(CircleShape)
-                .size(50.dp),
-            drawableResId = userIconResId,
+                .size(40.dp)
+                .background(
+                    color = if (userIconUrl.isEmpty()) {
+                        RandomUtil.getRandomColor(colorNumber ?: 0)
+                    } else {
+                        Color.Transparent
+                    },
+                )
+                .padding(5.dp),
+            model = if (userIconUrl.isEmpty()) {
+                R.drawable.ic_logo
+            } else {
+                null
+            },
+            contentDescription = null,
+            colorFilter = if (userIconUrl.isEmpty()) {
+                ColorFilter.tint(Color.White)
+            } else {
+                null
+            },
         )
         Column(
             modifier = Modifier
@@ -91,6 +113,6 @@ private fun DiscordUserChatBoxPreview() {
             "asfasfasfasssssss\n" +
             "asfasfasf\n" +
             "asfasfasasdf",
-        userIconResId = R.drawable.ic_search,
+        userIconUrl = "https://cdn.discordapp.com/avatars/1234567890/1234567890.png",
     )
 }

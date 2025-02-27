@@ -25,3 +25,15 @@ annotation class DefaultOkHttpClient
 @Retention(AnnotationRetention.BINARY)
 @Qualifier
 annotation class ServerRetrofit
+
+@Retention(AnnotationRetention.BINARY)
+@Qualifier
+annotation class ChatWebSocketUrl
+
+@Retention(AnnotationRetention.BINARY)
+@Qualifier
+annotation class WebSocketClient
+
+@Retention(AnnotationRetention.BINARY)
+@Qualifier
+annotation class StompWebSocketClient

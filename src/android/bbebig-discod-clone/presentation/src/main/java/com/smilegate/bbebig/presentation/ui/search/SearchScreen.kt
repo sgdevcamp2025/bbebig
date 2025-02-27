@@ -125,7 +125,7 @@ private fun SearchResultItem(modifier: Modifier, onClickSearchResult: () -> Unit
                 "Chat Content\n" +
                 "Chat Content\n" +
                 "Chat Content",
-            userIconResId = R.drawable.ic_msg,
+            userIconUrl = "https://via",
         )
     }
 }

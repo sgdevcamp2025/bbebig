@@ -1,6 +1,7 @@
 package com.smilegate.bbebig.presentation.ui.home.mvi
 
 import com.smilegate.bbebig.presentation.base.UiIntent
+import com.smilegate.bbebig.presentation.model.MessageType
 import com.smilegate.bbebig.presentation.ui.home.model.ChannelInfo
 
 sealed interface HomeIntent : UiIntent {
@@ -15,4 +16,5 @@ sealed interface HomeIntent : UiIntent {
     data object ClickBackChatRoom : HomeIntent
     data object DisMissSheet : HomeIntent
     data object ClickBack : HomeIntent
+    data class ClickSendChat(val message: String, val messageType: MessageType) : HomeIntent
 }

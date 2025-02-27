@@ -18,3 +18,4 @@ val Blue70 = Color(0xFF5A65EA) // Discord Bluei
 val Blue50 = Color(0xFF171CB3) // Login Blue
 val Red50 = Color(0xFFC94543) // Alerti Red
 val Gray15 = Color(0xFF1C1D22) // Gray
+val MainColor = Color(0xFFF04B00) // Main Color
