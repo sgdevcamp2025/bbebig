@@ -93,7 +93,7 @@ public class StompHandler implements ChannelInterceptor {
 
 		StompCommand command = headerAccessor.getCommand();
 
-		log.info("[Chat] StompHandler Post send: sessionId={}, command={}, memberId={}", sessionId, command);
+		log.info("[Chat] StompHandler Post send: sessionId={}, command={}, memberId={}", sessionId, command, sessionManager.findMemberIdBySessionId(sessionId));
 
 		if (command == null) {
 			log.error("[Chat] StompHandler: postSend - command 정보 없음. 전체 헤더 정보: {}", headerAccessor.toMap());
