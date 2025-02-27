@@ -18,6 +18,8 @@ import {
   GetUserRequestSchema,
   GetUserResponseSchema,
   GetUserSelfResponseSchema,
+  SelectUserByNicknameRequestSchema,
+  SelectUserByNicknameResponseSchema,
   UpdateUserPresenceStatusRequestSchema,
   UpdateUserPresenceStatusResponseSchema,
   UpdateUserRequestSchema,
@@ -120,6 +122,30 @@ const userService = () => {
     return response.data
   }
 
+  const selectUserByNickname = async (data: SelectUserByNicknameRequestSchema) => {
+    const response = await axiosInstance.get<
+      CommonResponseType<SelectUserByNicknameResponseSchema>
+    >(`${MEMBER_PATH}/search`, {
+      params: {
+        nickName: data.nickName
+      }
+    })
+
+    return response.data
+  }
+
+  const createFriendWithNickname = async (data: SelectUserByNicknameRequestSchema) => {
+    const selectUserId = await selectUserByNickname({
+      nickName: data.nickName
+    }).then((res) => res?.result.id)
+
+    const createRequest = await createRequestForFriend({
+      toMemberId: selectUserId
+    })
+
+    return createRequest.result
+  }
+
   return {
     deleteMember,
     getUser,
@@ -133,7 +159,9 @@ const userService = () => {
     declineFriend,
     acceptFriend,
     deleteFriendInRequestList,
-    createRequestForFriend
+    createRequestForFriend,
+    selectUserByNickname,
+    createFriendWithNickname
   }
 }
 

@@ -28,9 +28,22 @@ const createCategoryResponseSchema = commonResponseSchema.extend({
   })
 })
 
+const inviteUserRequestSchema = z.object({
+  serverId: z.string(),
+  inviteUserName: z.string().min(1, { message: '초대할 유저 이름은 최소 1글자 이상이어야 합니다.' })
+})
+
+const inviteUserResponseSchema = commonResponseSchema.extend({
+  result: z.object({
+    id: z.number()
+  })
+})
+
 export {
   createCategoryRequestSchema,
   createCategoryResponseSchema,
   createChannelRequestSchema,
-  createChannelResponseSchema
+  createChannelResponseSchema,
+  inviteUserRequestSchema,
+  inviteUserResponseSchema
 }

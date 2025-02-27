@@ -35,8 +35,11 @@ import type {
   UpdateServerRequestSchema,
   UpdateServerResponseSchema,
   WithdrawServerRequestSchema,
-  WithdrawServerResponseSchema
+  WithdrawServerResponseSchema,
+  ZInviteUserRequestSchema,
+  ZInviteUserResponseSchema
 } from '../schema/types/service'
+import userService from './user'
 
 const SERVER_PATH = `/service-server/servers`
 const CHANNEL_PATH = `/service-server/channels`
@@ -182,6 +185,19 @@ const serviceService = () => {
     return response.data
   }
 
+  const inviteServerWithUserNickname = async (data: ZInviteUserRequestSchema) => {
+    const selectUserId = await userService
+      .selectUserByNickname({
+        nickName: data.inviteUserName
+      })
+      .then((res) => res.result.id)
+
+    const response = await axiosInstance.post<ZInviteUserResponseSchema>(
+      `${SERVER_PATH}/${data.serverId}/invite/${selectUserId}`
+    )
+    return response.data
+  }
+
   return {
     getServers,
     getServersList,
@@ -200,7 +216,8 @@ const serviceService = () => {
     getCategories,
     createCategory,
     updateCategory,
-    getChannelListInServer
+    getChannelListInServer,
+    inviteServerWithUserNickname
   }
 }
 

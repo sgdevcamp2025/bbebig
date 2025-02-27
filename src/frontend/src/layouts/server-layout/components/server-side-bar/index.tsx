@@ -7,9 +7,10 @@ import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
 import useClickOutside from '@/hooks/use-click-outside'
 import { cn } from '@/libs/cn'
 
-import CategoryCreateModal from '../cateogry-create-modal'
-import ChannelCreateModal from '../channel-create-modal'
 import SettingModal from '../setting-modal'
+import CategoryCreateModal from './cateogry-create-modal'
+import ChannelCreateModal from './channel-create-modal'
+import { ServerInviteModal } from './InviteModal'
 import ServerSideBarSkeleton from './server-side-bar-skeleton'
 
 interface ServerSideBarProps {
@@ -40,6 +41,7 @@ export function Inner({ serverId, channelId }: ServerSideBarProps) {
   const [selectedChannel, setSelectedChannel] = useState<{ id: number; name: string } | null>(null)
 
   const [serverMenuOpen, setServerMenuOpen] = useState(false)
+  const [inviteModalOpen, setInviteModalOpen] = useState(false)
   const [channelCreateModalOpen, setChannelCreateModalOpen] = useState(false)
   const [categoryCreateModalOpen, setCategoryCreateModalOpen] = useState(false)
 
@@ -73,7 +75,7 @@ export function Inner({ serverId, channelId }: ServerSideBarProps) {
       icon: <UserRoundPlus className='w-4 h-4' />,
       color: 'text-brand-20',
       onClick: () => {
-        console.log('초대하기')
+        setInviteModalOpen(true)
       }
     }
   ]
@@ -266,6 +268,10 @@ export function Inner({ serverId, channelId }: ServerSideBarProps) {
       <CategoryCreateModal
         isOpen={categoryCreateModalOpen}
         onClose={() => setCategoryCreateModalOpen(false)}
+      />
+      <ServerInviteModal
+        isOpen={inviteModalOpen}
+        onClose={() => setInviteModalOpen(false)}
       />
     </>
   )
