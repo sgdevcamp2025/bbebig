@@ -1,0 +1,33 @@
+global:
+  scrape_interval: 5s # 5초마다 데이터를 수집
+
+scrape_configs:
+  - job_name: 'search-monitoring'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['43.203.136.82:9030']  # Spring Boot 컨테이너 주소
+
+  - job_name: 'state-monitoring'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['43.203.136.82:9040']  # Spring Boot 컨테이너 주소
+
+  - job_name: 'chat1-monitoring'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['43.203.136.82:9050']  # Spring Boot 컨테이너 주소
+
+  - job_name: 'chat2-monitoring'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['43.203.136.82:9051']  # Spring Boot 컨테이너 주소
+
+  - job_name: 'service-monitoring'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['43.203.136.82:9020']  # Spring Boot 컨테이너 주소
+      
+  - job_name: 'user-monitoring'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['43.203.136.82:9010']  # Spring Boot 컨테이너 주소

@@ -1,0 +1,108 @@
+services:
+  ### Kafka00 (브로커 1)
+  kafka00:
+    image: bitnami/kafka:3.7.0
+    container_name: kafka00
+    restart: unless-stopped
+    ports:
+      - '9092:9092'  # 호스트:컨테이너
+    environment:
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=false
+      # KRaft 설정
+      - KAFKA_CFG_BROKER_ID=0
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_KRAFT_CLUSTER_ID=HsDBs9l6UUmQq7Y5E6bNlw
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka00:9093,1@kafka01:9093,2@kafka02:9093
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      # 리스너 설정
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka00:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+    networks:
+      - bbebig-network
+    volumes:
+      - kafka00-data:/bitnami/kafka
+      - ./create-topics.sh:/usr/local/bin/create-topics.sh  # 토픽 생성
+
+  ### Kafka01 (브로커 2)
+  kafka01:
+    image: bitnami/kafka:3.7.0
+    container_name: kafka01
+    restart: unless-stopped
+    ports:
+      - '9093:9092'  # 호스트:컨테이너
+    environment:
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=false
+      # KRaft 설정
+      - KAFKA_CFG_BROKER_ID=1
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_KRAFT_CLUSTER_ID=HsDBs9l6UUmQq7Y5E6bNlw
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka00:9093,1@kafka01:9093,2@kafka02:9093
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      # 리스너 설정
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka01:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+    networks:
+      - bbebig-network
+    volumes:
+      - kafka01-data:/bitnami/kafka
+
+  ## Kafka02 (브로커 3)
+  kafka02:
+    image: bitnami/kafka:3.7.0
+    container_name: kafka02
+    restart: unless-stopped
+    ports:
+      - '9094:9092'  # 호스트:컨테이너
+    environment:
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=false
+      # KRaft 설정
+      - KAFKA_CFG_BROKER_ID=2
+      - KAFKA_CFG_NODE_ID=2
+      - KAFKA_KRAFT_CLUSTER_ID=HsDBs9l6UUmQq7Y5E6bNlw
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka00:9093,1@kafka01:9093,2@kafka02:9093
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      # 리스너 설정
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka02:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+    networks:
+      - bbebig-network
+    volumes:
+      - kafka02-data:/bitnami/kafka
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: kafka-ui
+    restart: always
+    ports:
+      - "9099:8080"  # Kafka UI 접근 포트
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      # ==> 내부 통신에서는 컨테이너 포트(9092) 사용
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka00:9092,kafka01:9092,kafka02:9092
+    depends_on:
+      - kafka00
+      - kafka01
+      - kafka02
+    networks:
+      - bbebig-network
+
+networks:
+  bbebig-network:
+    external: true
+
+volumes:
+  kafka00-data:
+  kafka01-data:
+  kafka02-data:
