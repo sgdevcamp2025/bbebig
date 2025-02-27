@@ -6,14 +6,14 @@ import utc from 'dayjs/plugin/utc'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
+import { CHAT_SERVER_URL } from '@/constants/env'
 import { COOKIE_KEYS } from '@/constants/keys'
 import { ChannelVisitEventRequest, ChattingMessageEvent } from '@/types/chat-stomp-event'
 import cookie from '@/utils/cookie'
 import { handlePersonalNotificationEvent } from '@/utils/personal-notification-event-handler'
 import { handleServerEvent } from '@/utils/server-event-handler'
 
-import useGetSelfUser from '../queries/user/useGetSelfUser'
-import { CHAT_SERVER_URL } from '@/constants/env'
+import useGetSelfUser from '../hooks/queries/user/useGetSelfUser'
 
 const clientInstance = new Client({
   brokerURL: CHAT_SERVER_URL,

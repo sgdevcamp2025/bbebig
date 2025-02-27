@@ -2,8 +2,8 @@ import { PlusIcon } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import ServerIcon from '@/components/server-icon'
-import { useServerUnreadStore } from '@/hooks/store/use-server-unread-store'
 import { cn } from '@/libs/cn'
+import { useServerUnreadStore } from '@/stores/use-server-unread-store'
 interface ServerListProps {
   myChannelList: {
     servers: {

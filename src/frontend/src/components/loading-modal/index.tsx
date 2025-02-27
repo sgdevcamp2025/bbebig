@@ -1,11 +1,20 @@
+import { useEffect, useState } from 'react'
+
 import Modal from '../modal'
 
-interface Props {
-  isOpen: boolean
-  onClose?: () => void
-}
+function LoadingModal() {
+  const [isOpen, setIsOpen] = useState(true)
 
-function LoadingModal({ isOpen = true, onClose }: Props) {
+  useEffect(() => {
+    return () => {
+      setIsOpen(false)
+    }
+  }, [])
+
+  const onClose = () => {
+    setIsOpen(false)
+  }
+
   return (
     <Modal
       className='bg-[#292B32]'

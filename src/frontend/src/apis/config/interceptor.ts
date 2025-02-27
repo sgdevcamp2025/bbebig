@@ -12,7 +12,7 @@ export const checkAndSetToken = (
   const cookieValue = cookie.getCookie(COOKIE_KEYS.ACCESS_TOKEN)
 
   if (!cookieValue) {
-    throw new Error('토큰이 유효하지 않습니다.')
+    window.location.href = '/login'
   }
 
   config.headers.Authorization = `Bearer ${cookieValue}`

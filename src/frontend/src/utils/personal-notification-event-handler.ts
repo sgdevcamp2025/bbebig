@@ -1,4 +1,4 @@
-import { useServerUnreadStore } from '@/hooks/store/use-server-unread-store'
+import { useServerUnreadStore } from '@/stores/use-server-unread-store'
 import { PersonalNotificationEvent } from '@/types/chat-stomp-event'
 
 export const handlePersonalNotificationEvent = (message: PersonalNotificationEvent) => {
