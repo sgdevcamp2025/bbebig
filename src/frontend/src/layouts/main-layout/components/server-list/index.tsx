@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 
 import ServerIcon from '@/components/server-icon'
 import { cn } from '@/libs/cn'
+import { useServerUnreadStore } from '@/stores/use-server-unread-store'
 interface ServerListProps {
   myChannelList: {
     servers: {
@@ -23,6 +24,8 @@ export function ServerList({
   const navigate = useNavigate()
   const pathname =
     location.pathname.split('/')[1] === 'channels' ? location.pathname.split('/')[2] : null
+
+  const unreadCounts = useServerUnreadStore((state) => state.unreadCounts)
 
   const handleClickMyServer = () => {
     navigate('/channels/@me')
@@ -63,19 +66,26 @@ export function ServerList({
       <div className='w-full flex justify-center'>
         <div className='h-[2px] w-8 rounded-[1px] bg-gray-80' />
       </div>
-      {myChannelList.servers.map((server) => (
-        <li key={server.serverId}>
-          <ServerIcon
-            imageUrl={server.serverImageUrl}
-            label={server.serverName}
-            isActive={pathname === server.serverId.toString()}
-            hasAlarm={false}
-            onClick={() => {
-              handleClickServer(server.serverId)
-            }}
-          />
-        </li>
-      ))}
+
+      {myChannelList.servers.map((server) => {
+        const unreadCount = unreadCounts[server.serverId]
+          ? Object.values(unreadCounts[server.serverId]).reduce((acc, count) => acc + count, 0)
+          : 0
+        return (
+          <li key={server.serverId}>
+            <ServerIcon
+              imageUrl={server.serverImageUrl}
+              label={server.serverName}
+              isActive={pathname === server.serverId.toString()}
+              hasAlarm={false}
+              unreadCount={unreadCount}
+              onClick={() => {
+                handleClickServer(server.serverId)
+              }}
+            />
+          </li>
+        )
+      })}
       <li>
         <button
           aria-label='서버 생성'

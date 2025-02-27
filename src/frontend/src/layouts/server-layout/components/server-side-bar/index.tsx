@@ -14,9 +14,10 @@ import ServerSideBarSkeleton from './server-side-bar-skeleton'
 
 interface ServerSideBarProps {
   serverId: string
+  channelId: string
 }
 
-export function Inner({ serverId }: ServerSideBarProps) {
+export function Inner({ serverId, channelId }: ServerSideBarProps) {
   const serverData = useGetServerInfo(serverId)
   const myInfo = useGetSelfUser()
   const navigate = useNavigate()
@@ -28,13 +29,14 @@ export function Inner({ serverId }: ServerSideBarProps) {
     channelInfoList: channelInfoList.filter((channel) => channel.categoryId === category.categoryId)
   }))
 
-  const handleChannelSelect = (channelId: number) => {
-    navigate(`/channels/${serverId}/${channelId}`)
-  }
-
   const [expandedCategories, setExpandedCategories] = useState<number[]>(
     categories.map((category) => category.categoryId)
   )
+
+  const [activeChannelId, setActiveChannelId] = useState<number | null>(
+    channelId ? Number(channelId) : null
+  )
+
   const [selectedChannel, setSelectedChannel] = useState<{ id: number; name: string } | null>(null)
 
   const [serverMenuOpen, setServerMenuOpen] = useState(false)
@@ -48,6 +50,11 @@ export function Inner({ serverId }: ServerSideBarProps) {
     setExpandedCategories((prev) =>
       prev.includes(categoryId) ? prev.filter((id) => id !== categoryId) : [...prev, categoryId]
     )
+  }
+
+  const handleChannelSelect = (channelId: number) => {
+    setActiveChannelId(channelId)
+    navigate(`/channels/${serverId}/${channelId}`)
   }
 
   const handleOpenSettings = (channelId: number, channelName: string) => {
@@ -199,7 +206,7 @@ export function Inner({ serverId }: ServerSideBarProps) {
                     onClick={() => handleChannelSelect(channel.channelId)}
                     className={cn(
                       'w-full flex items-center px-2 py-1 rounded transition-colors cursor-pointer',
-                      selectedChannel && Number(selectedChannel.id) === channel.channelId
+                      activeChannelId === channel.channelId
                         ? 'bg-discord-gray-500 text-white'
                         : 'text-discord-font-color-muted hover:bg-discord-gray-600'
                     )}>
@@ -264,11 +271,14 @@ export function Inner({ serverId }: ServerSideBarProps) {
   )
 }
 
-export function ServerSideBar({ serverId }: { serverId: string }) {
+export function ServerSideBar({ serverId, channelId }: { serverId: string; channelId: string }) {
   return (
     <div className='w-60 bg-discord-gray-700 h-[calc(100%-52px)] flex flex-col'>
       <Suspense fallback={<ServerSideBarSkeleton />}>
-        <Inner serverId={serverId} />
+        <Inner
+          serverId={serverId}
+          channelId={channelId}
+        />
       </Suspense>
     </div>
   )

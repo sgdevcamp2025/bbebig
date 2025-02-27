@@ -1,16 +1,17 @@
-import { useChatStore } from '@/stores/use-chat-store'
+import { useChatStore, useMessageIdStore, useMessageSequenceStore } from '@/stores/use-chat-store'
 import { useStatusStore } from '@/stores/use-status-store'
 import { ServerSubscribeResponse } from '@/types/chat-stomp-event'
 import { CustomPresenceStatus } from '@/types/user'
 
 export const handleServerEvent = (message: ServerSubscribeResponse) => {
   const { addMessage } = useChatStore.getState()
+  const { addMessageId } = useMessageIdStore.getState()
+  const { addMessageSequence } = useMessageSequenceStore.getState()
 
   switch (message.type) {
     case 'SERVER_CHANNEL':
       break
     case 'SERVER_CATEGORY':
-      break
       break
     case 'SERVER_ACTION':
       break
@@ -32,6 +33,8 @@ export const handleServerEvent = (message: ServerSubscribeResponse) => {
         ...message,
         sendMemberId: message.sendMemberId
       })
+      addMessageId(message.channelId, message.id || 0)
+      addMessageSequence(message.channelId, message.sequence || 0)
       break
     default:
       break

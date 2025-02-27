@@ -6,10 +6,12 @@ import serviceService from '@/apis/service/service'
 import Avatar from '@/components/avatar'
 import LoadingIcon from '@/components/loading-icon'
 import { statusKo } from '@/constants/status'
+import { useGetAllServerUnreadCount } from '@/hooks/queries/search/useGetAllServerUnreadCount'
 import { useGetServer } from '@/hooks/queries/server/useGetServer'
 import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
-import { useChattingStomp } from '@/stores/use-chatting-stomp'
+import { useChattingStomp } from '@/hooks/store/use-chatting-stomp'
 import { useMediaSettingsStore } from '@/stores/use-media-setting.store'
+import { useServerUnreadStore } from '@/stores/use-server-unread-store'
 import { useSignalingStomp } from '@/stores/use-signaling-stomp-store'
 
 import ProfileCard from './components/profile-card'
@@ -22,6 +24,7 @@ const Inner = () => {
   const {
     connect: connectChatting,
     disconnect: disconnectChatting,
+    subscribeToPersonal,
     subscribeToServer,
     unsubscribe,
     checkConnection
@@ -36,6 +39,7 @@ const Inner = () => {
     const initChatting = async () => {
       if (!checkConnection()) {
         await connectChatting()
+        await subscribeToPersonal()
       }
     }
 
@@ -78,6 +82,27 @@ const Inner = () => {
   const myChannelList = useGetServer()
   const selfUser = useGetSelfUser()
 
+  const { setInitialUnreadCounts, resetUnreadCountForServer } = useServerUnreadStore()
+
+  const allUnreadMessageCounts = useGetAllServerUnreadCount({
+    memberId: selfUser.id
+  })
+
+  useEffect(() => {
+    if (allUnreadMessageCounts && allUnreadMessageCounts.serverInfos) {
+      allUnreadMessageCounts.serverInfos.forEach((server) => {
+        const formattedData = server.channels.reduce(
+          (acc, channel) => {
+            acc[channel.channelId] = channel.unreadCount
+            return acc
+          },
+          {} as Record<number, number>
+        )
+        setInitialUnreadCounts(server.serverId, formattedData)
+      })
+    }
+  }, [allUnreadMessageCounts, setInitialUnreadCounts])
+
   const { muted, toggleAudioInputMute, toggleAudioOutputMute } = useMediaSettingsStore(
     useShallow((state) => ({
       muted: state.muted,
@@ -99,6 +124,8 @@ const Inner = () => {
     if (checkConnection()) {
       subscribeToServer(serverId)
     }
+
+    resetUnreadCountForServer(serverId)
   }
 
   const [settingModalState, setSettingModalState] = useState({
