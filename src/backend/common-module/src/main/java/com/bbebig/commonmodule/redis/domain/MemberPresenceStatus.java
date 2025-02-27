@@ -57,7 +57,7 @@ public class MemberPresenceStatus {
 		calculateGlobalStatus();
 	}
 
-	private void calculateGlobalStatus() {
+	public void calculateGlobalStatus() {
 		if (devices == null || devices.isEmpty() || actualStatus == PresenceType.OFFLINE) {
 			actualStatus = PresenceType.OFFLINE;
 			globalStatus = PresenceType.OFFLINE;

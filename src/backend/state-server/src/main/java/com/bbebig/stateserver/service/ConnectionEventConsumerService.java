@@ -115,6 +115,8 @@ public class ConnectionEventConsumerService {
 			memberPresenceStatus.getDevices().add(deviceInfo);
 		}
 
+		memberPresenceStatus.calculateGlobalStatus();
+
 		memberRedisRepositoryImpl.saveMemberPresenceStatus(connectionEventDto.getMemberId(), memberPresenceStatus);
 
 		return memberPresenceStatus;
@@ -137,6 +139,7 @@ public class ConnectionEventConsumerService {
 			memberRedisRepositoryImpl.saveMemberPresenceStatus(connectionEventDto.getMemberId(), memberPresenceStatus);
 		}
 
+		memberPresenceStatus.calculateGlobalStatus();
 		memberRedisRepositoryImpl.saveMemberPresenceStatus(connectionEventDto.getMemberId(), memberPresenceStatus);
 		return memberPresenceStatus;
 	}
