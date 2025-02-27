@@ -9,6 +9,10 @@ datastorePreferences = "1.1.2"
 kotlin = "2.0.0"
 kotlinSerialization = "1.8.0"
 kotlinxSerializationConverter = "1.0.0"
+krossbowStompCore = "7.0.0"
+krossbowStompKxserialization = "7.0.0"
+krossbowStompKxserializationJson = "7.0.0"
+krossbowWebsocketOkhttp = "7.0.0"
 ksp = "2.0.0-1.0.24"
 
 coreKtx = "1.13.1"
@@ -56,6 +60,10 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.r
 hilt-core = { group = "com.google.dagger", name = "hilt-core", version.ref = "hilt" }
 
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinSerialization" }
+krossbow-stomp-core = { module = "org.hildan.krossbow:krossbow-stomp-core", version.ref = "krossbowStompCore" }
+krossbow-stomp-kxserialization = { module = "org.hildan.krossbow:krossbow-stomp-kxserialization", version.ref = "krossbowStompKxserialization" }
+krossbow-stomp-kxserialization-json = { module = "org.hildan.krossbow:krossbow-stomp-kxserialization-json", version.ref = "krossbowStompKxserializationJson" }
+krossbow-websocket-okhttp = { module = "org.hildan.krossbow:krossbow-websocket-okhttp", version.ref = "krossbowWebsocketOkhttp" }
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }
 
 material = { group = "androidx.compose.material", name = "material", version.ref = "material" }
