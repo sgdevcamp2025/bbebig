@@ -139,19 +139,11 @@ const userService = () => {
       nickName: data.nickName
     }).then((res) => res?.result.id)
 
-    if (!selectUserId) {
-      return
-    }
-
     const createRequest = await createRequestForFriend({
       toMemberId: selectUserId
     })
 
-    const acceptResponse = await acceptFriend({
-      friendId: createRequest.result.friendId
-    })
-
-    return acceptResponse.result
+    return createRequest.result
   }
 
   return {
