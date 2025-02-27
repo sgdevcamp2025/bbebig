@@ -39,6 +39,7 @@ public enum ErrorStatus implements BaseErrorCode {
     CHAT_ROOM_NOT_FOUND(HttpStatus.BAD_REQUEST, "CHAT401", "채팅방이 존재하지 않습니다."),
     CHAT_ROOM_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "CHAT402", "이미 존재하는 채팅방입니다."),
     CHAT_ROOM_MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "CHAT403", "채팅방에 참여한 멤버가 존재하지 않습니다."),
+    CHANNEL_LEAVE_LAST_INFO_NOT_VALID(HttpStatus.BAD_REQUEST, "CHAT404", "채널 퇴장 시 마지막 정보가 유효하지 않습니다."),
 
     // SERVICE
     SERVER_NOT_FOUND(HttpStatus.NOT_FOUND, "SERVICE401", "서버를 찾을 수 없습니다."),
