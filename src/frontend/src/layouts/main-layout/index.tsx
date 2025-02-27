@@ -8,7 +8,7 @@ import LoadingIcon from '@/components/loading-icon'
 import { statusKo } from '@/constants/status'
 import { useGetServer } from '@/hooks/queries/server/useGetServer'
 import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
-import useChattingStomp from '@/hooks/store/use-chatting-stomp'
+import { useChattingStomp } from '@/stores/use-chatting-stomp'
 import { useMediaSettingsStore } from '@/stores/use-media-setting.store'
 import { useSignalingStomp } from '@/stores/use-signaling-stomp-store'
 

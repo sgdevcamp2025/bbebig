@@ -1,5 +1,5 @@
-import { useChatStore } from '@/hooks/store/use-chat-store'
-import { useStatusStore } from '@/hooks/store/use-status-store'
+import { useChatStore } from '@/stores/use-chat-store'
+import { useStatusStore } from '@/stores/use-status-store'
 import { ServerSubscribeResponse } from '@/types/chat-stomp-event'
 import { CustomPresenceStatus } from '@/types/user'
 

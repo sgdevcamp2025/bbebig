@@ -4,10 +4,9 @@ import { Client } from '@stomp/stompjs'
 
 export interface StompState {
   client: Client | null
-  isConnected: boolean
   connect: () => void
   disconnect: () => void
-  subscribe: (destination: string, callback: (message: any) => void, id: string) => void
-  unsubscribe: (destination: string, id: string) => void
+  subscribe: (subscriptionId: string, destination: string, callback: (message: any) => void) => void
+  unsubscribe: (subscriptionId: string, destination: string) => void
   send: (destination: string, body: any) => void
 }

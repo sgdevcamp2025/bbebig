@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { Outlet, useParams } from 'react-router-dom'
 
 import { useGetServerInfo } from '@/hooks/queries/server/useGetServerInfo'
-import useChattingStomp from '@/hooks/store/use-chatting-stomp'
+import { useChattingStomp } from '@/stores/use-chatting-stomp'
 import useStatusBarStore from '@/stores/use-status-bar-store'
 
 import { ServerSideBar } from './components/server-side-bar'

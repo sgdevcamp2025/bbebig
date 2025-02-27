@@ -1,4 +1,4 @@
-import { IMessage } from '@stomp/stompjs'
+import { Client, IMessage } from '@stomp/stompjs'
 import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
@@ -6,15 +6,20 @@ import utc from 'dayjs/plugin/utc'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
-import { chattingStompInstance } from '@/apis/config/stomp-instance'
+import { CHAT_SERVER_URL } from '@/constants/env'
 import { COOKIE_KEYS } from '@/constants/keys'
 import { ChannelVisitEventRequest, ChattingMessageEvent } from '@/types/chat-stomp-event'
 import cookie from '@/utils/cookie'
 import { handleServerEvent } from '@/utils/server-event-handler'
 
-import useGetSelfUser from '../queries/user/useGetSelfUser'
+import useGetSelfUser from '../hooks/queries/user/useGetSelfUser'
 
-const clientInstance = chattingStompInstance()
+const clientInstance = new Client({
+  brokerURL: CHAT_SERVER_URL,
+  reconnectDelay: 5000,
+  heartbeatIncoming: 4000,
+  heartbeatOutgoing: 4000
+})
 
 export const useChattingStomp = () => {
   const selfUser = useGetSelfUser()
