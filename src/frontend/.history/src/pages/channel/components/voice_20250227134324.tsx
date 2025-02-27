@@ -100,12 +100,10 @@ function VideoComponent({
       // PeerConnection 종료
       if (peersRef.current[socketId]) {
         peersRef.current[socketId].close()
-        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete peersRef.current[socketId]
       }
       // userMapRef에서도 제거
       if (userMapRef.current[socketId]) {
-        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete userMapRef.current[socketId]
       }
     }
@@ -299,9 +297,9 @@ function VideoComponent({
   // -----------------------------
   // (8) 카메라 변경
   // -----------------------------
-  // async function handleCameraChange() {
-  //   await getMedia()
-  // }
+  async function handleCameraChange() {
+    await getMedia()
+  }
 
   // -----------------------------
   // (9) 방 입장 / 퇴장

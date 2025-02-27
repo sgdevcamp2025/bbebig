@@ -70,7 +70,7 @@ function VideoComponent({
 
       // 카메라 목록 가져오기 (처음 한 번만)
       if (!deviceId) {
-        // await getCameras()
+        await getCameras()
       }
     } catch (err) {
       console.error('getMedia error:', err)
@@ -80,12 +80,12 @@ function VideoComponent({
   // -----------------------------
   // (2) 카메라 목록
   // -----------------------------
-  // async function getCameras() {
-  //   try {
-  //   } catch (err) {
-  //     console.error('getCameras error:', err)
-  //   }
-  // }
+  async function getCameras() {
+    try {
+    } catch (err) {
+      console.error('getCameras error:', err)
+    }
+  }
 
   // -----------------------------
   // (3) user_left 처리
@@ -100,12 +100,10 @@ function VideoComponent({
       // PeerConnection 종료
       if (peersRef.current[socketId]) {
         peersRef.current[socketId].close()
-        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete peersRef.current[socketId]
       }
       // userMapRef에서도 제거
       if (userMapRef.current[socketId]) {
-        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete userMapRef.current[socketId]
       }
     }
@@ -208,7 +206,7 @@ function VideoComponent({
       getMedia()
       // 서버에 join_room
     }
-  }, [channelId, getCurrentChannelInfo])
+  }, [getCurrentChannelInfo])
 
   // -----------------------------
   // (6) PeerConnection 생성
@@ -299,9 +297,9 @@ function VideoComponent({
   // -----------------------------
   // (8) 카메라 변경
   // -----------------------------
-  // async function handleCameraChange() {
-  //   await getMedia()
-  // }
+  async function handleCameraChange() {
+    await getMedia()
+  }
 
   // -----------------------------
   // (9) 방 입장 / 퇴장

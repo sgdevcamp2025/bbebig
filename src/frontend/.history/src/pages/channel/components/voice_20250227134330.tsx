@@ -100,12 +100,10 @@ function VideoComponent({
       // PeerConnection 종료
       if (peersRef.current[socketId]) {
         peersRef.current[socketId].close()
-        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete peersRef.current[socketId]
       }
       // userMapRef에서도 제거
       if (userMapRef.current[socketId]) {
-        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete userMapRef.current[socketId]
       }
     }
