@@ -6,12 +6,14 @@ import utc from 'dayjs/plugin/utc'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
+import { useParams } from 'react-router-dom'
+
 import { CHAT_SERVER_URL } from '@/constants/env'
 import { COOKIE_KEYS } from '@/constants/keys'
+import { useHandleServerEvent } from '@/hooks/use-handler-server-event'
 import { ChannelVisitEventRequest, ChattingMessageEvent } from '@/types/chat-stomp-event'
 import cookie from '@/utils/cookie'
 import { handlePersonalNotificationEvent } from '@/utils/personal-notification-event-handler'
-import { handleServerEvent } from '@/utils/server-event-handler'
 
 import useGetSelfUser from '../hooks/queries/user/useGetSelfUser'
 
@@ -25,7 +27,8 @@ const clientInstance = new Client({
 export const useChattingStomp = () => {
   const selfUser = useGetSelfUser()
   const memberId = selfUser.id.toString()
-
+  const serverId = useParams().serverId
+  const handleServerEvent = useHandleServerEvent(serverId ?? '-1')
   const checkConnection = () => {
     return clientInstance.connected && clientInstance.webSocket?.readyState === WebSocket.OPEN
   }

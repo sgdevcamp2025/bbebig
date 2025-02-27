@@ -1,9 +1,9 @@
-import { Suspense, useEffect, useRef, useState } from 'react'
+import { Suspense, useRef, useState } from 'react'
 
 import Avatar from '@/components/avatar'
 import LoadingIcon from '@/components/loading-icon'
+import { useGetServerInfo } from '@/hooks/queries/server/useGetServerInfo'
 import { useGetServerMember } from '@/hooks/queries/server/useGetServerMember'
-import { useStatusStore } from '@/stores/use-status-store'
 import { CustomPresenceStatus } from '@/types/user'
 
 import { UserProfileCard } from './user-profile-card'
@@ -142,20 +142,9 @@ function Inner({ channelUserList }: StatusSideBarProps) {
 }
 
 export function StatusSideBar({ serverId }: { serverId: string }) {
-  const { channelMemberList, setChannelMembers } = useStatusStore()
+  const { serverMemberInfoList } = useGetServerMember(serverId)
+  const serverInfo = useGetServerInfo(serverId)
+  console.log('serverInfo', serverInfo)
 
-  const serverMemebersData = useGetServerMember(serverId)
-  useEffect(() => {
-    setChannelMembers(
-      serverMemebersData.serverMemberInfoList.map((member) => ({
-        memberId: member.memberId,
-        nickName: member.nickName,
-        avatarUrl: member.avatarUrl,
-        bannerUrl: member.bannerUrl,
-        globalStatus: member.globalStatus
-      }))
-    )
-  }, [setChannelMembers])
-
-  return <Inner channelUserList={channelMemberList} />
+  return <Inner channelUserList={serverMemberInfoList} />
 }
