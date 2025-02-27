@@ -29,3 +29,47 @@ export const useChatStore = create<ChatState>((set) => ({
     }))
   }
 }))
+
+interface MessageIdState {
+  messageIds: Record<number, number>
+  addMessageId: (channelId: number, messageId: number) => void
+  getLastMessageId: (channelId: number) => number
+}
+
+export const useMessageIdStore = create<MessageIdState>((set, get) => ({
+  messageIds: {},
+
+  addMessageId: (channelId, messageId) =>
+    set((state) => ({
+      messageIds: {
+        ...state.messageIds,
+        [channelId]: messageId
+      }
+    })),
+
+  getLastMessageId: (channelId) => {
+    return get().messageIds[channelId]
+  }
+}))
+
+interface MessageSequenceState {
+  messageSequences: Record<number, number>
+  addMessageSequence: (channelId: number, messageSequence: number) => void
+  getLastMessageSequence: (channelId: number) => number
+}
+
+export const useMessageSequenceStore = create<MessageSequenceState>((set, get) => ({
+  messageSequences: {},
+
+  addMessageSequence: (channelId, messageSequence) =>
+    set((state) => ({
+      messageSequences: {
+        ...state.messageSequences,
+        [channelId]: messageSequence
+      }
+    })),
+
+  getLastMessageSequence: (channelId) => {
+    return get().messageSequences[channelId]
+  }
+}))

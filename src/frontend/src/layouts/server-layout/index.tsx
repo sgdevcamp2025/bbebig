@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Outlet, useParams } from 'react-router-dom'
 
 import { useGetServerInfo } from '@/hooks/queries/server/useGetServerInfo'
+import { useMessageIdStore, useMessageSequenceStore } from '@/hooks/store/use-chat-store'
 import useChattingStomp from '@/hooks/store/use-chatting-stomp'
 import useStatusBarStore from '@/stores/use-status-bar-store'
 
@@ -12,6 +13,8 @@ function ServerLayout() {
   const { serverId, channelId } = useParams<{ serverId: string; channelId: string }>()
   const { isStatusBarOpen } = useStatusBarStore()
   const { publishToChannelEnter, publishToChannelLeave } = useChattingStomp()
+  const { getLastMessageId } = useMessageIdStore()
+  const { getLastMessageSequence } = useMessageSequenceStore()
 
   if (!serverId || !channelId) {
     throw new Error('serverId or channelId is required')
@@ -32,7 +35,7 @@ function ServerLayout() {
       channelType: channel.channelType,
       serverId: Number(serverId),
       channelId: Number(channelId),
-      type: 'ENTER'
+      type: 'CHANNEL_ENTER'
     })
 
     return () => {
@@ -40,14 +43,19 @@ function ServerLayout() {
         channelType: channel.channelType,
         serverId: Number(serverId),
         channelId: Number(channelId),
-        type: 'LEAVE'
+        type: 'CHANNEL_LEAVE',
+        lastReadSequence: getLastMessageSequence(Number(channelId)),
+        lastReadMessageId: getLastMessageId(Number(channelId))
       })
     }
   }, [channelId, channelInfoList, serverId])
 
   return (
     <div className='flex h-screen w-full'>
-      <ServerSideBar serverId={serverId} channelId={channelId} />
+      <ServerSideBar
+        serverId={serverId}
+        channelId={channelId}
+      />
 
       <main className='flex-1 bg-discord-gray-600 overflow-hidden'>
         <Outlet />

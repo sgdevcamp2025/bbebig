@@ -65,6 +65,7 @@ export interface ServerMemberPresenceEvent extends BaseServerEvent {
 
 // 서버 채팅 메시지 이벤트 (STOMP에서 받는 MESSAGE)
 export interface ChattingMessageEvent extends BaseServerEvent {
+  id?: number
   chatType: 'CHANNEL' | 'DM'
   messageType: 'TEXT'
   type: 'MESSAGE_CREATE'
@@ -78,11 +79,12 @@ export interface ChattingMessageEvent extends BaseServerEvent {
 
 // 채널 방문/떠남 이벤트
 export interface ChannelVisitEventRequest extends BaseServerEvent {
-  type: 'ENTER' | 'LEAVE'
+  type: 'CHANNEL_ENTER' | 'CHANNEL_LEAVE'
   memberId?: number
   channelType: ChannelType
   channelId: number
-  lastReadMessageId?: string
+  lastReadMessageId?: number | null // LEAVE
+  lastReadSequence?: number | null // LEAVE
   eventTime?: string
 }
 

@@ -1,5 +1,4 @@
 import { PlusIcon } from 'lucide-react'
-import { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import ServerIcon from '@/components/server-icon'
@@ -31,9 +30,7 @@ export function ServerList({
   const handleClickMyServer = () => {
     navigate('/channels/@me')
   }
-  useEffect(() => {
-    console.log('📢 업데이트된 unreadCounts:', unreadCounts)
-  }, [unreadCounts])
+
   return (
     <ul className='w-[72px] flex flex-col gap-2'>
       <li>

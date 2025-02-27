@@ -19,12 +19,18 @@ export const useServerUnreadStore = create<ServerUnreadStore>((set) => ({
 
   // 안 읽은 메세지 업데이트 (소켓)
   updateUnreadCount: (serverId, channelId, count) =>
-    set((state) => ({
-      unreadCounts: {
-        ...state.unreadCounts,
-        [serverId]: { ...(state.unreadCounts[serverId] || {}), [channelId]: count }
+    set((state) => {
+      const updatedServerUnread = {
+        ...(state.unreadCounts[serverId] || {}),
+        [channelId]: count
       }
-    })),
+      return {
+        unreadCounts: {
+          ...state.unreadCounts,
+          [serverId]: updatedServerUnread
+        }
+      }
+    }),
 
   // 안 읽은 메세지 초기화 (채널별)
   resetUnreadCount: (serverId, channelId) =>

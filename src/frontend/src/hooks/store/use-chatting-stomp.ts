@@ -33,7 +33,7 @@ export const useChattingStomp = () => {
       return Promise.resolve()
     }
 
-    console.log('[🔗] 채팅 서버 연결 시도...')
+    console.log('[🔗] 채팅 서버 연결 시도... ', memberId)
 
     return new Promise<void>((resolve, reject) => {
       const token = cookie.getCookie(COOKIE_KEYS.ACCESS_TOKEN)
@@ -125,6 +125,7 @@ export const useChattingStomp = () => {
     clientInstance.subscribe(
       destination,
       (message: IMessage) => {
+        console.log('======== 개인 알림 구독 시작')
         try {
           const messageBody = JSON.parse(message.body)
           console.log(`[📩] 개인 알림 ${memberId} 메시지 수신:`, message.body)
@@ -234,7 +235,8 @@ export const useChattingStomp = () => {
         ...body,
         memberId: Number(memberId),
         type: 'CHANNEL_LEAVE',
-        lastReadMessageId: '1',
+        lastReadMessageId: body.lastReadMessageId,
+        lastReadSequence: body.lastReadSequence,
         eventTime: new Date().toISOString()
       }),
       headers: {
