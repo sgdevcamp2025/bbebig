@@ -1,6 +1,7 @@
 package com.bbebig.searchserver.domain.history.controller;
 
 import com.bbebig.commonmodule.global.response.code.CommonResponse;
+import com.bbebig.commonmodule.kafka.dto.ChatMessageDto;
 import com.bbebig.commonmodule.passport.annotation.PassportUser;
 import com.bbebig.commonmodule.proto.PassportProto;
 import com.bbebig.searchserver.domain.history.dto.HistoryResponseDto.*;
@@ -86,4 +87,11 @@ public class HistoryController {
 		log.info("[Search] ChatMessageServiceController: 멤버별 DM 안읽은 메시지 수 조회 요청. memberId: {}", passport.getMemberId());
 		return CommonResponse.onSuccess(null);
 	}
+
+	@GetMapping("/test/send")
+	public CommonResponse<?> testSend(ChatMessageDto chatMessageDto) {
+		historyService.saveChannelMessage(chatMessageDto);
+		return CommonResponse.onSuccess(null);
+	}
+
 }
