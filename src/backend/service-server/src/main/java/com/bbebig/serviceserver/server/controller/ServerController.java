@@ -138,6 +138,23 @@ public class ServerController {
         return CommonResponse.onSuccess(serverService.participateServer(passport.getMemberId(), serverId));
     }
 
+    @Operation(summary = "서버 초대", description = "서버를 초대합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "서버 초대 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "", content = @Content)
+    })
+    @PostMapping("/{serverId}/invite/{memberId}")
+    public CommonResponse<ServerParticipateResponseDto> inviteServer(
+            @Parameter(hidden = true) @PassportUser Passport passport,
+            @PathVariable Long serverId,
+            @PathVariable Long memberId
+    ) {
+        log.info("[Service] 서버 초대 요청: serverId = {}, memberId = {}", serverId, memberId);
+        return CommonResponse.onSuccess(serverService.participateServer(memberId, serverId));
+    }
+
+
+
     @Operation(summary = "서버 탈퇴", description = "서버를 탈퇴합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "서버 탈퇴 성공", useReturnTypeSchema = true),
