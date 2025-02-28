@@ -150,7 +150,7 @@ function ChatArea({
 
                 return (
                   <div
-                    key={`${msg.channelId}-${msg.id}`}
+                    key={`${msg.id}`}
                     className='flex items-start gap-3 mb-4'>
                     <Avatar
                       size='sm'

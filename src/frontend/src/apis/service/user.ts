@@ -102,8 +102,8 @@ const userService = () => {
   }
 
   const declineFriend = async (data: DeclineFriendRequestSchema) => {
-    const response = await axiosInstance.delete<CommonResponseType<DeclineFriendResponseSchema>>(
-      `${FRIEND_PATH}/${data.friendId}/decline`
+    const response = await axiosInstance.patch<CommonResponseType<DeclineFriendResponseSchema>>(
+      `${FRIEND_PATH}/${data.friendId}/declined`
     )
     return response.data
   }

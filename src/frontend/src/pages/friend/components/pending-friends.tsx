@@ -1,24 +1,35 @@
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 
 import SearchInput from '@/components/search-input'
 import UserListItem from '@/components/user-list-item'
+import { useAcceptFriendRequest } from '@/hooks/queries/user/useAcceptFriendRequest'
+import { useDeclineFriendRequest } from '@/hooks/queries/user/useDeclineFriendRequest'
 import { useGetFriendPendingList } from '@/hooks/queries/user/useGetFriendPendingList'
 
 function PendingFriends() {
   const friendPendingList = useGetFriendPendingList()
+  const acceptFriendRequest = useAcceptFriendRequest()
+  const declineFriendRequest = useDeclineFriendRequest()
   const [searchValue, setSearchValue] = useState('')
 
-  const responsePendingFriends = friendPendingList.receivePendingFriends
-  const requestPendingFriends = friendPendingList.sendPendingFriends
+  const [responsePendingFriends, setResponsePendingFriends] = useState(
+    friendPendingList.receivePendingFriends
+  )
+
+  const [requestPendingFriends, setRequestPendingFriends] = useState(
+    friendPendingList.sendPendingFriends
+  )
+
+  useEffect(() => {
+    setResponsePendingFriends(friendPendingList.receivePendingFriends)
+    setRequestPendingFriends(friendPendingList.sendPendingFriends)
+  }, [friendPendingList])
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value)
   }
 
-  const allPendingList = [
-    ...(friendPendingList.receivePendingFriends || []),
-    ...(friendPendingList.sendPendingFriends || [])
-  ]
+  const allPendingList = [...responsePendingFriends, ...requestPendingFriends]
 
   const filteredFriends = searchValue
     ? allPendingList.filter((friend) => new RegExp(searchValue, 'i').test(friend.memberName))
@@ -26,6 +37,16 @@ function PendingFriends() {
 
   const handleClear = () => {
     setSearchValue('')
+  }
+
+  const handleAcceptFriend = (friendId: number) => {
+    setResponsePendingFriends((prev) => prev.filter((friend) => friend.friendId !== friendId))
+    acceptFriendRequest.mutate({ friendId })
+  }
+
+  const handleDeclineFriend = (friendId: number) => {
+    setResponsePendingFriends((prev) => prev.filter((friend) => friend.friendId !== friendId))
+    declineFriendRequest.mutate({ friendId })
   }
 
   return (
@@ -62,6 +83,8 @@ function PendingFriends() {
                   description={friend.memberEmail}
                   statusColor='black'
                   iconType='response'
+                  handleAcceptFriendRequest={() => handleAcceptFriend(friend.friendId)}
+                  handleDeclineFriendRequest={() => handleDeclineFriend(friend.friendId)}
                 />
               )
             )}
@@ -71,7 +94,7 @@ function PendingFriends() {
         {requestPendingFriends.length > 0 && (
           <div className='flex flex-col gap-2'>
             <div className='text-discord-font-color-muted text-xs font-semibold mb-2'>
-              요청 — {friendPendingList.pendingFriendsCount}
+              보냄 — {friendPendingList.pendingFriendsCount}
             </div>
             {requestPendingFriends.map(
               (friend: {

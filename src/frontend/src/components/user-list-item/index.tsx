@@ -12,6 +12,8 @@ interface InnerProps {
   status?: CustomPresenceStatus
   statusColor?: string
   iconType: 'default' | 'request' | 'response'
+  handleAcceptFriendRequest?: () => void
+  handleDeclineFriendRequest?: () => void
   handleNavigateToDM?: () => void
   handleDMIconClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
 }
@@ -30,7 +32,9 @@ export function Inner({
   statusColor,
   iconType = 'default',
   handleNavigateToDM,
-  handleDMIconClick
+  handleDMIconClick,
+  handleAcceptFriendRequest,
+  handleDeclineFriendRequest
 }: InnerProps) {
   return (
     <div
@@ -52,11 +56,20 @@ export function Inner({
       </div>
 
       <div className='flex items-center gap-1'>
-        {ICON_PATH[iconType].map((iconPath) => (
+        {ICON_PATH[iconType].map((iconPath, index) => (
           <button
             key={iconPath}
             type='button'
-            onClick={iconPath === '/icon/friend/dm.svg' ? (e) => handleDMIconClick?.(e) : undefined}
+            onClick={(e) => {
+              e.stopPropagation()
+              if (iconType === 'default' && index === 0) {
+                handleDMIconClick?.(e)
+              } else if (iconType === 'response' && index === 0) {
+                handleAcceptFriendRequest?.()
+              } else if ((iconType === 'response' && index === 1) || iconType === 'request') {
+                handleDeclineFriendRequest?.()
+              }
+            }}
             aria-label={'icon'}
             className='p-2 bg-discord-gray-700 hover:bg-discord-gray-800 rounded-3xl group-hover:bg-discord-gray-800'>
             <img
