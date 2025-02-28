@@ -9,10 +9,10 @@ const buttonVariants = cva('', {
   variants: {
     variant: {
       primary: 'bg-brand text-white-100',
-      secondary: 'bg-blue-200'
+      secondary: 'bg-[#248045] text-white-100'
     },
     size: {
-      small: 'h-10 leading-[24px] rounded-[3px]',
+      small: 'h-10 text-[14px] leading-[24px] rounded-[3px]',
       medium: 'h-12',
       large: 'h-14'
     },
@@ -20,6 +20,11 @@ const buttonVariants = cva('', {
       full: 'w-full',
       half: 'w-1/2'
     }
+  },
+  defaultVariants: {
+    variant: 'primary',
+    size: 'small',
+    width: 'full'
   }
 })
 
@@ -28,7 +33,7 @@ function CustomButton({ children, variant, size, width, className, ...props }: P
     <button
       className={cn(buttonVariants({ variant, size, width }), className)}
       {...props}>
-      {children}
+      <span>{children}</span>
     </button>
   )
 }

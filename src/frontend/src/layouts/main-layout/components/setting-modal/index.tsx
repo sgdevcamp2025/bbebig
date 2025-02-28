@@ -1,20 +1,21 @@
+import { useEffect, useState } from 'react'
+
+import CloseButton from '@/components/close-button'
 import Modal from '@/components/modal'
 import { cn } from '@/libs/cn'
-import { useEffect, useState } from 'react'
-import MyProfile from './my-profile'
-import MyAccount from './my-account'
-import VoiceSetting from './voice-setting'
-import AlarmSetting from './alarm-setting'
-import CloseButton from '@/components/close-button'
 
-type Props = {
+import { AlarmSetting } from './alarm-setting'
+import { MyAccount } from './my-account'
+import { MyProfile } from './my-profile'
+import { VoiceSetting } from './voice-setting'
+
+interface Props {
   itemId: number
   isOpen: boolean
   onClose: () => void
 }
 
 export const SettingModalTabsID = {
-  none: -1,
   myAccount: 101,
   myProfile: 102,
   voiceSetting: 201,
@@ -51,7 +52,7 @@ const tabs = [
 ] as const
 
 function SettingModal({ itemId, isOpen, onClose }: Props) {
-  const [currentItemId, setCurrentItemId] = useState(SettingModalTabsID.none)
+  const [currentItemId, setCurrentItemId] = useState(SettingModalTabsID.myAccount)
 
   useEffect(
     function initialCurrentItemId() {
@@ -60,8 +61,12 @@ function SettingModal({ itemId, isOpen, onClose }: Props) {
     [itemId]
   )
 
-  const handleClickItem = (itemId: number) => {
+  const handleClickItem = (itemId: number) => () => {
     setCurrentItemId(itemId)
+  }
+
+  const handleProfileEditClick = () => {
+    setCurrentItemId(SettingModalTabsID.myProfile)
   }
 
   return (
@@ -90,7 +95,7 @@ function SettingModal({ itemId, isOpen, onClose }: Props) {
                         )}>
                         <button
                           type='button'
-                          onClick={() => handleClickItem(item.id)}
+                          onClick={handleClickItem(item.id)}
                           className='w-full text-left leading-[20px] text-[16px]'>
                           {item.name}
                         </button>
@@ -104,7 +109,9 @@ function SettingModal({ itemId, isOpen, onClose }: Props) {
           <div className='flex flex-[1_1_800px] bg-brand-10'>
             <div className='max-w-[740px] w-full relative'>
               <div className='overflow-y-auto h-full'>
-                {currentItemId === SettingModalTabsID.myAccount && <MyAccount />}
+                {currentItemId === SettingModalTabsID.myAccount && (
+                  <MyAccount onProfileEditClick={handleProfileEditClick} />
+                )}
                 {currentItemId === SettingModalTabsID.myProfile && <MyProfile />}
                 {currentItemId === SettingModalTabsID.voiceSetting && <VoiceSetting />}
                 {currentItemId === SettingModalTabsID.alarmSetting && <AlarmSetting />}

@@ -1,9 +1,10 @@
+import { useState } from 'react'
+
 import CloseButton from '@/components/close-button'
 import Modal from '@/components/modal'
 import { cn } from '@/libs/cn'
-import { useState } from 'react'
 
-type Props = {
+interface Props {
   channelName: string
   isOpen: boolean
   onClose: () => void
@@ -70,7 +71,7 @@ function SettingModal({ channelName, isOpen, onClose }: Props) {
             <nav className='py-[60px] px-[50px] flex flex-col gap-2'>
               <span className='flex items-center text-sm font-bold text-discord-gray-300 gap-1'>
                 <img
-                  src='/icon/channel/type-text.svg'
+                  src='/icon/channel/type-chat.svg'
                   alt='#'
                 />
                 {channelName}

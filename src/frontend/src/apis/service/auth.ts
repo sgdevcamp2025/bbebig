@@ -1,34 +1,75 @@
-import COOKIE_KEYS from '@/constants/keys'
-import axiosInstance from '../config/axios-instance'
-import { LoginResponseSchema, LoginSchema, RegisterSchema } from '../schema/types/auth'
+import { AxiosRequestConfig } from 'axios'
+
+import { COOKIE_KEYS } from '@/constants/keys'
 import cookie from '@/utils/cookie'
 
-const AUTH_BASE_PATH = '/auth-server'
+import axiosInstance from '../config/axios-instance'
+import {
+  LoginResponseSchema,
+  LoginSchema,
+  RegisterSchema,
+  StatusCheckResponseSchema
+} from '../schema/types/auth'
+const BASE_PATH = `/auth-server/auth`
+
+export interface CustomAxiosRequestConfig extends AxiosRequestConfig {
+  useAuth?: boolean
+}
+
+const LOGIN_STATUS_DISABLED_CODE = 'AUTH110'
 
 const authService = () => {
-  const login = async (data: LoginSchema) => {
-    try {
-      const res = await axiosInstance.post<LoginResponseSchema>(`${AUTH_BASE_PATH}/login`, data)
-      cookie.setCookie(COOKIE_KEYS.ACCESS_TOKEN, res.data.result.accessToken)
-    } catch (error) {
-      console.error(error)
-      throw error
+  const statusCheck = async () => {
+    const res = await axiosInstance.get<StatusCheckResponseSchema>(`${BASE_PATH}/status-check`, {
+      headers: {
+        Authorization: `Bearer ${cookie.getCookie(COOKIE_KEYS.ACCESS_TOKEN)}`
+      },
+      useAuth: false
+    } as CustomAxiosRequestConfig)
+
+    if (res.data.code === LOGIN_STATUS_DISABLED_CODE) {
+      cookie.deleteCookie(COOKIE_KEYS.ACCESS_TOKEN)
     }
+
+    return res.data
+  }
+
+  const login = async (data: LoginSchema) => {
+    const res = await axiosInstance.post<LoginResponseSchema>(`${BASE_PATH}/login`, data, {
+      useAuth: false
+    } as CustomAxiosRequestConfig)
+    const accessToken = res.data.result.accessToken
+    cookie.setCookie(COOKIE_KEYS.ACCESS_TOKEN, accessToken)
   }
 
   const register = async (data: RegisterSchema) => {
+    const response = await axiosInstance.post(`${BASE_PATH}/register`, data, {
+      useAuth: false
+    } as CustomAxiosRequestConfig)
+    return response.data
+  }
+
+  const logout = async () => {
     try {
-      const response = await axiosInstance.post(`${AUTH_BASE_PATH}/register`, data)
-      return response.data
+      await axiosInstance.post(`${BASE_PATH}/logout`)
     } catch (error) {
       console.error(error)
-      throw error
+    } finally {
+      cookie.deleteCookie(COOKIE_KEYS.ACCESS_TOKEN)
     }
+  }
+
+  const refreshToken = async () => {
+    const response = await axiosInstance.post(`${BASE_PATH}/refresh`)
+    return response.data
   }
 
   return {
     login,
-    register
+    register,
+    logout,
+    refreshToken,
+    statusCheck
   }
 }
 

@@ -1,11 +1,12 @@
-import { cn } from '@/libs/cn'
-import { CustomPresenceStatus } from '@/types/user'
 import { cva } from 'class-variance-authority'
 import { CSSProperties, memo } from 'react'
 
-type Props = {
+import { cn } from '@/libs/cn'
+import { CustomPresenceStatus } from '@/types/user'
+
+interface Props {
   status: CustomPresenceStatus
-  size: 'sm' | 'lg'
+  size: 'sm' | 'md' | 'lg'
   defaultBackgroundColor?: CSSProperties['color']
   hover?: boolean
   haveHoverAction?: boolean
@@ -16,6 +17,7 @@ const statusIconSize = cva('rounded-full', {
   variants: {
     size: {
       sm: 'h-[8px] w-[8px]',
+      md: 'h-[18px] w-[18px]',
       lg: 'h-[18px] w-[18px]'
     }
   }
@@ -39,7 +41,7 @@ function StatusIcon({
     )
   }
 
-  if (status === 'OFFLINE') {
+  if (status === 'AWAY') {
     return (
       <svg
         className={`${statusIconSize({ size })} -scale-x-100 `}
@@ -50,7 +52,7 @@ function StatusIcon({
     )
   }
 
-  if (status === 'NOT_DISTURB') {
+  if (status === 'DND') {
     return (
       <div
         className={cn(statusIconSize({ size }), 'bg-[#f23f43] flex items-center justify-center')}
@@ -67,7 +69,7 @@ function StatusIcon({
     )
   }
 
-  if (status === 'INVISIBLE') {
+  if (status === 'INVISIBLE' || status === 'OFFLINE') {
     return (
       <div
         className={cn(

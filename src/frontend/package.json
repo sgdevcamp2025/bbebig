@@ -4,36 +4,43 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "react-router build",
-    "dev": "react-router dev",
-    "start": "react-router-serve ./build/server/index.js",
-    "typecheck": "react-router typegen && tsc",
+    "build": "tsc && vite build && echo '/* /index.html 200' | cat > build/client/_redirects",
+    "dev": "vite dev",
+    "start": "vite",
+    "typecheck": "tsc",
     "check": "yarn formatter && yarn lint:fix",
     "lint:fix": "eslint --fix \"src/**/*.{ts,tsx}\"",
     "formatter": "prettier --write \"src/**/*.{ts,tsx}\"",
     "preview": "vite preview",
-    "test": "vitest",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
-    "@react-router/node": "^7.1.3",
-    "@react-router/serve": "^7.1.3",
+    "@sentry/react": "^9.1.0",
+    "@sentry/vite-plugin": "^3.1.2",
+    "@stomp/stompjs": "^7.0.0",
+    "@tanstack/react-query": "^5.66.0",
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dayjs": "^1.11.13",
     "isbot": "^5.1.17",
     "lucide-react": "^0.473.0",
     "postcss": "^8.5.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.2",
-    "react-router": "^7.1.3",
-    "react-router-dom": "^7.1.3",
+    "react-hot-toast": "^2.5.2",
+    "react-router-dom": "6",
+    "sdp-transform": "^2.15.0",
+    "socket.io-client": "^4.8.1",
     "tailwind-merge": "^2.6.0",
     "tailwindcss": "^3.4.17",
+    "timezone": "^1.0.23",
+    "ua-parser-js": "^2.0.2",
+    "utc": "^0.1.0",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
@@ -47,10 +54,13 @@
     "@storybook/react": "^8.5.0",
     "@storybook/react-vite": "^8.5.0",
     "@storybook/test": "^8.5.0",
+    "@tanstack/eslint-plugin-query": "^5.66.1",
     "@types/node": "^20",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.1",
+    "@types/sdp-transform": "^2",
     "@vitejs/plugin-react": "^4.3.4",
+    "dotenv": "^16.4.7",
     "eslint": "^9.17.0",
     "eslint-import-resolver-typescript": "^3.7.0",
     "eslint-plugin-only-warn": "^1.1.0",
@@ -61,10 +71,11 @@
     "eslint-plugin-storybook": "^0.11.2",
     "eslint-plugin-unused-imports": "^4.1.4",
     "globals": "^15.14.0",
+    "msw": "^2.7.1",
     "prettier": "^3.4.2",
     "react-router-devtools": "^1.1.0",
     "storybook": "^8.5.0",
-    "tailwindcss-motion": "^1.0.1",
+    "tailwindcss-motion": "^1.1.0",
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.18.2",
     "vite": "^6.0.11",
@@ -77,5 +88,14 @@
       "plugin:storybook/recommended"
     ]
   },
-  "packageManager": "yarn@4.6.0"
+  "engines": {
+    "node": ">=20.11.0",
+    "npm": ">=10.9.0"
+  },
+  "packageManager": "yarn@4.6.0",
+  "msw": {
+    "workerDirectory": [
+      "./public"
+    ]
+  }
 }

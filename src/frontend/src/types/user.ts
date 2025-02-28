@@ -1,14 +1,24 @@
-type User = {
-  id: string
+interface User {
+  id: number
   name: string
+  nickname: string
   email: string
-  avatarUrl: string
-  bannerUrl: string
+  birthdate: string
+  avatarUrl: string | null
+  bannerUrl: string | null
+  introduce: string | null
+  lastAccessAt: string
   customPresenceStatus: CustomPresenceStatus
-  introduction: string
-  introductionEmoji: string
 }
 
-type CustomPresenceStatus = 'ONLINE' | 'OFFLINE' | 'NOT_DISTURB' | 'INVISIBLE'
+export interface ChatUser {
+  memberId: number
+  nickName: string
+  avatarUrl: string | null
+  bannerUrl: string | null
+  globalStatus: CustomPresenceStatus
+}
 
-export { type User, type CustomPresenceStatus }
+type CustomPresenceStatus = 'ONLINE' | 'AWAY' | 'DND' | 'INVISIBLE' | 'OFFLINE'
+
+export { type CustomPresenceStatus, type User }

@@ -1,8 +1,10 @@
-import { useEffect, type PropsWithChildren, type CSSProperties } from 'react'
-import Portal from '../portal'
+import { type CSSProperties, type PropsWithChildren, useCallback, useEffect } from 'react'
+
 import { cn } from '@/libs/cn'
 
-type Props = {
+import Portal from '../portal'
+
+interface Props {
   isOpen: boolean
   onClose?: () => void
   backgroundColor?: CSSProperties['backgroundColor']
@@ -21,22 +23,25 @@ function Modal({ children, isOpen, onClose, className }: PropsWithChildren<Props
     [isOpen]
   )
 
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        e.stopPropagation()
+        onClose?.()
+      }
+    },
+    [onClose]
+  )
+
   useEffect(
     function CloseModal() {
       if (isOpen) {
         document.addEventListener('keydown', handleKeyDown)
       }
     },
-    [isOpen]
+    [isOpen, onClose, handleKeyDown]
   )
-
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      e.preventDefault()
-      e.stopPropagation()
-      onClose?.()
-    }
-  }
 
   return (
     <Portal>

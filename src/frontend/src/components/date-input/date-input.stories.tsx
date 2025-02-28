@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import { fn } from '@storybook/test'
 
 import DateInput from '.'
 
@@ -25,7 +26,8 @@ type Story = StoryObj<typeof meta>
 export const PrimaryDateInput: Story = {
   args: {
     label: '날짜 선택',
-    required: true
+    required: true,
+    setDate: fn()
   },
   render: (args) => (
     <div className='w-full h-[500px] flex justify-center items-center'>

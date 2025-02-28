@@ -10,7 +10,7 @@ interface Props {
 }
 
 const year = Array.from({ length: 100 }, (_, i) => String(2025 - i))
-const month = Array.from({ length: 12 }, (_, i) => String(i + 1))
+const month = Array.from({ length: 12 }, (_, i) => String(i + 1) + '월')
 const day = Array.from({ length: 31 }, (_, i) => String(i + 1))
 
 function DateInput({ label, required, setDate, error }: Props) {
@@ -36,24 +36,23 @@ function DateInput({ label, required, setDate, error }: Props) {
       <div className='flex justify-between'>
         <SelectBox
           label='년'
-          options={year}
-          value={selectedYear}
-          onChange={setSelectedYear}
+          options={year.map((year) => ({ label: year, value: year }))}
+          value={selectedYear ? { label: selectedYear, value: selectedYear + '년' } : null}
+          onChange={(value) => setSelectedYear(value.value)}
           className='w-[30%]'
         />
         <SelectBox
           label='월'
-          prefix='월'
-          options={month}
-          value={selectedMonth}
-          onChange={setSelectedMonth}
+          options={month.map((month) => ({ label: month, value: month }))}
+          value={selectedMonth ? { label: selectedMonth, value: selectedMonth + '월' } : null}
+          onChange={(value) => setSelectedMonth(value.value.split('월')[0])}
           className='w-[35%]'
         />
         <SelectBox
           label='일'
-          options={day}
-          value={selectedDay}
-          onChange={setSelectedDay}
+          options={day.map((day) => ({ label: day, value: day }))}
+          value={selectedDay ? { label: selectedDay, value: selectedDay + '일' } : null}
+          onChange={(value) => setSelectedDay(value.value)}
           className='w-[30%]'
         />
       </div>

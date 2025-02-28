@@ -1,7 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router'
+import { toast } from 'react-hot-toast'
+import { useNavigate } from 'react-router-dom'
+
 import { registerRequestSchema } from '@/apis/schema/auth'
 import { RegisterSchema } from '@/apis/schema/types/auth'
 import authService from '@/apis/service/auth'
@@ -27,7 +29,7 @@ function RegisterPage() {
       password: '',
       name: '',
       nickname: '',
-      birthDate: ''
+      birthdate: ''
     }
   })
 
@@ -41,16 +43,17 @@ function RegisterPage() {
 
   const setBirthdate = useCallback(
     (value: string) => {
-      setValue('birthDate', value)
+      setValue('birthdate', value)
     },
     [setValue]
   )
 
   const signUp = useCallback(
     async (data: RegisterSchema) => {
-      await authService.register(data)
-
-      handleMoveLoginPage()
+      await authService.register(data).then(() => {
+        toast.success('회원가입이 완료되었습니다.')
+        handleMoveLoginPage()
+      })
     },
     [handleMoveLoginPage]
   )
@@ -91,7 +94,7 @@ function RegisterPage() {
           <DateInput
             label='생년월일'
             required
-            error={errors.birthDate?.message}
+            error={errors.birthdate?.message}
             setDate={setBirthdate}
           />
           <div>
@@ -118,8 +121,8 @@ function RegisterPage() {
             </div>
             <button
               type='button'
-              onClick={handleMoveLoginPage}
-              className='text-sm w-min-[130px] mt-5 w-auto h-4 text-text-link'>
+              className='text-sm w-min-[130px] mt-5 w-auto h-4 text-text-link'
+              onClick={handleMoveLoginPage}>
               <span>이미 계정이 있으신가요?</span>
             </button>
           </div>

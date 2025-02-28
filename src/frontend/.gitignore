@@ -44,3 +44,7 @@ tsconfig.tsbuildinfo
 
 
 .react-router
+# Sentry Config File
+.env.sentry-build-plugin
+
+.history

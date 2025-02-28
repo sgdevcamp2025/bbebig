@@ -1,13 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useCallback, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router'
+import { useNavigate } from 'react-router-dom'
+
 import { loginRequestSchema } from '@/apis/schema/auth'
 import { LoginSchema } from '@/apis/schema/types/auth'
-import authService from '@/apis/service/auth'
 import AuthInput from '@/components/auth-input'
 import CustomButton from '@/components/custom-button'
-import useLoginStore from '@/stores/use-login-store'
+import { useLoginMutation } from '@/hooks/queries/auth/useLoginMutation'
 
 function LoginPage() {
   const navigate = useNavigate()
@@ -15,30 +15,29 @@ function LoginPage() {
   const { register, handleSubmit } = useForm<LoginSchema>({
     resolver: zodResolver(loginRequestSchema)
   })
+  const { mutate: login, isSuccess } = useLoginMutation()
 
-  const login = useLoginStore((state) => state.login)
-
-  const handleMoveSignUpPage = useCallback(() => {
+  const handleMoveSignUpPage = () => {
     setMovePage(true)
 
     setTimeout(() => {
       navigate('/register')
     }, 500)
-  }, [navigate])
+  }
 
-  const signIn = useCallback(
-    async (data: LoginSchema) => {
-      await authService.login(data)
+  const signIn = async (data: LoginSchema) => {
+    await login(data)
+  }
 
-      login()
+  useEffect(() => {
+    if (isSuccess) {
       setMovePage(true)
 
       setTimeout(() => {
         navigate('/channels/@me', { replace: true })
       }, 500)
-    },
-    [navigate]
-  )
+    }
+  }, [isSuccess, navigate])
 
   return (
     <form

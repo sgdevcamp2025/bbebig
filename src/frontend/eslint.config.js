@@ -5,6 +5,7 @@ import prettierPlugin from 'eslint-plugin-prettier'
 import onlyWarn from 'eslint-plugin-only-warn'
 import reactHooks from 'eslint-plugin-react-hooks'
 import simpleImportSort from 'eslint-plugin-simple-import-sort'
+import tanstackPlugin from '@tanstack/eslint-plugin-query'
 import unusedImports from 'eslint-plugin-unused-imports'
 
 export default tseslint.config(
@@ -35,12 +36,12 @@ export default tseslint.config(
       prettier: prettierPlugin,
       'simple-import-sort': simpleImportSort,
       '@typescript-eslint': tseslint.plugin,
-      onlyWarn
+      onlyWarn,
+      tanstack: tanstackPlugin
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
       'import/no-anonymous-default-export': 'off',
-      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       'prettier/prettier': 'error',
       'unused-imports/no-unused-imports': 'error',
       'unused-imports/no-unused-vars': 'error',

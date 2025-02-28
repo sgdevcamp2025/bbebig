@@ -8,9 +8,18 @@ type Props = {
   label: string
   isActive: boolean
   hasAlarm?: boolean
+  unreadCount?: number
 } & ComponentPropsWithoutRef<'button'>
 
-function ServerIcon({ imageUrl, imageSize = 48, label, isActive, hasAlarm, ...props }: Props) {
+function ServerIcon({
+  imageUrl,
+  imageSize = 48,
+  label,
+  isActive,
+  hasAlarm,
+  unreadCount,
+  ...props
+}: Props) {
   const [isFocused, setIsFocused] = useState(false)
 
   const handleMouseEnter = () => setIsFocused(true)
@@ -23,16 +32,21 @@ function ServerIcon({ imageUrl, imageSize = 48, label, isActive, hasAlarm, ...pr
       type='button'
       className='flex items-center w-full justify-center relative'
       {...props}>
+      {unreadCount !== undefined && unreadCount > 0 && (
+        <span className='absolute bottom-0 right-1 bg-red-500 border-2 border-black-80 text-white text-[10px] font-medium min-w-[18px] h-[168x] flex items-center justify-center rounded-full z-10'>
+          {unreadCount > 99 ? '99+' : unreadCount}
+        </span>
+      )}
       <div
         className={cn(
-          'absolute top-1/2 translate-y-[-50%] left-[-4px] w-2 h-10 rounded-r-[4px] overflow-hidden transition-all duration-300 bg-white',
+          'absolute top-1/2 translate-y-[-50%] left-[-4px] w-2 h-10  rounded-r-[4px] overflow-hidden transition-all duration-300 bg-white',
           !isActive && (isFocused ? 'h-5' : hasAlarm ? 'h-2' : 'h-0')
         )}
       />
       <div className='flex items-center justify-center'>
         <div
           className={cn(
-            'w-[48px] h-[48px] flex items-center justify-center bg-brand-10 overflow-hidden transition-all duration-300 hover:rounded-[14px]',
+            'w-[48px] h-[48px] flex items-center justify-center hover:bg-brand bg-brand-10 overflow-hidden transition-all duration-300 hover:rounded-[14px]',
             isActive
               ? 'rounded-[14px] bg-brand text-text-normal'
               : 'rounded-[48px] text-text-white',
@@ -50,7 +64,7 @@ function ServerIcon({ imageUrl, imageSize = 48, label, isActive, hasAlarm, ...pr
               }}
             />
           ) : (
-            <span className='text-gray-100 text-[14px] font-bold'>{label.charAt(0)}</span>
+            <span className='text-gray-100 text-[12px] font-bold text-nowrap'>{label}</span>
           )}
         </div>
       </div>
