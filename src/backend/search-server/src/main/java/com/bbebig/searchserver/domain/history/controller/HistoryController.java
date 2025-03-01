@@ -1,8 +1,8 @@
 package com.bbebig.searchserver.domain.history.controller;
 
 import com.bbebig.commonmodule.global.response.code.CommonResponse;
+import com.bbebig.commonmodule.kafka.dto.ChatMessageDto;
 import com.bbebig.commonmodule.passport.annotation.PassportUser;
-import com.bbebig.commonmodule.proto.PassportProto;
 import com.bbebig.searchserver.domain.history.dto.HistoryResponseDto.*;
 import com.bbebig.searchserver.domain.history.service.HistoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,6 +13,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 import static com.bbebig.commonmodule.proto.PassportProto.*;
 
@@ -31,11 +33,10 @@ public class HistoryController {
 	})
 	@GetMapping("/server/{serverId}/channel/{channelId}/messages")
 	public CommonResponse<GetChannelMessageResponseDto> getServerChannelMessageByChannelId(@PathVariable Long serverId, @PathVariable Long channelId,
-																						   @Parameter(hidden = true) @PassportUser Passport passport,
-																						   @RequestParam(required = false) Long messageId,
+																						   @RequestParam(required = false) Long sequence,
 																						   @RequestParam(defaultValue = "300") int limit) {
 		log.info("[Search] ChatMessageServiceController: 채널 ID로 메시지 검색 요청. serverID: {}, channelID: {}", serverId, channelId);
-		return CommonResponse.onSuccess(historyService.getChannelMessages(serverId, channelId, messageId, limit));
+		return CommonResponse.onSuccess(historyService.getChannelMessages(serverId, channelId, sequence, limit));
 	}
 
 	@Operation(summary = "DM 채팅 과거 메시지 조회", description = "마지막 MessageId를 기반으로 원하는 수량만큼 과거 메시지를 조회합니다.")
@@ -86,4 +87,17 @@ public class HistoryController {
 		log.info("[Search] ChatMessageServiceController: 멤버별 DM 안읽은 메시지 수 조회 요청. memberId: {}", passport.getMemberId());
 		return CommonResponse.onSuccess(null);
 	}
+
+	@PostMapping("/test/send")
+	public CommonResponse<?> testSend(ChatMessageDto chatMessageDto) {
+		chatMessageDto.setCreatedAt(LocalDateTime.now());
+		historyService.saveChannelMessage(chatMessageDto);
+		return CommonResponse.onSuccess(null);
+	}
+
+	@GetMapping("/test/unread/all/{memberId}")
+	public CommonResponse<?> testUnreadAll(@PathVariable Long memberId) {
+		return CommonResponse.onSuccess(historyService.getAllServerUnreadCount(memberId));
+	}
+
 }

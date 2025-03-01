@@ -76,6 +76,9 @@ dependencies {
 
     // Protobuf
     implementation 'com.google.protobuf:protobuf-java:3.21.12'
+
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
 }
 
 dependencyManagement {

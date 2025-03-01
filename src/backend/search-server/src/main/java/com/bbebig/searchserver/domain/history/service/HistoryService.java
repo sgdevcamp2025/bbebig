@@ -164,9 +164,9 @@ public class HistoryService {
 
 	// Id 기반 채널 과거 메시지 조회
 	// GET /server/{serverId}/channel/{channelId}/messages
-	public GetChannelMessageResponseDto getChannelMessages(Long serverId, Long channelId, Long messageId, int limit) {
+	public GetChannelMessageResponseDto getChannelMessages(Long serverId, Long channelId, Long sequence, int limit) {
 		// 처음 검색이라면, 캐시된 최근 메시지를 반환
-		if (messageId == null) {
+		if (sequence == null) {
 			List<ChannelChatMessage> cachedChannelMessages = getCachedChannelMessages(channelId);
 			return GetChannelMessageResponseDto.builder()
 					.serverId(serverId)
@@ -177,7 +177,7 @@ public class HistoryService {
 		}
 
 		PageRequest pageReq = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC));
-		List<ChannelChatMessage> messages = channelChatMessageRepository.findByChannelIdAndIdLessThan(channelId, messageId, pageReq);
+		List<ChannelChatMessage> messages = channelChatMessageRepository.findPreviousMessages(channelId, sequence, pageReq);
 		if (!messages.isEmpty()) {
 			return HistoryDtoConverter.convertToGetChannelMessageResponseDto(serverId, channelId, messages);
 		}
@@ -300,7 +300,7 @@ public class HistoryService {
 
 	private void cacheChannelMessage(Long channelId) {
 		List<ChannelChatMessage> messages = channelChatMessageRepository.findByChannelId(channelId,
-				PageRequest.of(0, 300, Sort.by(Sort.Order.desc("id"))));
+				PageRequest.of(0, 100, Sort.by(Sort.Order.desc("sequence"))));
 		if (messages != null && !messages.isEmpty()) {
 			serverRedisRepository.saveChannelMessages(channelId, messages);
 		}
@@ -335,6 +335,7 @@ public class HistoryService {
 				log.error("[Search] ChatMessageService: FeignException: {}", e.getMessage());
 			}
 		}
+
 
 		return lastInfo;
 	}
