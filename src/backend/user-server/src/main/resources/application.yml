@@ -93,3 +93,21 @@ eas:
 auth:
   server:
     url: ${AUTH_SERVER_URL}
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,metrics,prometheus,logfile"
+
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+  metrics:
+    web:
+      server:
+        request:
+          auto-timeouts: true

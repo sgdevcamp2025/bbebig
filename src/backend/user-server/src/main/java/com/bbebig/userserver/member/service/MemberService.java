@@ -145,8 +145,8 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public MemberReadResponseDto getMemberByNickname(String nickname) {
-        Optional<Member> member = memberRepository.findByNickname(nickname);
-		return member.map(MemberReadResponseDto::convertToMemberReadResponseDto).orElse(null);
+        Member member = memberRepository.findByNickname(nickname).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+		return MemberReadResponseDto.convertToMemberReadResponseDto(member);
 	}
 
     /**
