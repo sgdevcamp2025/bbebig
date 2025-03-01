@@ -66,3 +66,20 @@ logging:
   level:
     org.apache.kafka: WARN
     org.springframework.kafka: WARN
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,metrics,prometheus,logfile"
+
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+  metrics:
+    web:
+      server:
+        request:
+          auto-timeouts: true
