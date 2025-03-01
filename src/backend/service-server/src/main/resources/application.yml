@@ -93,3 +93,18 @@ auth:
 service:
   server:
     url: ${SERVICE_SERVER_URL}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,metrics,prometheus,logfile"  # metrics 포함 확인
+  metrics:
+    enable:
+      http: true  # HTTP 요청 메트릭 활성화
+    tags:
+      application: "bbebig-store"  # (선택) 태그 설정
+  endpoint:
+    metrics:
+      enabled: true  # 특정 메트릭 엔드포인트 활성화
+

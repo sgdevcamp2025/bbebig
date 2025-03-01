@@ -30,8 +30,14 @@ public class SwaggerConfig {
                 .in(SecurityScheme.In.HEADER)
                 .name("X-Passport");
 
+        SecurityScheme jwtScheme = new SecurityScheme()
+                .type(SecurityScheme.Type.HTTP)
+                .scheme("bearer")
+                .bearerFormat("JWT");
+
         SecurityRequirement securityRequirement = new SecurityRequirement()
-                .addList("X-Passport");
+                .addList("X-Passport")
+                .addList("Authorization");
 
         // 배포 서버 URL
         Server productionServer = new Server()
@@ -46,7 +52,9 @@ public class SwaggerConfig {
 
         return new OpenAPI()
                 .info(info)
-                .components(new Components().addSecuritySchemes("X-Passport", passportScheme))
+                .components(new Components()
+                        .addSecuritySchemes("X-Passport", passportScheme)
+                        .addSecuritySchemes("Authorization", jwtScheme))
                 .addSecurityItem(securityRequirement)
                 .servers(List.of(productionServer, localServer));
     }
