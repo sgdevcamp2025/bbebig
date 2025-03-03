@@ -166,6 +166,9 @@ const loginStatusCheckSchema = {
     200: z.object({
       code: z.string().default('AUTH109'),
       message: z.string().default('login status check success!'),
+      result: z.object({
+        status: z.boolean(),
+      }),
     }),
     401: commonResponseSchema,
   },
