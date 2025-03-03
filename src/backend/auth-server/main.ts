@@ -144,7 +144,6 @@ app.register(cors, {
   allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
   exposedHeaders: ['Set-Cookie'],
   preflightContinue: true,
-  optionsSuccessStatus: 204,
 });
 
 app
@@ -169,11 +168,6 @@ app.register(fastifyCookie, {
     path: '/',
   },
 } as FastifyCookieOptions);
-
-app.addHook('onRequest', async (request, reply) => {
-  reply.header('Access-Control-Allow-Credentials', 'true');
-  reply.header('Access-Control-Allow-Origin', request.headers.origin || '');
-});
 
 app.setErrorHandler((err, req, reply) => {
   if (hasZodFastifySchemaValidationErrors(err)) {
