@@ -8,6 +8,7 @@ import {
   createCategoryResponseSchema,
   createChannelRequestSchema,
   createChannelResponseSchema,
+  createServerRequestSchema,
   inviteUserRequestSchema,
   inviteUserResponseSchema
 } from '../service'
@@ -116,11 +117,6 @@ export interface GetServerIdListWithMemberIdRequestSchema {
 export interface GetServerIdListWithMemberIdResponseSchema {
   memberId: number
   serverIdList: number[]
-}
-
-export interface CreateServerRequestSchema {
-  serverName: string
-  serverImageUrl: string | null
 }
 
 export interface CreateServerResponseSchema {
@@ -324,3 +320,4 @@ export type ZCreateCategoryRequestSchema = z.infer<typeof createCategoryRequestS
 export type ZCreateCategoryResponseSchema = z.infer<typeof createCategoryResponseSchema>
 export type ZInviteUserRequestSchema = z.infer<typeof inviteUserRequestSchema>
 export type ZInviteUserResponseSchema = z.infer<typeof inviteUserResponseSchema>
+export type ZCreateServerRequestSchema = z.infer<typeof createServerRequestSchema>
