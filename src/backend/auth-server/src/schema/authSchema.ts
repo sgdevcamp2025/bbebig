@@ -14,25 +14,6 @@ const signInSchema = {
       message: z.string().default('Login Ok!'),
       result: z.object({
         accessToken: z.string(),
-      }),
-    }),
-    400: commonResponseSchemaOmitResult,
-  },
-};
-
-const mobileSignInSchema = {
-  tags: ['auth'],
-  description: '모바일 로그인 합니다.',
-  body: z.object({
-    email: z.string().email(),
-    password: z.string(),
-  }),
-  response: {
-    200: z.object({
-      code: z.string().default('AUTH100'),
-      message: z.string().default('Login Ok!'),
-      result: z.object({
-        accessToken: z.string(),
         refreshToken: z.string(),
       }),
     }),
@@ -88,6 +69,7 @@ const refreshTokenSchema = {
       message: z.string().default('refresh success'),
       result: z.object({
         accessToken: z.string(),
+        refreshToken: z.string(),
       }),
     }),
     400: commonResponseSchemaOmitResult,
@@ -211,7 +193,6 @@ export {
   verifyTokenSchema,
   registerSchema,
   signInSchema,
-  mobileSignInSchema,
   verifyEmailSchema,
   tokenDecodeSchema,
   healthCheckSchema,
