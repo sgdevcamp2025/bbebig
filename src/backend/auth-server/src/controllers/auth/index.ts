@@ -23,16 +23,9 @@ function authController() {
         return;
       }
 
-      res.setCookie('refresh_token', values.refreshToken, {
-        sameSite: true,
-        httpOnly: true,
-        secure: true,
-        path: '/',
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-      });
-
       const result = {
         accessToken: values.accessToken,
+        refreshToken: values.refreshToken,
       };
 
       await redis.set(REDIS_KEY.refreshToken(values.id), values.refreshToken);
@@ -65,33 +58,6 @@ function authController() {
 
       handleError(res, ERROR_MESSAGE.serverError, error);
     }
-  };
-
-  const mobileLogin = async (req: FastifyRequest, res: FastifyReply) => {
-    const { email, password } = req.body as { email: string; password: string };
-
-    const values = await authService.loginWithPassword(email, password);
-
-    if (!values) {
-      handleError(res, ERROR_MESSAGE.notFound);
-      return;
-    }
-
-    const result = {
-      accessToken: values.accessToken,
-      refreshToken: values.refreshToken,
-    };
-
-    await redis.set(REDIS_KEY.refreshToken(values.id), values.refreshToken);
-
-    handleSuccess(
-      res,
-      {
-        ...SUCCESS_MESSAGE.loginOk,
-        result,
-      },
-      200,
-    );
   };
 
   const register = async (
@@ -167,20 +133,13 @@ function authController() {
 
       const result = await authService.refresh(refreshToken, redisRefreshToken);
 
-      res.setCookie('refresh_token', result.refreshToken, {
-        sameSite: 'lax',
-        httpOnly: true,
-        secure: false,
-        path: '/',
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-      });
-
       await redis.set(REDIS_KEY.refreshToken(id), result.refreshToken);
 
       handleSuccess(res, {
         ...SUCCESS_MESSAGE.refreshToken,
         result: {
           accessToken: result.accessToken,
+          refreshToken: result.refreshToken,
         },
       });
     } catch (error) {
@@ -205,17 +164,14 @@ function authController() {
         return;
       }
 
-      const result = await authService.refresh(refreshToken, redisRefreshToken);
+      const values = await authService.refresh(refreshToken, redisRefreshToken);
 
-      res.setCookie('refresh_token', result.refreshToken, {
-        sameSite: 'lax',
-        httpOnly: true,
-        secure: false,
-        path: '/',
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-      });
+      const result = {
+        accessToken: values.accessToken,
+        refreshToken: values.refreshToken,
+      };
 
-      await redis.set(REDIS_KEY.refreshToken(id), result.refreshToken);
+      await redis.set(REDIS_KEY.refreshToken(id), values.refreshToken);
 
       handleSuccess(res, {
         ...SUCCESS_MESSAGE.refreshToken,
@@ -272,7 +228,6 @@ function authController() {
     refresh,
     verifyToken,
     healthCheck,
-    mobileLogin,
     refreshMobile,
     loginStatusCheck,
   };
