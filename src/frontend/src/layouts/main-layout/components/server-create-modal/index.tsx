@@ -71,6 +71,7 @@ function ServerCreateModal({ isOpen, onClose, ...args }: ServerCreateModalProps)
             ref={uploadInputRef}
             type='file'
             accept='image/*'
+            multiple={false}
             onChange={handleChangeServerImage}
             className='hidden'
           />

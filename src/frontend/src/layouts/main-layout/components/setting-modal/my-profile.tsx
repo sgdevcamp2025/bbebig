@@ -1,10 +1,26 @@
+import { useRef } from 'react'
+
 import CustomButton from '@/components/custom-button'
 import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
+import { useUpdateAvatarImage } from '@/hooks/queries/user/useUpdateAvatarImage'
 
 import { Content as ProfileCard } from '../profile-card'
 
 export function MyProfile() {
   const myInfo = useGetSelfUser()
+  const { updateAvatarImage } = useUpdateAvatarImage()
+  const avatarInputRef = useRef<HTMLInputElement>(null)
+  const handleChangeAvatar = () => {
+    avatarInputRef.current?.click()
+  }
+
+  const handleUploadAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    updateAvatarImage(file)
+  }
+
   return (
     <section className='pt-[60px] px-[40px] pb-20 flex flex-col gap-4'>
       <h2 className='text-white-100 text-[24px] leading-[30px] font-bold'>프로필</h2>
@@ -35,12 +51,18 @@ export function MyProfile() {
           <div className='flex flex-col gap-2'>
             <h3 className='text-gray-10 text-[12px] leading-[15px] font-bold'>아바타</h3>
             <div className='flex gap-2'>
+              <input
+                ref={avatarInputRef}
+                type='file'
+                multiple={false}
+                accept='image/*'
+                className='hidden'
+                onChange={handleUploadAvatar}
+              />
               <CustomButton
                 type='button'
                 className='w-fit py-[2px] px-4 h-8'
-                onClick={() => {
-                  console.log('아바타 변경하기')
-                }}>
+                onClick={handleChangeAvatar}>
                 아바타 변경하기
               </CustomButton>
               <CustomButton
