@@ -96,7 +96,7 @@ function authController() {
     const id = req.user?.id;
     const refreshToken = req.headers['refresh-token'] as string;
 
-    if (!id || !refreshToken) {
+    if (!id || !refreshToken || refreshToken === 'null' || refreshToken === '') {
       handleError(res, ERROR_MESSAGE.unauthorized);
       return;
     }
@@ -172,7 +172,7 @@ function authController() {
   const loginStatusCheck = async (req: FastifyRequest, res: FastifyReply) => {
     const refreshToken = req.headers['refresh-token'] as string;
 
-    if (!refreshToken) {
+    if (!refreshToken || refreshToken === 'null' || refreshToken === '') {
       handleSuccess(res, SUCCESS_MESSAGE.loginStatusDisabled, 200);
       return;
     }
@@ -181,7 +181,7 @@ function authController() {
       shortVerifyRefreshToken(refreshToken);
       handleSuccess(res, SUCCESS_MESSAGE.loginStatusOK, 200);
     } catch (error) {
-      handleError(res, ERROR_MESSAGE.unauthorized, error);
+      handleSuccess(res, SUCCESS_MESSAGE.loginStatusDisabled, 200);
       return;
     }
   };
