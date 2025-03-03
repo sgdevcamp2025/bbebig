@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { generateHash } from '../../libs/authHelper';
+import { generateHash, shortVerifyRefreshToken } from '../../libs/authHelper';
 import { ERROR_MESSAGE, REDIS_KEY } from '../../libs/constants';
 import { SUCCESS_MESSAGE } from '../../libs/constants';
 import { handleError } from '../../libs/errorHelper';
@@ -178,7 +178,13 @@ function authController() {
       return;
     }
 
-    handleSuccess(res, SUCCESS_MESSAGE.loginStatusOK, 200);
+    try {
+      shortVerifyRefreshToken(refreshToken);
+      handleSuccess(res, SUCCESS_MESSAGE.loginStatusOK, 200);
+    } catch (error) {
+      handleError(res, ERROR_MESSAGE.unauthorized, error);
+      return;
+    }
   };
 
   return {

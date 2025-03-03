@@ -16,6 +16,7 @@ const authRoute = async (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().route({
     method: 'GET',
     url: '/status-check',
+    preHandler: [verifySignIn],
     schema: loginStatusCheckSchema,
     handler: authController.loginStatusCheck,
   });
