@@ -1,5 +1,6 @@
 const COOKIE_KEYS = {
-  ACCESS_TOKEN: 'access_token'
+  ACCESS_TOKEN: 'access_token',
+  REFRESH_TOKEN: 'refresh_token'
 } as const
 
 const LOCAL_STORAGE = {

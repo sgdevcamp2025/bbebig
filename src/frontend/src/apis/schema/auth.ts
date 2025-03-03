@@ -12,7 +12,8 @@ const loginRequestSchema = z.object({
 
 const loginResponseSchema = commonResponseSchema.extend({
   result: z.object({
-    accessToken: z.string()
+    accessToken: z.string(),
+    refreshToken: z.string()
   })
 })
 

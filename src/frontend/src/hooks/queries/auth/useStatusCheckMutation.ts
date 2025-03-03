@@ -9,7 +9,6 @@ export function useStatusCheckMutation(
 ) {
   return useMutation({
     ...config,
-    mutationFn: authService.statusCheck,
-    mutationKey: ['statusCheck']
+    mutationFn: authService.statusCheck
   })
 }
