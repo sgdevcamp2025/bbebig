@@ -137,6 +137,14 @@ app.register(fastifySwaggerUi, {
 app.register(currentAuthPlugin);
 app.register(routes);
 
+app.register(cors, {
+  origin: ['http://localhost:5173', 'https://bbebig.netlify.app'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['set-cookie'],
+});
+
 app
   .register(fastifyRedis, {
     client: redis,
