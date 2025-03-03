@@ -138,10 +138,13 @@ app.register(currentAuthPlugin);
 app.register(routes);
 
 app.register(cors, {
-  origin: '*',
+  origin: ['http://localhost:5173', 'https://bbebig.netlify.app'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
+  exposedHeaders: ['Set-Cookie'],
+  preflightContinue: true,
+  optionsSuccessStatus: 204,
 });
 
 app
@@ -158,7 +161,19 @@ app
 
 app.register(fastifyCookie, {
   secret: SECRET_KEY,
+  hook: 'onRequest',
+  parseOptions: {
+    secure: true,
+    httpOnly: true,
+    sameSite: 'none',
+    path: '/',
+  },
 } as FastifyCookieOptions);
+
+app.addHook('onRequest', async (request, reply) => {
+  reply.header('Access-Control-Allow-Credentials', 'true');
+  reply.header('Access-Control-Allow-Origin', request.headers.origin || '');
+});
 
 app.setErrorHandler((err, req, reply) => {
   if (hasZodFastifySchemaValidationErrors(err)) {
