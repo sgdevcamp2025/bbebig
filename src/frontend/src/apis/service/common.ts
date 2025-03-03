@@ -1,11 +1,15 @@
-import { FILE_SERVER_URL } from '@/constants/env'
+import toast from 'react-hot-toast'
 
-export const registerImage = async (file: File) => {
+import { DISABLED_SERVER, FILE_SERVER_URL } from '@/constants/env'
+export const uploadFile = async (file: File) => {
   try {
-    // Ensure file name is properly encoded for the URL
+    if (DISABLED_SERVER) {
+      toast.error('이미지 업로드 기능은 현재 비활성화 되어 있습니다.')
+      return
+    }
+
     const encodedFileName = encodeURIComponent(file.name)
 
-    // Include contentType in the request
     const response = await fetch(
       `${FILE_SERVER_URL}/api/files/upload/${encodedFileName}?contentType=${encodeURIComponent(file.type)}`,
       {
@@ -23,17 +27,16 @@ export const registerImage = async (file: File) => {
     const presignedUrl = await response.text()
 
     if (presignedUrl) {
-      // Use the presigned URL to upload the file directly to S3
       const uploadResponse = await fetch(presignedUrl, {
         method: 'PUT',
         headers: {
-          'Content-Type': file.type // Ensure the correct file type is set
+          'Content-Type': file.type
         },
         body: file
       })
 
       if (uploadResponse.ok) {
-        const fileUrl = presignedUrl.split('?')[0] // Extract base S3 URL
+        const fileUrl = presignedUrl.split('?')[0]
 
         return fileUrl
       } else {
