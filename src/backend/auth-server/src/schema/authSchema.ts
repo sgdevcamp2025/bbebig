@@ -161,6 +161,7 @@ const healthCheckSchema = {
 const loginStatusCheckSchema = {
   tags: ['auth'],
   description: '로그인 상태를 확인 합니다.',
+  security: [{ bearerAuth: [] }],
   response: {
     200: z.object({
       code: z.string().default('AUTH109'),

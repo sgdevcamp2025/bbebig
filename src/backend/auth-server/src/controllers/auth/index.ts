@@ -170,10 +170,9 @@ function authController() {
   };
 
   const loginStatusCheck = async (req: FastifyRequest, res: FastifyReply) => {
-    const id = req.user?.id;
     const refreshToken = req.headers['refresh-token'] as string;
 
-    if (!id || !refreshToken) {
+    if (!refreshToken) {
       handleSuccess(res, SUCCESS_MESSAGE.loginStatusDisabled, 200);
       return;
     }
