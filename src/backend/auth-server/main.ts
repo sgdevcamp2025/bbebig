@@ -140,6 +140,7 @@ app.register(routes);
 app.register(cors, {
   origin: false,
   credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization', 'Refresh-Token'],
 });
 
 app

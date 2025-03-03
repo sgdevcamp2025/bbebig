@@ -94,7 +94,7 @@ function authController() {
 
   const logout = async (req: FastifyRequest, res: FastifyReply) => {
     const id = req.user?.id;
-    const refreshToken = req.cookies.refresh_token;
+    const refreshToken = req.headers['refresh-token'] as string;
 
     if (!id || !refreshToken) {
       handleError(res, ERROR_MESSAGE.unauthorized);
@@ -103,11 +103,6 @@ function authController() {
 
     try {
       await redis.del(REDIS_KEY.refreshToken(id));
-
-      res.clearCookie('refresh_token', {
-        path: '/',
-      });
-
       handleSuccess(res, SUCCESS_MESSAGE.logoutOk, 205);
     } catch (error) {
       handleError(res, ERROR_MESSAGE.badRequest, error);
@@ -116,7 +111,7 @@ function authController() {
 
   const refresh = async (req: FastifyRequest, res: FastifyReply) => {
     const id = req.user?.id;
-    const refreshToken = req.cookies.refresh_token;
+    const refreshToken = req.headers['refresh-token'] as string;
 
     if (!refreshToken || !id) {
       handleError(res, ERROR_MESSAGE.unauthorized);
@@ -141,41 +136,6 @@ function authController() {
           accessToken: result.accessToken,
           refreshToken: result.refreshToken,
         },
-      });
-    } catch (error) {
-      handleError(res, ERROR_MESSAGE.unauthorized, error);
-    }
-  };
-
-  const refreshMobile = async (req: FastifyRequest, res: FastifyReply) => {
-    const id = req.user?.id;
-    const refreshToken = req.cookies.refresh_token;
-
-    if (!refreshToken || !id) {
-      handleError(res, ERROR_MESSAGE.unauthorized);
-      return;
-    }
-
-    try {
-      const redisRefreshToken = await redis.get(REDIS_KEY.refreshToken(id));
-
-      if (!redisRefreshToken) {
-        handleError(res, ERROR_MESSAGE.unauthorized);
-        return;
-      }
-
-      const values = await authService.refresh(refreshToken, redisRefreshToken);
-
-      const result = {
-        accessToken: values.accessToken,
-        refreshToken: values.refreshToken,
-      };
-
-      await redis.set(REDIS_KEY.refreshToken(id), values.refreshToken);
-
-      handleSuccess(res, {
-        ...SUCCESS_MESSAGE.refreshToken,
-        result,
       });
     } catch (error) {
       handleError(res, ERROR_MESSAGE.unauthorized, error);
@@ -211,7 +171,7 @@ function authController() {
 
   const loginStatusCheck = async (req: FastifyRequest, res: FastifyReply) => {
     const id = req.user?.id;
-    const refreshToken = req.cookies.refresh_token;
+    const refreshToken = req.headers['refresh-token'] as string;
 
     if (!id || !refreshToken) {
       handleSuccess(res, SUCCESS_MESSAGE.loginStatusDisabled, 200);
@@ -228,7 +188,6 @@ function authController() {
     refresh,
     verifyToken,
     healthCheck,
-    refreshMobile,
     loginStatusCheck,
   };
 }
