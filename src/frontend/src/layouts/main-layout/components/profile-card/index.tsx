@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRef, useState } from 'react'
 import { toast } from 'react-hot-toast'
-import { useNavigate } from 'react-router-dom'
 
 import { CommonResponseType } from '@/apis/schema/types/common'
 import { GetUserSelfResponseSchema } from '@/apis/schema/types/user'
@@ -92,7 +91,6 @@ export function Content({
     }
   })
 
-  const navigate = useNavigate()
   const { mutate: logout } = useLogoutMutation()
 
   const statusMenuRef = useRef<HTMLDivElement>(null)
@@ -111,7 +109,6 @@ export function Content({
 
   const handleClickLogout = () => {
     logout(undefined)
-    navigate('/', { replace: true })
   }
 
   const menuItems = [

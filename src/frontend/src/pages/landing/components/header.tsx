@@ -41,6 +41,7 @@ function Header() {
   const [isLogin, setIsLogin] = useState(false)
   const { mutate: statusCheck } = useStatusCheckMutation({
     onSuccess: (data) => {
+      console.log(data.result.status)
       setIsLogin(data.result.status)
     }
   })
