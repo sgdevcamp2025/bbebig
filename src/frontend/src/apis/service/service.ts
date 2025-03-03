@@ -5,7 +5,6 @@ import type {
   CreateCategoryResponseSchema,
   CreateChannelRequestSchema,
   CreateChannelResponseSchema,
-  CreateServerRequestSchema,
   CreateServerResponseSchema,
   DeleteCategoryRequestSchema,
   DeleteCategoryResponseSchema,
@@ -36,6 +35,7 @@ import type {
   UpdateServerResponseSchema,
   WithdrawServerRequestSchema,
   WithdrawServerResponseSchema,
+  ZCreateServerRequestSchema,
   ZInviteUserRequestSchema,
   ZInviteUserResponseSchema
 } from '../schema/types/service'
@@ -83,7 +83,7 @@ const serviceService = () => {
     return response.data
   }
 
-  const createServer = async (data: CreateServerRequestSchema) => {
+  const createServer = async (data: ZCreateServerRequestSchema) => {
     const response = await axiosInstance.post<CommonResponseType<CreateServerResponseSchema>>(
       `${SERVER_PATH}`,
       data

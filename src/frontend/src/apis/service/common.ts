@@ -1,9 +1,9 @@
 import toast from 'react-hot-toast'
 
-import { DISABLED_SERVER, FILE_SERVER_URL } from '@/constants/env'
+import { ENABLE_SERVER, FILE_SERVER_URL } from '@/constants/env'
 export const uploadFile = async (file: File) => {
   try {
-    if (DISABLED_SERVER) {
+    if (!ENABLE_SERVER) {
       toast.error('이미지 업로드 기능은 현재 비활성화 되어 있습니다.')
       return
     }

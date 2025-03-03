@@ -40,7 +40,6 @@ const inviteUserResponseSchema = commonResponseSchema.extend({
 })
 
 const createServerRequestSchema = z.object({
-  serverId: z.string(),
   serverName: z.string().min(1, { message: '서버 이름은 최소 1글자 이상이어야 합니다.' }),
   serverImageUrl: z.string().nullable()
 })
