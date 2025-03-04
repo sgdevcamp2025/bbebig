@@ -28,6 +28,9 @@ function VideoComponent({
   const { joinChannel, leaveChannel, isInVoiceChannel, callRef, myFaceRef } =
     useSingalingWithMeshSocket(channelId, channelName, serverName)
 
+  // const { joinChannel, leaveChannel, isInVoiceChannel, callRef, myFaceRef } =
+  //   useSignalingWithSFU(channelId, channelName, serverName)
+
   const handleJoinVoiceChannel = () => {
     joinChannel()
   }

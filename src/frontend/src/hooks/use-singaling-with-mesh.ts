@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import io, { Socket } from 'socket.io-client'
 
 import { SIGNALING_NODE_SERVER_URL, TURN_SERVER_URL } from '@/constants/env'
-import useUserStatus from '@/stores/use-user-status'
+import { useUserStatus } from '@/stores/use-user-status-store'
 
 import useGetSelfUser from './queries/user/useGetSelfUser'
 
