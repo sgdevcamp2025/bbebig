@@ -137,6 +137,12 @@ app.register(fastifySwaggerUi, {
 app.register(currentAuthPlugin);
 app.register(routes);
 
+app.register(cors, {
+  origin: false,
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization', 'Refresh-Token'],
+});
+
 app
   .register(fastifyRedis, {
     client: redis,
@@ -151,6 +157,13 @@ app
 
 app.register(fastifyCookie, {
   secret: SECRET_KEY,
+  hook: 'onRequest',
+  parseOptions: {
+    secure: true,
+    httpOnly: true,
+    sameSite: 'none',
+    path: '/',
+  },
 } as FastifyCookieOptions);
 
 app.setErrorHandler((err, req, reply) => {

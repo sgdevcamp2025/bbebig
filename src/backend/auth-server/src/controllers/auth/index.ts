@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { generateHash } from '../../libs/authHelper';
+import { generateHash, shortVerifyRefreshToken } from '../../libs/authHelper';
 import { ERROR_MESSAGE, REDIS_KEY } from '../../libs/constants';
 import { SUCCESS_MESSAGE } from '../../libs/constants';
 import { handleError } from '../../libs/errorHelper';
@@ -23,16 +23,9 @@ function authController() {
         return;
       }
 
-      res.setCookie('refresh_token', values.refreshToken, {
-        sameSite: true,
-        httpOnly: true,
-        secure: true,
-        path: '/',
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-      });
-
       const result = {
         accessToken: values.accessToken,
+        refreshToken: values.refreshToken,
       };
 
       await redis.set(REDIS_KEY.refreshToken(values.id), values.refreshToken);
@@ -65,33 +58,6 @@ function authController() {
 
       handleError(res, ERROR_MESSAGE.serverError, error);
     }
-  };
-
-  const mobileLogin = async (req: FastifyRequest, res: FastifyReply) => {
-    const { email, password } = req.body as { email: string; password: string };
-
-    const values = await authService.loginWithPassword(email, password);
-
-    if (!values) {
-      handleError(res, ERROR_MESSAGE.notFound);
-      return;
-    }
-
-    const result = {
-      accessToken: values.accessToken,
-      refreshToken: values.refreshToken,
-    };
-
-    await redis.set(REDIS_KEY.refreshToken(values.id), values.refreshToken);
-
-    handleSuccess(
-      res,
-      {
-        ...SUCCESS_MESSAGE.loginOk,
-        result,
-      },
-      200,
-    );
   };
 
   const register = async (
@@ -128,20 +94,15 @@ function authController() {
 
   const logout = async (req: FastifyRequest, res: FastifyReply) => {
     const id = req.user?.id;
-    const refreshToken = req.cookies.refresh_token;
+    const refreshToken = req.headers['refresh-token'] as string;
 
-    if (!id || !refreshToken) {
+    if (!id || !refreshToken || refreshToken === 'null' || refreshToken === '') {
       handleError(res, ERROR_MESSAGE.unauthorized);
       return;
     }
 
     try {
       await redis.del(REDIS_KEY.refreshToken(id));
-
-      res.clearCookie('refresh_token', {
-        path: '/',
-      });
-
       handleSuccess(res, SUCCESS_MESSAGE.logoutOk, 205);
     } catch (error) {
       handleError(res, ERROR_MESSAGE.badRequest, error);
@@ -150,7 +111,7 @@ function authController() {
 
   const refresh = async (req: FastifyRequest, res: FastifyReply) => {
     const id = req.user?.id;
-    const refreshToken = req.cookies.refresh_token;
+    const refreshToken = req.headers['refresh-token'] as string;
 
     if (!refreshToken || !id) {
       handleError(res, ERROR_MESSAGE.unauthorized);
@@ -166,14 +127,6 @@ function authController() {
       }
 
       const result = await authService.refresh(refreshToken, redisRefreshToken);
-
-      res.setCookie('refresh_token', result.refreshToken, {
-        sameSite: 'lax',
-        httpOnly: true,
-        secure: false,
-        path: '/',
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-      });
 
       await redis.set(REDIS_KEY.refreshToken(id), result.refreshToken);
 
@@ -181,45 +134,8 @@ function authController() {
         ...SUCCESS_MESSAGE.refreshToken,
         result: {
           accessToken: result.accessToken,
+          refreshToken: result.refreshToken,
         },
-      });
-    } catch (error) {
-      handleError(res, ERROR_MESSAGE.unauthorized, error);
-    }
-  };
-
-  const refreshMobile = async (req: FastifyRequest, res: FastifyReply) => {
-    const id = req.user?.id;
-    const refreshToken = req.cookies.refresh_token;
-
-    if (!refreshToken || !id) {
-      handleError(res, ERROR_MESSAGE.unauthorized);
-      return;
-    }
-
-    try {
-      const redisRefreshToken = await redis.get(REDIS_KEY.refreshToken(id));
-
-      if (!redisRefreshToken) {
-        handleError(res, ERROR_MESSAGE.unauthorized);
-        return;
-      }
-
-      const result = await authService.refresh(refreshToken, redisRefreshToken);
-
-      res.setCookie('refresh_token', result.refreshToken, {
-        sameSite: 'lax',
-        httpOnly: true,
-        secure: false,
-        path: '/',
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-      });
-
-      await redis.set(REDIS_KEY.refreshToken(id), result.refreshToken);
-
-      handleSuccess(res, {
-        ...SUCCESS_MESSAGE.refreshToken,
-        result,
       });
     } catch (error) {
       handleError(res, ERROR_MESSAGE.unauthorized, error);
@@ -254,15 +170,20 @@ function authController() {
   };
 
   const loginStatusCheck = async (req: FastifyRequest, res: FastifyReply) => {
-    const id = req.user?.id;
-    const refreshToken = req.cookies.refresh_token;
+    const refreshToken = req.headers['refresh-token'] as string;
 
-    if (!id || !refreshToken) {
+    if (!refreshToken || refreshToken === 'null' || refreshToken === '') {
       handleSuccess(res, SUCCESS_MESSAGE.loginStatusDisabled, 200);
       return;
     }
 
-    handleSuccess(res, SUCCESS_MESSAGE.loginStatusOK, 200);
+    try {
+      shortVerifyRefreshToken(refreshToken);
+      handleSuccess(res, SUCCESS_MESSAGE.loginStatusOK, 200);
+    } catch (error) {
+      handleSuccess(res, SUCCESS_MESSAGE.loginStatusDisabled, 200);
+      return;
+    }
   };
 
   return {
@@ -272,8 +193,6 @@ function authController() {
     refresh,
     verifyToken,
     healthCheck,
-    mobileLogin,
-    refreshMobile,
     loginStatusCheck,
   };
 }

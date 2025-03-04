@@ -3,8 +3,6 @@ import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import {
   healthCheckSchema,
   logoutSchema,
-  mobileSignInSchema,
-  refreshTokenMobileSchema,
   refreshTokenSchema,
   registerSchema,
   signInSchema,
@@ -18,6 +16,7 @@ const authRoute = async (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().route({
     method: 'GET',
     url: '/status-check',
+    preHandler: [verifySignIn],
     schema: loginStatusCheckSchema,
     handler: authController.loginStatusCheck,
   });
@@ -27,13 +26,6 @@ const authRoute = async (app: FastifyInstance) => {
     url: '/login',
     schema: signInSchema,
     handler: authController.login,
-  });
-
-  app.withTypeProvider<ZodTypeProvider>().route({
-    method: 'POST',
-    url: '/mobile-login',
-    schema: mobileSignInSchema,
-    handler: authController.mobileLogin,
   });
 
   app.withTypeProvider<ZodTypeProvider>().route({
@@ -57,13 +49,6 @@ const authRoute = async (app: FastifyInstance) => {
     schema: refreshTokenSchema,
     preHandler: [verifySignIn],
     handler: authController.refresh,
-  });
-
-  app.withTypeProvider<ZodTypeProvider>().route({
-    method: 'POST',
-    url: '/refresh-mobile',
-    schema: refreshTokenMobileSchema,
-    handler: authController.refreshMobile,
   });
 
   app.withTypeProvider<ZodTypeProvider>().route({

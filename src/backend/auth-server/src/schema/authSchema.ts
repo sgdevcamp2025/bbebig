@@ -14,25 +14,6 @@ const signInSchema = {
       message: z.string().default('Login Ok!'),
       result: z.object({
         accessToken: z.string(),
-      }),
-    }),
-    400: commonResponseSchemaOmitResult,
-  },
-};
-
-const mobileSignInSchema = {
-  tags: ['auth'],
-  description: '모바일 로그인 합니다.',
-  body: z.object({
-    email: z.string().email(),
-    password: z.string(),
-  }),
-  response: {
-    200: z.object({
-      code: z.string().default('AUTH100'),
-      message: z.string().default('Login Ok!'),
-      result: z.object({
-        accessToken: z.string(),
         refreshToken: z.string(),
       }),
     }),
@@ -81,27 +62,9 @@ const registerSchema = {
 
 const refreshTokenSchema = {
   tags: ['auth'],
-  security: [{ bearerAuth: [] }],
-  response: {
-    201: z.object({
-      code: z.string().default('AUTH102'),
-      message: z.string().default('refresh success'),
-      result: z.object({
-        accessToken: z.string(),
-      }),
-    }),
-    400: commonResponseSchemaOmitResult,
-  },
-  description: `
-  리프레시 토큰은 쿠키('refresh_token')로 자동 처리됩니다.
-  Swagger UI에서 테스트하려면 브라우저 쿠키가 있어야 합니다.
-  1. 먼저 로그인하여 쿠키 설정
-  2. 이 엔드포인트 호출하여 새 액세스 토큰 발급
-`,
-};
-
-const refreshTokenMobileSchema = {
-  tags: ['auth'],
+  headers: z.object({
+    'refresh-token': z.string(),
+  }),
   security: [{ bearerAuth: [] }],
   response: {
     201: z.object({
@@ -125,6 +88,9 @@ const refreshTokenMobileSchema = {
 const logoutSchema = {
   tags: ['auth'],
   description: '로그아웃 합니다.',
+  headers: z.object({
+    'refresh-token': z.string(),
+  }),
   security: [{ bearerAuth: [] }],
   response: {
     205: z.object({
@@ -195,10 +161,14 @@ const healthCheckSchema = {
 const loginStatusCheckSchema = {
   tags: ['auth'],
   description: '로그인 상태를 확인 합니다.',
+  security: [{ bearerAuth: [] }],
   response: {
     200: z.object({
       code: z.string().default('AUTH109'),
       message: z.string().default('login status check success!'),
+      result: z.object({
+        status: z.boolean(),
+      }),
     }),
     401: commonResponseSchema,
   },
@@ -207,11 +177,9 @@ const loginStatusCheckSchema = {
 export {
   logoutSchema,
   refreshTokenSchema,
-  refreshTokenMobileSchema,
   verifyTokenSchema,
   registerSchema,
   signInSchema,
-  mobileSignInSchema,
   verifyEmailSchema,
   tokenDecodeSchema,
   healthCheckSchema,
