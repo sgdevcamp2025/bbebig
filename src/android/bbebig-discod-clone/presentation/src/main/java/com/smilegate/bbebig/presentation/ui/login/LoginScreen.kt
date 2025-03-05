@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Text
@@ -42,7 +43,9 @@ fun LoginScreen(
             .padding(horizontal = 10.dp),
     ) {
         DiscordTopBar(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .statusBarsPadding()
+                .fillMaxWidth(),
             onBackClick = onBackClick,
             backButtonColor = Gray20,
         )

@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +31,7 @@ import com.smilegate.bbebig.presentation.theme.Gray20
 import com.smilegate.bbebig.presentation.theme.Gray25
 import com.smilegate.bbebig.presentation.theme.Gray90
 import com.smilegate.bbebig.presentation.theme.White
+import com.smilegate.bbebig.presentation.utils.LocalDateUtil
 import com.smilegate.bbebig.presentation.utils.rippleSingleClick
 import com.smilegate.devcamp.presentation.R
 import java.util.Calendar
@@ -39,17 +42,20 @@ fun AgeScreen(
     onClickConfirm: (String) -> Unit,
 ) {
     var isDatePickerDialogShow by remember { mutableStateOf(false) }
-    var selectedDate by remember { mutableStateOf("") }
+    var selectedDate by remember { mutableStateOf(LocalDateUtil.getCurrentDate()) }
 
     Column(
         modifier = Modifier
             .background(Gray20)
             .fillMaxSize()
+            .navigationBarsPadding()
             .padding(horizontal = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         DiscordTopBar(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .statusBarsPadding(),
             onBackClick = onBackClick,
             backButtonColor = White,
         )
@@ -86,10 +92,7 @@ fun AgeScreen(
                 if (it != null) {
                     val calendar = Calendar.getInstance()
                     calendar.timeInMillis = it
-                    selectedDate =
-                        "${calendar.get(Calendar.YEAR)}.${calendar.get(Calendar.MONTH) + 1}.${
-                        calendar.get(Calendar.DAY_OF_MONTH)
-                        }"
+                    selectedDate = LocalDateUtil.getCalenderDate(calendar)
                 }
             },
         )
@@ -115,11 +118,7 @@ private fun DateContainer(modifier: Modifier, selectedDate: String, onDateAreaCl
                 .clip(RoundedCornerShape(8.dp))
                 .background(Gray25)
                 .padding(vertical = 15.dp, horizontal = 20.dp),
-            text = selectedDate.ifEmpty {
-                Calendar.getInstance().run {
-                    "${get(Calendar.YEAR)}.${get(Calendar.MONTH) + 1}.${get(Calendar.DAY_OF_MONTH)}"
-                }
-            },
+            text = selectedDate,
             color = Gray90,
         )
     }

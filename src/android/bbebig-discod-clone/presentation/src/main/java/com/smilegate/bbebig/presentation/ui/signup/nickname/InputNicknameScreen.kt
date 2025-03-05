@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,7 +37,7 @@ fun NicknameScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         DiscordTopBar(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.statusBarsPadding().fillMaxWidth(),
             onBackClick = onBackClick,
             backButtonColor = White,
         )
