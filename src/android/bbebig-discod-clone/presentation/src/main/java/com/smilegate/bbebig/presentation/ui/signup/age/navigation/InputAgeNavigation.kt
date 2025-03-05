@@ -4,7 +4,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.smilegate.bbebig.presentation.navigation.signup.InputAge
-import com.smilegate.bbebig.presentation.navigation.user.Intro
 
 fun NavController.navigateToAge() {
     navigate(
@@ -21,7 +20,7 @@ fun NavGraphBuilder.ageNavigation(
         AgeRoute(
             navigateToHome = navigateToHome,
             onBackClick = onBackClick,
-            navBackStackEntry = navController.getBackStackEntry<Intro>(),
+            navBackStackEntry = navController.getBackStackEntry(navController.graph.id),
         )
     }
 }
