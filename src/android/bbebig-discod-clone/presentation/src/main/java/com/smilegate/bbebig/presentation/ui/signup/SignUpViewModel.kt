@@ -9,7 +9,6 @@ import com.smilegate.bbebig.presentation.ui.signup.mvi.SignUpIntent
 import com.smilegate.bbebig.presentation.ui.signup.mvi.SignUpSideEffect
 import com.smilegate.bbebig.presentation.ui.signup.mvi.SignUpUiState
 import com.smilegate.bbebig.presentation.ui.signup.mvi.toDomainParam
-import com.smilegate.bbebig.presentation.utils.LocalDateUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -61,7 +60,7 @@ class SignUpViewModel @Inject constructor(
         Log.d("SignUpViewModel", "updateBirth: $birth")
         reduce {
             copy(
-                birth = LocalDateUtil.format(birth),
+                birth = birth,
             )
         }
     }
