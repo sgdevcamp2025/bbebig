@@ -13,9 +13,7 @@ fun NavGraphBuilder.introNavGraph(
     introNavigation(
         navigateToLogin = navController::navigateToLogin,
         navigateToSignUp = {
-            navController.navigate(
-                route = SignUpNavGraph,
-            )
+            navController.navigate(route = SignUpNavGraph)
         },
     )
 }
