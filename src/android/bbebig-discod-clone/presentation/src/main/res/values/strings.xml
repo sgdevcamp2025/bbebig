@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="login">로그인</string>
+    <string name="sign_up">가입하기</string>
+    <string name="desc_back">뒤로가기</string>
+    <string name="account_info_title">계정 정보</string>
+    <string name="email_pw_hint">이메일</string>
+    <string name="pw_hint">비밀번호</string>
+    <string name="login_welcome_title">돌아오신 것을 환영해요!</string>
+    <string name="login_welcome_sub_title">다시 만나다니 너무 반가워요!</string>
+    <string name="intro_title">Discord에 오신 걸\n환영합니다</string>
+    <string name="intro_sub_title">어울리고 게임하고, 가볍게 대화하세요.\n아래를 탭해 시작해요!</string>
+    <string name="signup_user_info">계정정보 입력</string>
+    <string name="next">다음</string>
+    <string name="auth">인증하기</string>
+    <string name="finish_sign_up">계정 만들기</string>
+    <string name="age_title">몇 살 이신가요?</string>
+    <string name="birth_sub_title">생년월일</string>
+    <string name="username">사용자명</string>
+    <string name="require_pw">비밀번호는 8자 이상으로 입력해주세요.</string>
+    <string name="user_info_title">이제 계정을 만들어 보세요</string>
+    <string name="input_email_title">이메일 주소를 입력하세요</string>
+    <string name="phone_number">전화번호</string>
+    <string name="auth_code_title">확인 코드를 입력해주세요</string>
+    <string name="alias_title">별명</string>
+    <string name="nickname_title">이름은 무엇인가요?</string>
+    <string name="server_join_text">서버 참가하기</string>
+    <string name="server_make_text">서버를 만들어보세요</string>
+    <string name="search_text">검색하기</string>
+    <string name="empty_title">한 단계 나아간 그룹 채팅을 이용할\n준비가 되셨나요?</string>
+    <string name="empty_sub_title">정리된 대화, 즉흥적 행아웃, 강력한 사용자\n 지정 기능과 함께 커뮤니티를 구축하세요!</string>
+    <string name="add_friend">친구 추가하기</string>
+    <string name="dm_top_title">메시지</string>
+    <string name="dm_sub_title">친구들 초대해 게임도 하고, 노래도\n 듣고, 다양한 활동을 즐기세요.</string>
+    <string name="dm_empty_title">즐거움이 함께하는 DM</string>
+    <string name="server_join_title">기존 서버에 참가하기</string>
+    <string name="server_join_sub_title">아래에 있는 초대 코드를 입력하여 서버에 참가하세요.</string>
+    <string name="server_join_link_title">초대 링크</string>
+    <string name="server_join_hint">htttps://discord.gg/hTKzmak</string>
+    <string name="server_join_btn_text">초대 링크로 참가하기</string>
+    <string name="server_join_how_input_link">초대는 https://discord.com/hTKzmak, hTKzmak, 또는\nhttps://discord.gg/cool-people와 같은 형태여야 해요.</string>
+    <string name="add_friend_input_title">친구로 추가하고 싶은 사람이 있나요?</string>
+    <string name="add_friend_hint">사용자명으로 입력하기</string>
+    <string name="add_friend_title">사용자명으로 추가</string>
+    <string name="add_friend_request">친구 요청 보내기</string>
+    <string name="create_server_title">서버를 만들어보세요</string>
+    <string name="create_server_sub_title">서버는 나와 친구들이 함께 어울리는 공간입니다.\n내 서버를 만들고 대화를 시작해보세요.</string>
+    <string name="create_server_btn">서버 만들기</string>
+    <string name="create_server_input_title">서버 이름</string>
+    <string name="create_server_hint">사용할 서버 이름을 입력해주세요</string>
+    <string name="msg_send_hint">메시지를 입력해주세요</string>
+    <string name="bottom_join_chat">음성 채널 참가하기</string>
+    <string name="invite">초대하기</string>
+    <string name="sign_up_email_label">이메일</string>
+    <string name="empty_chat">대화를 시작해보세요!</string>
+
+</resources>
