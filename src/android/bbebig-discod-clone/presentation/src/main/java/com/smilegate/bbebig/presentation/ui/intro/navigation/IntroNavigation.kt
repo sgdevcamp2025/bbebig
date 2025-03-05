@@ -7,7 +7,7 @@ import com.smilegate.bbebig.presentation.navigation.user.Intro
 
 fun NavController.navigateToIntro() {
     navigate(route = Intro) {
-        popUpTo<Intro> {
+        popUpTo(graph.id) {
             inclusive = true
         }
     }

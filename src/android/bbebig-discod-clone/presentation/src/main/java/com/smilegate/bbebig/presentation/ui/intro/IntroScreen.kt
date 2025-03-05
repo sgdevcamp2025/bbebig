@@ -3,8 +3,8 @@ package com.smilegate.bbebig.presentation.ui.intro
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
@@ -56,9 +56,7 @@ fun IntroScreen(
 private fun IntroTitleContainer(modifier: Modifier) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         AsyncImage(
-            modifier = Modifier
-                .width(200.dp)
-                .aspectRatio(1f),
+            modifier = Modifier.width(200.dp).height(150.dp),
             model = R.drawable.ic_logo,
             contentScale = ContentScale.Crop,
             contentDescription = "Discord Logo",

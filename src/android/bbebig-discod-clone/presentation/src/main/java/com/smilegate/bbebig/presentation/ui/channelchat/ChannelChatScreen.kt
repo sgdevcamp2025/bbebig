@@ -61,16 +61,14 @@ fun ChannelChatScreen(
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .statusBarsPadding(),
+        modifier = modifier.fillMaxSize()
     ) {
         Column(
             modifier = Modifier,
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
             DiscordTopBar(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().statusBarsPadding(),
                 title = channelName,
                 backButtonColor = Gray90,
                 onBackClick = onClickBack,
