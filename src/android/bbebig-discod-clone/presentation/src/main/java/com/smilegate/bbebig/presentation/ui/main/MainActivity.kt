@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
@@ -22,7 +23,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             BbebigTheme {
                 DiscordNavHost(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.navigationBarsPadding().fillMaxSize(),
                     navController = navController,
                 )
             }
