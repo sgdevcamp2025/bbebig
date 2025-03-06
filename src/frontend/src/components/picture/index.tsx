@@ -4,9 +4,10 @@ type Props = {
   src: string
 } & ComponentPropsWithoutRef<'img'>
 
-export function Picture({ src, className, ...props }: Props) {
+export function Picture({ src, children, ...props }: Props) {
   return (
-    <picture className={className}>
+    <picture>
+      {children}
       <source
         srcSet={`${src}.webp`}
         type='image/webp'
@@ -16,7 +17,6 @@ export function Picture({ src, className, ...props }: Props) {
         type='image/avif'
       />
       <img
-        className='w-full h-full'
         src={`${src}.png`}
         alt='test'
         {...props}
