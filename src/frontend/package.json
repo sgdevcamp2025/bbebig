@@ -13,7 +13,8 @@
     "formatter": "prettier --write \"src/**/*.{ts,tsx}\"",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "convert-images": "tsx ./script/convert-images.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -73,9 +74,10 @@
     "globals": "^15.14.0",
     "msw": "^2.7.1",
     "prettier": "^3.4.2",
-    "react-router-devtools": "^1.1.0",
+    "sharp": "^0.33.5",
     "storybook": "^8.5.0",
     "tailwindcss-motion": "^1.1.0",
+    "tsx": "^4.19.3",
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.18.2",
     "vite": "^6.0.11",
