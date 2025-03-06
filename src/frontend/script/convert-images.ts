@@ -6,7 +6,7 @@ import sharp from 'sharp'
 const rootDir = './public/image' // 루트 이미지 디렉토리 경로
 const quality = 85 // 이미지 품질 (1-100)
 const targetFormats = ['webp', 'avif', 'png'] // 원하는 변환 형식
-const convertableExtensions = ['jpg', 'jpeg', 'png', 'gif', 'tiff', 'bmp'] // 변환 가능한 확장자
+const convertableExtensions = ['jpg', 'jpeg', 'png', 'gif', 'tiff', 'bmp', 'webp'] // 변환 가능한 확장자
 
 // 재귀적으로 디렉토리 탐색하며 이미지 변환
 async function processDirectory(directory: string) {
@@ -34,6 +34,7 @@ async function processDirectory(directory: string) {
     for (const file of imageFiles) {
       const sourcePath = path.join(directory, file)
       const filename = path.parse(file).name
+      const originalExt = path.extname(file).toLowerCase().substring(1)
 
       try {
         const originalBuffer = fs.readFileSync(sourcePath)
@@ -42,10 +43,16 @@ async function processDirectory(directory: string) {
         // 각 형식으로 변환
         for (const format of targetFormats) {
           try {
+            // 원본과 대상 형식이 같으면 건너뛰기 (예: .webp → .webp)
+            if (originalExt === format) {
+              console.log(`  → 건너뜀: ${filename}.${format} (원본과 동일 형식)`)
+              continue
+            }
+
             const targetPath = path.join(directory, `${filename}.${format}`)
 
             // 이미 존재하는지 확인
-            if (fs.existsSync(targetPath) && file !== `${filename}.${format}`) {
+            if (fs.existsSync(targetPath)) {
               console.log(`  → 이미 존재함: ${targetPath}`)
               continue
             }
@@ -58,13 +65,6 @@ async function processDirectory(directory: string) {
           } catch (formatError) {
             console.error(`  → ${format} 변환 실패:`, formatError)
           }
-        }
-
-        // 원본이 대상 형식과 다를 경우만 삭제
-        const originalExt = path.extname(file).toLowerCase().substring(1)
-        if (!targetFormats.includes(originalExt)) {
-          fs.unlinkSync(sourcePath)
-          console.log(`  → 원본 삭제됨: ${sourcePath}`)
         }
       } catch (fileError) {
         console.error(`  → 파일 처리 실패: ${sourcePath}`, fileError)

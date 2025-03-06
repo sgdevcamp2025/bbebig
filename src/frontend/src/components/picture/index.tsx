@@ -1,9 +1,10 @@
-interface PictureProps {
-  src: string
-  className?: string
-}
+import { ComponentPropsWithoutRef } from 'react'
 
-export function Picture({ src, className }: PictureProps) {
+type Props = {
+  src: string
+} & ComponentPropsWithoutRef<'img'>
+
+export function Picture({ src, className, ...props }: Props) {
   return (
     <picture className={className}>
       <source
@@ -15,8 +16,10 @@ export function Picture({ src, className }: PictureProps) {
         type='image/avif'
       />
       <img
+        className='w-full h-full'
         src={`${src}.png`}
         alt='test'
+        {...props}
       />
     </picture>
   )

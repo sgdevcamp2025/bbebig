@@ -4,6 +4,7 @@ import { ComponentProps, CSSProperties } from 'react'
 import { cn } from '@/libs/cn'
 import { CustomPresenceStatus } from '@/types/user'
 
+import { Picture } from '../picture'
 import StatusIcon from '../status-icon'
 
 type Props = {
@@ -49,11 +50,18 @@ function Avatar({ avatarUrl, size, statusColor = 'black', status, defaultBackgro
       aria-label='avatar'
       className={cn(avatarSize({ size }), 'relative')}
       style={{ backgroundColor: defaultBackgroundColor }}>
-      <img
-        src={avatarUrl || '/image/common/default-avatar.png'}
-        alt='avatar'
-        className={imageSize({ size })}
-      />
+      {avatarUrl ? (
+        <img
+          src={avatarUrl}
+          alt='avatar'
+          className={imageSize({ size })}
+        />
+      ) : (
+        <Picture
+          src='/image/common/default-avatar'
+          className={imageSize({ size })}
+        />
+      )}
       {status ? (
         <div
           className={cn(statusWrapperSize({ size }), 'absolute bottom-0 right-0')}

@@ -1,10 +1,11 @@
 import { ArrowDownToLine } from 'lucide-react'
 
+import { Picture } from '@/components/picture'
 import deviceHelper from '@/utils/device-helper'
 
 function HomeHero() {
   return (
-    <div className='h-dvh-screen bg-landing-shine-1 desktop-large:bg-[length:96%_96%] desktop-large:bg-[position:100%_-33%] desktop-xlarge:pb-[13rem] bg-cover bg-no-repeat pb-[7.25rem] pt-[8rem]'>
+    <div className='h-dvh-screen bg-[url("/background/shine-1.webp")] bg-cover bg-no-repeat pb-[7.25rem] pt-[8rem]'>
       <div className='padding-global'>
         <div className='tablet-range:flex tablet-range:flex-col tablet-range:items-center mx-auto mb-14 w-[90%] max-w-[1080px]'>
           <div className='desktop-range:hidden w-full max-w-[43rem]'>
@@ -28,7 +29,11 @@ function HomeHero() {
             </div>
             <div className='desktop-small:right-[-3%] desktop-small:ml-0 desktop-large:right-[-6%] desktop-xlarge:right-[-11.5%] mobile-range:hidden tablet-range:hidden relative w-full'>
               <div className='desktop-small:mr-auto desktop-large:left-[17px] desktop-large:mt-[-14px] desktop-xlarge:left-3 relative'>
-                <div className='desktop-small:-left-[-14%]] bg-landing-hero-background desktop-small:min-h-[480px] desktop-small:min-w-[46rem] desktop-small:max-w-none desktop-large:ml-[-2vw] desktop-large:mr-[-2vw] desktop-large:min-h-[557px] desktop-large:min-w-[52rem] bg-contain bg-no-repeat' />
+                <Picture
+                  src='/image/homepage/hero-character'
+                  alt='hero-character'
+                  className='desktop-small:min-h-[480px] desktop-small:min-w-[46rem] desktop-small:max-w-none desktop-large:ml-[-2vw] desktop-large:mr-[-2vw] desktop-large:min-h-[557px] desktop-large:min-w-[52rem]'
+                />
               </div>
             </div>
           </div>
