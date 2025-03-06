@@ -5,6 +5,7 @@ import LoadingIcon from '@/components/loading-icon'
 import { useGetServerInfo } from '@/hooks/queries/server/useGetServerInfo'
 import { useGetServerMember } from '@/hooks/queries/server/useGetServerMember'
 import { CustomPresenceStatus } from '@/types/user'
+import { log } from '@/utils/log'
 
 import { UserProfileCard } from './user-profile-card'
 
@@ -39,11 +40,11 @@ function Inner({ channelUserList }: StatusSideBarProps) {
   const sidebarRef = useRef<HTMLDivElement>(null)
 
   const handleSendFriendRequest = () => {
-    console.log('친구 요청 보내기:', selectedUser?.nickName)
+    log('친구 요청 보내기:', selectedUser?.nickName)
   }
 
   const handleMoreButtonClick = () => {
-    console.log('더보기 메뉴')
+    log('더보기 메뉴')
   }
 
   const handleClickUser = (user: ChannelStatusBarUser, event: React.MouseEvent<HTMLDivElement>) => {
@@ -144,7 +145,7 @@ function Inner({ channelUserList }: StatusSideBarProps) {
 export function StatusSideBar({ serverId }: { serverId: string }) {
   const { serverMemberInfoList } = useGetServerMember(serverId)
   const serverInfo = useGetServerInfo(serverId)
-  console.log('serverInfo', serverInfo)
+  log('serverInfo', serverInfo)
 
   return <Inner channelUserList={serverMemberInfoList} />
 }

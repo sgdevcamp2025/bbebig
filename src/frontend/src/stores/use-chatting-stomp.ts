@@ -267,5 +267,3 @@ export const useChattingStomp = () => {
     checkConnection
   }
 }
-
-export default useChattingStomp

@@ -6,7 +6,7 @@ import { useMessageIdStore, useMessageSequenceStore } from '@/stores/use-chat-st
 import { useChattingStomp } from '@/stores/use-chatting-stomp'
 import useStatusBarStore from '@/stores/use-status-bar-store'
 
-import ServerSideBar from './components/server-side-bar'
+import { ServerSideBar } from './components/server-side-bar'
 import { StatusSideBar } from './components/status-side-bar'
 
 function ServerLayout() {

@@ -12,7 +12,7 @@ interface InnerProps {
   onClose: () => void
 }
 
-export function Inner({ isOpen, onClose, serverId }: InnerProps) {
+function Inner({ isOpen, onClose, serverId }: InnerProps) {
   const {
     register,
     handleSubmit,

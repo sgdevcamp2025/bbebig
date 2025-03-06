@@ -9,7 +9,7 @@ export type ServerSubscribeResponse =
   | ServerMemberPresenceEvent
   | ChattingMessageEvent
 
-export interface BaseServerEvent {
+interface BaseServerEvent {
   serverId: number
   type: string
 }
@@ -18,7 +18,7 @@ export type PersonalNotificationEvent = FriendActionEvent | FriendPresenceEvent 
 
 // 🛜 SUBSCRIBE
 // 서버 채널 생성/수정/삭제 이벤트
-export interface ServerChannelEvent extends BaseServerEvent {
+interface ServerChannelEvent extends BaseServerEvent {
   type: 'SERVER_CHANNEL'
   categoryId: number
   channeId: number
@@ -27,7 +27,7 @@ export interface ServerChannelEvent extends BaseServerEvent {
   status: 'CREATE' | 'UPDATE' | 'DELETE'
 }
 // 서버 카테고리 생성/수정/삭제 이벤트
-export interface ServerCategoryEvent extends BaseServerEvent {
+interface ServerCategoryEvent extends BaseServerEvent {
   serverId: number
   type: 'SERVER_CATEGORY'
   categoryId: number
@@ -37,7 +37,7 @@ export interface ServerCategoryEvent extends BaseServerEvent {
 }
 
 // 서버 수정/삭제 이벤트
-export interface ServerActionEvent extends BaseServerEvent {
+interface ServerActionEvent extends BaseServerEvent {
   type: 'SERVER_ACTION'
   serverName?: string | null
   profileImageUrl?: string | null
@@ -45,7 +45,7 @@ export interface ServerActionEvent extends BaseServerEvent {
 }
 
 // 서버 멤버 참여/탈퇴/수정 이벤트
-export interface ServerMemberActionEvent extends BaseServerEvent {
+interface ServerMemberActionEvent extends BaseServerEvent {
   type: 'SERVER_MEMBER_ACTION'
   memberId: number
   nickName?: string | null
@@ -55,7 +55,7 @@ export interface ServerMemberActionEvent extends BaseServerEvent {
 }
 
 // 서버 멤버 온/오프라인 상태 업데이트 이벤트
-export interface ServerMemberPresenceEvent extends BaseServerEvent {
+interface ServerMemberPresenceEvent extends BaseServerEvent {
   type: 'SERVER_MEMBER_PRESENCE'
   memberId: number
   serverId: number
@@ -89,7 +89,7 @@ export interface ChannelVisitEventRequest extends BaseServerEvent {
 }
 
 // 친구 관련 이벤트 (친구 요청, 수신, 수락, 거절 등)
-export interface FriendActionEvent {
+interface FriendActionEvent {
   memberId: number
   type: 'FRIEND_ACTION'
   friendId: number
@@ -101,7 +101,7 @@ export interface FriendActionEvent {
 }
 
 // 친구 활성화 상태 이벤트
-export interface FriendPresenceEvent {
+interface FriendPresenceEvent {
   memberId: number
   type: 'FRIEND_PRESENCE'
   friendId: number
@@ -110,7 +110,7 @@ export interface FriendPresenceEvent {
 }
 
 // 서버 안 읽은 메세지 이벤트
-export interface ServerUnreadEvent {
+interface ServerUnreadEvent {
   memberId: number
   type: 'SERVER_UNREAD'
   serverId: number

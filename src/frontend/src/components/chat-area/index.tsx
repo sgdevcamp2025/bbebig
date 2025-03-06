@@ -12,7 +12,7 @@ import { ChannelMessage } from '@/types/message'
 import { ChatUser } from '@/types/user'
 import timeHelper from '@/utils/format-time'
 
-export interface ChatProps {
+interface ChatProps {
   chatKey: string | number
   users: {
     currentUser: ChatUser

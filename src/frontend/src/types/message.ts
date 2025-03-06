@@ -1,12 +1,3 @@
-interface Message {
-  id: string
-  memberId: string
-  type: MessageType
-  contents: { text: string }
-  createdAt?: string
-  updatedAt?: string
-}
-
 interface ChannelMessage {
   id?: number // RESPONSE에만 있음
   chatType?: 'CHANNEL' | 'DM' // 과거메세지 받을 땐 없음
@@ -28,6 +19,4 @@ interface SearchMessage {
   createdAt: string
 }
 
-type MessageType = 'CHANNEL' | 'DM'
-
-export { type ChannelMessage, type Message, type MessageType, type SearchMessage }
+export { type ChannelMessage, type SearchMessage }

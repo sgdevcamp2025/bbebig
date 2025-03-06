@@ -3,6 +3,7 @@ import { useRef } from 'react'
 import CustomButton from '@/components/custom-button'
 import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
 import { useUpdateAvatarImage } from '@/hooks/queries/user/useUpdateAvatarImage'
+import { log } from '@/utils/log'
 
 import { Content as ProfileCard } from '../profile-card'
 
@@ -69,7 +70,7 @@ export function MyProfile() {
                 type='button'
                 className='w-fit py-[2px] px-4 h-8 bg-transparent hover:underline'
                 onClick={() => {
-                  console.log('아바타 제거')
+                  log('아바타 제거')
                 }}>
                 아바타 제거
               </CustomButton>
@@ -83,7 +84,7 @@ export function MyProfile() {
                 type='button'
                 className='w-fit py-[2px] px-4 h-8'
                 onClick={() => {
-                  console.log('아바타 장식 변경하기')
+                  log('아바타 장식 변경하기')
                 }}>
                 장식 변경하기
               </CustomButton>
@@ -91,7 +92,7 @@ export function MyProfile() {
                 type='button'
                 className='w-fit py-[2px] px-4 h-8 bg-transparent hover:underline'
                 onClick={() => {
-                  console.log('아바타 장식 제거하기')
+                  log('아바타 장식 제거하기')
                 }}>
                 장식 제거하기
               </CustomButton>
@@ -105,7 +106,7 @@ export function MyProfile() {
                 type='button'
                 className='w-fit py-[2px] px-4 h-8'
                 onClick={() => {
-                  console.log('프로필 효과 변경하기')
+                  log('프로필 효과 변경하기')
                 }}>
                 효과 변경
               </CustomButton>
@@ -113,7 +114,7 @@ export function MyProfile() {
                 type='button'
                 className='w-fit py-[2px] px-4 h-8 bg-transparent hover:underline'
                 onClick={() => {
-                  console.log('프로필 효과 제거하기')
+                  log('프로필 효과 제거하기')
                 }}>
                 효과 제거
               </CustomButton>
@@ -129,7 +130,7 @@ export function MyProfile() {
             avatarUrl={myInfo.avatarUrl}
             bannerUrl={myInfo.bannerUrl}
             onEditProfile={() => {
-              console.log('프로필 수정하기')
+              log('프로필 수정하기')
             }}
           />
         </div>
