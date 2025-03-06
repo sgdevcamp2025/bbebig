@@ -16,9 +16,6 @@ const config = {
   },
   docs: {
     autodocs: true
-  },
-  core: {
-    builder: '@storybook/builder-vite'
   }
 }
 export default config
