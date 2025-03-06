@@ -13,6 +13,7 @@ import { COOKIE_KEYS } from '@/constants/keys'
 import { useHandleServerEvent } from '@/hooks/use-handler-server-event'
 import { ChannelVisitEventRequest, ChattingMessageEvent } from '@/types/chat-stomp-event'
 import cookie from '@/utils/cookie'
+import { errorLog, log } from '@/utils/log'
 import { handlePersonalNotificationEvent } from '@/utils/personal-notification-event-handler'
 
 import useGetSelfUser from '../hooks/queries/user/useGetSelfUser'
@@ -37,11 +38,11 @@ export const useChattingStomp = () => {
   // 연결
   const connect = (): Promise<void> => {
     if (checkConnection()) {
-      console.log('[✅] 이미 채팅 서버에 연결되어 있음')
+      log('[✅] 이미 채팅 서버에 연결되어 있음')
       return Promise.resolve()
     }
 
-    console.log('[🔗] 채팅 서버 연결 시도... ', memberId)
+    log('[🔗] 채팅 서버 연결 시도... ', memberId)
 
     return new Promise<void>((resolve, reject) => {
       const token = cookie.getCookie(COOKIE_KEYS.ACCESS_TOKEN)
@@ -54,22 +55,22 @@ export const useChattingStomp = () => {
       }
 
       clientInstance.onConnect = () => {
-        console.log('[✅] 채팅 서버 연결 성공')
+        log('[✅] 채팅 서버 연결 성공')
         resolve()
       }
 
       clientInstance.onStompError = (frame) => {
-        console.error('[❌] STOMP 에러:', frame.headers['message'])
+        errorLog('[❌] STOMP 에러:', frame.headers['message'])
         reject(new Error('STOMP 연결 오류'))
       }
 
       clientInstance.onWebSocketError = (event) => {
-        console.error('[❌] WebSocket 에러:', event)
+        errorLog('[❌] WebSocket 에러:', event)
         reject(new Error('WebSocket 연결 오류'))
       }
 
       clientInstance.onDisconnect = () => {
-        console.log('[❌] 채팅 서버 연결 종료')
+        log('[❌] 채팅 서버 연결 종료')
         reject(new Error('STOMP 연결 종료'))
       }
 
@@ -80,23 +81,23 @@ export const useChattingStomp = () => {
   // 서버 구독
   const subscribeToServer = (serverId: number, callback?: (message: unknown) => void) => {
     if (!checkConnection() || !clientInstance) {
-      console.log('[❌] STOMP 연결되지 않아서 구독 불가:', serverId)
+      log('[❌] STOMP 연결되지 않아서 구독 불가:', serverId)
       return
     }
 
     const destination = `/topic/server/${serverId}`
-    console.log(`[✅] 서버 ${serverId} 구독 시작`)
+    log(`[✅] 서버 ${serverId} 구독 시작`)
 
     clientInstance.subscribe(
       destination,
       (message: IMessage) => {
         try {
           const messageBody = JSON.parse(message.body)
-          console.log(`[📩] (${serverId})번 서버 이벤트 수신 :`, messageBody)
+          log(`[📩] (${serverId})번 서버 이벤트 수신 :`, messageBody)
           handleServerEvent(messageBody)
           callback?.(messageBody)
         } catch (error) {
-          console.error('[❌] 서버 이벤트 처리 중 오류 발생:', error)
+          errorLog('[❌] 서버 이벤트 처리 중 오류 발생:', error)
         }
       },
       { id: `chat-${memberId}`, MemberId: memberId }
@@ -107,12 +108,12 @@ export const useChattingStomp = () => {
   const subscribeToChannelTyping = (channelId: string, callback: (message: unknown) => void) => {
     if (checkConnection() && clientInstance) {
       const destination = `/topic/channel/${channelId}`
-      console.log(`[✅] 채널 ${channelId} 구독 시작`)
+      log(`[✅] 채널 ${channelId} 구독 시작`)
 
       clientInstance.subscribe(
         destination,
         (message: IMessage) => {
-          console.log(`[📩] 채널 ${channelId} 메시지 수신:`, message.body)
+          log(`[📩] 채널 ${channelId} 메시지 수신:`, message.body)
           callback(JSON.parse(message.body))
         },
         { id: `chat-${channelId}` }
@@ -123,24 +124,24 @@ export const useChattingStomp = () => {
   // 개인 알림 구독
   const subscribeToPersonal = async (callback?: (message: unknown) => void) => {
     if (!checkConnection()) {
-      console.log('[❌] 채팅 서버에 연결되지 않음.')
+      log('[❌] 채팅 서버에 연결되지 않음.')
       return
     }
 
     const destination = `/queue/notification/${memberId}`
-    console.log(`[✅] 👤 개인 알림 ${memberId} 구독 시작`)
+    log(`[✅] 👤 개인 알림 ${memberId} 구독 시작`)
 
     clientInstance.subscribe(
       destination,
       (message: IMessage) => {
-        console.log('======== 개인 알림 구독 시작')
+        log('======== 개인 알림 구독 시작')
         try {
           const messageBody = JSON.parse(message.body)
-          console.log(`[📩] 개인 알림 ${memberId} 메시지 수신:`, message.body)
+          log(`[📩] 개인 알림 ${memberId} 메시지 수신:`, message.body)
           handlePersonalNotificationEvent(messageBody)
           callback?.(messageBody)
         } catch (error) {
-          console.error('[❌] 개인 알림 이벤트 처리 중 오류 발생:', error)
+          errorLog('[❌] 개인 알림 이벤트 처리 중 오류 발생:', error)
         }
       },
       { id: `chat-${memberId}`, MemberId: memberId }
@@ -151,14 +152,14 @@ export const useChattingStomp = () => {
   const disconnect = () => {
     if (clientInstance) {
       clientInstance.deactivate()
-      console.log('[❌] 채팅 서버 연결 종료')
+      log('[❌] 채팅 서버 연결 종료')
     }
   }
 
   // 구독 해제
   const unsubscribe = (destination: string) => {
     if (checkConnection()) {
-      console.log(`[❌] 구독 해제 요청: ${destination}`)
+      log(`[❌] 구독 해제 요청: ${destination}`)
       clientInstance.unsubscribe(destination)
     }
   }
@@ -168,13 +169,13 @@ export const useChattingStomp = () => {
   // 서버 채널 채팅 전송
   const publishToServerChatting = async (body: ChattingMessageEvent) => {
     if (!checkConnection()) {
-      console.log('[❌] 채팅 서버에 연결되지 않음.')
+      log('[❌] 채팅 서버에 연결되지 않음.')
       await connect()
       return
     }
 
     const destination = `/pub/channel/message`
-    console.log(`[📤] 서버 ${body.serverId}의 ${body.channelId} 채널로 메시지 발행:`)
+    log(`[📤] 서버 ${body.serverId}의 ${body.channelId} 채널로 메시지 발행:`)
 
     const now = dayjs.utc().subtract(500, 'millisecond').format('YYYY-MM-DDTHH:mm:ss')
 
@@ -203,13 +204,13 @@ export const useChattingStomp = () => {
   // 채널 방문 이벤트
   const publishToChannelEnter = async (body: ChannelVisitEventRequest) => {
     if (!checkConnection()) {
-      console.log('[❌] 채팅 서버에 연결되지 않음.')
+      log('[❌] 채팅 서버에 연결되지 않음.')
       await connect()
       return
     }
 
     const destination = `/pub/channel/enter`
-    console.log(`[📤] 채널 ${body.channelId} 방문 이벤트 발행:`)
+    log(`[📤] 채널 ${body.channelId} 방문 이벤트 발행:`)
 
     clientInstance.publish({
       destination,
@@ -229,13 +230,13 @@ export const useChattingStomp = () => {
   // 채널 퇴장 이벤트
   const publishToChannelLeave = (body: ChannelVisitEventRequest) => {
     if (!checkConnection()) {
-      console.log('[❌] 채팅 서버에 연결되지 않음.')
+      log('[❌] 채팅 서버에 연결되지 않음.')
       connect()
       return
     }
 
     const destination = `/pub/channel/leave`
-    console.log(`[📤] 채널 ${body.channelId} 퇴장 이벤트 발행:`)
+    log(`[📤] 채널 ${body.channelId} 퇴장 이벤트 발행:`)
 
     clientInstance.publish({
       destination,
