@@ -1,6 +1,4 @@
-import type { StorybookConfig } from '@storybook/react-vite'
-
-const config: StorybookConfig = {
+const config = {
   stories: ['../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
   addons: [
     '@storybook/addon-onboarding',
@@ -18,9 +16,6 @@ const config: StorybookConfig = {
   },
   docs: {
     autodocs: true
-  },
-  core: {
-    builder: '@storybook/builder-vite'
   }
 }
 export default config

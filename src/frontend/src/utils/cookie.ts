@@ -9,7 +9,7 @@ function cookie() {
 
   const setCookie = (name: string, value: string) => {
     const expires = new Date(Date.now() + COOKIE_EXPIRE_TIME * 24 * 60 * 60 * 1000).toUTCString()
-    document.cookie = `${name}=${value}; path=/; expires=${expires}; samesite=strict`
+    document.cookie = `${name}=${value}; path=/; expires=${expires};`
   }
 
   const deleteCookie = (name: string) => {

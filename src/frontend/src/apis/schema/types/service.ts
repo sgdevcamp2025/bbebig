@@ -1,13 +1,12 @@
 import { z } from 'zod'
 
-import { ChannelType, ChannelUser } from '@/types/server'
+import { ChannelType } from '@/types/server'
 import { CustomPresenceStatus } from '@/types/user'
 
 import {
   createCategoryRequestSchema,
-  createCategoryResponseSchema,
   createChannelRequestSchema,
-  createChannelResponseSchema,
+  createServerRequestSchema,
   inviteUserRequestSchema,
   inviteUserResponseSchema
 } from '../service'
@@ -74,53 +73,6 @@ export interface GetServerMemebersResponseSchema {
     bannerUrl: string | null
     globalStatus: CustomPresenceStatus
   }[]
-}
-
-export interface GetMemberIdListInServerRequestSchema {
-  serverId: number
-}
-
-export interface GetMemberIdListInServerResponseSchema {
-  serverId: number
-  ownerId: number
-  memberIdList: number[]
-}
-
-export interface GetChannelIdListInServerRequestSchema {
-  serverId: number
-}
-
-export interface GetChannelIdListInServerResponseSchema {
-  serverId: number
-  channelIdList: number[]
-}
-
-export interface GetMemberInfoLastVisitChannelRequestSchema {
-  serverId: number
-  memberId: number
-}
-
-export interface GetMemberInfoLastVisitChannelResponseSchema {
-  serverId: number
-  channelInfoList: {
-    channelId: number
-    lastReadMessageId: number
-    lastAccessAt: string | Date
-  }[]
-}
-
-export interface GetServerIdListWithMemberIdRequestSchema {
-  memberId: number
-}
-
-export interface GetServerIdListWithMemberIdResponseSchema {
-  memberId: number
-  serverIdList: number[]
-}
-
-export interface CreateServerRequestSchema {
-  serverName: string
-  serverImageUrl: string | null
 }
 
 export interface CreateServerResponseSchema {
@@ -301,14 +253,6 @@ export interface UpdateCategoryResponseSchema {
   categoryName: string
 }
 
-export interface GetChannelUserListRequestSchema {
-  channelId: number
-}
-
-export interface GetChannelUserListResponseSchema {
-  channelUserList: ChannelUser[]
-}
-
 export interface GetChannelListInServerRequestSchema {
   serverId: number
 }
@@ -319,8 +263,7 @@ export interface GetChannelListInServerResponseSchema {
 }
 
 export type ZCreateChannelRequestSchema = z.infer<typeof createChannelRequestSchema>
-export type ZCreateChannelResponseSchema = z.infer<typeof createChannelResponseSchema>
 export type ZCreateCategoryRequestSchema = z.infer<typeof createCategoryRequestSchema>
-export type ZCreateCategoryResponseSchema = z.infer<typeof createCategoryResponseSchema>
 export type ZInviteUserRequestSchema = z.infer<typeof inviteUserRequestSchema>
 export type ZInviteUserResponseSchema = z.infer<typeof inviteUserResponseSchema>
+export type ZCreateServerRequestSchema = z.infer<typeof createServerRequestSchema>

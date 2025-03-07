@@ -1,6 +1,8 @@
 import { useState } from 'react'
 
 import { AudioDevice } from '@/types/media'
+import { log } from '@/utils/log'
+import { errorLog } from '@/utils/log'
 
 const DEFAULT_DEVICES: Record<MediaDeviceKind, AudioDevice> = {
   audioinput: {
@@ -67,7 +69,7 @@ export function useGetMediaDevices() {
         // 스트림 해제
         audioStream.getTracks().forEach((track) => track.stop())
       } catch (audioError) {
-        console.log('오디오 권한이 거부됨:', audioError)
+        errorLog('오디오 권한이 거부됨:', audioError)
         // 오디오 권한 거부 시 기본값 유지
       }
 
@@ -88,11 +90,11 @@ export function useGetMediaDevices() {
         // 스트림 해제
         videoStream.getTracks().forEach((track) => track.stop())
       } catch (videoError) {
-        console.log('비디오 권한이 거부됨:', videoError)
+        log('비디오 권한이 거부됨:', videoError)
         // 비디오 권한 거부 시 기본값 유지
       }
     } catch (error) {
-      console.error('장치 초기화 실패:', error)
+      errorLog('장치 초기화 실패:', error)
       // 에러 발생 시 기본값 유지
     }
   }

@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { useShallow } from 'zustand/shallow'
 
 interface ChannelInfo {
   channelId: number
@@ -20,4 +21,13 @@ const useUserStatusStore = create<UserStatusStore>((set, get) => ({
   getCurrentChannelInfo: () => get().channelInfo
 }))
 
-export default useUserStatusStore
+export function useUserStatus() {
+  return useUserStatusStore(
+    useShallow((state) => ({
+      channelInfo: state.channelInfo,
+      joinVoiceChannel: state.joinVoiceChannel,
+      leaveVoiceChannel: state.leaveVoiceChannel,
+      getCurrentChannelInfo: state.getCurrentChannelInfo
+    }))
+  )
+}

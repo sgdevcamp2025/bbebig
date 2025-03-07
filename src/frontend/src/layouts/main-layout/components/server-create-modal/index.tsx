@@ -1,13 +1,13 @@
 import { Camera } from 'lucide-react'
 import { Plus } from 'lucide-react'
-import { ComponentProps } from 'react'
+import { ChangeEvent, ComponentProps, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 
-import { CreateServerRequestSchema } from '@/apis/schema/types/service'
+import { ZCreateServerRequestSchema } from '@/apis/schema/types/service'
+import { uploadFile } from '@/apis/service/common'
 import CustomButton from '@/components/custom-button'
 import CustomModal from '@/components/custom-modal'
 import { useCreateServer } from '@/hooks/queries/server/useCreateServer'
-
 type ServerCreateModalProps = {
   isOpen: boolean
   onClose: () => void
@@ -15,26 +15,41 @@ type ServerCreateModalProps = {
 
 function ServerCreateModal({ isOpen, onClose, ...args }: ServerCreateModalProps) {
   const createServer = useCreateServer()
-
+  const uploadInputRef = useRef<HTMLInputElement>(null)
   const {
+    getValues,
     register,
     handleSubmit,
     formState: { errors },
     reset
-  } = useForm<CreateServerRequestSchema>({
+  } = useForm<ZCreateServerRequestSchema>({
     defaultValues: {
       serverName: '',
       serverImageUrl: null
     }
   })
 
-  const handleClickCreateServer = (data: CreateServerRequestSchema) => {
+  const handleClickCreateServer = (data: ZCreateServerRequestSchema) => {
     createServer({
       serverName: data.serverName,
-      serverImageUrl: null
+      serverImageUrl: data.serverImageUrl
     })
     reset()
     onClose()
+  }
+
+  const handleUploadServerImage = async () => {
+    uploadInputRef.current?.click()
+  }
+
+  const handleChangeServerImage = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const url = await uploadFile(file)
+    if (url) {
+      register('serverImageUrl').onChange({ target: { value: url } })
+    }
   }
 
   return (
@@ -52,14 +67,37 @@ function ServerCreateModal({ isOpen, onClose, ...args }: ServerCreateModalProps)
       </CustomModal.Header>
       <form onSubmit={handleSubmit(handleClickCreateServer)}>
         <CustomModal.Content>
+          <input
+            ref={uploadInputRef}
+            type='file'
+            accept='image/*'
+            multiple={false}
+            onChange={handleChangeServerImage}
+            className='hidden'
+          />
           <div className='flex flex-col items-center justify-center'>
-            <div className='w-[80px] h-[80px] flex-col rounded-full relative flex items-center justify-center border-2 border-dashed border-gray-10'>
-              <div className='absolute top-0 right-0 w-5 h-5 rounded-full bg-brand flex items-center justify-center'>
-                <Plus className='w-3 h-3 text-white-100' />
-              </div>
-              <Camera className='w-6 h-6 text-gray-10' />
-              <span className='text-gray-10 text-[12px] leading-[16px] font-medium'>UPLOAD</span>
-            </div>
+            <button
+              onClick={handleUploadServerImage}
+              type='button'
+              className='w-[80px] h-[80px] flex-col rounded-full relative flex items-center justify-center border-2 border-dashed border-gray-10'>
+              {getValues('serverImageUrl') ? (
+                <img
+                  src={getValues('serverImageUrl') as string}
+                  alt='server-image'
+                  className='w-full h-full object-cover'
+                />
+              ) : (
+                <>
+                  <div className='absolute top-0 right-0 w-5 h-5 rounded-full bg-brand flex items-center justify-center'>
+                    <Plus className='w-3 h-3 text-white-100' />
+                  </div>
+                  <Camera className='w-6 h-6 text-gray-10' />
+                  <span className='text-gray-10 text-[12px] leading-[16px] font-medium'>
+                    UPLOAD
+                  </span>
+                </>
+              )}
+            </button>
           </div>
           <label className='text-[12px] text-gray-10 mb-2 leading-[24px] font-bold'>
             서버 이름

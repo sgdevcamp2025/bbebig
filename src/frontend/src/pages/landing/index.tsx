@@ -7,7 +7,7 @@ import VideoBanner from './components/video-banner'
 
 function LandingPage() {
   return (
-    <div className='w-full bg-landing-background bg-cover'>
+    <div className='w-full bg-[url("/background/landing-art.webp")] bg-cover'>
       <Header />
       <HomeHero />
       {discordIntroduceVideo.map((videoBanner, index) => (

@@ -12,7 +12,8 @@ const loginRequestSchema = z.object({
 
 const loginResponseSchema = commonResponseSchema.extend({
   result: z.object({
-    accessToken: z.string()
+    accessToken: z.string(),
+    refreshToken: z.string()
   })
 })
 
@@ -30,6 +31,4 @@ const registerRequestSchema = z.object({
   birthdate: z.string().date()
 })
 
-const registerResponseSchema = commonResponseSchema
-
-export { loginRequestSchema, loginResponseSchema, registerRequestSchema, registerResponseSchema }
+export { loginRequestSchema, loginResponseSchema, registerRequestSchema }

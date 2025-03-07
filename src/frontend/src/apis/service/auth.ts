@@ -12,23 +12,23 @@ import {
 } from '../schema/types/auth'
 const BASE_PATH = `/auth-server/auth`
 
-export interface CustomAxiosRequestConfig extends AxiosRequestConfig {
+interface CustomAxiosRequestConfig extends AxiosRequestConfig {
   useAuth?: boolean
 }
-
-const LOGIN_STATUS_DISABLED_CODE = 'AUTH110'
 
 const authService = () => {
   const statusCheck = async () => {
     const res = await axiosInstance.get<StatusCheckResponseSchema>(`${BASE_PATH}/status-check`, {
       headers: {
-        Authorization: `Bearer ${cookie.getCookie(COOKIE_KEYS.ACCESS_TOKEN)}`
+        Authorization: `Bearer ${cookie.getCookie(COOKIE_KEYS.ACCESS_TOKEN)}`,
+        'refresh-token': `${cookie.getCookie(COOKIE_KEYS.REFRESH_TOKEN)}`
       },
       useAuth: false
     } as CustomAxiosRequestConfig)
 
-    if (res.data.code === LOGIN_STATUS_DISABLED_CODE) {
+    if (!res.data.result.status) {
       cookie.deleteCookie(COOKIE_KEYS.ACCESS_TOKEN)
+      cookie.deleteCookie(COOKIE_KEYS.REFRESH_TOKEN)
     }
 
     return res.data
@@ -39,7 +39,9 @@ const authService = () => {
       useAuth: false
     } as CustomAxiosRequestConfig)
     const accessToken = res.data.result.accessToken
+    const refreshToken = res.data.result.refreshToken
     cookie.setCookie(COOKIE_KEYS.ACCESS_TOKEN, accessToken)
+    cookie.setCookie(COOKIE_KEYS.REFRESH_TOKEN, refreshToken)
   }
 
   const register = async (data: RegisterSchema) => {
@@ -51,16 +53,28 @@ const authService = () => {
 
   const logout = async () => {
     try {
-      await axiosInstance.post(`${BASE_PATH}/logout`)
+      await axiosInstance.post(`${BASE_PATH}/logout`, {}, {
+        headers: {
+          Authorization: `Bearer ${cookie.getCookie(COOKIE_KEYS.ACCESS_TOKEN)}`,
+          'refresh-token': `${cookie.getCookie(COOKIE_KEYS.REFRESH_TOKEN)}`
+        },
+        useAuth: false
+      } as CustomAxiosRequestConfig)
     } catch (error) {
       console.error(error)
     } finally {
       cookie.deleteCookie(COOKIE_KEYS.ACCESS_TOKEN)
+      cookie.deleteCookie(COOKIE_KEYS.REFRESH_TOKEN)
     }
   }
 
   const refreshToken = async () => {
-    const response = await axiosInstance.post(`${BASE_PATH}/refresh`)
+    const response = await axiosInstance.post(`${BASE_PATH}/refresh`, {}, {
+      headers: {
+        'refresh-token': `${cookie.getCookie(COOKIE_KEYS.REFRESH_TOKEN)}`
+      },
+      useAuth: false
+    } as CustomAxiosRequestConfig)
     return response.data
   }
 

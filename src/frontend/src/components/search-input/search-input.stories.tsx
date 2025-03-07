@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
+import { log } from '@/utils/log'
+
 import SearchInput from '.'
 
 const meta = {
@@ -17,6 +19,6 @@ type Story = StoryObj<typeof meta>
 export const PrimarySearchInput: Story = {
   args: {
     placeholder: '검색',
-    handleClear: () => console.log('검색 초기화')
+    handleClear: () => log('검색 초기화')
   }
 }
