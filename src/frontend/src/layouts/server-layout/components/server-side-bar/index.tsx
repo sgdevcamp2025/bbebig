@@ -6,19 +6,20 @@ import { useGetServerInfo } from '@/hooks/queries/server/useGetServerInfo'
 import useGetSelfUser from '@/hooks/queries/user/useGetSelfUser'
 import useClickOutside from '@/hooks/use-click-outside'
 import { cn } from '@/libs/cn'
+import { log } from '@/utils/log'
 
 import SettingModal from '../setting-modal'
 import CategoryCreateModal from './cateogry-create-modal'
 import ChannelCreateModal from './channel-create-modal'
 import { ServerInviteModal } from './InviteModal'
-import ServerSideBarSkeleton from './server-side-bar-skeleton'
+import { ServerSideBarSkeleton } from './server-side-bar-skeleton'
 
 interface ServerSideBarProps {
   serverId: string
   channelId: string
 }
 
-export function Inner({ serverId, channelId }: ServerSideBarProps) {
+function Inner({ serverId, channelId }: ServerSideBarProps) {
   const serverData = useGetServerInfo(serverId)
   const myInfo = useGetSelfUser()
   const navigate = useNavigate()
@@ -88,7 +89,7 @@ export function Inner({ serverId, channelId }: ServerSideBarProps) {
       icon: <Settings className='w-4 h-4' />,
       color: 'text-gray-10',
       onClick: () => {
-        console.log('서버 설정')
+        log('서버 설정')
       }
     },
     {
@@ -287,5 +288,3 @@ export function ServerSideBar({ serverId, channelId }: { serverId: string; chann
     </div>
   )
 }
-
-export default ServerSideBar

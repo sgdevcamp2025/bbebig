@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import toast from 'react-hot-toast'
 
 import ChatArea from '@/components/chat-area'
 import CustomButton from '@/components/custom-button'
@@ -110,7 +111,7 @@ function VideoComponent({
                   <button
                     type='button'
                     onClick={() => {
-                      console.log(voiceUsers, 'voiceUsers')
+                      toast.success('준비중입니다.')
                     }}
                     className='w-14 h-14 rounded-full bg-[#282d31] flex items-center justify-center'>
                     <img

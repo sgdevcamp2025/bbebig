@@ -62,5 +62,3 @@ export function ServerSideBarSkeleton() {
     </div>
   )
 }
-
-export default ServerSideBarSkeleton
