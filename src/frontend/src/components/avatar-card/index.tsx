@@ -1,6 +1,8 @@
 import { cva } from 'class-variance-authority'
 import { CSSProperties } from 'react'
 
+import { Picture } from '../picture'
+
 interface Props {
   name: string
   avatarUrl: string
@@ -52,10 +54,17 @@ function AvatarCard({
         backgroundColor: backgroundColor ? backgroundColor : 'transparent'
       }}
       className={`${cardSize({ size })} group bg-no-repeat bg-cover`}>
-      <img
-        src={avatarUrl}
-        className={avatarSize({ size })}
-      />
+      {avatarUrl ? (
+        <img
+          src={avatarUrl}
+          className={avatarSize({ size })}
+        />
+      ) : (
+        <Picture
+          src='/image/common/default-avatar'
+          className={avatarSize({ size })}
+        />
+      )}
       <div className='absolute bottom-0 w-full p-2 flex justify-between items-center'>
         {size !== 'sm' ? (
           <div className='flex items-center gap-2 px-3 py-2 rounded-[8px] bg-black/40 group-hover:opacity-100 opacity-0 transition-opacity duration-300'>

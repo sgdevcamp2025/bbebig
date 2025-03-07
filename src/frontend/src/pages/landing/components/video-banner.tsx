@@ -9,7 +9,7 @@ interface Props {
 function VideoBanner({ videoUrl, title, description, videoIsLeft = false, isLast = false }: Props) {
   return (
     <div
-      className={`max-h-[1030px] bg-landing-shine-2 bg-cover bg-no-repeat py-[6.25rem] pb-[7.1875rem] ${isLast ? 'pb-[296px]' : ''}`}>
+      className={`max-h-[1030px] bg-[url("/background/shine-2.webp")] bg-cover bg-no-repeat py-[6.25rem] pb-[7.1875rem] ${isLast ? 'pb-[296px]' : ''}`}>
       <div className='padding-global'>
         <div
           className={`mx-auto flex w-full max-w-[840px] justify-between gap-[2.1625rem] rounded-[40px] bg-video-banner-background p-5 shadow-video-banner-box-shadow mobile-range:flex-col ${

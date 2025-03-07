@@ -16,7 +16,7 @@ function AuthLayout() {
   }
 
   return (
-    <div className='w-full h-screen flex justify-center items-center overflow-auto relative bg-auth-background bg-cover'>
+    <div className='w-full h-screen flex justify-center items-center overflow-auto relative bg-[url("/background/auth.svg")] bg-cover'>
       <div className='absolute left-0 right-0 top-0'>
         <img
           src='/icon/brand/icon_logo.svg'

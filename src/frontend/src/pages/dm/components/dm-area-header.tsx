@@ -1,3 +1,4 @@
+import { Picture } from '@/components/picture'
 import { ChatUser } from '@/types/user'
 
 interface DmAreaHeaderProps {
@@ -12,11 +13,18 @@ function DmAreaHeader({ member }: DmAreaHeaderProps) {
         role='button'
         tabIndex={0}
         aria-label={`${member.nickName}의 프로필 사진`}>
-        <img
-          src={member.avatarUrl ?? '/image/common/default-avatar.png'}
-          alt={`${member.nickName}의 프로필`}
-          className='w-20 h-20 rounded-full'
-        />
+        {member.avatarUrl ? (
+          <img
+            src={member.avatarUrl}
+            alt={`${member.nickName}의 프로필`}
+            className='w-20 h-20 rounded-full'
+          />
+        ) : (
+          <Picture
+            src='/image/common/default-avatar'
+            className='w-20 h-20 rounded-full'
+          />
+        )}
       </div>
       <div className='flex flex-col gap-1'>
         <h2 className='text-2xl font-bold text-discord-font-color-normal'>{member.nickName}</h2>
