@@ -103,5 +103,3 @@ export function ServerList({
     </ul>
   )
 }
-
-export default ServerList

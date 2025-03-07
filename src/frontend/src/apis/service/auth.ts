@@ -12,7 +12,7 @@ import {
 } from '../schema/types/auth'
 const BASE_PATH = `/auth-server/auth`
 
-export interface CustomAxiosRequestConfig extends AxiosRequestConfig {
+interface CustomAxiosRequestConfig extends AxiosRequestConfig {
   useAuth?: boolean
 }
 

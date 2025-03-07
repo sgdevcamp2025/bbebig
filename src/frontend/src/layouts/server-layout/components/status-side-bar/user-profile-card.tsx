@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 
 import Avatar from '@/components/avatar'
 
@@ -11,7 +11,7 @@ interface InnerProps {
   onMoreButtonClick: () => void
 }
 
-export function Inner({ user, onSendFriendRequest, onMoreButtonClick }: InnerProps) {
+function Inner({ user, onSendFriendRequest, onMoreButtonClick }: InnerProps) {
   const [message, setMessage] = useState('')
   const navigate = useNavigate()
 

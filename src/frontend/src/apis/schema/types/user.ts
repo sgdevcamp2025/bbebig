@@ -151,7 +151,3 @@ export interface SelectUserByNicknameResponseSchema {
   customPresenceStatus: CustomPresenceStatus | null
   lastAccessAt: string | null
 }
-
-export interface InviteServerWithUserNicknameResponseSchema {
-  id: number
-}

@@ -31,6 +31,4 @@ const registerRequestSchema = z.object({
   birthdate: z.string().date()
 })
 
-const registerResponseSchema = commonResponseSchema
-
-export { loginRequestSchema, loginResponseSchema, registerRequestSchema, registerResponseSchema }
+export { loginRequestSchema, loginResponseSchema, registerRequestSchema }

@@ -1,7 +1,7 @@
 import { ChannelMessage, SearchMessage } from '@/types/message'
 
 // Search 서버 - Search Controller
-export type SearchOption = 'CONTENT'
+type SearchOption = 'CONTENT'
 
 export interface SearchChattingChannelRequestSchema {
   serverId: number
