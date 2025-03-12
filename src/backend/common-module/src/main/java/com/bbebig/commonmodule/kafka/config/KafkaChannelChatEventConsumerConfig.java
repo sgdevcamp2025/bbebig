@@ -62,6 +62,7 @@ public class KafkaChannelChatEventConsumerConfig {
 		ContainerProperties prop = factory.getContainerProperties();
 		prop.setConsumerRebalanceListener(rebalanceListener());
 		factory.setConcurrency(3); // 쓰레드 개수
+		factory.setBatchListener(true);
 		return factory;
 	}
 

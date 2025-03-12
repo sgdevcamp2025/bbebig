@@ -32,6 +32,7 @@ spring:
       bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
 
     consumer:
+      max-poll-records: 100
       group-id:
         channel-chat-event: "${spring.application.name}-channelChatEventGroup"
         dm-chat-event: "${spring.application.name}-dmChatEventGroup"
@@ -43,7 +44,7 @@ spring:
         member-event: "${spring.application.name}-memberEventGroup"
 
       enable-auto-commit: true
-      auto-offset-reset: latest
+      auto-offset-reset: earliest
 
 server:
   port: 9030

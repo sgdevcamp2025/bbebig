@@ -1,54 +1,44 @@
 package com.bbebig.searchserver.domain.search.service;
 
-import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
-import com.bbebig.commonmodule.global.response.exception.ErrorHandler;
 import com.bbebig.commonmodule.kafka.dto.ChatMessageDto;
-import com.bbebig.commonmodule.kafka.dto.model.ChannelType;
 import com.bbebig.commonmodule.kafka.dto.model.ChatType;
 import com.bbebig.searchserver.domain.history.service.HistoryService;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class MessageEventConsumerService {
 
+	private final ChannelMessageBatchService batchService;
 	private final HistoryService historyService;
 
+	private final CircuitBreakerRegistry registry;
+
 	/**
-	 * 채널 채팅 메시지 이벤트 처리 (CREATE, UPDATE, DELETE)
+	 * 채널 채팅 메시지 이벤트 Batch 처리 (CREATE, UPDATE, DELETE)
 	 */
 	@KafkaListener(topics = "${spring.kafka.topic.channel-chat-event}", groupId = "${spring.kafka.consumer.group-id.channel-chat-event}", containerFactory = "channelChatListener")
-	public void consumeForChannelChatEvent(ChatMessageDto chatMessageDto) {
-		if (chatMessageDto == null) {
+	public void consumeForChannelChatEvent(List<ChatMessageDto> messageDtos) {
+		if (messageDtos == null || messageDtos.isEmpty()) {
 			log.error("[Search] MessageEventConsumerService: 채팅 메시지 정보 없음");
-			throw new ErrorHandler(ErrorStatus.KAFKA_CONSUME_NULL_EVENT);
+			return;
 		}
-
-		if (chatMessageDto.getChatType() != ChatType.CHANNEL) {
-			log.error("[Chat] MessageEventConsumerService: 채널 채팅 메시지가 아닙니다. ChatMessageDto: {}", chatMessageDto);
-			throw new ErrorHandler(ErrorStatus.CHAT_TYPE_INVALID);
-		}
-
-		// 개발용 로그
-		log.info("[Chat] MessageEventConsumerService에서 메시지 이벤트 수신: ChatMessageDto: {}", chatMessageDto);
-
-		switch (chatMessageDto.getType()) {
-			case MESSAGE_CREATE:
-				historyService.saveChannelMessage(chatMessageDto);
-				break;
-			case MESSAGE_UPDATE:
-				historyService.updateChannelMessage(chatMessageDto);
-				break;
-			case MESSAGE_DELETE:
-				historyService.deleteChannelMessage(chatMessageDto.getId());
-				break;
-			default:
-				log.warn("[Chat] MessageEventConsumerService: 처리할 수 없는 메시지 타입. ChatMessageDto: {}", chatMessageDto);
-				throw new ErrorHandler(ErrorStatus.INVALID_MESSAGE_EVENT_TYPE);
+		CircuitBreaker cb = registry.circuitBreaker("channelChatConsumer");
+		try {
+			CircuitBreaker.decorateRunnable(cb, () -> {
+				batchService.processChannelMessages(messageDtos);
+			}).run();
+		} catch (Throwable throwable) {
+			log.error("[Chat] Batch consume fail, fallback or store to DLT. reason={}", throwable.getMessage());
+			// TODO: fallback: e.g. send to DeadLetterTopic
 		}
 	}
 
@@ -59,12 +49,12 @@ public class MessageEventConsumerService {
 	public void consumeForDmChatEvent(ChatMessageDto chatMessageDto) {
 		if (chatMessageDto == null) {
 			log.error("[Search] MessageEventConsumerService: 채팅 메시지 정보 없음");
-			throw new ErrorHandler(ErrorStatus.KAFKA_CONSUME_NULL_EVENT);
+			return;
 		}
 
 		if (chatMessageDto.getChatType() != ChatType.DM) {
 			log.error("[Chat] MessageEventConsumerService: DM 채팅 메시지가 아닙니다. ChatMessageDto: {}", chatMessageDto);
-			throw new ErrorHandler(ErrorStatus.CHAT_TYPE_INVALID);
+			return;
 		}
 
 		switch (chatMessageDto.getType()) {
@@ -79,7 +69,6 @@ public class MessageEventConsumerService {
 				break;
 			default:
 				log.warn("[Chat] MessageEventConsumerService: 처리할 수 없는 메시지 타입. ChatMessageDto: {}", chatMessageDto);
-				throw new ErrorHandler(ErrorStatus.INVALID_MESSAGE_EVENT_TYPE);
 		}
 	}
 }

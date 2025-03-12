@@ -11,6 +11,7 @@ import com.bbebig.commonmodule.redis.domain.ChannelLastInfo;
 import com.bbebig.commonmodule.redis.domain.ServerLastInfo;
 import com.bbebig.searchserver.domain.history.repository.ChannelChatMessageRepository;
 import com.bbebig.searchserver.domain.history.repository.DmChatMessageRepository;
+import com.bbebig.searchserver.domain.search.domain.ChannelChatMessageElastic;
 import com.bbebig.searchserver.global.client.ServiceClient;
 import com.bbebig.searchserver.domain.history.domain.ChannelChatMessage;
 import com.bbebig.searchserver.domain.history.domain.DmChatMessage;
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.bbebig.searchserver.domain.history.dto.HistoryResponseDto.*;
 
@@ -49,6 +51,7 @@ public class HistoryService {
 	private final ServiceClient serviceClient;
 
 
+	@Transactional
 	public void saveChannelMessage(ChatMessageDto messageDto) {
 		ChannelChatMessage message = HistoryDtoConverter.convertDtoToChannelChatMessage(messageDto);
 		channelChatMessageRepository.save(message);
@@ -87,10 +90,18 @@ public class HistoryService {
 
 			Long channelId = messageDto.getChannelId();
 			// Redis에 채널 메시지가 존재하면 삭제 후 다시 저장
-			if (serverRedisRepository.existsChannelMessageList(channelId)) {
-				serverRedisRepository.deleteChannelMessageList(chatMessage.getChannelId());
+			List<ChannelChatMessage> channelMessageList = serverRedisRepository.getChannelMessageList(channelId);
+			if (channelMessageList != null && !channelMessageList.isEmpty()) {
+				channelMessageList.stream()
+						.filter(m -> m.getId().equals(messageDto.getId()))
+						.forEach(m -> {
+							m.setContent(messageDto.getContent());
+						});
+				serverRedisRepository.saveChannelMessages(channelId, channelMessageList);
+			} else {
+				cacheChannelMessage(channelId);
 			}
-			cacheChannelMessage(channelId);
+
 
 		}, () -> {
 			log.error("[Search] ChatMessageService : 채팅 메시지 정보 없음. messageId: {}", messageDto.getId());
@@ -136,7 +147,6 @@ public class HistoryService {
 				serverRedisRepository.deleteChannelMessageList(channelId);
 			}
 
-			log.info("[Search] ChatMessageService : 채널 메시지 삭제 완료. messageId: {}", messageId);
 		}, () -> {
 			log.error("[Search] ChatMessageService : 채널 채팅 메시지를 찾을 수 없습니다. messageId: {}", messageId);
 			throw new ErrorHandler(ErrorStatus.CHAT_MESSAGE_NOT_FOUND);
