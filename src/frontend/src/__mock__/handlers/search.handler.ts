@@ -14,9 +14,9 @@ import {
   mockUnreadMessages
 } from '../data/search.handler'
 const copyMockMessages = [...mockMessages]
-const copyUnreadChannels = [...mockUnreadChannels]
-const copyUnreadMessages = [...mockUnreadMessages]
-const copyMessagesByChannel = [...mockMessagesByChannel]
+const copyUnreadChannels = structuredClone(mockUnreadChannels)
+const copyUnreadMessages = structuredClone(mockUnreadMessages)
+const copyMessagesByChannel = structuredClone(mockMessagesByChannel)
 
 const SEARCH_SERVER_PATH = `/search-server/server`
 const SEARCH_HISTORY_PATH = `/search-server/history`
@@ -58,19 +58,17 @@ export const searchHandler = [
     })
   }),
   http.get(
-    `${SERVER_URL}${SEARCH_HISTORY_PATH}/:serverId/channel/:channelId/messages`,
+    `${SERVER_URL}${SEARCH_HISTORY_PATH}/server/:serverId/channel/:channelId/messages`,
     ({ params }) => {
       const { serverId, channelId } = params as { serverId: string; channelId: string }
       return HttpResponse.json({
         code: 'UNREAD_MESSAGE_FOUND',
         message: 'Unread message found',
         result: {
+          ...copyMessagesByChannel,
           serverId: Number(serverId),
-          channelId: Number(channelId),
-          lastMessageId: copyMessagesByChannel[copyMessagesByChannel.length - 1].id,
-          totalCount: copyMessagesByChannel.length,
-          messages: copyMessagesByChannel
-        } as GetHistoryChattingMessageResponseSchema
+          channelId: Number(channelId)
+        }
       })
     }
   )

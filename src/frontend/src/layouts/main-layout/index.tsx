@@ -120,10 +120,10 @@ const Inner = () => {
   const [isServerCreateModalOpen, setIsServerCreateModalOpen] = useState(false)
 
   const handleClickServer = async (serverId: number) => {
-    const {
-      result: { channelInfoList }
-    } = await serviceService.getServersList({ serverId: serverId.toString() })
-    const firstChannelId = channelInfoList[0].channelId
+    const { result: serverInfo } = await serviceService.getServersList({
+      serverId: serverId.toString()
+    })
+    const firstChannelId = serverInfo.channelInfoList[0].channelId
     navigate(`/channels/${serverId}/${firstChannelId}`)
 
     if (checkConnection()) {

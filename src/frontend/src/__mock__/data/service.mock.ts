@@ -9,21 +9,6 @@ export const mockServersData = [
     serverId: 1,
     serverName: 'Server 1',
     serverImageUrl: null
-  },
-  {
-    serverId: 2,
-    serverName: 'Server 2',
-    serverImageUrl: null
-  },
-  {
-    serverId: 3,
-    serverName: 'Server 3',
-    serverImageUrl: null
-  },
-  {
-    serverId: 4,
-    serverName: 'Server 4',
-    serverImageUrl: null
   }
 ] as {
   serverId: number
@@ -34,18 +19,13 @@ export const mockServersData = [
 export const mockCategoriesData = [
   {
     categoryId: 1,
-    categoryName: '카테고리 1',
+    categoryName: '채팅 채널',
     position: 1
   },
   {
     categoryId: 2,
-    categoryName: '카테고리 2',
+    categoryName: '음성 채널',
     position: 2
-  },
-  {
-    categoryId: 3,
-    categoryName: '카테고리 3',
-    position: 3
   }
 ]
 
@@ -53,21 +33,41 @@ export const mockChannelsData = [
   {
     channelId: 1,
     categoryId: 1,
-    channelName: '채널 1',
+    channelName: '일반',
     position: 1,
-    channelType: 'TEXT',
-    privateStatus: true,
-    channelMemberIdList: [1, 2, 3],
+    channelType: 'CHAT',
+    privateStatus: false,
+    channelMemberIdList: [1, 2, 3, 4],
     lastSequence: 0
   },
   {
     channelId: 2,
+    categoryId: 2,
+    channelName: '일반',
+    position: 1,
+    channelType: 'VOICE',
+    privateStatus: false,
+    channelMemberIdList: [1, 2, 3, 4],
+    lastSequence: 0
+  },
+  {
+    channelId: 13,
     categoryId: 1,
-    channelName: '채널 2',
+    channelName: '채널2',
     position: 2,
-    channelType: 'TEXT',
-    privateStatus: true,
-    channelMemberIdList: [1, 2, 3],
+    channelType: 'CHAT',
+    privateStatus: false,
+    channelMemberIdList: [1, 2, 3, 4],
+    lastSequence: 2
+  },
+  {
+    channelId: 16,
+    categoryId: 1,
+    channelName: 'ㅁㄴㅇㅁㄴㅇ',
+    position: 3,
+    channelType: 'CHAT',
+    privateStatus: false,
+    channelMemberIdList: [1, 2, 3, 4],
     lastSequence: 0
   }
 ] as {
@@ -81,10 +81,7 @@ export const mockChannelsData = [
   lastSequence: number
 }[]
 
-export const mockServers = (
-  categoryInfoList: typeof mockCategoriesData,
-  channelInfoList: typeof mockChannelsData
-) => ({
+export const mockServers = {
   code: 'SERVER_LIST_SUCCESS',
   message: '서버 목록 조회 성공',
   result: {
@@ -92,10 +89,10 @@ export const mockServers = (
     serverName: 'Server 1',
     ownerId: 1,
     serverImageUrl: null,
-    categoryInfoList,
-    channelInfoList
+    categoryInfoList: mockCategoriesData,
+    channelInfoList: mockChannelsData
   }
-})
+}
 
 export const mockServersList: CommonResponseType<GetServersResponseSchema> = {
   code: 'SERVER_LIST_SUCCESS',
@@ -110,53 +107,36 @@ export const mockServerMembers: CommonResponseType<GetServerMemebersResponseSche
     serverId: 1,
     serverMemberInfoList: [
       {
-        memberId: 0,
-        nickName: 'test1',
+        memberId: 1,
+        nickName: '테스트1',
         avatarUrl: null,
         bannerUrl: null,
+        joinAt: '2025-02-27T14:04:50.258047',
         globalStatus: 'ONLINE'
       },
       {
-        memberId: 1,
-        nickName: 'test2',
+        memberId: 2,
+        nickName: '테슷트2',
         avatarUrl: null,
         bannerUrl: null,
+        joinAt: '2025-02-27T14:09:57.037225',
         globalStatus: 'OFFLINE'
       },
       {
-        memberId: 2,
-        nickName: 'test3',
+        memberId: 3,
+        nickName: '서테스트',
         avatarUrl: null,
         bannerUrl: null,
-        globalStatus: 'INVISIBLE'
-      }
-    ]
-  }
-}
-
-export const mockLastVisitChannelInfo = {
-  code: 'CHANNEL_INFO_SUCCESS',
-  message: '채널 정보 조회 성공',
-  result: {
-    serverId: 1,
-    channelInfoList: [
-      {
-        channelId: 1,
-        lastReadMessageId: 0,
-        lastReadSequence: 0,
-        lastAccessAt: '2025-03-12T13:19:13.221Z'
+        joinAt: '2025-02-27T14:46:42.392247',
+        globalStatus: 'OFFLINE'
       },
       {
-        channelId: 2,
-        lastReadMessageId: 0,
-        lastReadSequence: 0,
-        lastAccessAt: '2025-03-12T13:19:13.221Z'
-      },
-      {
-        channelId: 3,
-        lastReadMessageId: 0,
-        lastReadSequence: 0,
-        lastAccessAt: '2025-03-12T13:19:13.221Z'
+        memberId: 4,
+        nickName: '테3',
+        avatarUrl: null,
+        bannerUrl: null,
+        joinAt: '2025-02-27T23:27:00.269422',
+        globalStatus: 'OFFLINE'
       }
     ]
   }

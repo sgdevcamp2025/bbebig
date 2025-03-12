@@ -15,39 +15,27 @@ export const userMock = {
 
 export const friendsMock = [
   {
-    friendId: 0,
-    memberId: 0,
-    memberName: 'test',
-    memberNickname: 'test',
-    memberAvatarUrl: null,
-    memberBannerUrl: null,
-    memberIntroduce: null,
-    memberEmail: 'test@test1.com',
-    globalStatus: 'ONLINE',
-    createdAt: '2025-03-12T13:58:09.724Z'
-  },
-  {
     friendId: 1,
     memberId: 2,
-    memberName: 'test',
-    memberNickname: 'test',
+    memberName: '김테스트',
+    memberNickname: '테슷트2',
     memberAvatarUrl: null,
     memberBannerUrl: null,
     memberIntroduce: null,
     memberEmail: 'test@test2.com',
-    globalStatus: '',
-    createdAt: '2025-03-12T13:58:09.724Z'
+    globalStatus: 'OFFLINE',
+    createdAt: null
   },
   {
-    friendId: 2,
-    memberId: 3,
-    memberName: 'test',
-    memberNickname: 'test',
+    friendId: 6,
+    memberId: 4,
+    memberName: '테3',
+    memberNickname: '테3',
     memberAvatarUrl: null,
     memberBannerUrl: null,
     memberIntroduce: null,
     memberEmail: 'test@test3.com',
-    globalStatus: 'ONLINE',
-    createdAt: '2025-03-12T13:58:09.724Z'
+    globalStatus: 'OFFLINE',
+    createdAt: null
   }
 ]

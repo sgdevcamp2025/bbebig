@@ -14,6 +14,7 @@ import {
   mockCategory,
   mockChannelsData,
   mockServerMembers,
+  mockServers,
   mockServersData
 } from '../data/service.mock'
 
@@ -74,17 +75,8 @@ export const serviceHandler = [
       })
     )
   }),
-  http.get(`${SERVER_URL}${SERVER_PATH}/:serverId`, ({ params }) => {
-    const { serverId } = params as { serverId: string }
-    return new HttpResponse(
-      JSON.stringify({
-        code: 'SERVER_FOUND',
-        message: 'Server found',
-        result: {
-          server: copyMockServers.find((server) => server.serverId === Number(serverId))
-        }
-      })
-    )
+  http.get(`${SERVER_URL}${SERVER_PATH}/:serverId`, () => {
+    return new HttpResponse(JSON.stringify(mockServers))
   }),
   http.get(`${SERVER_URL}${SERVER_PATH}`, () => {
     return new HttpResponse(
@@ -98,15 +90,7 @@ export const serviceHandler = [
     )
   }),
   http.get(`${SERVER_URL}${SERVER_PATH}/:serverId/members`, () => {
-    return new HttpResponse(
-      JSON.stringify({
-        code: 'SERVER_MEMBERS_FOUND',
-        message: 'Server members found',
-        result: {
-          members: mockServerMembers
-        }
-      })
-    )
+    return new HttpResponse(JSON.stringify(mockServerMembers))
   }),
   http.get(`${SERVER_URL}${SERVER_PATH}/:serverId/channels/info`, () => {
     return new HttpResponse(
