@@ -3,8 +3,6 @@ package com.bbebig.searchserver.domain.search.service;
 import com.bbebig.commonmodule.kafka.dto.ChatMessageDto;
 import com.bbebig.commonmodule.kafka.dto.model.ChatType;
 import com.bbebig.searchserver.domain.history.service.HistoryService;
-import io.github.resilience4j.circuitbreaker.CircuitBreaker;
-import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -20,26 +18,22 @@ public class MessageEventConsumerService {
 	private final ChannelMessageBatchService batchService;
 	private final HistoryService historyService;
 
-	private final CircuitBreakerRegistry registry;
-
 	/**
 	 * 채널 채팅 메시지 이벤트 Batch 처리 (CREATE, UPDATE, DELETE)
 	 */
 	@KafkaListener(topics = "${spring.kafka.topic.channel-chat-event}", groupId = "${spring.kafka.consumer.group-id.channel-chat-event}", containerFactory = "channelChatListener")
 	public void consumeForChannelChatEvent(List<ChatMessageDto> messageDtos) {
 		if (messageDtos == null || messageDtos.isEmpty()) {
-			log.error("[Search] MessageEventConsumerService: 채팅 메시지 정보 없음");
+			log.warn("Empty batch for channel-chat-event");
 			return;
 		}
-		CircuitBreaker cb = registry.circuitBreaker("channelChatConsumer");
-		try {
-			CircuitBreaker.decorateRunnable(cb, () -> {
-				batchService.processChannelMessages(messageDtos);
-			}).run();
-		} catch (Throwable throwable) {
-			log.error("[Chat] Batch consume fail, fallback or store to DLT. reason={}", throwable.getMessage());
-			// TODO: fallback: e.g. send to DeadLetterTopic
-		}
+		log.info("Batch size: {}", messageDtos.size());
+
+		batchService.processChannelMessages(messageDtos);
+	}
+
+	private void channelChatFallback(List<ChatMessageDto> messageDtos, Throwable ex) {
+		log.error("[ChannelChat] Batch consume fail => fallback. reason={}", ex.getMessage(), ex);
 	}
 
 	/**

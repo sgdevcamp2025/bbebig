@@ -81,7 +81,8 @@ dependencies {
     implementation 'io.micrometer:micrometer-registry-prometheus'
 
     // Resilience4j
-    implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.0.2'
+    implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
+
 }
 
 dependencyManagement {
