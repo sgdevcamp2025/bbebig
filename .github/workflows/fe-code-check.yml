@@ -12,9 +12,6 @@ on:
 
 jobs:
   lint:
-    if: contains(github.event.head_commit.modified, 'src/frontend/') ||
-      contains(github.event.head_commit.added, 'src/frontend/') ||
-      contains(github.event.head_commit.removed, 'src/frontend/')
     runs-on: ubuntu-latest
 
     steps:
@@ -33,7 +30,7 @@ jobs:
 
       - name: Run ESLint
         working-directory: ./src/frontend
-        run: yarn lint:fix
+        run: yarn lint --max-warnings=0
 
       - name: Run Type Check
         working-directory: ./src/frontend
