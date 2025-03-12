@@ -13,11 +13,8 @@ import {
   mockCategoriesData,
   mockCategory,
   mockChannelsData,
-  mockLastVisitChannelInfo,
   mockServerMembers,
-  mockServers,
-  mockServersData,
-  mockServersList
+  mockServersData
 } from '../data/service.mock'
 
 let copyMockServers = [...mockServersData]
@@ -77,17 +74,50 @@ export const serviceHandler = [
       })
     )
   }),
-  http.get(`${SERVER_URL}${SERVER_PATH}/:serverId`, () => {
-    return new HttpResponse(JSON.stringify(mockServers(copyMockCategories, copyMockChannels)))
+  http.get(`${SERVER_URL}${SERVER_PATH}/:serverId`, ({ params }) => {
+    const { serverId } = params as { serverId: string }
+    return new HttpResponse(
+      JSON.stringify({
+        code: 'SERVER_FOUND',
+        message: 'Server found',
+        result: {
+          server: copyMockServers.find((server) => server.serverId === Number(serverId))
+        }
+      })
+    )
   }),
   http.get(`${SERVER_URL}${SERVER_PATH}`, () => {
-    return new HttpResponse(JSON.stringify(mockServersList))
+    return new HttpResponse(
+      JSON.stringify({
+        code: 'SERVER_LIST_SUCCESS',
+        message: 'Server list success',
+        result: {
+          servers: copyMockServers
+        }
+      })
+    )
   }),
   http.get(`${SERVER_URL}${SERVER_PATH}/:serverId/members`, () => {
-    return new HttpResponse(JSON.stringify(mockServerMembers))
+    return new HttpResponse(
+      JSON.stringify({
+        code: 'SERVER_MEMBERS_FOUND',
+        message: 'Server members found',
+        result: {
+          members: mockServerMembers
+        }
+      })
+    )
   }),
   http.get(`${SERVER_URL}${SERVER_PATH}/:serverId/channels/info`, () => {
-    return new HttpResponse(JSON.stringify(mockLastVisitChannelInfo))
+    return new HttpResponse(
+      JSON.stringify({
+        code: 'CHANNEL_INFO_FOUND',
+        message: 'Channel info found',
+        result: {
+          channels: copyMockChannels
+        }
+      })
+    )
   }),
   http.post(`${SERVER_URL}${SERVER_PATH}`, () => {
     const mockServerId = Math.floor(Math.random() * 1000000)

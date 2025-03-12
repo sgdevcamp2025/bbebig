@@ -6,9 +6,7 @@ import { MOCK_SERVICE_WORKER } from '@/constants/env'
 function MSWProvider() {
   useEffect(() => {
     if (MOCK_SERVICE_WORKER) {
-      worker.start({
-        onUnhandledRequest: 'bypass'
-      })
+      worker.start()
     }
   }, [])
 
