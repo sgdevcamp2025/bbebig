@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 const commonResponseSchema = z.object({
-  code: z.number(),
+  code: z.string(),
   message: z.string(),
   result: z.optional(z.any())
 })
