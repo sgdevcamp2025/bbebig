@@ -9,7 +9,7 @@ export const userMock = {
   avatarUrl: null,
   bannerUrl: null,
   introduce: null,
-  presenceStatus: 'ONLINE',
+  customPresenceStatus: 'ONLINE',
   lastAccessAt: '2021-01-01T00:00:00.000Z'
 } as User
 

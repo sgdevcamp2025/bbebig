@@ -3,6 +3,7 @@ import { http, HttpResponse } from 'msw'
 import {
   GetFriendListResponseSchema,
   GetFriendPendingListResponseSchema,
+  GetUserSelfResponseSchema,
   UpdateUserPresenceStatusRequestSchema,
   UpdateUserRequestSchema
 } from '@/apis/schema/types/user'
@@ -45,7 +46,7 @@ export const userHandler = [
       JSON.stringify({
         code: 'MEMBER_FOUND',
         message: 'Member found',
-        result: userMock
+        result: userMock as GetUserSelfResponseSchema
       })
     )
   }),
