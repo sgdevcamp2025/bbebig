@@ -35,23 +35,27 @@ const Inner = () => {
 
   const navigate = useNavigate()
 
-  useEffect(function init() {
-    const initChatting = async () => {
-      if (!checkConnection()) {
-        await connectChatting()
-        await subscribeToPersonal()
-      }
-    }
-
+  /* Socket 연결 관련 함수들은 매번 새로 생성될 필요가 없고,
+   * 의존성 배열에 추가하면 불필요한 재연결이 발생할 수 있으므로
+   * exhaustive-deps 규칙을 비활성화합니다.
+   */
+  useEffect(() => {
+    checkConnection()
+    connectChatting()
     connectSignaling()
-    initChatting()
+    subscribeToPersonal()
 
-    return function cleanup() {
+    return () => {
       disconnectChatting()
       disconnectSignaling()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  /* 서버 연결 관련 함수들은 매번 새로 생성될 필요가 없고,
+   * 의존성 배열에 추가하면 불필요한 재연결이 발생할 수 있으므로
+   * exhaustive-deps 규칙을 비활성화합니다.
+   */
   useEffect(() => {
     const subscribeToServerIfConnected = async () => {
       if (!serverId) return
@@ -77,6 +81,7 @@ const Inner = () => {
         unsubscribe(`/topic/server/${previousServerId.current}`)
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkConnection])
 
   const myChannelList = useGetServer()

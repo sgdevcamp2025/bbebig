@@ -51,7 +51,7 @@ function ChatArea({
     if (historyMessages && chatKey) {
       setMessages(Number(chatKey), historyMessages)
     }
-  }, [historyMessages, chatKey])
+  }, [historyMessages, chatKey, setMessages])
 
   useEffect(() => {
     if (messagesRef.current) {
