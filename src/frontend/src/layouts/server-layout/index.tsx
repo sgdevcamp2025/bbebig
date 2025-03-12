@@ -24,6 +24,10 @@ function ServerLayout() {
 
   const { channelInfoList } = serverData
 
+  /*
+   * 채널 입장 및 퇴장 이벤트를 처리하는 함수
+   * 무한 루프 방지를 위해 exhaustive-deps 규칙을 비활성화합니다.
+   */
   useEffect(() => {
     if (!channelInfoList || channelInfoList.length === 0) return
 
@@ -48,6 +52,7 @@ function ServerLayout() {
         lastReadMessageId: getLastMessageId(Number(channelId))
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [channelId, channelInfoList, serverId])
 
   return (

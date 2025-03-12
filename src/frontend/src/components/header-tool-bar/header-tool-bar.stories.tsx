@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import { fn } from '@storybook/test'
 
 import HeaderToolBar from '.'
 
@@ -27,11 +28,11 @@ export const PrimaryHeaderToolBar: Story = {
   args: {
     type: 'DEFAULT',
     isStatusBarOpen: false,
-    onToggleStatusBar: () => console.log('Status bar toggled'),
+    onToggleStatusBar: () => fn(),
     searchProps: {
       value: '검색',
-      onChange: () => console.log('검색'),
-      handleClear: () => console.log('검색 초기화'),
+      onChange: () => fn(),
+      handleClear: () => fn(),
       placeholder: '검색'
     }
   }
@@ -40,7 +41,7 @@ export const PrimaryHeaderToolBar: Story = {
 export const VoiceChannelHeaderToolBar: Story = {
   args: {
     type: 'VOICE',
-    onClose: () => console.log('Voice channel closed')
+    onClose: () => fn()
   }
 }
 
@@ -49,8 +50,8 @@ export const DirectMessageHeaderToolBar: Story = {
     type: 'DM',
     searchProps: {
       value: '검색',
-      onChange: () => console.log('검색'),
-      handleClear: () => console.log('검색 초기화'),
+      onChange: () => fn(),
+      handleClear: () => fn(),
       placeholder: '검색'
     }
   }
@@ -60,11 +61,11 @@ export const StatusBarOpenHeaderToolBar: Story = {
   args: {
     type: 'DEFAULT',
     isStatusBarOpen: true,
-    onToggleStatusBar: () => console.log('Status bar toggled'),
+    onToggleStatusBar: () => fn(),
     searchProps: {
       value: '검색',
-      onChange: () => console.log('검색'),
-      handleClear: () => console.log('검색 초기화'),
+      onChange: () => fn(),
+      handleClear: () => fn(),
       placeholder: '검색'
     }
   }
