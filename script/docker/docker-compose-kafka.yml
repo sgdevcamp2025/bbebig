@@ -7,7 +7,7 @@ services:
     ports:
       - '9092:9092'  # 호스트:컨테이너
     environment:
-      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=false
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
       # KRaft 설정
       - KAFKA_CFG_BROKER_ID=0
       - KAFKA_CFG_NODE_ID=0
@@ -35,7 +35,7 @@ services:
     ports:
       - '9093:9092'  # 호스트:컨테이너
     environment:
-      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=false
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
       # KRaft 설정
       - KAFKA_CFG_BROKER_ID=1
       - KAFKA_CFG_NODE_ID=1
@@ -62,7 +62,7 @@ services:
     ports:
       - '9094:9092'  # 호스트:컨테이너
     environment:
-      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=false
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
       # KRaft 설정
       - KAFKA_CFG_BROKER_ID=2
       - KAFKA_CFG_NODE_ID=2
