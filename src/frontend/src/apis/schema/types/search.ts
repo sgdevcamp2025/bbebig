@@ -30,7 +30,6 @@ export interface GetHistoryChattingMessagesRequestSchema {
 }
 
 export interface GetHistoryChattingMessageResponseSchema {
-  id: number
   serverId: number
   channelId: number
   lastMessageId: number

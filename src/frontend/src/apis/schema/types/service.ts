@@ -71,6 +71,7 @@ export interface GetServerMemebersResponseSchema {
     nickName: string
     avatarUrl: string | null
     bannerUrl: string | null
+    joinAt: string
     globalStatus: CustomPresenceStatus
   }[]
 }
