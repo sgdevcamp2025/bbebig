@@ -2,6 +2,19 @@ spring:
   application:
     name: search-server
 
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+      client:
+        config:
+          default:
+            connectTimeout: 5000
+            readTimeout: 5000
+          service-server:
+            connectTimeout: 3000
+            readTimeout: 3000
+
   data:
     mongodb:
       host: ${MONGODB_HOST:localhost}
@@ -74,26 +87,15 @@ auth:
   server:
     url: ${AUTH_SERVER_URL}
 
-
-feign:
-  client:
-    config:
-      default:
-        connectTimeout: 5000
-        readTimeout: 5000
-
-  circuitbreaker:
-    enabled: true
-
 resilience4j:
   circuitbreaker:
     configs:
       default:
         registerHealthIndicator: true
-        failureRateThreshold: 50
-        waitDurationInOpenState: 10s
+        failureRateThreshold: 80
+        slowCallDurationThreshold: 10s
+        waitDurationInOpenState: 20s
         permittedNumberOfCallsInHalfOpenState: 3
-      # 필요하다면 custom config
     instances:
       service-server:
         baseConfig: default
