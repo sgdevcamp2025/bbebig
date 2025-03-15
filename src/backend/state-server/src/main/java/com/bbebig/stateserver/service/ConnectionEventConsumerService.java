@@ -9,7 +9,7 @@ import com.bbebig.commonmodule.kafka.dto.model.ConnectionEventType;
 import com.bbebig.commonmodule.kafka.dto.model.PresenceType;
 import com.bbebig.commonmodule.redis.domain.DeviceInfo;
 import com.bbebig.commonmodule.redis.domain.MemberPresenceStatus;
-import com.bbebig.stateserver.client.MemberClient;
+import com.bbebig.stateserver.global.feign.client.MemberClient;
 import com.bbebig.stateserver.dto.DtoConverter;
 import com.bbebig.stateserver.repository.MemberRedisRepositoryImpl;
 import feign.FeignException;

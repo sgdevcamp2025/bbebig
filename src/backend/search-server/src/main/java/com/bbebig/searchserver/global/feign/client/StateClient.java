@@ -1,4 +1,4 @@
-package com.bbebig.searchserver.global.client;
+package com.bbebig.searchserver.global.feign.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 

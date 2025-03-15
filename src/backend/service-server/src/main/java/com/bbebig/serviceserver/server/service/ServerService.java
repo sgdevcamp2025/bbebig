@@ -1,6 +1,5 @@
 package com.bbebig.serviceserver.server.service;
 
-import com.bbebig.commonmodule.clientDto.SearchFeignResponseDto;
 import com.bbebig.commonmodule.clientDto.SearchFeignResponseDto.ServerChannelSequenceResponseDto;
 import com.bbebig.commonmodule.clientDto.ServiceFeignResponseDto.*;
 import com.bbebig.commonmodule.clientDto.StateFeignResponseDto.ServerMemberPresenceResponseDto;
@@ -22,9 +21,9 @@ import com.bbebig.serviceserver.channel.entity.ChannelMember;
 import com.bbebig.serviceserver.channel.entity.ChannelType;
 import com.bbebig.serviceserver.channel.repository.ChannelMemberRepository;
 import com.bbebig.serviceserver.channel.repository.ChannelRepository;
-import com.bbebig.serviceserver.global.client.MemberClient;
-import com.bbebig.serviceserver.global.client.SearchClient;
-import com.bbebig.serviceserver.global.client.StateClient;
+import com.bbebig.serviceserver.global.feign.client.MemberClient;
+import com.bbebig.serviceserver.global.feign.client.SearchClient;
+import com.bbebig.serviceserver.global.feign.client.StateClient;
 import com.bbebig.serviceserver.global.kafka.KafkaProducerService;
 import com.bbebig.serviceserver.server.dto.request.ServerCreateRequestDto;
 import com.bbebig.serviceserver.server.dto.request.ServerUpdateRequestDto;
@@ -323,9 +322,6 @@ public class ServerService {
 
         if (serverMemberStatus.isEmpty()) {
             ServerMemberPresenceResponseDto responseDto = stateClient.checkServerMemberState(serverId);
-            if (responseDto.getMemberPresenceStatusList().isEmpty()) {
-                throw new ErrorHandler(ErrorStatus.SERVER_MEMBER_PRESENCE_STATE_NOT_FOUND);
-            }
             serverMemberStatus = responseDto.getMemberPresenceStatusList().stream()
                     .map(memberPresence -> ServerMemberStatus.builder()
                             .memberId(memberPresence.getMemberId())

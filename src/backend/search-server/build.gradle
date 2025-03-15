@@ -83,6 +83,9 @@ dependencies {
     // Resilience4j
     implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
 
+    // AOP
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+
 }
 
 dependencyManagement {

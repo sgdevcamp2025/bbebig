@@ -3,6 +3,7 @@ package com.bbebig.commonmodule.global.response.exception;
 import com.bbebig.commonmodule.global.response.code.CommonResponse;
 import com.bbebig.commonmodule.global.response.code.error.ErrorReasonDTO;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.*;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
@@ -89,6 +89,20 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
 				headers,
 				status,
 				request
+		);
+	}
+
+	@ExceptionHandler(CallNotPermittedException.class)
+	public ResponseEntity<Object> handleCallNotPermittedException(CallNotPermittedException e, HttpServletRequest request) {
+		log.warn("[ExceptionAdvice] CircuitBreaker is OPEN. Blocking call. Msg: {}", e.getMessage());
+
+		return handleExceptionInternalFalse(
+				e,
+				ErrorStatus.CIRCUIT_OPEN_ERROR,
+				HttpHeaders.EMPTY,
+				ErrorStatus.CIRCUIT_OPEN_ERROR.getHttpStatus(), // 보통 503
+				new ServletWebRequest(request),
+				e.getMessage()
 		);
 	}
 

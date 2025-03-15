@@ -1,11 +1,12 @@
-package com.bbebig.searchserver.global.client;
+package com.bbebig.searchserver.global.feign.client;
 
 import com.bbebig.commonmodule.clientDto.ServiceFeignResponseDto.*;
+import com.bbebig.searchserver.global.feign.fallback.ServiceFallback;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "service-server")
+@FeignClient(name = "service-server",fallback = ServiceFallback.class)
 public interface ServiceClient {
 
 	@GetMapping("/feign/servers/{serverId}/list/member")
