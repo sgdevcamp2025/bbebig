@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 
 import { TURN_SERVER_URL } from '@/constants/env'
-import { useSignalingSocket } from '@/stores/use-signaling-socket'
+import { useSignalingSocket } from '@/stores/use-signaling-store'
 import { useUserStatus } from '@/stores/use-user-status-store'
 
 import useGetSelfUser from './queries/user/useGetSelfUser'
