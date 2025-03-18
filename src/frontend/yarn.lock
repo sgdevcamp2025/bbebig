@@ -1248,7 +1248,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mswjs/interceptors@npm:^0.37.0":
+"@mswjs/interceptors@npm:^0.37.0, @mswjs/interceptors@npm:^0.37.1":
   version: 0.37.6
   resolution: "@mswjs/interceptors@npm:0.37.6"
   dependencies:
@@ -1259,6 +1259,19 @@ __metadata:
     outvariant: "npm:^1.4.3"
     strict-event-emitter: "npm:^0.5.1"
   checksum: 10c0/74f52c09c84fcbba9f1a06e462aa25b1567cf078ed27d396c76a8059c002fa9c361e711dcada0ac2aad4298f247d8e236a4fcc861c08ddf6e2ce0889368596fd
+  languageName: node
+  linkType: hard
+
+"@mswjs/socket.io-binding@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "@mswjs/socket.io-binding@npm:0.1.1"
+  dependencies:
+    "@mswjs/interceptors": "npm:^0.37.1"
+    engine.io-parser: "npm:^5.2.3"
+    socket.io-parser: "npm:^4.2.4"
+  peerDependencies:
+    "@mswjs/interceptors": "*"
+  checksum: 10c0/fc433ebc9bc1eb7e66f5c19eb486c080b39b62d973d56f8624f94f4144cbc26abf445b9138d34ae892f4b629ca2b9d7165b483c39db800b0b7c59e519b10c1b6
   languageName: node
   linkType: hard
 
@@ -3579,7 +3592,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"engine.io-parser@npm:~5.2.1":
+"engine.io-parser@npm:^5.2.3, engine.io-parser@npm:~5.2.1":
   version: 5.2.3
   resolution: "engine.io-parser@npm:5.2.3"
   checksum: 10c0/ed4900d8dbef470ab3839ccf3bfa79ee518ea8277c7f1f2759e8c22a48f64e687ea5e474291394d0c94f84054749fd93f3ef0acb51fa2f5f234cc9d9d8e7c536
@@ -4362,6 +4375,7 @@ __metadata:
     "@chromatic-com/storybook": "npm:^3.2.4"
     "@eslint/js": "npm:^9.17.0"
     "@hookform/resolvers": "npm:^3.10.0"
+    "@mswjs/socket.io-binding": "npm:^0.1.1"
     "@sentry/react": "npm:^9.1.0"
     "@sentry/vite-plugin": "npm:^3.1.2"
     "@stomp/stompjs": "npm:^7.0.0"
@@ -6941,7 +6955,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"socket.io-parser@npm:~4.2.4":
+"socket.io-parser@npm:^4.2.4, socket.io-parser@npm:~4.2.4":
   version: 4.2.4
   resolution: "socket.io-parser@npm:4.2.4"
   dependencies:
