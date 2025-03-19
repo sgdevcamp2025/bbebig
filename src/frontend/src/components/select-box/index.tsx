@@ -91,10 +91,13 @@ const SelectBox = <T,>({
         </div>
       ) : null}
       <div className='py-2 px-2 flex justify-between'>
-        <div className='text-gray-10 flex max-w-[calc(100%-8px)] items-center mx-1 h-7'>
+        <label
+          htmlFor={label}
+          className='text-gray-10 flex max-w-[calc(100%-8px)] items-center mx-1 h-7'>
           {search ? '' : value ? (value as Option<T>).label : label}
-        </div>
+        </label>
         <input
+          id={label}
           type='text'
           value={search}
           onChange={handleSearch}
@@ -103,6 +106,7 @@ const SelectBox = <T,>({
           {...props}
         />
         <button
+          role='combobox'
           type='button'
           onClick={() => setIsOpen((prev) => !prev)}
           className={cn(
