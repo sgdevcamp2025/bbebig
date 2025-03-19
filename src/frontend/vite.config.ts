@@ -69,6 +69,10 @@ export default defineConfig(({ mode }) => {
           '@': resolve(__dirname, './src')
         }
       }
+    },
+    test: {
+      globals: true,
+      environment: 'jsdom'
     }
   }
 })
