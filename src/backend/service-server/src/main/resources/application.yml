@@ -79,6 +79,20 @@ springdoc:
     tags-sorter: alpha
     operations-sorter: method
 
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true
+        failureRateThreshold: 80
+        slowCallDurationThreshold: 10s
+        waitDurationInOpenState: 20s
+        permittedNumberOfCallsInHalfOpenState: 3
+    instances:
+      service-server:
+        baseConfig: default
+
 eas:
   passport:
     secretKey: ${PASSPORT_SECRET_KEY}

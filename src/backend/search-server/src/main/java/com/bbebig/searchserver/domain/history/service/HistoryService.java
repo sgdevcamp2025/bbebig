@@ -1,6 +1,5 @@
 package com.bbebig.searchserver.domain.history.service;
 
-import com.bbebig.commonmodule.clientDto.SearchFeignResponseDto;
 import com.bbebig.commonmodule.clientDto.SearchFeignResponseDto.ServerChannelSequenceResponseDto;
 import com.bbebig.commonmodule.clientDto.ServiceFeignResponseDto.*;
 import com.bbebig.commonmodule.global.response.code.error.ErrorStatus;
@@ -11,8 +10,7 @@ import com.bbebig.commonmodule.redis.domain.ChannelLastInfo;
 import com.bbebig.commonmodule.redis.domain.ServerLastInfo;
 import com.bbebig.searchserver.domain.history.repository.ChannelChatMessageRepository;
 import com.bbebig.searchserver.domain.history.repository.DmChatMessageRepository;
-import com.bbebig.searchserver.domain.search.domain.ChannelChatMessageElastic;
-import com.bbebig.searchserver.global.client.ServiceClient;
+import com.bbebig.searchserver.global.feign.client.ServiceClient;
 import com.bbebig.searchserver.domain.history.domain.ChannelChatMessage;
 import com.bbebig.searchserver.domain.history.domain.DmChatMessage;
 import com.bbebig.searchserver.domain.history.dto.HistoryDtoConverter;
@@ -30,7 +28,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.bbebig.searchserver.domain.history.dto.HistoryResponseDto.*;
 
@@ -227,14 +224,10 @@ public class HistoryService {
 
 		List<ServerUnreadCountDto> result = new ArrayList<>();
 		Set<Long> serverList = memberRedisRepository.getMemberServerList(memberId);
-		if (serverList.isEmpty()) {
-			try {
-				MemberServerListResponseDto memberServerListCacheResponseDto = serviceClient.getMemberServerList(memberId);
-				serverList.addAll(memberServerListCacheResponseDto.getServerIdList());
-			} catch (FeignException e) {
-				log.error("[Search] ChatMessageService: Feign으로 멤버 서버 목록 조회 중 오류 발생. memberId: {}", memberId);
-			}
-		}
+
+		MemberServerListResponseDto memberServerListCacheResponseDto = serviceClient.getMemberServerList(memberId);
+		serverList.addAll(memberServerListCacheResponseDto.getServerIdList());
+
 		for (Long serverId : serverList) {
 			result.add(getServerUnreadCount(memberId, serverId));
 		}
@@ -319,31 +312,25 @@ public class HistoryService {
 	private ServerLastInfo getServerLastInfo(Long memberId, Long serverId) {
 		ServerLastInfo lastInfo = serverRedisRepository.getServerLastInfo(serverId, memberId);
 		if (lastInfo == null) {
-			try {
-				ServerLastInfoResponseDto responseDto = serviceClient.getServerLastInfo(serverId, memberId);
-				if (responseDto == null) {
-					log.error("[Search] ChatMessageService: 서버 마지막 방문 정보 조회 실패. serverId: {}, memberId: {}", serverId, memberId);
-					throw new ErrorHandler(ErrorStatus.SERVER_LAST_INFO_NOT_FOUND);
-				}
-				Map<Long, ChannelLastInfo> channelInfoMap = new HashMap<>();
-				responseDto.getChannelInfoList().forEach(chDto -> {
-					channelInfoMap.put(chDto.getChannelId(), ChannelLastInfo.builder()
-							.channelId(chDto.getChannelId())
-							.lastReadMessageId(chDto.getLastReadMessageId())
-							.lastReadSequence(chDto.getLastReadSequence())
-							.lastAccessAt(chDto.getLastAccessAt())
-							.build());
-				});
-				ServerLastInfo info = ServerLastInfo.builder()
-						.serverId(serverId)
-						.channelLastInfoMap(channelInfoMap)
-						.build();
-				serverRedisRepository.saveServerLastInfo(memberId, serverId, info);
-				return info;
-			} catch (FeignException e) {
-				log.error("[Search] ChatMessageService: Feign으로 서버 정보 조회 중 오류 발생. serverId: {}, memberId: {}", serverId, memberId);
-				log.error("[Search] ChatMessageService: FeignException: {}", e.getMessage());
+			ServerLastInfoResponseDto responseDto = serviceClient.getServerLastInfo(serverId, memberId);
+			if (responseDto == null) {
+				log.error("[Search] ChatMessageService: 서버 마지막 방문 정보 조회 실패. serverId: {}, memberId: {}", serverId, memberId);
+				throw new ErrorHandler(ErrorStatus.SERVER_LAST_INFO_NOT_FOUND);
 			}
+			Map<Long, ChannelLastInfo> channelInfoMap = new HashMap<>();
+			responseDto.getChannelInfoList().forEach(chDto -> {
+				channelInfoMap.put(chDto.getChannelId(), ChannelLastInfo.builder()
+						.channelId(chDto.getChannelId())
+						.lastReadMessageId(chDto.getLastReadMessageId())
+						.lastReadSequence(chDto.getLastReadSequence())
+						.lastAccessAt(chDto.getLastAccessAt())
+						.build());
+			});
+			ServerLastInfo info = ServerLastInfo.builder()
+					.serverId(serverId)
+					.channelLastInfoMap(channelInfoMap)
+					.build();
+			serverRedisRepository.saveServerLastInfo(memberId, serverId, info);
 		}
 
 
