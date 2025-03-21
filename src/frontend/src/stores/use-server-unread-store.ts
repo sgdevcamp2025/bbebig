@@ -36,8 +36,11 @@ export const useServerUnreadStore = create<ServerUnreadStore>((set) => ({
   resetUnreadCount: (serverId, channelId) =>
     set((state) => {
       if (!state.unreadCounts[serverId]) return state
-      const newCounts = { ...state.unreadCounts[serverId] }
-      delete newCounts[channelId]
+
+      const newCounts = Object.fromEntries(
+        Object.entries(state.unreadCounts[serverId]).filter(([key]) => key !== String(channelId))
+      )
+
       return {
         unreadCounts: { ...state.unreadCounts, [serverId]: newCounts }
       }

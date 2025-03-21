@@ -7,6 +7,7 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import simpleImportSort from 'eslint-plugin-simple-import-sort'
 import tanstackPlugin from '@tanstack/eslint-plugin-query'
 import unusedImports from 'eslint-plugin-unused-imports'
+import reactPlugin from 'eslint-plugin-react'
 
 export default tseslint.config(
   { ignores: ['dist', 'node_modules', '**/*.config.js', '!**/eslint.config.js'] },
@@ -37,10 +38,14 @@ export default tseslint.config(
       'simple-import-sort': simpleImportSort,
       '@typescript-eslint': tseslint.plugin,
       onlyWarn,
-      tanstack: tanstackPlugin
+      tanstack: tanstackPlugin,
+      react: reactPlugin
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
+      'no-console': ['error', { allow: ['warn', 'error'] }],
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
       'import/no-anonymous-default-export': 'off',
       'prettier/prettier': 'error',
       'unused-imports/no-unused-imports': 'error',

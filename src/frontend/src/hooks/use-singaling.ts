@@ -1,17 +1,14 @@
 import { useEffect, useRef } from 'react'
-import io, { Socket } from 'socket.io-client'
 
-import { SIGNALING_NODE_SERVER_URL, TURN_SERVER_URL } from '@/constants/env'
+import { TURN_SERVER_URL } from '@/constants/env'
+import { useSignalingSocket } from '@/stores/use-signaling-store'
 import { useUserStatus } from '@/stores/use-user-status-store'
 
 import useGetSelfUser from './queries/user/useGetSelfUser'
 
-export function useSingalingWithMeshSocket(
-  channelId: number,
-  channelName: string,
-  serverName: string
-) {
+export function useSingaling() {
   const { getCurrentChannelInfo, joinVoiceChannel, leaveVoiceChannel } = useUserStatus()
+  const { on, off, emit } = useSignalingSocket()
   const selfUser = useGetSelfUser()
 
   // 레퍼런스
@@ -20,13 +17,8 @@ export function useSingalingWithMeshSocket(
   const myStreamRef = useRef<MediaStream | null>(null) // 내 로컬 미디어 스트림
   const peersRef = useRef<Record<string, RTCPeerConnection>>({}) // socketId -> RTCPeerConnection
   const userMapRef = useRef<Record<string, string>>({}) // socketId -> userId (상대방 표시용)
-  const socket = useRef<Socket>(
-    io(SIGNALING_NODE_SERVER_URL, {
-      // path: '/socket.io',
-      // transports: ['websocket'],
-      withCredentials: true
-    })
-  ).current
+
+  const { channelId } = getCurrentChannelInfo() ?? {}
 
   // -----------------------------
   // (1) 미디어 스트림 획득
@@ -85,12 +77,12 @@ export function useSingalingWithMeshSocket(
       }
     }
 
-    socket.on('user_left', handleUserLeft)
+    on('user_left', handleUserLeft)
 
     return () => {
-      socket.off('user_left', handleUserLeft)
+      off('user_left', handleUserLeft)
     }
-  }, [socket])
+  }, [on, off])
 
   // -----------------------------
   // (4) 소켓 이벤트: welcome/offer/answer/ice
@@ -118,7 +110,7 @@ export function useSingalingWithMeshSocket(
       // ICE candidate
       pc.addEventListener('icecandidate', (event) => {
         if (event.candidate) {
-          socket.emit('ice', event.candidate, socketId)
+          emit('ice', event.candidate, socketId)
         }
       })
 
@@ -180,7 +172,7 @@ export function useSingalingWithMeshSocket(
       await peersRef.current[newSocketId].setLocalDescription(offer)
 
       // 서버에 offer 전송
-      socket.emit('offer', offer, newSocketId)
+      emit('offer', offer, newSocketId)
     }
 
     // offer 수신 (내가 나중에 들어왔을 때)
@@ -203,7 +195,7 @@ export function useSingalingWithMeshSocket(
       const answer = await peersRef.current[remoteId].createAnswer()
       await peersRef.current[remoteId].setLocalDescription(answer)
 
-      socket.emit('answer', answer, remoteId)
+      emit('answer', answer, remoteId)
     }
 
     // answer 수신
@@ -232,18 +224,18 @@ export function useSingalingWithMeshSocket(
       }
     }
 
-    socket.on('welcome', handleWelcome)
-    socket.on('offer', handleOffer)
-    socket.on('answer', handleAnswer)
-    socket.on('ice', handleIce)
+    on('welcome', handleWelcome)
+    on('offer', handleOffer)
+    on('answer', handleAnswer)
+    on('ice', handleIce)
 
     return () => {
-      socket.off('welcome', handleWelcome)
-      socket.off('offer', handleOffer)
-      socket.off('answer', handleAnswer)
-      socket.off('ice', handleIce)
+      off('welcome', handleWelcome)
+      off('offer', handleOffer)
+      off('answer', handleAnswer)
+      off('ice', handleIce)
     }
-  }, [socket])
+  }, [on, off, emit])
 
   // -----------------------------
   // (5) 방 입장
@@ -256,9 +248,15 @@ export function useSingalingWithMeshSocket(
     }
   }, [channelId, getCurrentChannelInfo])
 
-  function joinChannel() {
-    socket.connect()
-
+  function joinChannel({
+    channelId,
+    channelName,
+    serverName
+  }: {
+    channelId: number
+    channelName: string
+    serverName: string
+  }) {
     getMedia()
 
     joinVoiceChannel({
@@ -267,7 +265,7 @@ export function useSingalingWithMeshSocket(
       serverName
     })
 
-    socket.emit('join_room', { roomName: channelId, userId: selfUser.id })
+    emit('join_room', { roomName: channelId, userId: selfUser.id })
   }
 
   function leaveChannel() {
@@ -276,8 +274,6 @@ export function useSingalingWithMeshSocket(
       myStreamRef.current.getTracks().forEach((track) => track.stop())
       myStreamRef.current = null
     }
-    // 소켓 해제
-    socket.disconnect()
 
     // 내 비디오 제거
     if (myFaceRef.current) {
@@ -292,16 +288,7 @@ export function useSingalingWithMeshSocket(
     leaveVoiceChannel()
   }
 
-  // -----------------------------
-  // (10) 페이지 떠날 때 소켓 해제
-  // -----------------------------
-  useEffect(() => {
-    return function cleanup() {
-      socket.disconnect()
-    }
-  }, [socket])
-
-  const isInVoiceChannel = getCurrentChannelInfo()?.channelId === channelId
+  const isInVoiceChannel = getCurrentChannelInfo()
 
   return {
     callRef,

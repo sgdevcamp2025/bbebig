@@ -33,6 +33,9 @@ export default defineConfig(({ mode }) => {
         }
       })
     ],
+    optimizeDeps: {
+      include: ['@mswjs/socket.io-binding']
+    },
     build: {
       outDir: 'build/client',
       emptyOutDir: true,
@@ -66,6 +69,10 @@ export default defineConfig(({ mode }) => {
           '@': resolve(__dirname, './src')
         }
       }
+    },
+    test: {
+      globals: true,
+      environment: 'jsdom'
     }
   }
 })

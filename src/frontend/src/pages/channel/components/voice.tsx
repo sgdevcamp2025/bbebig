@@ -3,7 +3,7 @@ import toast from 'react-hot-toast'
 
 import ChatArea from '@/components/chat-area'
 import CustomButton from '@/components/custom-button'
-import { useSingalingWithMeshSocket } from '@/hooks/use-singaling-with-mesh'
+import { useSingaling } from '@/hooks/use-singaling'
 import { cn } from '@/libs/cn'
 import { ChatUser } from '@/types/user'
 
@@ -26,14 +26,14 @@ function VideoComponent({
 }: Props) {
   const [sideBar, setSideBar] = useState(false)
 
-  const { joinChannel, leaveChannel, isInVoiceChannel, callRef, myFaceRef } =
-    useSingalingWithMeshSocket(channelId, channelName, serverName)
-
-  // const { joinChannel, leaveChannel, isInVoiceChannel, callRef, myFaceRef } =
-  //   useSignalingWithSFU(channelId, channelName, serverName)
+  const { joinChannel, leaveChannel, isInVoiceChannel, callRef, myFaceRef } = useSingaling()
 
   const handleJoinVoiceChannel = () => {
-    joinChannel()
+    joinChannel({
+      channelId,
+      channelName,
+      serverName
+    })
   }
 
   const handleLeaveVoiceChannel = () => {
