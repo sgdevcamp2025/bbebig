@@ -32,12 +32,12 @@ public class KafkaProducerService {
 
 	// 채널 채팅 메시지 전송
 	public void sendMessageForChannelChat(ChatMessageDto messageDto) {
-		kafkaTemplateForChannelMessageEvent.send(channelChatTopic, messageDto);
+		kafkaTemplateForChannelMessageEvent.send(channelChatTopic, messageDto.getChannelId().toString(), messageDto);
 	}
 
 	// DM 채팅 메시지 전송
 	public void sendMessageForDmChat(ChatMessageDto messageDto) {
-		kafkaTemplateForChannelMessageEvent.send(dmChatTopic, messageDto);
+		kafkaTemplateForChannelMessageEvent.send(dmChatTopic, messageDto.getChannelId().toString(), messageDto);
 	}
 
 	// 연결 이벤트 메시지 전송
