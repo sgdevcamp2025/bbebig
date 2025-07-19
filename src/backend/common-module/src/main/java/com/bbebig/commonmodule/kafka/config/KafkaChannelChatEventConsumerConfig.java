@@ -60,8 +60,8 @@ public class KafkaChannelChatEventConsumerConfig {
 	}
 
 	@Bean
-	public DeadLetterPublishingRecoverer deadLetterPublishingRecoverer(KafkaTemplate<String, Object> kafkaTemplate) {
-		return new DeadLetterPublishingRecoverer(kafkaTemplate);
+	public DeadLetterPublishingRecoverer deadLetterPublishingRecoverer() {
+		return new DeadLetterPublishingRecoverer(kafkaTemplateForChannelDLQ());
 	}
 
 	@Bean

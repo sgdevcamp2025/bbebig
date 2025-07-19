@@ -86,9 +86,15 @@ resilience4j:
       default:
         registerHealthIndicator: true
         failureRateThreshold: 80
-        slowCallDurationThreshold: 10s
-        waitDurationInOpenState: 20s
-        permittedNumberOfCallsInHalfOpenState: 3
+        minimumNumberOfCalls: 10                      # 최소 10번 호출 이후에만 통계 적용
+        slidingWindowType: COUNT_BASED                # COUNT_BASED or TIME_BASED
+        slidingWindowSize: 20                         # 실패율 계산용 윈도우 크기 (20개 요청)
+        slowCallRateThreshold: 50                     # 느린 호출 비율이 50% 넘으면 실패 간주
+        slowCallDurationThreshold: 10s                # 10초 넘는 응답은 느린 호출로 간주
+        waitDurationInOpenState: 20s                  # Open 상태 유지 시간
+        permittedNumberOfCallsInHalfOpenState: 3      # Half-Open 시 허용되는 요청 수
+        automaticTransitionFromOpenToHalfOpenEnabled: true  # 자동 전환 허용
+        recordExceptions:                             # 이 예외들은 실패로 기록
     instances:
       service-server:
         baseConfig: default
