@@ -1,0 +1,16 @@
+language: ko-KR
+reviews:
+  profile: chill
+  request_changes_workflow: false
+  high_level_summary: true
+  path_filters:
+    - "frontend/**"
+    - "!**"
+  auto_review:
+    enabled: true
+  poem: false
+tools:
+  eslint:
+    enabled: true
+  ruff:
+    enabled: false
