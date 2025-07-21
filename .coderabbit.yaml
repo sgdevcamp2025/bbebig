@@ -8,6 +8,7 @@ reviews:
     - "!**"
   auto_review:
     enabled: true
+    base_branches: ["main", "develop"]
   poem: false
 tools:
   eslint:
